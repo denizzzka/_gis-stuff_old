@@ -64,7 +64,7 @@ enum FieldType {
     MAX_FIELD_TYPE      = 18,
 };
 
-bool msbIsSet( const ubyte* a )
+pure bool msbIsSet( const ubyte* a )
 {
     import core.bitop: bt;
     
@@ -79,7 +79,7 @@ unittest
 }
 
 
-ulong parseVarint( const (ubyte)* data )
+pure ulong parseVarint( const (ubyte)* data )
 {
     size_t i = 0;
     const (ubyte)* old;
