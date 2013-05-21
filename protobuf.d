@@ -103,6 +103,20 @@ unittest
 }
 
 
+pure long decodeZigZag( ulong v )
+{
+    if( v & 1 )
+        return -( v >> 1 ) - 1;
+    else
+        return v >> 1;
+}
+unittest
+{
+    assert( decodeZigZag( 4294967294 ) == 2147483647 );
+    assert( decodeZigZag( 4294967295 ) == -2147483648 );
+}
+
+
 int Base128Decode( ubyte* a )
 {
     
