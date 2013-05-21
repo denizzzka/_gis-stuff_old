@@ -97,7 +97,7 @@ ulong parseVarint( const (ubyte)* data )
 unittest
 {
     ubyte d[2] = [ 0b_10101100, 0b_00000010 ];
-    writeln( parseVarint( &d[0] ) );
+    assert( parseVarint( &d[0] ) == 300 );
 }
 
 
