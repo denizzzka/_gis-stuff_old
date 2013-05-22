@@ -1,3 +1,5 @@
+module protobuf;
+
 import std.exception;
 import std.stdio;
 
