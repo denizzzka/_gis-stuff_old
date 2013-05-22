@@ -127,6 +127,7 @@ unittest
     
     assert( tag == 1 );
     assert( wire == WireType.VARINT );
+    assert( res == &d[1] );
 }
 
 
