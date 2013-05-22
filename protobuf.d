@@ -79,34 +79,39 @@ unittest
 }
 
 
-pure ulong parseVarint( const (ubyte)* data )
+pure ulong parseVarint( const ubyte* data, const (ubyte)* nextElement )
 {
+    nextElement = data;
     size_t i = 0;
     const (ubyte)* old;
     ulong res;
     
     do {
-        assert( i < data.sizeof, "Varint is too big for type " ~ data.stringof );
+        assert( i < ulong.sizeof, "Varint is too big for type " ~ ulong.stringof );
         
-        res |= ( *data & 0b_01111111 ) << 7 * i;
-        old = data;
-        data++;
+        res |= ( *nextElement & 0b_01111111 ) << 7 * i;
+        old = nextElement;
+        nextElement++;
         i++;
-    } while( msbIsSet(old) );
+    } while( msbIsSet( old ) );
     
     return res;
 }
 unittest
 {
     ubyte d[2] = [ 0b_10101100, 0b_00000010 ];
-    assert( parseVarint( &d[0] ) == 300 );
+    const (ubyte)* nextItem;
+    
+    assert( parseVarint( &d[0], nextItem ) == 300 );
 }
 
 
 pure void parseTagAndWiretype( const (ubyte)* data, out size_t tag, out WireType wireType )
 {
+    const (ubyte)* nextItem;
+    
     wireType = cast( WireType ) ( *data & 0b_0000_0111 );
-    tag = parseVarint( data ) - ( *data & 0b_1111_1111 ) + (( *data & 0b_0111_1000 ) >> 3 );
+    tag = parseVarint( data, nextItem ) - ( *data & 0b_1111_1111 ) + (( *data & 0b_0111_1000 ) >> 3 );
     
     
     /*
