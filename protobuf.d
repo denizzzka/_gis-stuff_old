@@ -86,7 +86,7 @@ pure ulong parseVarint( const (ubyte)* data )
     ulong res;
     
     do {
-        assert( i < 8, "Value is too big" );
+        assert( i < data.sizeof, "Varint is too big for type " ~ data.stringof );
         
         res |= ( *data & 0x7f ) << 7 * i;
         old = data;
