@@ -145,6 +145,19 @@ unittest
 }
 
 
+string unpackString( const ubyte* data, out const (ubyte)* nextElement )
+{
+    size_t tag;
+    WireType wire;
+    
+    nextElement = parseTagAndWiretype( data, tag, wire );
+    
+    assert( wire == WireType.LENGTH_DELIMITED );
+    
+    return "fixme";
+}
+
+
 int Base128Decode( ubyte* a )
 {
     
