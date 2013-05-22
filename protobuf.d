@@ -1,3 +1,4 @@
+import std.exception;
 import std.stdio;
 
 string example = q"EOS
@@ -87,7 +88,7 @@ pure ulong parseVarint( const ubyte* data, out const (ubyte)* nextElement )
     ulong res;
     
     do {
-        assert( i < ulong.sizeof, "Varint is too big for type " ~ ulong.stringof );
+        enforce( i < ulong.sizeof, "Varint is too big for type " ~ ulong.stringof );
         
         res |= ( *nextElement & 0b_01111111 ) << 7 * i;
         old = nextElement;
@@ -152,7 +153,7 @@ string unpackString( const ubyte* data, out const (ubyte)* nextElement )
     
     nextElement = parseTagAndWiretype( data, tag, wire );
     
-    assert( wire == WireType.LENGTH_DELIMITED );
+    enforce( wire == WireType.LENGTH_DELIMITED, "Wrong wire type for string" );
     
     return "fixme";
 }
