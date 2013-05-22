@@ -161,7 +161,8 @@ unittest
 }
 
 
-char[] unpackString( const ubyte* data, out const (ubyte)* nextElement )
+T[] unpackString( T )( const ubyte* data, out const (ubyte)* nextElement )
+if( T.sizeof == 1 )
 {
     uint tag;
     WireType wire;
@@ -172,16 +173,16 @@ char[] unpackString( const ubyte* data, out const (ubyte)* nextElement )
     enforce( wire == WireType.LENGTH_DELIMITED, "Wrong wire type for string" );
     
     // find length and start of string bytes
-    auto len = parseVarint!ulong( nextElement, nextElement );
+    auto len = parseVarint!size_t( nextElement, nextElement );
     
-    return ( cast( char[] ) nextElement[0..len] );
+    return ( cast( T[] ) nextElement[0..len] );
 }
 unittest
 {
     ubyte[9] d = [ 0x12, 0x07, 0x74, 0x65, 0x73, 0x74, 0x69, 0x6e, 0x67 ];
     const (ubyte)* next;
     
-    assert( unpackString( &d[0], next ) == "testing" );
+    assert( unpackString!char( &d[0], next ) == "testing" );
 }
 
 
