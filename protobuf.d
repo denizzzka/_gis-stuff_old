@@ -33,13 +33,13 @@ message AddressBook {
 }
 EOS";
 
-enum WireType {
-    WIRETYPE_VARINT           = 0,
-    WIRETYPE_FIXED64          = 1,
-    WIRETYPE_LENGTH_DELIMITED = 2,
-    WIRETYPE_START_GROUP      = 3, /// deprecated
-    WIRETYPE_END_GROUP        = 4, /// deprecated
-    WIRETYPE_FIXED32          = 5,
+enum WireType : ubyte {
+    VARINT           = 0,
+    FIXED64          = 1,
+    LENGTH_DELIMITED = 2,
+    START_GROUP      = 3, /// deprecated
+    END_GROUP        = 4, /// deprecated
+    FIXED32          = 5
 };
 
 enum FieldType {
@@ -88,7 +88,7 @@ pure ulong parseVarint( const (ubyte)* data )
     do {
         assert( i < data.sizeof, "Varint is too big for type " ~ data.stringof );
         
-        res |= ( *data & 0x7f ) << 7 * i;
+        res |= ( *data & 0b_01111111 ) << 7 * i;
         old = data;
         data++;
         i++;
@@ -100,6 +100,27 @@ unittest
 {
     ubyte d[2] = [ 0b_10101100, 0b_00000010 ];
     assert( parseVarint( &d[0] ) == 300 );
+}
+
+
+pure void parseTagAndWiretype( const (ubyte)* data, out size_t *tag, out WireType* wireType )
+{
+    *wireType = cast( WireType ) ( *data & 0b_00000111 );
+    
+    /*
+    size_t i = 0;
+    const (ubyte)* old;
+    ulong res;
+    
+    do {
+        assert( i < data.sizeof, "Varint is too big for type " ~ data.stringof );
+        
+        res |= ( *data & 0x7f ) << 7 * i;
+        old = data;
+        data++;
+        i++;
+    } while( msbIsSet(old) );
+    */
 }
 
 
