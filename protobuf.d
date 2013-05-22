@@ -80,6 +80,19 @@ unittest
 }
 
 
+pure size_t getVarintLength( const ubyte* data )
+{
+    size_t i = 0;
+    while( msbIsSet( data + i ) ) i++;
+    return i + 1;
+}
+unittest
+{
+    ubyte d[2] = [ 0b_10101100, 0b_00000010 ];
+    
+    assert( getVarintLength( &d[0] ) == 2 );
+}
+
 pure ulong parseVarint( const ubyte* data, out const (ubyte)* nextElement )
 {
     nextElement = data;
