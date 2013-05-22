@@ -123,21 +123,21 @@ unittest
 }
 
 
-pure const (ubyte)* parseTagAndWiretype( const ubyte* data, out size_t tag, out WireType wireType )
+pure const (ubyte)* parseTagAndWiretype( const ubyte* data, out uint tag, out WireType wireType )
 {
     const (ubyte)* nextElement;
     
     wireType = cast( WireType ) ( *data & 0b_0000_0111 );
     
     // Parses as Varint, but takes the value of first byte and adds its real value without additional load
-    tag = parseVarint!size_t( data, nextElement ) - ( *data & 0b_1111_1111 ) + (( *data & 0b_0111_1000 ) >> 3 );
+    tag = parseVarint!uint( data, nextElement ) - ( *data & 0b_1111_1111 ) + (( *data & 0b_0111_1000 ) >> 3 );
     
     return nextElement;
 }
 unittest
 {
     ubyte d[3] = [ 0b_0000_1000, 0b_1001_0110, 0b_0000_0001 ];
-    size_t tag;
+    uint tag;
     WireType wire;
     auto res = parseTagAndWiretype( &d[0], tag, wire );
     
@@ -163,7 +163,7 @@ unittest
 
 char[] unpackString( const ubyte* data, out const (ubyte)* nextElement )
 {
-    size_t tag;
+    uint tag;
     WireType wire;
     
     // find string length varint
