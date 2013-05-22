@@ -95,15 +95,15 @@ unittest
 }
 
 
-pure ulong parseVarint( const ubyte* data, out const (ubyte)* nextElement )
+pure T parseVarint( T )( const ubyte* data, out const (ubyte)* nextElement )
 {
     nextElement = data;
     size_t i = 0;
     const (ubyte)* old;
-    ulong res;
+    T res;
     
     do {
-        enforce( i < ulong.sizeof, "Varint is too big for type " ~ ulong.stringof );
+        enforce( i < T.sizeof, "Varint is too big for type " ~ T.stringof );
         
         res |= ( *nextElement & 0b_01111111 ) << 7 * i;
         old = nextElement;
@@ -118,7 +118,7 @@ unittest
     ubyte d[2] = [ 0b_10101100, 0b_00000010 ];
     const (ubyte)* next;
     
-    assert( parseVarint( &d[0], next ) == 300 );
+    assert( parseVarint!ulong( &d[0], next ) == 300 );
     assert( next == &d[0] + 2 );
 }
 
@@ -130,7 +130,7 @@ pure const (ubyte)* parseTagAndWiretype( const ubyte* data, out size_t tag, out 
     wireType = cast( WireType ) ( *data & 0b_0000_0111 );
     
     // Parses as Varint, but takes the value of first byte and adds its real value without additional load
-    tag = parseVarint( data, nextElement ) - ( *data & 0b_1111_1111 ) + (( *data & 0b_0111_1000 ) >> 3 );
+    tag = parseVarint!ulong( data, nextElement ) - ( *data & 0b_1111_1111 ) + (( *data & 0b_0111_1000 ) >> 3 );
     
     return nextElement;
 }
@@ -172,7 +172,7 @@ char[] unpackString( const ubyte* data, out const (ubyte)* nextElement )
     enforce( wire == WireType.LENGTH_DELIMITED, "Wrong wire type for string" );
     
     // find length and start of string bytes
-    auto len = parseVarint( nextElement, nextElement );
+    auto len = parseVarint!ulong( nextElement, nextElement );
     
     return ( cast( char[] ) nextElement[0..len] );
 }
