@@ -125,10 +125,8 @@ unittest
     WireType wire;
     auto res = parseTagAndWiretype( &d[0], tag, wire );
     
-    const (ubyte)* next;
-    writeln( "bytes: ", d[1], " ", d[2] );
-    writeln( "tag: ", tag, " wire: ", wire, " payload: ", 
-        parseVarint( res, next ) );
+    assert( tag == 1 );
+    assert( wire == WireType.VARINT );
 }
 
 
