@@ -65,6 +65,7 @@ enum FieldType {
     MAX_FIELD_TYPE      = 18,
 };
 
+
 pure bool msbIsSet( const ubyte* a )
 {
     import core.bitop: bt;
@@ -88,10 +89,11 @@ pure size_t getVarintLength( const ubyte* data )
 }
 unittest
 {
-    ubyte d[2] = [ 0b_10101100, 0b_00000010 ];
+    ubyte d[3] = [ 0b_10101100, 0b_10101100, 0b_00000010 ];
     
-    assert( getVarintLength( &d[0] ) == 2 );
+    assert( getVarintLength( &d[0] ) == 3 );
 }
+
 
 pure ulong parseVarint( const ubyte* data, out const (ubyte)* nextElement )
 {
@@ -164,13 +166,23 @@ string unpackString( const ubyte* data, out const (ubyte)* nextElement )
     size_t tag;
     WireType wire;
     
+    // find string length varint
     nextElement = parseTagAndWiretype( data, tag, wire );
     
     enforce( wire == WireType.LENGTH_DELIMITED, "Wrong wire type for string" );
     
-    return "fixme";
+    // find length and start of string bytes
+    auto len = parseVarint( nextElement, nextElement );
+    
+    return ( cast( string ) nextElement[0..len] ).idup;
 }
-
+unittest
+{
+    ubyte[9] d = [ 0x12, 0x07, 0x74, 0x65, 0x73, 0x74, 0x69, 0x6e, 0x67 ];
+    const (ubyte)* next;
+    
+    assert( unpackString( &d[0], next ) == "testing" );
+}
 
 int Base128Decode( ubyte* a )
 {
