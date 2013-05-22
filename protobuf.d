@@ -130,7 +130,7 @@ pure const (ubyte)* parseTagAndWiretype( const ubyte* data, out size_t tag, out 
     wireType = cast( WireType ) ( *data & 0b_0000_0111 );
     
     // Parses as Varint, but takes the value of first byte and adds its real value without additional load
-    tag = parseVarint!ulong( data, nextElement ) - ( *data & 0b_1111_1111 ) + (( *data & 0b_0111_1000 ) >> 3 );
+    tag = parseVarint!size_t( data, nextElement ) - ( *data & 0b_1111_1111 ) + (( *data & 0b_0111_1000 ) >> 3 );
     
     return nextElement;
 }
