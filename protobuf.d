@@ -161,7 +161,7 @@ unittest
 }
 
 
-string unpackString( const ubyte* data, out const (ubyte)* nextElement )
+char[] unpackString( const ubyte* data, out const (ubyte)* nextElement )
 {
     size_t tag;
     WireType wire;
@@ -174,7 +174,7 @@ string unpackString( const ubyte* data, out const (ubyte)* nextElement )
     // find length and start of string bytes
     auto len = parseVarint( nextElement, nextElement );
     
-    return ( cast( string ) nextElement[0..len] ).idup;
+    return ( cast( char[] ) nextElement[0..len] );
 }
 unittest
 {
@@ -183,6 +183,7 @@ unittest
     
     assert( unpackString( &d[0], next ) == "testing" );
 }
+
 
 int Base128Decode( ubyte* a )
 {
