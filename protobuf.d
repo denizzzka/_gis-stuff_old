@@ -50,7 +50,7 @@ unittest
 }
 
 
-pure size_t getVarintLength( const ubyte* data )
+pure size_t getVarintSize( const ubyte* data )
 {
     size_t i = 0;
     while( msbIsSet( data + i ) ) i++;
@@ -60,7 +60,7 @@ unittest
 {
     ubyte d[3] = [ 0b_10101100, 0b_10101100, 0b_00000010 ];
     
-    assert( getVarintLength( &d[0] ) == 3 );
+    assert( getVarintSize( &d[0] ) == 3 );
 }
 
 
@@ -136,12 +136,12 @@ if( T.sizeof == 1 )
     uint tag;
     WireType wire;
     
-    // find string length varint
+    // find string size varint
     nextElement = parseTagAndWiretype( data, tag, wire );
     
     enforce( wire == WireType.LENGTH_DELIMITED, "Wrong wire type for string" );
     
-    // find length and start of string bytes
+    // find start and size of string
     auto len = parseVarint!size_t( nextElement, nextElement );
     
     return ( cast( T[] ) nextElement[0..len] );
