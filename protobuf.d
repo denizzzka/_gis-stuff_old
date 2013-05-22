@@ -105,8 +105,8 @@ unittest
 
 pure void parseTagAndWiretype( const (ubyte)* data, out size_t tag, out WireType wireType )
 {
-    wireType = cast( WireType ) ( *data & 0b_00000111 );
-    tag = parseVarint( data );
+    wireType = cast( WireType ) ( *data & 0b_0000_0111 );
+    tag = parseVarint( data ) - ( *data & 0b_1111_1111 ) + (( *data & 0b_0111_1000 ) >> 3 );
     
     
     /*
@@ -126,7 +126,7 @@ pure void parseTagAndWiretype( const (ubyte)* data, out size_t tag, out WireType
 }
 unittest
 {
-    ubyte d[2] = [ 0b_10101100, 0b_00000010 ];
+    ubyte d[3] = [ 0b_0000_1000, 0b_1001_0110, 0b_0000_0001 ];
     size_t tag;
     WireType wire;
     parseTagAndWiretype( &d[0], tag, wire );
