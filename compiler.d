@@ -67,12 +67,11 @@ string searchFirstStatement( string code )
                 
             case '}':
                 brace_counter--;
-                enforce( brace_counter >= 0, "syntax error" );
-                if( brace_counter == 0 ) return code[ 0..i];
-                break;
+                enforce( brace_counter >= 0, "Syntax error" );
+                // break is not need here
                 
             case ';':
-                return code[ 0..i];
+                if( brace_counter == 0 ) return code[0..i+1];
                 break;
                 
             default:
@@ -80,7 +79,7 @@ string searchFirstStatement( string code )
         }
     }
     
-    enforce( false, "Unexpected end of file" );
+    enforce( false, "Unexpected end of statement" );
     return code;
 }
 
@@ -90,9 +89,17 @@ void main()
     // remove comments
     example = replace( example, regex( "//.*", "gm" ), "" );
     
+    writeln( example );
     
     //auto s = splitter( example, regex( "[ ,;=\n\r]" ) );
     
-    writeln( example );
-    writeln( searchFirstStatement( example ) );
+    size_t next;
+    string s;
+    
+    for( auto i = 0; i< 10; i++ )
+    {
+        next += s.length;
+        s = searchFirstStatement( example[ next..$ ] );
+        writeln( "Found: ", s );
+    }
 }
