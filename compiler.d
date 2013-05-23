@@ -117,6 +117,7 @@ string recognizeStatement( string statementText )
     
     writeln( "Statement found: ", s.name );
     
+    enforce( ( s.name in Parsers ) != null, "Parser for \""~s.name~"\" is not found" );
     return Parsers[s.name] ( s.content );
 }
 
@@ -125,13 +126,13 @@ struct Parser
 {
     static string Package( string statementContent )
     {
-        return "adding package \"" ~ removeEndDelimiter( statementContent ) ~ '"';
+        return "adding package \"" ~ removeEndDelimiter( statementContent ) ~ "\"\n";
     }
 
 
     static string Option( string statementContent )
     {
-        return "option found \"" ~ removeEndDelimiter( statementContent ) ~ '"';
+        return "option found \"" ~ removeEndDelimiter( statementContent ) ~ "\"\n";
     }
 
 
@@ -139,8 +140,15 @@ struct Parser
     {
         string res;
         
+        // trick: using this for get message name
+        auto m = parseStatement( statementContent );
+        res ~= "Message " ~ m.name ~ " {\n";
+        
+        res ~= parseBlock( m.content );
     //    auto s = parseStatement
     //    res.parent = parent;
+    
+        res ~= "}\n";
         
         return res;
     }
