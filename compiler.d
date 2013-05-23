@@ -39,20 +39,6 @@ message AddressBook {
 EOS";
 
 
-struct Message
-{
-    Message* parent;
-    Message* nested[];
-    
-    string content;
-}
-
-
-struct Generated
-{
-}
-
-
 string searchFirstStatement( string code )
 {
     auto brace_counter = 0;
@@ -84,12 +70,64 @@ string searchFirstStatement( string code )
 }
 
 
+string Operators[] =
+[
+    "package",
+    "message",
+    "option"
+];
+
+
+struct Statement
+{
+    string name;
+    string content;
+}
+
+
+Statement parseStatement( string statement )
+{    
+    auto s = match( statement, regex( r"\w+" ) );
+    
+    Statement ret;
+    
+    if( !s.empty )
+    {
+        auto c = s.captures;
+        ret.name = s.front.hit;
+        ret.content = c.post;
+    }
+    
+    return ret;
+}
+
+
+struct Message
+{
+    Message* parent;
+    Message* nested[];
+    
+    string content;
+}
+
+
+Message parseMessage( string statement, Message* parent = null )
+{
+    Message res;
+    
+    res.parent = parent;
+    
+    return res;
+}
+
+
 void main()
 {
     // remove comments
     example = replace( example, regex( "//.*", "gm" ), "" );
     
-    writeln( example );
+    
+    //writeln( example );
     
     //auto s = splitter( example, regex( "[ ,;=\n\r]" ) );
     
@@ -101,5 +139,6 @@ void main()
         next += s.length;
         s = searchFirstStatement( example[ next..$ ] );
         writeln( "Found: ", s );
+        writeln( "Result: ", parseStatement( s ) );
     }
 }
