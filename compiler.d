@@ -103,13 +103,11 @@ Statement parseStatement( string statement )
 }
 
 
-alias string function( string ) StatementParser;
-
-StatementParser[string] Parsers;
-
-
 string recognizeStatement( string statement )
 {
+    alias string function( string ) StatementParser;
+    StatementParser[string] Parsers;
+    
     Parsers["package"] = &parsePackage;
     Parsers["message"] = &parseMessage;
     
