@@ -1,7 +1,7 @@
 module protobuf;
 
 import std.exception;
-import std.stdio;
+public import std.stdio;
 
 enum WireType : ubyte {
     VARINT           = 0,
@@ -152,9 +152,4 @@ unittest
     const (ubyte)* next;
     
     assert( unpackString!char( &d[0], next ) == "testing" );
-}
-
-  
-void main()
-{
 }

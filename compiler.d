@@ -1,7 +1,8 @@
 module compiler;
 
 import protobuf;
-
+import std.array;
+import std.regex;
 
 string example = q"EOS
 // See README.txt for information and build instructions.
@@ -37,6 +38,27 @@ message AddressBook {
 EOS";
 
 
+struct Message
+{
+    Message* parent;
+    Message* nested[];
+    
+    string content;
+}
+
+
 struct Generated
 {
+}
+
+
+void main()
+{
+    // remove comments
+    auto r = regex( "//.*", "gm" );
+    example = replace( example, r, "" );
+    
+    auto s = splitter( example );
+    
+    writeln( example );
 }
