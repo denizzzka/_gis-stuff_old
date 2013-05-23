@@ -110,6 +110,8 @@ string recognizeStatement( string statement )
     
     Parsers["package"] = &parsePackage;
     Parsers["message"] = &parseMessage;
+    Parsers["option"] = &parseOption;
+    
     
     auto s = parseStatement( statement );
     
@@ -122,6 +124,12 @@ string recognizeStatement( string statement )
 string parsePackage( string statementContent )
 {
     return "adding package \"" ~ removeEndDelimiter( statementContent ) ~ '"';
+}
+
+
+string parseOption( string statementContent )
+{
+    return "option found \"" ~ removeEndDelimiter( statementContent ) ~ '"';
 }
 
 
@@ -157,8 +165,11 @@ void main()
     {
         next += s.length;
         s = searchFirstStatement( example[ next..$ ] );
-        writeln( "Found root statement: ", parseStatement( s ) );
-        auto r = recognizeStatement( s );
-        writeln( "Result of parsing: ", r );
+        if( s != "" )
+        {
+            writeln( "Found root statement: ", parseStatement( s ) );
+            auto r = recognizeStatement( s );
+            writeln( "Result of parsing: ", r );
+        }
     }
 }
