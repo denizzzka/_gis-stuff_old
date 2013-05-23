@@ -108,9 +108,9 @@ string recognizeStatement( string statementText )
     alias string function( string ) StatementParser;
     StatementParser[string] Parsers;
     
-    Parsers["package"] = &parsePackage;
-    Parsers["message"] = &parseMessage;
-    Parsers["option"] = &parseOption;
+    Parsers["package"] = &Parser.Package;
+    Parsers["message"] = &Parser.Message;
+    Parsers["option"] = &Parser.Option;
     
     
     auto s = parseStatement( statementText );
@@ -121,26 +121,29 @@ string recognizeStatement( string statementText )
 }
 
 
-string parsePackage( string statementContent )
+struct Parser
 {
-    return "adding package \"" ~ removeEndDelimiter( statementContent ) ~ '"';
-}
+    static string Package( string statementContent )
+    {
+        return "adding package \"" ~ removeEndDelimiter( statementContent ) ~ '"';
+    }
 
 
-string parseOption( string statementContent )
-{
-    return "option found \"" ~ removeEndDelimiter( statementContent ) ~ '"';
-}
+    static string Option( string statementContent )
+    {
+        return "option found \"" ~ removeEndDelimiter( statementContent ) ~ '"';
+    }
 
 
-string parseMessage( string statementContent )
-{
-    string res;
-    
-//    auto s = parseStatement
-//    res.parent = parent;
-    
-    return res;
+    static string Message( string statementContent )
+    {
+        string res;
+        
+    //    auto s = parseStatement
+    //    res.parent = parent;
+        
+        return res;
+    }
 }
 
 
@@ -148,6 +151,9 @@ string removeEndDelimiter( string s )
 {
     return replace( s, regex( ";$", "m" ), "" );
 }
+
+
+//void parseBlock
 
 
 void main()
