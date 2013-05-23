@@ -3,6 +3,7 @@ module compiler;
 import protobuf;
 import std.array;
 import std.regex;
+import std.exception;
 
 string example = q"EOS
 // See README.txt for information and build instructions.
@@ -52,13 +53,46 @@ struct Generated
 }
 
 
+string searchFirstStatement( string code )
+{
+    auto brace_counter = 0;
+    
+    for( auto i = 0; i < code.length; i++ )
+    {
+        switch( code[i] )
+        {
+            case '{':
+                brace_counter++;
+                break;
+                
+            case '}':
+                brace_counter--;
+                enforce( brace_counter >= 0, "syntax error" );
+                if( brace_counter == 0 ) return code[ 0..i];
+                break;
+                
+            case ';':
+                return code[ 0..i];
+                break;
+                
+            default:
+                break;
+        }
+    }
+    
+    enforce( false, "Unexpected end of file" );
+    return code;
+}
+
+
 void main()
 {
     // remove comments
-    auto r = regex( "//.*", "gm" );
-    example = replace( example, r, "" );
+    example = replace( example, regex( "//.*", "gm" ), "" );
     
-    auto s = splitter( example );
+    
+    //auto s = splitter( example, regex( "[ ,;=\n\r]" ) );
     
     writeln( example );
+    writeln( searchFirstStatement( example ) );
 }
