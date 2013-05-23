@@ -6,39 +6,6 @@ import std.regex;
 import std.exception;
 import std.string;
 
-string example = q"EOS
-// See README.txt for information and build instructions.
-
-package tutorial;
-
-option java_package = "com.example.tutorial";
-option java_outer_classname = "AddressBookProtos";
-
-message Person {
-  required string name = 1;
-  required int32 id = 2;        // Unique ID number for this person.
-  optional string email = 3;
-
-  enum PhoneType {
-    MOBILE = 0;
-    HOME = 1;
-    WORK = 2;
-  }
-
-  message PhoneNumber {
-    required string number = 1;
-    optional PhoneType type = 2 [default = HOME];
-  }
-
-  repeated PhoneNumber phone = 4;
-}
-
-// Our address book file is just one of these.
-message AddressBook {
-  repeated Person person = 1;
-}
-EOS";
-
 
 string searchFirstStatementText( string code )
 {
@@ -161,11 +128,10 @@ struct Parser
         string res;
         
         auto m = getFirstWord( statementContent );
-        res ~= "Message " ~ m.word ~ " {\n";
         
+        res ~= "Message " ~ m.word ~ " {\n>>>";
         res ~= parseBlock( m.remain );
-        
-        res ~= "}\n";
+        res ~= "<<<}\n";
         
         return res;
     }
@@ -184,7 +150,7 @@ string parseBlock( string block )
     string statement; // statement text
     string res;
     
-    for( auto i = 0; i < example.length; i++ )
+    for( auto i = 0; i < block.length; i++ )
     {
         next += statement.length;
         statement = searchFirstStatementText( block[ next..$ ] );
@@ -199,6 +165,39 @@ string parseBlock( string block )
 
 void main()
 {
+string example = q"EOS
+// See README.txt for information and build instructions.
+
+package tutorial;
+
+option java_package = "com.example.tutorial";
+option java_outer_classname = "AddressBookProtos";
+
+message Person {
+  required string name = 1;
+  required int32 id = 2;        // Unique ID number for this person.
+  optional string email = 3;
+
+  enum PhoneType {
+    MOBILE = 0;
+    HOME = 1;
+    WORK = 2;
+  }
+
+  message PhoneNumber {
+    required string number = 1;
+    optional PhoneType type = 2 [default = HOME];
+  }
+
+  repeated PhoneNumber phone = 4;
+}
+
+// Our address book file is just one of these.
+message AddressBook {
+  repeated Person person = 1;
+}
+EOS";
+
     // remove comments
     example = replace( example, regex( "//.*", "gm" ), "" );
     writeln( example );
