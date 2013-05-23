@@ -153,7 +153,26 @@ string removeEndDelimiter( string s )
 }
 
 
-//void parseBlock
+string parseBlock( string block )
+{
+    // remove comments
+    block = replace( block, regex( "//.*", "gm" ), "" );
+    
+    size_t next; // next statement start position
+    string statement; // statement text
+    string res;
+    
+    for( auto i = 0; i < example.length; i++ )
+    {
+        next += statement.length;
+        statement = searchFirstStatementText( block[ next..$ ] );
+        
+        if( statement != "" )
+            res ~= recognizeStatement( statement );
+    }
+    
+    return res;
+}
 
 
 void main()
@@ -162,24 +181,7 @@ void main()
     example = replace( example, regex( "//.*", "gm" ), "" );
     //writeln( example );
     
-    //auto s = splitter( example, regex( "[ ,;=\n\r]" ) );
-    
-    size_t next;
-    string s;
-    string res;
-    
-    for( auto i = 0; i < example.length; i++ )
-    {
-        next += s.length;
-        s = searchFirstStatementText( example[ next..$ ] );
-        if( s != "" )
-        {
-            writeln( "Found root statement: ", parseStatement( s ) );
-            auto r = recognizeStatement( s );
-            writeln( "Result of parsing: ", r );
-            res ~= r;
-        }
-    }
+    auto res = parseBlock( example );
     
     writeln( "Total: ", res );
 }
