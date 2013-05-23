@@ -81,6 +81,7 @@ string recognizeStatement( string statementText )
     Parsers["required"] = &Parser.Required;
     Parsers["optional"] = &Parser.Optional;
     Parsers["repeated"] = &Parser.Repeated;
+    Parsers["enum"] = &Parser.Enum;
     
     
     auto s = getFirstWord( statementText );
@@ -130,7 +131,21 @@ struct Parser
         auto m = getFirstWord( statementContent );
         
         res ~= "Message " ~ m.word ~ " {\n>>>";
-        res ~= parseBlock( m.remain );
+        res ~= parseBlock( removeTopLevelBraces( m.remain ) );
+        res ~= "<<<}\n";
+        
+        return res;
+    }
+    
+    
+    static string Enum( string statementContent )
+    {
+        string res;
+        
+        auto m = getFirstWord( statementContent );
+        
+        res ~= "Enum " ~ m.word ~ " {\n>>>";
+        res ~= removeTopLevelBraces( m.remain );
         res ~= "<<<}\n";
         
         return res;
@@ -141,6 +156,17 @@ struct Parser
 string removeEndDelimiter( string s )
 {
     return replace( s, regex( ";$", "m" ), "" );
+}
+
+
+string removeTopLevelBraces( string s )
+{
+    string res = replace( s, regex( r"\{", "m" ), "" );
+    return replace( res, regex( r"\}$", "m" ), "" );
+}
+unittest
+{
+    assert( removeTopLevelBraces( " a { s { d } f }" ) == " a  s { d } f " );
 }
 
 
