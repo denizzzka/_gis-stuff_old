@@ -38,14 +38,6 @@ string searchFirstStatementText( string code )
 }
 
 
-string Operators[] =
-[
-    "package",
-    "message",
-    "option"
-];
-
-
 struct Word
 {
     string word;
