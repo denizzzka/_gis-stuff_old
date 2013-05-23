@@ -114,7 +114,7 @@ string recognizeStatement( string statement )
     final switch( s.name )
     {
         case "package":
-            res ~= "adding package " ~ removeEndDelimiter( s.content );
+            res ~= parsePackage( s.content );
             break;
         
         case "message":
@@ -123,6 +123,12 @@ string recognizeStatement( string statement )
     }
     
     return res;
+}
+
+
+string parsePackage( string statementContent )
+{
+    return "adding package \"" ~ removeEndDelimiter( statementContent ) ~ '"';
 }
 
 
@@ -147,24 +153,19 @@ void main()
 {
     // remove comments
     example = replace( example, regex( "//.*", "gm" ), "" );
-    
-    
-    writeln( recognizeStatement( searchFirstStatement( example ) ) );
-    
     //writeln( example );
     
     //auto s = splitter( example, regex( "[ ,;=\n\r]" ) );
     
-    /*
     size_t next;
     string s;
     
-    for( auto i = 0; i< 10; i++ )
+    for( auto i = 0; i < example.length; i++ )
     {
         next += s.length;
         s = searchFirstStatement( example[ next..$ ] );
-        writeln( "Found: ", s );
-        writeln( "Result: ", parseStatement( s ) );
+        writeln( "Found root statement: ", parseStatement( s ) );
+        auto r = recognizeStatement( s );
+        writeln( "Result of parsing: ", r );
     }
-    */
 }
