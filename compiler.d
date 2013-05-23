@@ -40,7 +40,7 @@ message AddressBook {
 EOS";
 
 
-string searchFirstStatement( string code )
+string searchFirstStatementText( string code )
 {
     auto brace_counter = 0;
     
@@ -86,9 +86,9 @@ struct Statement
 }
 
 
-Statement parseStatement( string statement )
+Statement parseStatement( string statementText )
 {    
-    auto s = match( statement, regex( r"\w+" ) );
+    auto s = match( statementText, regex( r"\w+" ) );
     
     Statement ret;
     
@@ -103,7 +103,7 @@ Statement parseStatement( string statement )
 }
 
 
-string recognizeStatement( string statement )
+string recognizeStatement( string statementText )
 {
     alias string function( string ) StatementParser;
     StatementParser[string] Parsers;
@@ -113,7 +113,7 @@ string recognizeStatement( string statement )
     Parsers["option"] = &parseOption;
     
     
-    auto s = parseStatement( statement );
+    auto s = parseStatement( statementText );
     
     writeln( "Statement found: ", s.name );
     
@@ -164,7 +164,7 @@ void main()
     for( auto i = 0; i < example.length; i++ )
     {
         next += s.length;
-        s = searchFirstStatement( example[ next..$ ] );
+        s = searchFirstStatementText( example[ next..$ ] );
         if( s != "" )
         {
             writeln( "Found root statement: ", parseStatement( s ) );
