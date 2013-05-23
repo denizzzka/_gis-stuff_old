@@ -160,6 +160,7 @@ void main()
     
     size_t next;
     string s;
+    string res;
     
     for( auto i = 0; i < example.length; i++ )
     {
@@ -170,6 +171,9 @@ void main()
             writeln( "Found root statement: ", parseStatement( s ) );
             auto r = recognizeStatement( s );
             writeln( "Result of parsing: ", r );
+            res ~= r;
         }
     }
+    
+    writeln( "Total: ", res );
 }
