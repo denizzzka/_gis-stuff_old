@@ -4,6 +4,7 @@ import protobuf;
 import std.array;
 import std.regex;
 import std.exception;
+import std.string;
 
 string example = q"EOS
 // See README.txt for information and build instructions.
@@ -94,7 +95,7 @@ Statement parseStatement( string statement )
     if( !s.empty )
     {
         auto c = s.captures;
-        ret.name = s.front.hit;
+        ret.name = toLower( s.front.hit );
         ret.content = c.post;
     }
     
@@ -102,22 +103,43 @@ Statement parseStatement( string statement )
 }
 
 
-struct Message
+string recognizeStatement( string statement )
 {
-    Message* parent;
-    Message* nested[];
+    string res;
     
-    string content;
+    auto s = parseStatement( statement );
+    
+    writeln( "Statement found: ", s.name );
+    
+    final switch( s.name )
+    {
+        case "package":
+            res ~= "adding package " ~ removeEndDelimiter( s.content );
+            break;
+        
+        case "message":
+            res ~= parseMessage( s.content );
+            break;
+    }
+    
+    return res;
 }
 
 
-Message parseMessage( string statement, Message* parent = null )
+string parseMessage( string statementContent )
 {
-    Message res;
+    string res;
     
-    res.parent = parent;
+//    auto s = parseStatement
+//    res.parent = parent;
     
     return res;
+}
+
+
+string removeEndDelimiter( string s )
+{
+    return replace( s, regex( ";$", "m" ), "" );
 }
 
 
@@ -127,10 +149,13 @@ void main()
     example = replace( example, regex( "//.*", "gm" ), "" );
     
     
+    writeln( recognizeStatement( searchFirstStatement( example ) ) );
+    
     //writeln( example );
     
     //auto s = splitter( example, regex( "[ ,;=\n\r]" ) );
     
+    /*
     size_t next;
     string s;
     
@@ -141,4 +166,5 @@ void main()
         writeln( "Found: ", s );
         writeln( "Result: ", parseStatement( s ) );
     }
+    */
 }
