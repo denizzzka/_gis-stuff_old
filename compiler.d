@@ -111,15 +111,14 @@ string recognizeStatement( string statementText )
     Parsers["package"] = &Parser.Package;
     Parsers["message"] = &Parser.Message;
     Parsers["option"] = &Parser.Option;
-    Parsers["required"] = &Parser.Required;    
+    Parsers["required"] = &Parser.Required;
     Parsers["optional"] = &Parser.Optional;
+    Parsers["repeated"] = &Parser.Repeated;
     
     
     auto s = getFirstWord( statementText );
     
-    writeln( "Statement found: ", s.word );
-    
-    if( ( s.word in Parsers ) == null ) return ""; ///FIXME remove this string
+//    if( ( s.word in Parsers ) == null ) return ""; ///FIXME remove this string
     enforce( ( s.word in Parsers ) != null, "Parser for \""~s.word~"\" is not found" );
     return Parsers[s.word] ( s.remain );
 }
@@ -148,6 +147,12 @@ struct Parser
     static string Optional( string statementContent )
     {
         return "optional found \"" ~ removeEndDelimiter( statementContent ) ~ "\"\n";
+    }
+    
+    
+    static string Repeated( string statementContent )
+    {
+        return "repeated found \"" ~ removeEndDelimiter( statementContent ) ~ "\"\n";
     }
     
     
