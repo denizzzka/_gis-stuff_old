@@ -111,12 +111,15 @@ string recognizeStatement( string statementText )
     Parsers["package"] = &Parser.Package;
     Parsers["message"] = &Parser.Message;
     Parsers["option"] = &Parser.Option;
+    Parsers["required"] = &Parser.Required;    
+    Parsers["optional"] = &Parser.Optional;
     
     
     auto s = parseStatement( statementText );
     
     writeln( "Statement found: ", s.name );
     
+    if( ( s.name in Parsers ) == null ) return ""; ///FIXME remove this string
     enforce( ( s.name in Parsers ) != null, "Parser for \""~s.name~"\" is not found" );
     return Parsers[s.name] ( s.content );
 }
@@ -134,8 +137,20 @@ struct Parser
     {
         return "option found \"" ~ removeEndDelimiter( statementContent ) ~ "\"\n";
     }
-
-
+    
+    
+    static string Required( string statementContent )
+    {
+        return "required found \"" ~ removeEndDelimiter( statementContent ) ~ "\"\n";
+    }
+    
+    
+    static string Optional( string statementContent )
+    {
+        return "optional found \"" ~ removeEndDelimiter( statementContent ) ~ "\"\n";
+    }
+    
+    
     static string Message( string statementContent )
     {
         string res;
@@ -145,9 +160,8 @@ struct Parser
         res ~= "Message " ~ m.name ~ " {\n";
         
         res ~= parseBlock( m.content );
-    //    auto s = parseStatement
-    //    res.parent = parent;
-    
+        //res ~= m.content;
+        
         res ~= "}\n";
         
         return res;
@@ -163,9 +177,6 @@ string removeEndDelimiter( string s )
 
 string parseBlock( string block )
 {
-    // remove comments
-    block = replace( block, regex( "//.*", "gm" ), "" );
-    
     size_t next; // next statement start position
     string statement; // statement text
     string res;
@@ -187,7 +198,7 @@ void main()
 {
     // remove comments
     example = replace( example, regex( "//.*", "gm" ), "" );
-    //writeln( example );
+    writeln( example );
     
     auto res = parseBlock( example );
     
