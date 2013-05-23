@@ -103,26 +103,21 @@ Statement parseStatement( string statement )
 }
 
 
+alias string function( string ) StatementParser;
+
+StatementParser[string] Parsers;
+
+
 string recognizeStatement( string statement )
 {
-    string res;
+    Parsers["package"] = &parsePackage;
+    Parsers["message"] = &parseMessage;
     
     auto s = parseStatement( statement );
     
     writeln( "Statement found: ", s.name );
     
-    final switch( s.name )
-    {
-        case "package":
-            res ~= parsePackage( s.content );
-            break;
-        
-        case "message":
-            res ~= parseMessage( s.content );
-            break;
-    }
-    
-    return res;
+    return Parsers[s.name] ( s.content );
 }
 
 
