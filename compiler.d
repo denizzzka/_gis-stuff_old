@@ -79,8 +79,8 @@ string searchFirstStatement( string code )
         }
     }
     
-    enforce( false, "Unexpected end of statement" );
-    return code;
+    // statement is not found
+    return "";
 }
 
 
