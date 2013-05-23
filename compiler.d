@@ -79,24 +79,24 @@ string Operators[] =
 ];
 
 
-struct Statement
+struct Word
 {
-    string name;
-    string content;
+    string word;
+    string remain;
 }
 
 
-Statement parseStatement( string statementText )
+Word getFirstWord( string statementText )
 {    
     auto s = match( statementText, regex( r"\w+" ) );
     
-    Statement ret;
+    Word ret;
     
     if( !s.empty )
     {
         auto c = s.captures;
-        ret.name = toLower( s.front.hit );
-        ret.content = c.post;
+        ret.word = toLower( s.front.hit );
+        ret.remain = c.post;
     }
     
     return ret;
@@ -115,13 +115,13 @@ string recognizeStatement( string statementText )
     Parsers["optional"] = &Parser.Optional;
     
     
-    auto s = parseStatement( statementText );
+    auto s = getFirstWord( statementText );
     
-    writeln( "Statement found: ", s.name );
+    writeln( "Statement found: ", s.word );
     
-    if( ( s.name in Parsers ) == null ) return ""; ///FIXME remove this string
-    enforce( ( s.name in Parsers ) != null, "Parser for \""~s.name~"\" is not found" );
-    return Parsers[s.name] ( s.content );
+    if( ( s.word in Parsers ) == null ) return ""; ///FIXME remove this string
+    enforce( ( s.word in Parsers ) != null, "Parser for \""~s.word~"\" is not found" );
+    return Parsers[s.word] ( s.remain );
 }
 
 
@@ -155,12 +155,10 @@ struct Parser
     {
         string res;
         
-        // trick: using this for get message name
-        auto m = parseStatement( statementContent );
-        res ~= "Message " ~ m.name ~ " {\n";
+        auto m = getFirstWord( statementContent );
+        res ~= "Message " ~ m.word ~ " {\n";
         
-        res ~= parseBlock( m.content );
-        //res ~= m.content;
+        res ~= parseBlock( m.remain );
         
         res ~= "}\n";
         
