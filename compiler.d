@@ -123,7 +123,8 @@ struct Parser
         auto m = getFirstWord( statementContent );
         
         res ~= "Message " ~ m.word ~ " {\n>>>";
-        res ~= parseBlock( removeTopLevelBraces( m.remain ) );
+        res ~= removeTopLevelBraces( m.remain );
+        //res ~= parseBlock( removeTopLevelBraces( m.remain ) );
         res ~= "<<<} message " ~ m.word ~ " end\n";
         
         return res;
@@ -137,7 +138,7 @@ struct Parser
         auto m = getFirstWord( statementContent );
         
         res ~= "Enum " ~ m.word ~ " {>>";
-        res ~= removeTopLevelBraces( m.remain );
+        res ~= m.remain;
         res ~= "<<} enum " ~ m.word ~ " end\n";
         
         return res;
@@ -153,12 +154,30 @@ string removeEndDelimiter( string s )
 
 string removeTopLevelBraces( string s )
 {
-    string res = replace( s, regex( r"\{", "m" ), "" );
-    return replace( res, regex( r"\}$", "m" ), "" );
+    string res;
+    
+    foreach( size_t i, char first; s )
+    {
+        if( first == '{' )
+        {            
+            foreach_reverse( size_t j, char last; s )
+                if( last == '}' )
+                {
+                    // remove founded braces
+                    res = s[0 .. i] ~ s[i+1 .. j] ~ s[j+1 .. $];
+                    
+                    break;
+                }
+            
+            break;
+        }
+    }
+    
+    return res;
 }
 unittest
 {
-    assert( removeTopLevelBraces( " a { s { d } f }" ) == " a  s { d } f " );
+    assert( removeTopLevelBraces( "a { s { d } f } g" ) == "a  s { d } f  g" );
 }
 
 
