@@ -6,6 +6,7 @@ import std.regex;
 import std.exception;
 import std.string;
 import std.typecons;
+import std.mmfile;
 
 
 string searchFirstStatementText( string code )
@@ -258,6 +259,9 @@ EOS";
     // remove comments
     example = replace( example, regex( "//.*", "gm" ), "" );
     writeln( example );
+    
+    // load file
+    auto f = new MmFile( "book.bin" );
     
     // begin parsing
     StatementParser[string] parsers;
