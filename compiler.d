@@ -5,6 +5,7 @@ import std.array;
 import std.regex;
 import std.exception;
 import std.string;
+import std.typetuple;
 
 
 string searchFirstStatementText( string code )
@@ -62,25 +63,19 @@ Word getFirstWord( string statementText )
 }
 
 
-string recognizeStatement( string statementText )
+alias string function( string ) StatementParser;
+
+
+string recognizeStatement( string statementText, StatementParser[string] parsers = null )
 {
-    alias string function( string ) StatementParser;
-    StatementParser[string] Parsers;
-    
-    Parsers["package"] = &Parser.Package;
-    Parsers["message"] = &Parser.Message;
-    Parsers["option"] = &Parser.Option;
-    Parsers["required"] = &Parser.Required;
-    Parsers["optional"] = &Parser.Optional;
-    Parsers["repeated"] = &Parser.Repeated;
-    Parsers["enum"] = &Parser.Enum;
-    
-    
     auto s = getFirstWord( statementText );
     
-//    if( ( s.word in Parsers ) == null ) return ""; ///FIXME remove this string
-    enforce( ( s.word in Parsers ) != null, "Parser for \""~s.word~"\" is not found" );
-    return Parsers[s.word] ( s.remain );
+    //enforce( ( s.word in parsers ) != null, "Unexpected \""~s.word~"\"" );
+    
+    if( ( s.word in parsers ) == null )
+        return "// Unexpected \""~s.word~"\"\n";
+    
+    return parsers[s.word] ( s.remain );
 }
 
 
@@ -100,6 +95,17 @@ struct Parser
     
     static string Required( string statementContent )
     {
+        auto w = getFirstWord( statementContent );
+        
+        /*
+        alias Tuple!(
+            Tuple!( "int32", int ),
+            Tuple!( "uint32", uint ),
+            Tuple!( "int64", long ),
+            Tuple!( "uint64", ulong )
+        ) Scalars;
+        */
+        
         return "//FIXME required found \"" ~ removeEndDelimiter( statementContent ) ~ "\"\n";
     }
     
@@ -118,12 +124,22 @@ struct Parser
     
     static string Message( string statementContent )
     {
+        StatementParser[string] Parsers;
+        
+        Parsers["package"] = &Parser.Package;
+        Parsers["message"] = &Parser.Message;
+        Parsers["option"] = &Parser.Option;
+        Parsers["required"] = &Parser.Required;
+        Parsers["optional"] = &Parser.Optional;
+        Parsers["repeated"] = &Parser.Repeated;
+        Parsers["enum"] = &Parser.Enum;
+        
         string res;
         
         auto m = getFirstWord( statementContent );
         
         res ~= "Message " ~ m.word ~ " {\n";
-        res ~= parseBlock( removeTopLevelBraces( m.remain ) );
+        res ~= parseBlock( removeTopLevelBraces( m.remain ), Parsers );
         res ~= "} // message " ~ m.word ~ " end\n";
         
         return res;
@@ -180,7 +196,7 @@ unittest
 }
 
 
-string parseBlock( string block )
+string parseBlock( string block, StatementParser[string] parsers )
 {
     size_t next; // next statement start position
     string statement; // statement text
@@ -192,7 +208,7 @@ string parseBlock( string block )
         statement = searchFirstStatementText( block[ next..$ ] );
         
         if( statement != "" )
-            res ~= recognizeStatement( statement );
+            res ~= recognizeStatement( statement, parsers );
         else
             break;
     }
@@ -240,7 +256,10 @@ EOS";
     example = replace( example, regex( "//.*", "gm" ), "" );
     writeln( example );
     
-    auto res = parseBlock( example );
+    // begin parsing
+    StatementParser[string] parsers;
+    parsers["message"] = &Parser.Message;
+    auto res = parseBlock( example, parsers );
     
     writeln( "Total:\n", res );
 }
