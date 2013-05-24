@@ -124,7 +124,7 @@ struct Parser
         
         res ~= "Message " ~ m.word ~ " {\n>>>";
         res ~= parseBlock( removeTopLevelBraces( m.remain ) );
-        res ~= "<<<}\n";
+        res ~= "<<<} message " ~ m.word ~ " end\n";
         
         return res;
     }
@@ -136,9 +136,9 @@ struct Parser
         
         auto m = getFirstWord( statementContent );
         
-        res ~= "Enum " ~ m.word ~ " {\n>>>";
+        res ~= "Enum " ~ m.word ~ " {>>";
         res ~= removeTopLevelBraces( m.remain );
-        res ~= "<<<}\n";
+        res ~= "<<} enum " ~ m.word ~ " end\n";
         
         return res;
     }
