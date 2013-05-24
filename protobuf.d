@@ -130,26 +130,20 @@ unittest
 }
 
 
-T[] unpackString( T )( const ubyte* data, out const (ubyte)* nextElement )
+T[] unpackDelimited( T )( const ubyte* data, out const (ubyte)* nextElement )
 if( T.sizeof == 1 )
 {
-    uint tag;
-    WireType wire;
-    
-    // find string size varint
-    nextElement = parseTagAndWiretype( data, tag, wire );
-    
-    enforce( wire == WireType.LENGTH_DELIMITED, "Wrong wire type for string" );
-    
     // find start and size of string
-    auto len = parseVarint!size_t( nextElement, nextElement );
-    
-    return ( cast( T[] ) nextElement[0..len] );
+    auto len = parseVarint!size_t( data, nextElement );
+    writeln( "len=", len );
+    auto res = ( cast( T[] ) nextElement[0..len] );
+    nextElement += len;
+    return res;
 }
 unittest
 {
-    ubyte[9] d = [ 0x12, 0x07, 0x74, 0x65, 0x73, 0x74, 0x69, 0x6e, 0x67 ];
+    ubyte[8] d = [ 0x07, 0x74, 0x65, 0x73, 0x74, 0x69, 0x6e, 0x67 ];
     const (ubyte)* next;
     
-    assert( unpackString!char( &d[0], next ) == "testing" );
+    assert( unpackDelimited!char( &d[0], next ) == "testing" );
 }
