@@ -168,13 +168,15 @@ string parseBlock( string block )
     string statement; // statement text
     string res;
     
-    for( auto i = 0; i < block.length; i++ )
+    while( next < block.length )
     {
         next += statement.length;
         statement = searchFirstStatementText( block[ next..$ ] );
         
         if( statement != "" )
             res ~= recognizeStatement( statement );
+        else
+            break;
     }
     
     return res;
