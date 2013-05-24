@@ -163,7 +163,7 @@ string removeTopLevelBraces( string s )
             foreach_reverse( size_t j, char last; s )
                 if( last == '}' )
                 {
-                    // remove founded braces
+                    // remove found pair of braces
                     res = s[0 .. i] ~ s[i+1 .. j] ~ s[j+1 .. $];
                     
                     break;
