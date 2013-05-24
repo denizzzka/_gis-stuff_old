@@ -5,7 +5,7 @@ import std.array;
 import std.regex;
 import std.exception;
 import std.string;
-import std.typetuple;
+import std.typecons;
 
 
 string searchFirstStatementText( string code )
@@ -94,15 +94,20 @@ struct Parser
     
     
     static string Required( string statementContent )
-    {
+    {        
         auto w = getFirstWord( statementContent );
         
-        alias Tuple!(
-            Tuple!( "int32", int ),
-            Tuple!( "uint32", uint ),
-            Tuple!( "int64", long ),
-            Tuple!( "uint64", ulong )
+        /*
+        switch( w.word )
+        {
+            case "int32":
+                Tuple!(
+            ( "int32", int ),
+            ( "uint32", uint ),
+            ( "int64", long ),
+            ( "uint64", ulong )
         ) Scalars;
+        */
         
         return "//FIXME required found \"" ~ removeEndDelimiter( statementContent ) ~ "\"\n";
     }
