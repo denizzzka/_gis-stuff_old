@@ -261,7 +261,8 @@ EOS";
     writeln( example );
     
     // load file
-    auto f = new MmFile( "book.bin" );
+    MmFile mmfile = new MmFile( "book.bin" );
+    ubyte[] f = cast( ubyte[] ) mmfile[0..mmfile.length];
     
     // begin parsing
     StatementParser[string] parsers;
@@ -269,4 +270,13 @@ EOS";
     auto res = parseBlock( example, parsers );
     
     writeln( "Total:\n", res );
+    
+    // test reading
+    WireType wire;
+    uint tag;
+    
+    auto f1 = parseTagAndWiretype( &f[0], tag, wire );
+    
+    writeln( "tag ", tag, " wire ", wire, " ", f1 );
+    writeln( unpackString!char( &f[0], f1 ) );
 }
