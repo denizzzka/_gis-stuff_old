@@ -278,8 +278,9 @@ EOS";
     auto f1 = parseTagAndWiretype( &f[2], tag, wire );
     
     writeln( "tag ", tag, " wire ", wire, " ", f1 );
-    writeln( 
-        unpackDelimited!char( f1, f1 )
-    );
-    writeln( "next: ", f1 );
+    writeln( unpackDelimited!char( f1, f1 ) );
+    
+    f1 = parseTagAndWiretype( f1, tag, wire );
+    writeln( "tag ", tag, " wire ", wire, " ", f1 );
+    writeln( parseVarint!uint( f1, f1 ) );
 }
