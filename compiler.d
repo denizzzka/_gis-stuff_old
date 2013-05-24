@@ -97,14 +97,12 @@ struct Parser
     {
         auto w = getFirstWord( statementContent );
         
-        /*
         alias Tuple!(
             Tuple!( "int32", int ),
             Tuple!( "uint32", uint ),
             Tuple!( "int64", long ),
             Tuple!( "uint64", ulong )
         ) Scalars;
-        */
         
         return "//FIXME required found \"" ~ removeEndDelimiter( statementContent ) ~ "\"\n";
     }
