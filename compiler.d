@@ -88,31 +88,31 @@ struct Parser
 {
     static string Package( string statementContent )
     {
-        return "adding package \"" ~ removeEndDelimiter( statementContent ) ~ "\"\n";
+        return "//FIXME adding package \"" ~ removeEndDelimiter( statementContent ) ~ "\"\n";
     }
 
 
     static string Option( string statementContent )
     {
-        return "option found \"" ~ removeEndDelimiter( statementContent ) ~ "\"\n";
+        return "//FIXME option found \"" ~ removeEndDelimiter( statementContent ) ~ "\"\n";
     }
     
     
     static string Required( string statementContent )
     {
-        return "required found \"" ~ removeEndDelimiter( statementContent ) ~ "\"\n";
+        return "//FIXME required found \"" ~ removeEndDelimiter( statementContent ) ~ "\"\n";
     }
     
     
     static string Optional( string statementContent )
     {
-        return "optional found \"" ~ removeEndDelimiter( statementContent ) ~ "\"\n";
+        return "//FIXME optional found \"" ~ removeEndDelimiter( statementContent ) ~ "\"\n";
     }
     
     
     static string Repeated( string statementContent )
     {
-        return "repeated found \"" ~ removeEndDelimiter( statementContent ) ~ "\"\n";
+        return "//FIXME repeated found \"" ~ removeEndDelimiter( statementContent ) ~ "\"\n";
     }
     
     
@@ -122,10 +122,9 @@ struct Parser
         
         auto m = getFirstWord( statementContent );
         
-        res ~= "Message " ~ m.word ~ " {\n>>>";
-        res ~= removeTopLevelBraces( m.remain );
-        //res ~= parseBlock( removeTopLevelBraces( m.remain ) );
-        res ~= "<<<} message " ~ m.word ~ " end\n";
+        res ~= "Message " ~ m.word ~ " {\n";
+        res ~= parseBlock( removeTopLevelBraces( m.remain ) );
+        res ~= "} // message " ~ m.word ~ " end\n";
         
         return res;
     }
@@ -137,9 +136,9 @@ struct Parser
         
         auto m = getFirstWord( statementContent );
         
-        res ~= "Enum " ~ m.word ~ " {>>";
-        res ~= m.remain;
-        res ~= "<<} enum " ~ m.word ~ " end\n";
+        res ~= "//FIXME Enum " ~ m.word ~ " {";
+        res ~= removeTopLevelBraces( m.remain );
+        res ~= "} // enum " ~ m.word ~ " end\n";
         
         return res;
     }
@@ -243,5 +242,5 @@ EOS";
     
     auto res = parseBlock( example );
     
-    writeln( "Total: ", res );
+    writeln( "Total:\n", res );
 }
