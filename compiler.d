@@ -275,7 +275,7 @@ EOS";
     WireType wire;
     uint tag;
     
-    auto f1 = parseTagAndWiretype( &f[0], tag, wire );
+    auto f1 = parseTagAndWiretype( &f[2], tag, wire );
     
     writeln( "tag ", tag, " wire ", wire, " ", f1 );
     writeln( 
