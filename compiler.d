@@ -293,7 +293,7 @@ struct AddressBook
 {
     char[] name;
     int id;
-    char[] email;
+    char[] email; // optional
     
     enum PhoneType : uint
     {
@@ -305,8 +305,8 @@ struct AddressBook
     struct PhoneNumber
     {
         char[] number;
-        PhoneType type = PhoneType.HOME;
+        PhoneType type = PhoneType.HOME; // optional [default = HOME]
     };
     
-    PhoneNumber[] phone;
+    PhoneNumber[] phone; // repeated
 }
