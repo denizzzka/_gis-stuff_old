@@ -272,24 +272,28 @@ EOS";
     writeln( "Total:\n", res );
     
     // test reading
+    AddressBook msg;
+    
     WireType wire;
     uint tag;
     
     auto f1 = parseTagAndWiretype( &f[2], tag, wire );
-    
-    writeln( "tag ", tag, " wire ", wire, " ", f1 );
-    writeln( unpackDelimited!char( f1, f1 ) );
+    msg.name = unpackDelimited!char( f1, f1 );
+
+    f1 = parseTagAndWiretype( f1, tag, wire );
+    msg.id = parseVarint!uint( f1, f1 );
     
     f1 = parseTagAndWiretype( f1, tag, wire );
-    writeln( "tag ", tag, " wire ", wire, " ", f1 );
-    writeln( parseVarint!uint( f1, f1 ) );
+    msg.email = unpackDelimited!char( f1, f1 );
+    
+    writeln( msg );
 }
 
 struct AddressBook
 {
-    string name;
+    char[] name;
     int id;
-    string email;
+    char[] email;
     
     enum PhoneType : uint
     {
@@ -300,7 +304,7 @@ struct AddressBook
     
     struct PhoneNumber
     {
-        string number;
+        char[] number;
         PhoneType type = PhoneType.HOME;
     };
     
