@@ -308,5 +308,5 @@ struct AddressBook
         PhoneType type = PhoneType.HOME;
     };
     
-    PhoneNumber phone;
+    PhoneNumber[] phone;
 }
