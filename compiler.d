@@ -284,3 +284,25 @@ EOS";
     writeln( "tag ", tag, " wire ", wire, " ", f1 );
     writeln( parseVarint!uint( f1, f1 ) );
 }
+
+struct AddressBook
+{
+    string name;
+    int id;
+    string email;
+    
+    enum PhoneType : uint
+    {
+        MOBILE = 0,
+        HOME = 1,
+        WORK = 2
+    };
+    
+    struct PhoneNumber
+    {
+        string number;
+        PhoneType type = PhoneType.HOME;
+    };
+    
+    PhoneNumber phone;
+}
