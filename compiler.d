@@ -309,6 +309,24 @@ struct AddressBook
     };
     
     PhoneNumber[] phone; // repeated
+    
+    
+    void fill( uint fieldNumber, const ubyte* data, out const (ubyte)* next )
+    {
+        switch( fieldNumber )
+        {
+            case 0:
+                name = unpackDelimited!char( data, next );
+                break;
+                
+            case 1:
+                id = unpackVarint!uint( data, next );
+                break;
+                
+            default:
+                break;
+        }
+    }
 }
 
 enum Rule
@@ -339,40 +357,3 @@ immutable RuleProperties[] RulesProperties =
     { rule: Rule.REPEATED, fill: FillType.CONCATENATE, necessarilyFill: false }
 ];
 
-/*
-struct ParserProperties
-{
-    uint fieldNum;
-    size_t offset;
-    Rule rule;
-    // func ptr
-}
-
-alias immutable ParserProperties[] ParsersTable;
-alias function( const ubyte*, out const (ubyte)* ) parserFunc;
-
-ParsersTable Parsers_AddressBook =
-[
-    { fieldNum: 0, offset: AddressBook.name.offsetof, rule: Rule.REQUIRED }, // char[]
-    { fieldNum: 1, offset: AddressBook.id.offsetof, rule: Rule.REQUIRED }, // uint
-    { fieldNum: 2, offset: AddressBook.email.offsetof, rule: Rule.OPTIONAL }, // char[]
-];
-
-auto fillByNumber( uint fieldNum, ParsersTable parsers )
-{
-    const (ubyte)* next;
-    
-    for( uint i = 0; i < parsers.length; i++ )
-    {
-        if( parsers[i].fieldNum == fieldNum )
-        {
-            // call for parser:
-            
-            
-            break;
-        }
-    }
-    
-    return next;
-}
-*/
