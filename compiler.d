@@ -292,7 +292,7 @@ EOS";
 struct AddressBook
 {
     char[] name;
-    int id;
+    uint id;
     char[] email; // optional
     
     enum PhoneType : uint
@@ -311,6 +311,46 @@ struct AddressBook
     PhoneNumber[] phone; // repeated
 }
 
+enum Rule
+{
+    REQUIRED,
+    OPTIONAL,
+    REPEATED
+}
+
+enum FillType
+{
+    REPLACE,
+    CONCATENATE,
+    MERGE
+};
+
+struct RuleProperties
+{
+    Rule rule;
+    FillType fill;
+    bool necessarilyFill;
+}
+
+immutable RuleProperties[] RulesProperties =
+[
+    { rule: Rule.REQUIRED, fill: FillType.REPLACE, necessarilyFill: true }
+];
+
+struct ParserProperties
+{
+    uint fieldNum;
+    size_t offset;
+    Rule rule;
+    // func ptr
+}
+
+immutable ParserProperties[] Parsers_AddressBook =
+[
+    { fieldNum: 0, offset: AddressBook.name.offsetof, rule: Rule.REQUIRED }, // char[]
+    { fieldNum: 1, offset: AddressBook.id.offsetof, rule: Rule.REQUIRED }, // uint
+    { fieldNum: 2, offset: AddressBook.email.offsetof, rule: Rule.OPTIONAL }, // char
+];
 
 auto fillByNumber( uint fieldNum )
 {
