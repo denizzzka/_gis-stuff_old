@@ -281,7 +281,7 @@ EOS";
     msg.name = unpackDelimited!char( f1, f1 );
 
     f1 = parseTag( f1, field, wire );
-    msg.id = parseVarint!uint( f1, f1 );
+    msg.id = unpackVarint!uint( f1, f1 );
     
     f1 = parseTag( f1, field, wire );
     msg.email = unpackDelimited!char( f1, f1 );
@@ -345,24 +345,30 @@ struct ParserProperties
     // func ptr
 }
 
-immutable ParserProperties[] Parsers_AddressBook =
+alias immutable ParserProperties[] ParsersTable;
+//alias auto function( 
+
+ParsersTable Parsers_AddressBook =
 [
     { fieldNum: 0, offset: AddressBook.name.offsetof, rule: Rule.REQUIRED }, // char[]
     { fieldNum: 1, offset: AddressBook.id.offsetof, rule: Rule.REQUIRED }, // uint
-    { fieldNum: 2, offset: AddressBook.email.offsetof, rule: Rule.OPTIONAL }, // char
+    { fieldNum: 2, offset: AddressBook.email.offsetof, rule: Rule.OPTIONAL }, // char[]
 ];
 
-auto fillByNumber( uint fieldNum )
+auto fillByNumber( uint fieldNum, ParsersTable parsers )
 {
     const (ubyte)* next;
     
-    switch( fieldNum )
+    for( uint i = 0; i < parsers.length; i++ )
     {
-        case 0:
-            //next = parseTag( data );
-            break;
+        if( parsers[i].fieldNum == fieldNum )
+        {
+            // call for parser:
             
-        default:
+            
             break;
+        }
     }
+    
+    return next;
 }

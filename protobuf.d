@@ -65,7 +65,7 @@ unittest
 }
 
 
-pure T parseVarint( T )( const ubyte* data, out const (ubyte)* nextElement )
+pure T unpackVarint( T )( const ubyte* data, out const (ubyte)* nextElement )
 {
     nextElement = data;
     size_t i = 0;
@@ -88,7 +88,7 @@ unittest
     ubyte d[2] = [ 0b_10101100, 0b_00000010 ];
     const (ubyte)* next;
     
-    assert( parseVarint!ulong( &d[0], next ) == 300 );
+    assert( unpackVarint!ulong( &d[0], next ) == 300 );
     assert( next == &d[0] + 2 );
 }
 
@@ -100,7 +100,7 @@ pure const (ubyte)* parseTag( const ubyte* data, out uint fieldNumber, out WireT
     wireType = cast( WireType ) ( *data & 0b_0000_0111 );
     
     // Parses as Varint, but takes the value of first byte and adds its real value without additional load
-    fieldNumber = parseVarint!uint( data, nextElement ) - ( *data & 0b_1111_1111 ) + (( *data & 0b_0111_1000 ) >> 3 );
+    fieldNumber = unpackVarint!uint( data, nextElement ) - ( *data & 0b_1111_1111 ) + (( *data & 0b_0111_1000 ) >> 3 );
     
     return nextElement;
 }
@@ -139,7 +139,7 @@ T[] unpackDelimited( T )( const ubyte* data, out const (ubyte)* nextElement )
 if( T.sizeof == 1 )
 {
     // find start and size of string
-    auto len = parseVarint!size_t( data, nextElement );
+    auto len = unpackVarint!size_t( data, nextElement );
     auto res = ( cast( T[] ) nextElement[0..len] );
     nextElement += len;
     return res;
