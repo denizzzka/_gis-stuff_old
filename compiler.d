@@ -275,7 +275,7 @@ EOS";
     // test reading
     AddressBook msg;
     
-    msg.fillStruct( f[2..$] );
+    msg.fillStruct( f );
     
     /*
     auto f1 = parseTag( &f[2], field, wire );
@@ -317,6 +317,15 @@ struct AddressBook
     {
         const (ubyte)* next = &messageData[0];
         
+        // unpackMessage:
+        uint field; WireType wire;
+        next = parseTag( next, field, wire );
+        enforce( wire.LENGTH_DELIMITED, "Wrong wire type" );
+        auto msg = unpackDelimited!ubyte( next, next );
+        next -= msg.length;
+        
+        writeln( msg.length );
+        
         while( next < &messageData[$-1] )
             next = fillField( next );
     }
@@ -330,23 +339,24 @@ struct AddressBook
         switch( field )
         {
             case 1:
-                enforce( wire.LENGTH_DELIMITED, "Wrong wire type" );
+                enforce( wire == WireType.LENGTH_DELIMITED, "Wrong wire type" );
                 name = unpackDelimited!char( next, next );
+                writeln( name );
                 break;
                 
             case 2:
-                //enforce( wire.VARINT, "Wrong wire type" );
+                enforce( wire == WireType.VARINT, "Wrong wire type" );
                 id = unpackVarint!uint( next, next );
                 break;
                 
             case 3:
-                enforce( wire.LENGTH_DELIMITED, "Wrong wire type" );
+                enforce( wire == WireType.LENGTH_DELIMITED, "Wrong wire type" );
                 email = unpackDelimited!char( next, next );
                 break;
                 
             case 4:
-                enforce( wire.LENGTH_DELIMITED, "Wrong wire type" );
-                unpackDelimited!char( next, next );
+                enforce( wire == WireType.LENGTH_DELIMITED, "Wrong wire type" );
+                unpackDelimited!ubyte( next, next );
                 break;
                 
             default:
