@@ -275,15 +275,15 @@ EOS";
     AddressBook msg;
     
     WireType wire;
-    uint tag;
+    uint field;
     
-    auto f1 = parseTagAndWiretype( &f[2], tag, wire );
+    auto f1 = parseTag( &f[2], field, wire );
     msg.name = unpackDelimited!char( f1, f1 );
 
-    f1 = parseTagAndWiretype( f1, tag, wire );
+    f1 = parseTag( f1, field, wire );
     msg.id = parseVarint!uint( f1, f1 );
     
-    f1 = parseTagAndWiretype( f1, tag, wire );
+    f1 = parseTag( f1, field, wire );
     msg.email = unpackDelimited!char( f1, f1 );
     
     writeln( msg );
@@ -309,4 +309,20 @@ struct AddressBook
     };
     
     PhoneNumber[] phone; // repeated
+}
+
+
+auto fillByNumber( uint fieldNum )
+{
+    const (ubyte)* next;
+    
+    switch( fieldNum )
+    {
+        case 0:
+            //next = parseTag( data );
+            break;
+            
+        default:
+            break;
+    }
 }

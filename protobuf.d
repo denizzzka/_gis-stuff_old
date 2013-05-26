@@ -93,7 +93,7 @@ unittest
 }
 
 
-pure const (ubyte)* parseTagAndWiretype( const ubyte* data, out uint fieldNumber, out WireType wireType )
+pure const (ubyte)* parseTag( const ubyte* data, out uint fieldNumber, out WireType wireType )
 {
     const (ubyte)* nextElement;
     
@@ -109,7 +109,7 @@ unittest
     ubyte d[3] = [ 0b_0000_1000, 0b_1001_0110, 0b_0000_0001 ];
     uint field;
     WireType wire;
-    auto res = parseTagAndWiretype( &d[0], field, wire );
+    auto res = parseTag( &d[0], field, wire );
     
     assert( field == 1 );
     assert( wire == WireType.VARINT );
