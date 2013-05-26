@@ -344,6 +344,11 @@ struct AddressBook
                 email = unpackDelimited!char( next, next );
                 break;
                 
+            case 4:
+                enforce( wire.LENGTH_DELIMITED, "Wrong wire type" );
+                unpackDelimited!char( next, next );
+                break;
+                
             default:
                 break;
         }
