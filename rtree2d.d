@@ -32,20 +32,11 @@ struct Box
         alias b.leftDownCorner ld2;
         alias b.rightUpCorner ru2;
         
-        auto r1 = ld1.x <= ru2.x;
-        auto r2 = ru1.x >= ld2.x;
-        auto r3 = ld1.y <= ru2.y;
-        auto r4 = ru1.y >= ld2.y;
-        
-        writeln( ld1.x, " <= ", ru2.x, " = ", r1 );
-        writeln( ru1.x, " >= ", ld2.x, " = ", r2 );
-        writeln( r1, r2 ,r3, r4 );
-        
         return
-            ld1.x <= ru2.x &&
-            ru1.x >= ld2.x &&
-            ld1.y <= ru2.y &&
-            ru1.y >= ld2.y;
+            ld1.x <= b.rightUpCorner.x &&
+            ru1.x >= b.leftDownCorner.x &&
+            ld1.y <= b.rightUpCorner.y &&
+            ru1.y >= b.leftDownCorner.y;
     }
 }
 
@@ -54,13 +45,13 @@ unittest
     Vector2D coords1 = { 0, 0 };
     Vector2D size1 = { 1, 1 };
     
-    Vector2D coords2 = { 2, 0 };
-    Vector2D size2 = { 1, 2 };
+    Vector2D coords2 = { 1, 0 };
+    Vector2D size2 = { 1, 1 };
     
     Box box1 = Box( coords1, size1 );
     Box box2 = Box( coords2, size2 );
     
-    //assert( box1.isOverlappedBy( box2 ) );
+    assert( box1.isOverlappedBy( box2 ) );
     
     writeln( box1 );
     writeln( box2 );
