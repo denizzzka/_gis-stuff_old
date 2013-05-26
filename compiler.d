@@ -334,9 +334,12 @@ struct RuleProperties
 
 immutable RuleProperties[] RulesProperties =
 [
-    { rule: Rule.REQUIRED, fill: FillType.REPLACE, necessarilyFill: true }
+    { rule: Rule.REQUIRED, fill: FillType.REPLACE, necessarilyFill: true },
+    { rule: Rule.OPTIONAL, fill: FillType.REPLACE, necessarilyFill: false },
+    { rule: Rule.REPEATED, fill: FillType.CONCATENATE, necessarilyFill: false }
 ];
 
+/*
 struct ParserProperties
 {
     uint fieldNum;
@@ -346,7 +349,7 @@ struct ParserProperties
 }
 
 alias immutable ParserProperties[] ParsersTable;
-//alias auto function( 
+alias function( const ubyte*, out const (ubyte)* ) parserFunc;
 
 ParsersTable Parsers_AddressBook =
 [
@@ -372,3 +375,4 @@ auto fillByNumber( uint fieldNum, ParsersTable parsers )
     
     return next;
 }
+*/
