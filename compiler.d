@@ -324,8 +324,6 @@ struct AddressBook
         auto msg = unpackDelimited!ubyte( next, next );
         next -= msg.length;
         
-        writeln( msg.length );
-        
         while( next < &messageData[$-1] )
             next = fillField( next );
     }
@@ -341,7 +339,6 @@ struct AddressBook
             case 1:
                 enforce( wire == WireType.LENGTH_DELIMITED, "Wrong wire type" );
                 name = unpackDelimited!char( next, next );
-                writeln( name );
                 break;
                 
             case 2:

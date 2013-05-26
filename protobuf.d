@@ -151,3 +151,14 @@ unittest
     
     assert( unpackDelimited!char( &d[0], next ) == "testing" );
 }
+
+/* // waiting answer from protobuf google group
+size_t unpackMessageHeader( const ubyte* data, out const (ubyte)* nextElement )
+{
+    uint field; WireType wire;
+    next = parseTag( next, field, wire );
+    enforce( wire.LENGTH_DELIMITED, "Wrong wire type" );
+    
+    return unpackVarint!size_t( data, nextElement );
+}
+*/
