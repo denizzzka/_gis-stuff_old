@@ -140,7 +140,7 @@ if( T.sizeof == 1 )
 {
     // find start and size of string
     auto len = unpackVarint!size_t( data, nextElement );
-    auto res = ( cast( T[] ) nextElement[0..len] );
+    auto res = cast( T[] ) nextElement[0..len];
     nextElement += len;
     return res;
 }
