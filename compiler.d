@@ -179,8 +179,8 @@ string removeTopLevelBraces( string s )
     {
         if( first == '{' )
         {            
-            foreach_reverse( size_t j, char last; s )
-                if( last == '}' )
+            for( size_t j = s.length-1; j > i; j-- )
+                if( s[j] == '}' )
                 {
                     // remove found pair of braces
                     res = s[0 .. i] ~ s[i+1 .. j] ~ s[j+1 .. $];
