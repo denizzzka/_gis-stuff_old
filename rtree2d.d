@@ -116,10 +116,15 @@ struct RTreeArray
 }
 
 
-struct RTreePtrs
+class RTreePtrs
 {
     ubyte depth = 0;
-    Knot root;
+    Knot* root;
+    
+    this()
+    {
+        root = new Knot;
+    }
     
     static union Knot
     {
@@ -129,17 +134,22 @@ struct RTreePtrs
     
     static struct Node
     {
-        Box bound;
+        Node* parent;
         Knot* children[];
+        Box bound;
     }
     
     static struct Leaf
     {
+        Node* parent;
         RTreePayload payload;
     }
     
     void addObject( RTreePayload o )
     {
+        auto leaf = selectLeaf( o.getBound(), root );
+        
+        //if( leaf.
     }
     
     private:
@@ -162,12 +172,30 @@ struct RTreePtrs
         
         return selectLeaf( newItemBound, curr.node.children[minKey], ++currDepth );
     }
+    
+    void correctNode( Knot* needsCorrection, ubyte currDepth = 0, Knot* newNode = null )
+    {
+        if( currDepth == 0 )
+        {
+            if( newNode != null )
+            {
+                auto r = new Knot;
+                r.node.children ~= needsCorrection;
+                r.node.children ~= newNode;
+                
+                root = r;
+                depth++;
+                
+                return;
+            }
+        }
+    }
 }
     
 
 unittest
 {
-    RTreePtrs rtree;
+    auto rtree = new RTreePtrs;
     
     for( float y = 0; y < 10; y++ )
         for( float x = 0; x < 10; x++ )
@@ -176,6 +204,7 @@ unittest
             p.coords = Vector2D( x, y );
             p.value = Vector2D( 1, 1 );
             
-            //rtree.addObject( 
+            rtree.addObject( p );
+            rtree.addObject( p );
         }
 }
