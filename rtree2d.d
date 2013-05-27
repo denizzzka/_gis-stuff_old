@@ -26,17 +26,14 @@ struct Box
     
     bool isOverlappedBy( Box b )
     {
-        alias leftDownCorner ld1;
-        alias rightUpCorner ru1;
-        
-        alias b.leftDownCorner ld2;
-        alias b.rightUpCorner ru2;
+        alias leftDownCorner ld;
+        alias rightUpCorner ru;
         
         return
-            ld1.x <= b.rightUpCorner.x &&
-            ru1.x >= b.leftDownCorner.x &&
-            ld1.y <= b.rightUpCorner.y &&
-            ru1.y >= b.leftDownCorner.y;
+            ld.x <= b.rightUpCorner.x &&
+            ru.x >= b.leftDownCorner.x &&
+            ld.y <= b.rightUpCorner.y &&
+            ru.y >= b.leftDownCorner.y;
     }
 }
 
