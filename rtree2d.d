@@ -78,11 +78,25 @@ struct RTree
     
     static struct Leaf
     {
-        Box bound;
-        Vector2D payload;
+        RTreePayload payload;
     }
     
     void addObject( RTreePayload o )
     {
     }
+}
+
+unittest
+{
+    RTree rtree;
+    
+    for( float y = 0; y < 10; y++ )
+        for( float x = 0; x < 10; x++ )
+        {
+            RTreePayload p;
+            p.coords = Vector2D( x, y );
+            p.value = Vector2D( 1, 1 );
+            
+            //rtree.addObject( 
+        }
 }
