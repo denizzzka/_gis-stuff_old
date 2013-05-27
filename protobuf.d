@@ -51,6 +51,22 @@ unittest
 }
 
 
+void msbSet( ubyte* a )
+{
+    import core.bitop: bts;
+    
+    enforce( !bts( cast(ulong*) a, 7 ), "MSB is already set" );
+}
+unittest
+{
+    ubyte t_neg = 0b_00000000;
+    ubyte t_pos = 0b_10000000;
+    msbSet( &t_neg );
+    
+    assert( t_neg == t_pos );
+}
+
+
 pure size_t getVarintSize( const ubyte* data )
 {
     size_t i = 0;

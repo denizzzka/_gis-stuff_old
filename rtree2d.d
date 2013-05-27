@@ -1,5 +1,7 @@
 module rtree2d;
 
+import protobuf;
+
 import std.stdio;
 
 struct Vector2D
