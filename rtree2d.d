@@ -88,7 +88,7 @@ struct RTreePayload
     Vector2D coords;
     Vector2D value;
     
-    Box getBound()
+    Box getBoundary()
     {
         return Box( coords, value );
     }
@@ -136,7 +136,7 @@ class RTreePtrs
     {
         Node* parent;
         Knot* children[];
-        Box bound;
+        Box boundary;
     }
     
     static struct Leaf
@@ -147,7 +147,7 @@ class RTreePtrs
     
     void addObject( RTreePayload o )
     {
-        auto leaf = selectLeaf( o.getBound(), root );
+        auto leaf = selectLeaf( o.getBoundary(), root );
         
         //if( leaf.
     }
@@ -162,7 +162,7 @@ class RTreePtrs
         
         // get areas for all child nodes
         foreach( size_t i, child; curr.node.children )
-            areas[i] = child.node.bound.getCircumscribed( newItemBound ).getArea();
+            areas[i] = child.node.boundary.getCircumscribed( newItemBound ).getArea();
         
         // search for min area
         size_t minKey;
@@ -173,7 +173,7 @@ class RTreePtrs
         return selectLeaf( newItemBound, curr.node.children[minKey], ++currDepth );
     }
     
-    void correctNode( Knot* needsCorrection, ubyte currDepth = 0, Knot* newNode = null )
+    void correctNode( RTreePayload payload, Knot* needsCorrection, ubyte currDepth = 0, Knot* newNode = null )
     {
         if( currDepth == 0 )
         {
@@ -188,6 +188,10 @@ class RTreePtrs
             
             return;
         }
+        
+        // adding new boundary to the current node
+        needsCorrection.node.boundary =
+            needsCorrection.node.boundary.getCircumscribed( payload.getBoundary() );
     }
 }
     
