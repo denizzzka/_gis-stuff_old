@@ -173,7 +173,7 @@ class RTreePtrs
         return selectLeaf( newItemBound, curr.node.children[minKey], ++currDepth );
     }
     
-    void correctNode( RTreePayload payload, Knot* needsCorrection, ubyte currDepth = 0, Knot* newNode = null )
+    void correctNode( ref Box childBoundary, Knot* needsCorrection, ubyte currDepth = 0, Knot* newNode = null )
     {
         if( currDepth == 0 )
         {
@@ -191,7 +191,7 @@ class RTreePtrs
         
         // adding new boundary to the current node
         needsCorrection.node.boundary =
-            needsCorrection.node.boundary.getCircumscribed( payload.getBoundary() );
+            needsCorrection.node.boundary.getCircumscribed( childBoundary );
     }
 }
     
