@@ -179,15 +179,14 @@ class RTreePtrs
         {
             if( newNode != null )
             {
+                // creating new root from two remaining nodes
                 auto r = new Knot;
-                r.node.children ~= needsCorrection;
-                r.node.children ~= newNode;
-                
+                r.node.children = [ needsCorrection, newNode ];
                 root = r;
                 depth++;
-                
-                return;
             }
+            
+            return;
         }
     }
 }
