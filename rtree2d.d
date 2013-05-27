@@ -118,6 +118,7 @@ struct RTreeArray
 
 class RTreePtrs
 {
+    immutable ubyte maxChildren = 3;
     ubyte depth = 0;
     Knot* root;
     
@@ -147,13 +148,19 @@ class RTreePtrs
     
     void addObject( RTreePayload o )
     {
-        auto leaf = selectLeaf( o.getBoundary(), root );
+        auto leaf = selectLeafPlace( o.getBoundary(), root );
         
-        //if( leaf.
+        // need split?
+        if( leaf.parent.children.length >= maxChildren )
+        {
+        }
+        else
+        {
+        }
     }
     
     private:
-    Leaf* selectLeaf( Box newItemBound, Knot* curr, ubyte currDepth = 0 )
+    Leaf* selectLeafPlace( Box newItemBoundary, Knot* curr, ubyte currDepth = 0 )
     {
         if( currDepth == depth )
             return &curr.leaf;
@@ -162,7 +169,7 @@ class RTreePtrs
         
         // get areas for all child nodes
         foreach( size_t i, child; curr.node.children )
-            areas[i] = child.node.boundary.getCircumscribed( newItemBound ).getArea();
+            areas[i] = child.node.boundary.getCircumscribed( newItemBoundary ).getArea();
         
         // search for min area
         size_t minKey;
@@ -170,7 +177,7 @@ class RTreePtrs
             if( areas[minKey] > areas[i] )
                 minKey = i;
         
-        return selectLeaf( newItemBound, curr.node.children[minKey], ++currDepth );
+        return selectLeafPlace( newItemBoundary, curr.node.children[minKey], ++currDepth );
     }
     
     Knot* createNode( Knot* k1, Knot* k2 )
@@ -200,6 +207,8 @@ class RTreePtrs
         // adding new boundary to the current node
         needsCorrection.node.boundary =
             needsCorrection.node.boundary.getCircumscribed( childBoundary );
+            
+        
     }
 }
     
