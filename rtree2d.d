@@ -18,6 +18,9 @@ struct Box
     Vector2D leftDownCorner;
     Vector2D rightUpCorner;
     
+    alias leftDownCorner ld;
+    alias rightUpCorner ru;
+    
     this( ref Vector2D coords, ref Vector2D size )
     {
         leftDownCorner.x = coords.x + ((size.x > 0) ? 0 : size.x);
@@ -28,17 +31,25 @@ struct Box
     
     bool isOverlappedBy( Box b )
     {
-        alias leftDownCorner ld1;
-        alias rightUpCorner ru1;
-        
         auto ld2 = b.leftDownCorner;
         auto ru2 = b.rightUpCorner;
         
         return
-            ld1.x <= ru2.x &&
-            ru1.x >= ld2.x &&
-            ld1.y <= ru2.y &&
-            ru1.y >= ld2.y;
+            ld.x <= ru2.x &&
+            ru.x >= ld2.x &&
+            ld.y <= ru2.y &&
+            ru.y >= ld2.y;
+    }
+    
+    Vector2D getSizeVector()
+    {
+        return Vector2D( ru.x - ld.x, ru.y - ld.y );
+    }
+    
+    auto getArea()
+    {
+        auto size = getSizeVector();
+        return size.x * size.y;
     }
 }
 
@@ -103,7 +114,7 @@ struct RTreePtrs
     static struct Node
     {
         Box bound;
-        Node* child[];
+        Node* children[];
     }
     
     static struct Leaf
@@ -119,11 +130,15 @@ struct RTreePtrs
     Knot* selectLeaf()
     {
         ubyte currDepth = 0;
-        auto current = &root;
+        
+        auto curr = &root;
         
         if( currDepth == depth )
+            return curr;        
+        
+        foreach( child; curr.node.children )
         {
-            return current;        
+            //selectLeaf( child );
         }
         
         return null;
