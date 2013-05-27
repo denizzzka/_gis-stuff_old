@@ -67,7 +67,7 @@ struct RTreePayload
     }
 }
 
-struct RTree
+struct RTreeArray
 {
     ubyte depth = 0;
     ubyte[] data;
@@ -88,9 +88,32 @@ struct RTree
     }
 }
 
+
+struct RTreePtrs
+{
+    ubyte depth = 0;
+    Node* root;
+    
+    static struct Node
+    {
+        Box bound;
+        Node* child[];
+    }
+    
+    static struct Leaf
+    {
+        RTreePayload payload;
+    }
+    
+    void addObject( RTreePayload o )
+    {
+    }
+}
+        
+
 unittest
 {
-    RTree rtree;
+    RTreePtrs rtree;
     
     for( float y = 0; y < 10; y++ )
         for( float x = 0; x < 10; x++ )
