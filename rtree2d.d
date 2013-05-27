@@ -137,10 +137,10 @@ class RTreePtrs
     static struct Leaf
     {
         Node* parent;
-        RTreePayload* payload;
+        RTreePayload payload;
     }
     
-    void addObject( RTreePayload o )
+    void addObject( ref RTreePayload o )
     {
         auto place = selectLeafPlace( o.getBoundary(), root );
         
@@ -150,6 +150,8 @@ class RTreePtrs
         }
         else
         {
+            auto l = cast( Node* ) new Leaf( place, o );
+            place.children ~= l;
         }
     }
     
