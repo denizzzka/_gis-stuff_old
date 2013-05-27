@@ -130,8 +130,8 @@ class RTreePtrs
     static struct Node
     {
         Node* parent;
-        Node* children[];
         Box boundary;
+        Node* children[];
     }
     
     static struct Leaf
