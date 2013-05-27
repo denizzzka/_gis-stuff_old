@@ -173,6 +173,16 @@ class RTreePtrs
         return selectLeaf( newItemBound, curr.node.children[minKey], ++currDepth );
     }
     
+    Knot* createNode( Knot* k1, Knot* k2 )
+    {
+        auto r = new Knot;
+        
+        r.node.children = [ k1, k2 ];
+        r.node.boundary = k1.node.boundary.getCircumscribed( k2.node.boundary );
+        
+        return r;
+    }
+    
     void correctNode( ref Box childBoundary, Knot* needsCorrection, ubyte currDepth = 0, Knot* newNode = null )
     {
         if( currDepth == 0 )
@@ -180,9 +190,7 @@ class RTreePtrs
             if( newNode != null )
             {
                 // creating new root from two remaining nodes
-                auto r = new Knot;
-                r.node.children = [ needsCorrection, newNode ];
-                root = r;
+                root = createNode( needsCorrection, newNode );
                 depth++;
             }
             
