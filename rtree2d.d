@@ -2,6 +2,7 @@ module rtree2d;
 
 import protobuf;
 
+import std.algorithm;
 import std.stdio;
 
 struct Vector2D
@@ -21,7 +22,7 @@ struct Box
     alias leftDownCorner ld;
     alias rightUpCorner ru;
     
-    this( ref Vector2D coords, ref Vector2D size )
+    this( in Vector2D coords, in Vector2D size )
     {
         leftDownCorner.x = coords.x + ((size.x > 0) ? 0 : size.x);
         leftDownCorner.y = coords.y + ((size.y > 0) ? 0 : size.y);
@@ -51,6 +52,19 @@ struct Box
         auto size = getSizeVector();
         return size.x * size.y;
     }
+    
+    Box getCircumscribed( Box b )
+    {
+        Box res;
+        
+        res.ld.x = min( ld.x, b.ld.x );
+        res.ld.y = min( ld.y, b.ld.y );
+        
+        res.ru.x = max( ru.x, b.ru.x );
+        res.ru.y = max( ru.y, b.ru.y );
+        
+        return res;
+    }
 }
 
 unittest
@@ -65,6 +79,8 @@ unittest
     Box box2 = Box( coords2, size2 );
     
     assert( box1.isOverlappedBy( box2 ) );
+    
+    assert( box1.getCircumscribed( box2 ) == Box(Vector2D(0, 0), Vector2D(2, 1)) );
 }
 
 struct RTreePayload
