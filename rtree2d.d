@@ -137,6 +137,7 @@ class RTreePtrs
     static struct Leaf
     {
         Node* parent;
+        Box boundary;
         RTreePayload payload;
     }
     
@@ -147,11 +148,13 @@ class RTreePtrs
         // need split?
         if( place.children.length >= maxChildren )
         {
+            Node* n;
+            splitNode( place, n, n );
         }
         else
         {
-            auto l = cast( Node* ) new Leaf( place, o );
-            place.children ~= l;
+            auto l = new Leaf( place, o.getBoundary(), o );
+            place.children ~= cast( Node* ) l;
         }
     }
     
@@ -208,6 +211,60 @@ class RTreePtrs
             needsCorrection.boundary.getCircumscribed( childBoundary );
             
         
+    }
+    
+    /// Brute force method
+    void splitNode( in Node* n, out Node* r1, out Node* r2 )
+    {
+        import core.bitop: bt;
+        
+        size_t capacity = n.children.length;
+        
+        float minArea;
+        uint minAreaKey;
+        
+        for( uint i = 0; i < capacity * 2; i++ )
+        {
+            Box b1;
+            Box b2;
+            
+            for( auto j = 0; j < capacity.sizeof * 8; j++ )
+            {
+                auto boundary = n.children[j].boundary;
+                
+                if( bt( cast( ulong* ) &i, j ) != 0 )
+                    b1 = b1.getCircumscribed( boundary );
+                else
+                    b2 = b2.getCircumscribed( boundary );
+            }
+            
+            float area = b1.getArea() + b2.getArea();
+            
+            if( area < minArea )
+            {
+                minArea = area;
+                minAreaKey = i;
+            }
+        }
+        
+        r1 = new Node;
+        r2 = new Node;
+        
+        void assignChildToNode( Node* child, Node* node )
+        {
+            child.parent = node;
+            node.children ~= child;
+        }
+        
+        for( auto j = 0; j < minAreaKey.sizeof*8; j++ )
+        {
+            auto c = n.children[j];
+            
+            if( bt( cast( ulong* ) &minAreaKey, j ) != 0 )
+                assignChildToNode( n.children[j], r1 );
+            else
+                assignChildToNode( c, r2 );
+        }
     }
 }
     
