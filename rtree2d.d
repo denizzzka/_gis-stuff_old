@@ -226,4 +226,6 @@ unittest
             rtree.addObject( p );
             rtree.addObject( p );
         }
+        
+    writeln( rtree.root.children );
 }
