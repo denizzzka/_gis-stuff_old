@@ -150,19 +150,15 @@ struct RTreePtrs
         
         auto areas = new float[ curr.node.children.length ];
         
+        // get areas for all child nodes
         foreach( size_t i, child; curr.node.children )
-        {
-            auto b = child.node.bound.getCircumscribed( newItemBound );
-            areas[i] = b.getArea();
-        }
+            areas[i] = child.node.bound.getCircumscribed( newItemBound ).getArea();
         
         // search for min area
         size_t minKey;
         foreach( i, f; areas )
-        {
             if( areas[minKey] > areas[i] )
                 minKey = i;
-        }
         
         return selectLeaf( newItemBound, curr.node.children[minKey], ++currDepth );
     }
