@@ -52,8 +52,37 @@ unittest
     Box box2 = Box( coords2, size2 );
     
     assert( box1.isOverlappedBy( box2 ) );
+}
+
+struct RTreePayload
+{
+    Vector2D coords;
+    Vector2D value;
     
-    writeln( box1 );
-    writeln( box2 );
-    writeln( box1.isOverlappedBy( box2 ) );
+    Box getBound()
+    {
+        return Box( coords, value );
+    }
+}
+
+struct RTree
+{
+    ubyte depth = 0;
+    ubyte[] data;
+    
+    static struct Node
+    {
+        Box bound;
+        ubyte childOffset;
+    }
+    
+    static struct Leaf
+    {
+        Box bound;
+        Vector2D payload;
+    }
+    
+    void addObject( RTreePayload o )
+    {
+    }
 }
