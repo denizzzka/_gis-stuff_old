@@ -92,7 +92,13 @@ struct RTreeArray
 struct RTreePtrs
 {
     ubyte depth = 0;
-    Node* root;
+    Knot root;
+    
+    static union Knot
+    {
+        Node node;
+        Leaf leaf;
+    }
     
     static struct Node
     {
@@ -108,8 +114,22 @@ struct RTreePtrs
     void addObject( RTreePayload o )
     {
     }
-}
+    
+    private:
+    Knot* selectLeaf()
+    {
+        ubyte currDepth = 0;
+        auto current = &root;
         
+        if( currDepth == depth )
+        {
+            return current;        
+        }
+        
+        return null;
+    }
+}
+    
 
 unittest
 {
