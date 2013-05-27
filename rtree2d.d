@@ -130,7 +130,7 @@ struct RTreePtrs
     static struct Node
     {
         Box bound;
-        Node* children[];
+        Knot* children[];
     }
     
     static struct Leaf
@@ -143,21 +143,28 @@ struct RTreePtrs
     }
     
     private:
-    Knot* selectLeaf()
+    Leaf* selectLeaf( Box newItemBound, Knot* curr, ubyte currDepth = 0 )
     {
-        ubyte currDepth = 0;
-        
-        auto curr = &root;
-        
         if( currDepth == depth )
-            return curr;        
+            return &curr.leaf;
         
-        foreach( child; curr.node.children )
+        auto areas = new float[ curr.node.children.length ];
+        
+        foreach( size_t i, child; curr.node.children )
         {
-            //selectLeaf( child );
+            auto b = child.node.bound.getCircumscribed( newItemBound );
+            areas[i] = b.getArea();
         }
         
-        return null;
+        // search for min area
+        size_t minKey;
+        foreach( i, f; areas )
+        {
+            if( areas[minKey] > areas[i] )
+                minKey = i;
+        }
+        
+        return selectLeaf( newItemBound, curr.node.children[minKey], ++currDepth );
     }
 }
     
