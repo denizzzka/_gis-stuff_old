@@ -193,7 +193,12 @@ class RTreePtrs
         return r;
     }
     
-    void correctNode( ref Box childBoundary, Node* needsCorrection, ubyte currDepth = 0, Node* newNode = null )
+    void correctNode(
+            ref Box childBoundary,
+            Node* needsCorrection,
+            ubyte currDepth = 0,
+            Node* newNode = null
+        )
     {
         if( currDepth == 0 )
         {
@@ -238,9 +243,8 @@ class RTreePtrs
         float minArea;
         uint minAreaKey;
         
-        uint capacity = numToBits!uint( len-1 );
-        
         // loop through all combinations of nodes
+        uint capacity = numToBits!uint( len-1 );
         for( uint i = 1; i < ( capacity + 1 ) / 2; i++ )
         {
             Box b1;
@@ -258,6 +262,7 @@ class RTreePtrs
                     b2 = b2.getCircumscribed( boundary );
             }
             
+            // search for combination with minimum area
             float area = b1.getArea() + b2.getArea();
             
             if( area < minArea )
@@ -276,6 +281,7 @@ class RTreePtrs
             node.children ~= child;
         }
         
+        // split by places, specified by bit key
         for( auto i = 0; i < len; i++ )
         {
             auto c = n.children[i];
