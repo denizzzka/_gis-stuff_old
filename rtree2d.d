@@ -7,8 +7,8 @@ import std.stdio;
 
 struct Vector2D
 {
-    float x;
-    float y;
+    float x = 0;
+    float y = 0;
     
     alias x lon;
     alias y lat;
@@ -140,6 +140,8 @@ class RTreePtrs
     
         void assignChild( Node* child )
         {
+            //writeln( children );
+            //stdout.flush();
             children ~= child;
             boundary = boundary.getCircumscribed( child.boundary );
             child.parent = &this;
@@ -267,8 +269,8 @@ class RTreePtrs
         auto capacity = numToBits!uint( len );
         for( uint i = 1; i < ( capacity + 1 ) / 2; i++ )
         {
-            Box b1 = Box( Vector2D( 0, 0), Vector2D( 0, 0) );
-            Box b2 = b1;
+            Box b1;
+            Box b2;
             
             // division into two unique combinations of child nodes
             uint j;
@@ -293,8 +295,8 @@ class RTreePtrs
         }
         
         // split by places specified by bits of key
-        Node tmpNode;
         auto newNode = new Node;
+        auto tmpNode = new Node;
         
         for( auto i = 0; i < len; i++ )
         {
@@ -307,6 +309,7 @@ class RTreePtrs
         }
         
         n.children = tmpNode.children;
+        //writeln( "children array ", &n.children, "tmp array", &tmpNode.children );
         n.boundary = tmpNode.boundary;
         
         writeln( "Split node ", n, " ", n.children, ", new ", newNode, " ", newNode.children );
@@ -322,7 +325,7 @@ unittest
     auto rtree = new RTreePtrs;
     
     for( float y = 0; y < 1; y++ )
-        for( float x = 0; x < 6; x++ )
+        for( float x = 0; x < 8; x++ )
         {
             RTreePayload p;
             p.coords = Vector2D( x, y );
