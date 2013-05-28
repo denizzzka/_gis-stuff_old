@@ -204,7 +204,7 @@ class RTreePtrs
     
     void correctRecursive( Node* mainNode )
     {
-        if( mainNode.children.length >= maxChildren )
+        if( mainNode.children.length > maxChildren )
         {
             if( mainNode.parent is null )
             {
