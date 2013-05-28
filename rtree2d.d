@@ -65,6 +65,11 @@ struct Box
         
         return res;
     }
+    
+    void addCircumscribe( in Box b ) pure
+    {
+        this = this.getCircumscribed( b );
+    }
 }
 
 unittest
@@ -200,7 +205,7 @@ class RTreePtrs
         return r;
     }
     
-    void splitRecursive( Node* mainNode )
+    void correctRecursive( Node* mainNode )
     {
         if( mainNode.children.length >= maxChildren )
         {
@@ -214,8 +219,15 @@ class RTreePtrs
             
             mainNode.parent.assignChild( n );
             
-            splitRecursive( mainNode.parent );
+            correctRecursive( mainNode.parent );
         }
+        
+        // recalculate boundary
+        Box boundary;
+        foreach( c; mainNode.children )
+            boundary.addCircumscribe( c.boundary );
+            
+        mainNode.boundary = boundary;
     }
     
     /// convert number to number of bits
