@@ -148,8 +148,9 @@ class RTreePtrs
         // need split?
         if( place.children.length >= maxChildren )
         {
-            Node* n;
-            splitNode( place, n, n );
+            Node* n1;
+            Node* n2;
+            splitNode( place, n1, n2 );
         }
         else
         {
