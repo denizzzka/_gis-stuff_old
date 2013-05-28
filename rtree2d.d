@@ -143,7 +143,10 @@ class RTreePtrs
     
     void addObject( ref RTreePayload o )
     {
+        // unconditional add a leaf
         auto place = selectLeafPlace( o.getBoundary(), root );
+        auto l = new Leaf( place, o.getBoundary(), o );
+        place.children ~= cast( Node* ) l;
         
         // need split?
         if( place.children.length >= maxChildren )
@@ -151,11 +154,8 @@ class RTreePtrs
             Node* n1;
             Node* n2;
             splitNode( place, n1, n2 );
-        }
-        else
-        {
-            auto l = new Leaf( place, o.getBoundary(), o );
-            place.children ~= cast( Node* ) l;
+            
+            //correctNode(
         }
     }
     
@@ -216,7 +216,10 @@ class RTreePtrs
         needsCorrection.boundary =
             needsCorrection.boundary.getCircumscribed( childBoundary );
             
-        
+        if( newNode )
+        {
+            Box b; // = newNode
+        }
     }
     
     /// convert number to number of bits
@@ -279,6 +282,7 @@ class RTreePtrs
         {
             child.parent = node;
             node.children ~= child;
+            node.boundary = node.boundary.getCircumscribed( child.boundary );
         }
         
         // split by places, specified by bit key
