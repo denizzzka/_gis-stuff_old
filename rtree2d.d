@@ -246,12 +246,12 @@ class RTreePtrs
             Box b2;
             
             // division into two unique combinations of child nodes
-            uint bit;
-            for( bit = 0; bit < capacity; bit++ )
+            uint j;
+            for( j = 0; j < len; j++ )
             {
-                auto boundary = n.children[i].boundary;
+                auto boundary = n.children[j].boundary;
                 
-                if( bt( cast( ulong* ) &i, bit ) != 0 )
+                if( bt( cast( ulong* ) &i, j ) == 0 )
                     b1 = b1.getCircumscribed( boundary );
                 else
                     b2 = b2.getCircumscribed( boundary );
@@ -262,7 +262,7 @@ class RTreePtrs
             if( area < minArea )
             {
                 minArea = area;
-                minAreaKey = bit;
+                minAreaKey = j;
             }
         }
         
