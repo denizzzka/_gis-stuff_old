@@ -182,15 +182,18 @@ class RTreePtrs
         
         // search for min area of child nodes
         size_t minKey;
-        foreach( size_t i, child; curr.children )
+        foreach( i, c; curr.children )
         {
-            area[i] = child.boundary.getCircumscribed( newItemBoundary ).getArea();
+            area[i] = c.boundary.getCircumscribed( newItemBoundary ).getArea();
             
             if( area[i] < area[minKey] )
                 minKey = i;
         }
         
-        return selectLeafPlace( curr.children[minKey], newItemBoundary, ++currDepth );
+        writeln( curr, " >>> ", curr.children );
+        auto r = curr.children[minKey];
+        
+        return selectLeafPlace( r, newItemBoundary, ++currDepth );
     }
     
     Node* createParentNode( Node* child )
