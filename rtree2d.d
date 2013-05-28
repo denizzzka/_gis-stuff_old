@@ -213,6 +213,20 @@ class RTreePtrs
         
     }
     
+    /// convert number to bits
+    auto lengthToBits( T, N )( N n )
+    {
+        T res;
+        for( N i = 0; i < n; i++ )
+            res = res << 1 | 1;
+            
+        return res;
+    }
+    unittest
+    (
+        assert( lengthToBits!ubyte( 3 ) == 0b_0000_0111 );
+    }
+    
     /// Brute force method
     void splitNode( in Node* n, out Node* r1, out Node* r2 )
     {
