@@ -138,11 +138,13 @@ class RTreePtrs
         Box boundary;
         Node* children[];
     
-        pure void assignChild( Node* child )
+        void assignChild( Node* child )
         {
             children ~= child;
             boundary = boundary.getCircumscribed( child.boundary );
             child.parent = &this;
+            
+            writeln("Node: ", &this, " Child assigned: ", child, " length=", children.length );
         }
     }
     
@@ -186,14 +188,14 @@ class RTreePtrs
         return selectLeafPlace( curr.children[minKey], newItemBoundary, ++currDepth );
     }
     
-    pure Node* createParentNode( Node* child )
+    Node* createParentNode( Node* child )
     {
         auto r = new Node;
         r.assignChild( child );
         return r;
     }
     
-    pure Node* createParentNode( Node* child1, Node* child2 )
+    Node* createParentNode( Node* child1, Node* child2 )
     {
         auto r = createParentNode( child1 );
         r.assignChild( child2 );
@@ -244,6 +246,11 @@ class RTreePtrs
     
     /// Brute force method
     Node* splitNode( Node* n )
+    in
+    {
+        assert( n.children.length > 1 );
+    }
+    body
     {
         import core.bitop: bt;
         
@@ -253,8 +260,8 @@ class RTreePtrs
         uint minAreaKey;
         
         // loop through all combinations of nodes
-        uint capacity = numToBits!uint( len-1 );
-        for( uint i = 1; i < ( capacity + 1 ) / 2; i++ )
+        uint capacity = numToBits!uint( len );
+        for( uint i = 0; i < ( capacity + 1 ) / 2; i++ )
         {
             Box b1;
             Box b2;
@@ -265,7 +272,7 @@ class RTreePtrs
             {
                 auto boundary = n.children[j].boundary;
                 
-                if( bt( cast( ulong* ) &i, j ) == 0 )
+                if( bt( cast( ulong* ) &i, j ) == 0 || j == 0 )
                     b1 = b1.getCircumscribed( boundary );
                 else
                     b2 = b2.getCircumscribed( boundary );
@@ -298,6 +305,8 @@ class RTreePtrs
         n.children = tmpNode.children;
         n.boundary = tmpNode.boundary;
         
+        writeln( "Split to: ", n.children, " and ", newNode.children );
+        
         return newNode;
     }
 }
@@ -307,8 +316,8 @@ unittest
 {
     auto rtree = new RTreePtrs;
     
-    for( float y = 0; y < 10; y++ )
-        for( float x = 0; x < 10; x++ )
+    for( float y = 0; y < 1; y++ )
+        for( float x = 0; x < 3; x++ )
         {
             RTreePayload p;
             p.coords = Vector2D( x, y );
