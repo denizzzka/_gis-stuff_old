@@ -42,12 +42,12 @@ struct Box
             ru.y >= ld2.y;
     }
     
-    Vector2D getSizeVector()
+    Vector2D getSizeVector() const
     {
         return Vector2D( ru.x - ld.x, ru.y - ld.y );
     }
     
-    auto getArea()
+    auto getArea() const
     {
         auto size = getSizeVector();
         return size.x * size.y;
