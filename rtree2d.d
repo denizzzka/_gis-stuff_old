@@ -269,7 +269,7 @@ class RTreePtrs
         r1 = new Node;
         r2 = new Node;
         
-        void assignChildToNode( Node* child, Node* node )
+        static void assignChildToNode( Node* child, Node* node )
         {
             child.parent = node;
             node.children ~= child;
