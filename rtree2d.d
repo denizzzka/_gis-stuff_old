@@ -223,6 +223,9 @@ class RTreePtrs
             boundary.addCircumscribe( c.boundary );
             
         mainNode.boundary = boundary;
+        
+        if( mainNode.parent )
+            correctRecursive( mainNode.parent );
     }
     
     /// convert number to number of bits
