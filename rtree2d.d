@@ -151,9 +151,9 @@ class RTreePtrs
     void addObject( ref RTreePayload o )
     {
         // unconditional add a leaf
-        auto place = selectLeafPlace( o.getBoundary(), root );
+        auto place = selectLeafPlace( root, o.getBoundary() );
         auto l = new Leaf( place, o.getBoundary(), o );
-        place.children ~= cast( Node* ) l;
+        place.assignChild( cast( Node* ) l );
         
         // need split?
         if( place.children.length >= maxChildren )
@@ -162,13 +162,14 @@ class RTreePtrs
             Node* n2;
             splitNode( place, n1, n2 );
             
-            //correctNode( 
+            place.parent.assignChild( n1 );
+            place.parent.assignChild( n2 );
         }
     }
     
     private:
     
-    Node* selectLeafPlace( Box newItemBoundary, Node* curr, ubyte currDepth = 0 )
+    Node* selectLeafPlace( Node* curr, Box newItemBoundary, ubyte currDepth = 0 )
     {
         if( currDepth == depth )
             return curr;
@@ -185,7 +186,7 @@ class RTreePtrs
             if( areas[minKey] > areas[i] )
                 minKey = i;
         
-        return selectLeafPlace( newItemBoundary, curr.children[minKey], ++currDepth );
+        return selectLeafPlace( curr.children[minKey], newItemBoundary, ++currDepth );
     }
     
     Node* createNode( Node* k1, Node* k2 )
@@ -286,7 +287,7 @@ class RTreePtrs
         r1 = new Node;
         r2 = new Node;
         
-        // split by places, specified by bit key
+        // split by places specified by bits of key
         for( auto i = 0; i < len; i++ )
         {
             auto c = n.children[i];
