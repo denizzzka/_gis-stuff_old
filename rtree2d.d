@@ -123,7 +123,7 @@ struct RTreeArray
 
 class RTreePtrs
 {
-    immutable ubyte maxChildren = 3;
+    immutable ubyte maxChildren = 2;
     ubyte depth = 0;
     Node* root;
     
@@ -318,5 +318,5 @@ unittest
             rtree.addObject( p );
         }
         
-    writeln( rtree.root.children );
+    //writeln( rtree.root.children );
 }
