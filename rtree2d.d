@@ -160,13 +160,8 @@ class RTreePtrs
         auto l = new Leaf( place, o.getBoundary(), o );
         place.assignChild( cast( Node* ) l );
         
-        // need split?
-        if( place.children.length >= maxChildren )
-        {
-            Node* n = splitNode( place );
-            
-            place.parent.assignChild( n );
-        }
+        // correction of the tree
+        correctRecursive( place );
     }
     
     private:
