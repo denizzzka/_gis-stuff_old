@@ -228,7 +228,7 @@ class RTreePtrs
     }
     
     /// Brute force method
-    void splitNode( in Node* n, out Node* r1, out Node* r2 )
+    void splitNode( Node* n, out Node* r1, out Node* r2 )
     {
         import core.bitop: bt;
         
@@ -274,19 +274,16 @@ class RTreePtrs
             child.parent = node;
             node.children ~= child;
         }
-        /*
-        for( auto i = 0; i < capacity; i++ )
+        
+        for( auto i = 0; i < len; i++ )
         {
             auto c = n.children[i];
             
-            if( bt( cast( ulong* ) &minAreaKey, i ) != 0 )
-            {
-                assignChildToNode( n.children[i], r1 );
-            }
+            if( bt( cast( ulong* ) &minAreaKey, i ) == 0 )
+                assignChildToNode( c, r1 );
             else
                 assignChildToNode( c, r2 );
         }
-        */
     }
 }
     
