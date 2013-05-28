@@ -256,15 +256,15 @@ class RTreePtrs
         
         size_t len = n.children.length;
         
-        float minArea;
+        float minArea = float.max;
         uint minAreaKey;
         
         // loop through all combinations of nodes
         uint capacity = numToBits!uint( len );
         for( uint i = 1; i < ( capacity + 1 ) / 2; i++ )
         {
-            Box b1;
-            Box b2;
+            Box b1 = Box( Vector2D( 0, 0), Vector2D( 0, 0) );
+            Box b2 = b1;
             
             // division into two unique combinations of child nodes
             uint j;
