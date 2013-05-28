@@ -132,6 +132,13 @@ class RTreePtrs
         Node* parent;
         Box boundary;
         Node* children[];
+    
+        void assignChild( Node* child )
+        {
+            children ~= child;
+            boundary = boundary.getCircumscribed( child.boundary );
+            child.parent = &this;
+        }
     }
     
     static struct Leaf
@@ -155,11 +162,12 @@ class RTreePtrs
             Node* n2;
             splitNode( place, n1, n2 );
             
-            //correctNode(
+            //correctNode( 
         }
     }
     
     private:
+    
     Node* selectLeafPlace( Box newItemBoundary, Node* curr, ubyte currDepth = 0 )
     {
         if( currDepth == depth )
@@ -193,7 +201,7 @@ class RTreePtrs
         return r;
     }
     
-    void correctNode(
+    void splitRecursive(
             ref Box childBoundary,
             Node* needsCorrection,
             ubyte currDepth = 0,
@@ -278,22 +286,15 @@ class RTreePtrs
         r1 = new Node;
         r2 = new Node;
         
-        static void assignChildToNode( Node* child, Node* node )
-        {
-            child.parent = node;
-            node.children ~= child;
-            node.boundary = node.boundary.getCircumscribed( child.boundary );
-        }
-        
         // split by places, specified by bit key
         for( auto i = 0; i < len; i++ )
         {
             auto c = n.children[i];
             
             if( bt( cast( ulong* ) &minAreaKey, i ) == 0 )
-                assignChildToNode( c, r1 );
+                r1.assignChild( c );
             else
-                assignChildToNode( c, r2 );
+                r2.assignChild( c );
         }
     }
 }
