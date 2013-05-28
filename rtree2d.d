@@ -214,7 +214,7 @@ class RTreePtrs
     }
     
     /// convert number to number of bits
-    static auto numToBits( T, N )( N n )
+    static pure auto numToBits( T, N )( N n )
     {
         T res;
         for( N i = 0; i < n; i++ )
