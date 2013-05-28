@@ -218,18 +218,25 @@ class RTreePtrs
     {
         import core.bitop: bt;
         
-        size_t capacity = n.children.length;
+        size_t len = n.children.length;
         
         float minArea;
         uint minAreaKey;
         
+        // convert length to number of bits
+        uint capacity;
+        for( auto i = 0; i < len; i++ )
+            capacity = capacity << 1 | 1;
+        
+        writefln( "%b", capacity );
+        
         // loop through all combinations of nodes
-        for( uint i = 0; i < capacity * 2 - 1; i++ )
+        for( uint i = 0; i < capacity && i < len; i++ )
         {
             Box b1;
             Box b2;
             
-            // loop for division into two unique combinations of child nodes
+            // division into two unique combinations of child nodes
             uint bit;
             for( bit = 0; bit < capacity; bit++ )
             {
@@ -258,7 +265,7 @@ class RTreePtrs
             child.parent = node;
             node.children ~= child;
         }
-        
+        /*
         for( auto i = 0; i < capacity; i++ )
         {
             auto c = n.children[i];
@@ -270,6 +277,7 @@ class RTreePtrs
             else
                 assignChildToNode( c, r2 );
         }
+        */
     }
 }
     
