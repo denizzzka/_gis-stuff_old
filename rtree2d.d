@@ -53,7 +53,7 @@ struct Box
         return size.x * size.y;
     }
     
-    Box getCircumscribed( in Box b ) const
+    Box getCircumscribed( in Box b ) const pure
     {
         Box res;
         
@@ -133,7 +133,7 @@ class RTreePtrs
         Box boundary;
         Node* children[];
     
-        void assignChild( Node* child )
+        pure void assignChild( Node* child )
         {
             children ~= child;
             boundary = boundary.getCircumscribed( child.boundary );
@@ -158,12 +158,9 @@ class RTreePtrs
         // need split?
         if( place.children.length >= maxChildren )
         {
-            Node* n1;
-            Node* n2;
-            splitNode( place, n1, n2 );
+            Node* n = splitNode( place );
             
-            place.parent.assignChild( n1 );
-            place.parent.assignChild( n2 );
+            place.parent.assignChild( n );
         }
     }
     
@@ -189,45 +186,35 @@ class RTreePtrs
         return selectLeafPlace( curr.children[minKey], newItemBoundary, ++currDepth );
     }
     
-    Node* createNode( Node* k1, Node* k2 )
+    pure Node* createParentNode( Node* child )
     {
         auto r = new Node;
-        
-        r.children = [ k1, k2 ];
-        k1.parent = r;
-        k2.parent = r;
-        
-        r.boundary = k1.boundary.getCircumscribed( k2.boundary );
-        
+        r.assignChild( child );
         return r;
     }
     
-    void correctTree(
-            Node* needsCorrection,
-            ref Box childBoundary,
-            ubyte currDepth = 0,
-            Node* newNode = null
-        )
+    pure Node* createParentNode( Node* child1, Node* child2 )
     {
-        if( currDepth == 0 )
+        auto r = createParentNode( child1 );
+        r.assignChild( child2 );
+        return r;
+    }
+    
+    void splitRecursive( Node* mainNode )
+    {
+        if( mainNode.children.length >= maxChildren )
         {
-            if( newNode != null )
+            if( mainNode.parent is null )
             {
-                // creating new root from two remaining nodes
-                root = createNode( needsCorrection, newNode );
+                root = createParentNode( mainNode );
                 depth++;
             }
             
-            return;
-        }
-        
-        // adding new boundary to the current node
-        needsCorrection.boundary =
-            needsCorrection.boundary.getCircumscribed( childBoundary );
+            Node* n = splitNode( mainNode );
             
-        if( newNode )
-        {
-            Box b; // = newNode
+            mainNode.parent.assignChild( n );
+            
+            splitRecursive( mainNode.parent );
         }
     }
     
@@ -246,7 +233,7 @@ class RTreePtrs
     }
     
     /// Brute force method
-    void splitNode( Node* n, out Node* r1, out Node* r2 )
+    Node* splitNode( Node* n )
     {
         import core.bitop: bt;
         
@@ -284,19 +271,24 @@ class RTreePtrs
             }
         }
         
-        r1 = new Node;
-        r2 = new Node;
-        
         // split by places specified by bits of key
+        Node tmpNode;
+        auto newNode = new Node;
+        
         for( auto i = 0; i < len; i++ )
         {
             auto c = n.children[i];
             
             if( bt( cast( ulong* ) &minAreaKey, i ) == 0 )
-                r1.assignChild( c );
+                tmpNode.assignChild( c );
             else
-                r2.assignChild( c );
+                newNode.assignChild( c );
         }
+        
+        n.children = tmpNode.children;
+        n.boundary = tmpNode.boundary;
+        
+        return newNode;
     }
 }
     
