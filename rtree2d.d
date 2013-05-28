@@ -53,7 +53,7 @@ struct Box
         return size.x * size.y;
     }
     
-    Box getCircumscribed( Box b )
+    Box getCircumscribed( in Box b ) const
     {
         Box res;
         
@@ -151,7 +151,7 @@ class RTreePtrs
     void addObject( ref RTreePayload o )
     {
         // unconditional add a leaf
-        auto place = selectLeafPlace( root, o.getBoundary() );
+        auto place = cast ( Node* ) selectLeafPlace( root, o.getBoundary() );
         auto l = new Leaf( place, o.getBoundary(), o );
         place.assignChild( cast( Node* ) l );
         
@@ -169,7 +169,7 @@ class RTreePtrs
     
     private:
     
-    Node* selectLeafPlace( Node* curr, Box newItemBoundary, ubyte currDepth = 0 )
+    const (Node*) selectLeafPlace( const Node* curr, in Box newItemBoundary, ubyte currDepth = 0 )
     {
         if( currDepth == depth )
             return curr;
@@ -202,9 +202,9 @@ class RTreePtrs
         return r;
     }
     
-    void splitRecursive(
-            ref Box childBoundary,
+    void correctTree(
             Node* needsCorrection,
+            ref Box childBoundary,
             ubyte currDepth = 0,
             Node* newNode = null
         )
