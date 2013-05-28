@@ -171,17 +171,17 @@ class RTreePtrs
         if( currDepth == depth )
             return curr;
         
-        auto areas = new float[ curr.children.length ];
+        auto area = new float[ curr.children.length ];
         
-        // get areas for all child nodes
-        foreach( size_t i, child; curr.children )
-            areas[i] = child.boundary.getCircumscribed( newItemBoundary ).getArea();
-        
-        // search for min area
+        // search for min area of child nodes
         size_t minKey;
-        foreach( i, f; areas )
-            if( areas[minKey] > areas[i] )
+        foreach( size_t i, child; curr.children )
+        {
+            area[i] = child.boundary.getCircumscribed( newItemBoundary ).getArea();
+            
+            if( area[i] < area[minKey] )
                 minKey = i;
+        }
         
         return selectLeafPlace( curr.children[minKey], newItemBoundary, ++currDepth );
     }
