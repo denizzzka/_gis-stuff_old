@@ -237,10 +237,10 @@ class RTreePtrs
         float minArea;
         uint minAreaKey;
         
-        uint capacity = numToBits!uint( len );
+        uint capacity = numToBits!uint( len-1 );
         
         // loop through all combinations of nodes
-        for( uint i = 0; i < capacity && i < len; i++ )
+        for( uint i = 1; i < ( capacity + 1 ) / 2; i++ )
         {
             Box b1;
             Box b2;
