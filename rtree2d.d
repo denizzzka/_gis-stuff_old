@@ -136,7 +136,7 @@ class RTreePtrs
     {
         Node* parent;
         Box boundary;
-        Node* children[];
+        Node*[] children;
     
         void assignChild( Node* child )
         {
@@ -145,6 +145,7 @@ class RTreePtrs
             child.parent = &this;
             
             writeln("Node: ", &this, " Child assigned: ", child, " length=", children.length );
+            stdout.flush();
         }
     }
     
@@ -252,6 +253,9 @@ class RTreePtrs
     }
     body
     {
+        writeln( "Begin split!" );
+        stdout.flush();
+        
         import core.bitop: bt;
         
         size_t len = n.children.length;
@@ -260,7 +264,7 @@ class RTreePtrs
         uint minAreaKey;
         
         // loop through all combinations of nodes
-        uint capacity = numToBits!uint( len );
+        auto capacity = numToBits!uint( len );
         for( uint i = 1; i < ( capacity + 1 ) / 2; i++ )
         {
             Box b1 = Box( Vector2D( 0, 0), Vector2D( 0, 0) );
@@ -305,27 +309,45 @@ class RTreePtrs
         n.children = tmpNode.children;
         n.boundary = tmpNode.boundary;
         
-        writeln( "Split to: ", n.children, " and ", newNode.children );
+        writeln( "Split node ", n, " ", n.children, ", new ", newNode, " ", newNode.children );
+        stdout.flush();
         
         return newNode;
     }
 }
-    
+
 
 unittest
 {
     auto rtree = new RTreePtrs;
     
     for( float y = 0; y < 1; y++ )
-        for( float x = 0; x < 3; x++ )
+        for( float x = 0; x < 6; x++ )
         {
             RTreePayload p;
             p.coords = Vector2D( x, y );
             p.value = Vector2D( 1, 1 );
             
             rtree.addObject( p );
-            rtree.addObject( p );
         }
-        
-    //writeln( rtree.root.children );
+    
+    void showTree( RTreePtrs.Node* from, uint depth = 0 )
+    {
+        if( depth > rtree.depth )
+        {
+            writeln( "Leaf: ", from );
+        }
+        else
+        {
+            writeln( "Node: ", from );
+            
+            foreach( i, c; from.children )
+            {
+                showTree( c, ++depth );
+            }
+        }
+    }
+    
+    writeln("\nShow tree:");
+    showTree( rtree.root );
 }
