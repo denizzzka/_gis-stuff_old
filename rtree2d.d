@@ -223,16 +223,19 @@ class RTreePtrs
         float minArea;
         uint minAreaKey;
         
-        for( uint i = 0; i < capacity * 2; i++ )
+        // loop through all combinations of nodes
+        for( uint i = 0; i < capacity * 2 - 1; i++ )
         {
             Box b1;
             Box b2;
             
-            for( auto j = 0; j < capacity.sizeof * 8; j++ )
+            // loop for division into two unique combinations of child nodes
+            uint bit;
+            for( bit = 0; bit < capacity; bit++ )
             {
-                auto boundary = n.children[j].boundary;
+                auto boundary = n.children[i].boundary;
                 
-                if( bt( cast( ulong* ) &i, j ) != 0 )
+                if( bt( cast( ulong* ) &i, bit ) != 0 )
                     b1 = b1.getCircumscribed( boundary );
                 else
                     b2 = b2.getCircumscribed( boundary );
@@ -243,7 +246,7 @@ class RTreePtrs
             if( area < minArea )
             {
                 minArea = area;
-                minAreaKey = i;
+                minAreaKey = bit;
             }
         }
         
@@ -256,12 +259,14 @@ class RTreePtrs
             node.children ~= child;
         }
         
-        for( auto j = 0; j < minAreaKey.sizeof*8; j++ )
+        for( auto i = 0; i < capacity; i++ )
         {
-            auto c = n.children[j];
+            auto c = n.children[i];
             
-            if( bt( cast( ulong* ) &minAreaKey, j ) != 0 )
-                assignChildToNode( n.children[j], r1 );
+            if( bt( cast( ulong* ) &minAreaKey, i ) != 0 )
+            {
+                assignChildToNode( n.children[i], r1 );
+            }
             else
                 assignChildToNode( c, r2 );
         }
