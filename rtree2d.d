@@ -91,13 +91,7 @@ unittest
 
 struct RTreePayload
 {
-    Vector2D coords;
-    Vector2D value;
-    
-    Box getBoundary()
-    {
-        return Box( coords, value );
-    }
+    string data = "123"; 
 }
 
 struct RTreeArray
