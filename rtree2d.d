@@ -140,14 +140,9 @@ class RTreePtrs
     
         void assignChild( Node* child )
         {
-            //writeln( children );
-            //stdout.flush();
             children ~= child;
             boundary = boundary.getCircumscribed( child.boundary );
             child.parent = &this;
-            
-            writeln("Node: ", &this, " Child assigned: ", child, " length=", children.length );
-            stdout.flush();
         }
     }
     
@@ -156,13 +151,19 @@ class RTreePtrs
         Node* parent;
         Box boundary;
         RTreePayload payload;
+        
+        this( in Box boundary, in RTreePayload payload )
+        {
+            this.boundary = boundary;
+            this.payload = payload;
+        }
     }
     
-    void addObject( ref RTreePayload o )
+    void addObject( Box boundary, in RTreePayload o )
     {
         // unconditional add a leaf
-        auto place = cast ( Node* ) selectLeafPlace( root, o.getBoundary() );
-        auto l = new Leaf( place, o.getBoundary(), o );
+        auto place = selectLeafPlace( root, boundary );
+        auto l = new Leaf( boundary, o );
         place.assignChild( cast( Node* ) l );
         
         // correction of the tree
@@ -171,7 +172,7 @@ class RTreePtrs
     
     private:
     
-    const (Node*) selectLeafPlace( const Node* curr, in Box newItemBoundary, ubyte currDepth = 0 )
+    Node* selectLeafPlace( Node* curr, in Box newItemBoundary, ubyte currDepth = 0 )
     {
         if( currDepth == depth )
             return curr;
@@ -324,14 +325,13 @@ unittest
 {
     auto rtree = new RTreePtrs;
     
-    for( float y = 0; y < 1; y++ )
+    for( float y = 0; y < 2; y++ )
         for( float x = 0; x < 8; x++ )
         {
             RTreePayload p;
-            p.coords = Vector2D( x, y );
-            p.value = Vector2D( 1, 1 );
+            Box b = Box( Vector2D( x, y ), Vector2D( 1, 1 ) );
             
-            rtree.addObject( p );
+            rtree.addObject( b, p );
         }
     
     void showTree( RTreePtrs.Node* from, uint depth = 0 )
