@@ -213,18 +213,18 @@ class RTreePtrs
         
     }
     
-    /// convert number to bits
-    auto lengthToBits( T, N )( N n )
+    /// convert number to number of bits
+    static auto numToBits( T, N )( N n )
     {
         T res;
         for( N i = 0; i < n; i++ )
-            res = res << 1 | 1;
+            res = cast(T) ( res << 1 | 1 );
             
         return res;
     }
     unittest
-    (
-        assert( lengthToBits!ubyte( 3 ) == 0b_0000_0111 );
+    {
+        assert( numToBits!ubyte( 3 ) == 0b_0000_0111 );
     }
     
     /// Brute force method
@@ -237,12 +237,7 @@ class RTreePtrs
         float minArea;
         uint minAreaKey;
         
-        // convert length to number of bits
-        uint capacity;
-        for( auto i = 0; i < len; i++ )
-            capacity = capacity << 1 | 1;
-        
-        writefln( "%b", capacity );
+        uint capacity = numToBits!uint( len );
         
         // loop through all combinations of nodes
         for( uint i = 0; i < capacity && i < len; i++ )
