@@ -261,7 +261,7 @@ class RTreePtrs
         
         // loop through all combinations of nodes
         uint capacity = numToBits!uint( len );
-        for( uint i = 0; i < ( capacity + 1 ) / 2; i++ )
+        for( uint i = 1; i < ( capacity + 1 ) / 2; i++ )
         {
             Box b1;
             Box b2;
@@ -272,7 +272,7 @@ class RTreePtrs
             {
                 auto boundary = n.children[j].boundary;
                 
-                if( bt( cast( ulong* ) &i, j ) == 0 || j == 0 )
+                if( bt( cast( ulong* ) &i, j ) == 0 )
                     b1 = b1.getCircumscribed( boundary );
                 else
                     b2 = b2.getCircumscribed( boundary );
