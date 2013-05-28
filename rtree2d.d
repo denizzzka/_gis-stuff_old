@@ -4,6 +4,7 @@ import protobuf;
 
 import std.algorithm;
 import std.stdio;
+import core.bitop: bt;
 
 struct Vector2D
 {
@@ -199,13 +200,6 @@ class RTreePtrs
         return r;
     }
     
-    Node* createParentNode( Node* child1, Node* child2 )
-    {
-        auto r = createParentNode( child1 );
-        r.assignChild( child2 );
-        return r;
-    }
-    
     void correctRecursive( Node* mainNode )
     {
         if( mainNode.children.length > maxChildren )
@@ -217,21 +211,22 @@ class RTreePtrs
             }
             
             Node* n = splitNode( mainNode );
-            
             mainNode.parent.assignChild( n );
             
             correctRecursive( mainNode.parent );
         }
-        
-        // recalculate boundary
-        Box boundary;
-        foreach( c; mainNode.children )
-            boundary.addCircumscribe( c.boundary );
+        else
+        {
+            // recalculate boundary
+            Box boundary;
+            foreach( c; mainNode.children )
+                boundary.addCircumscribe( c.boundary );
+                
+            mainNode.boundary = boundary;
             
-        mainNode.boundary = boundary;
-        
-        if( mainNode.parent )
-            correctRecursive( mainNode.parent );
+            if( mainNode.parent )
+                correctRecursive( mainNode.parent );
+        }
     }
     
     /// convert number to number of bits
@@ -258,8 +253,6 @@ class RTreePtrs
     {
         writeln( "Begin split!" );
         stdout.flush();
-        
-        import core.bitop: bt;
         
         size_t len = n.children.length;
         
@@ -309,8 +302,7 @@ class RTreePtrs
                 newNode.assignChild( c );
         }
         
-        n.children = tmpNode.children;
-        //writeln( "children array ", &n.children, "tmp array", &tmpNode.children );
+        n.children = tmpNode.children.dup;
         n.boundary = tmpNode.boundary;
         
         writeln( "Split node ", n, " ", n.children, ", new ", newNode, " ", newNode.children );
