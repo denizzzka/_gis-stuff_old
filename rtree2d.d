@@ -46,8 +46,10 @@ struct Box
     {
         Box b1 = Box( Vector2D(2, 2), Vector2D(1, 1) );
         Box b2 = Box( Vector2D(3, 3), Vector2D(1, 1) );
+        Box b3 = Box( Vector2D(4, 4), Vector2D(1, 1) );
         
         assert( b1.isOverlappedBy( b2 ) );
+        assert( !b1.isOverlappedBy( b3 ) );
     }
     
     Vector2D getSizeVector() const
