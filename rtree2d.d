@@ -3,7 +3,7 @@ module rtree2d;
 import protobuf;
 
 import std.algorithm;
-import std.stdio;
+debug import std.stdio;
 import core.bitop: bt;
 
 struct Vector2D
@@ -161,7 +161,7 @@ class RTreePtrs
         auto l = new Leaf( boundary, o );
         place.assignChild( cast( Node* ) l );
         
-        writeln( "Add leaf ", l, " to node ", place );
+        debug(rtptrs) writeln( "Add leaf ", l, " to node ", place );
         
         // correction of the tree
         correct( place );
@@ -211,7 +211,7 @@ class RTreePtrs
                     root = createParentNode( node );
                     depth++;
                     
-                    writeln( "Added new root, depth (without leafs) now is: ", depth );
+                    debug(rtptrs) writeln( "Added new root, depth (without leafs) now is: ", depth );
                 }
                 
                 Node* n = splitNode( node );
@@ -303,7 +303,7 @@ class RTreePtrs
                 newNode.assignChild( c );
         }
         
-        writeln( "Split node ", n, " ", n.children, ", new ", newNode, " ", newNode.children );
+        debug(rtptrs) writeln( "Split node ", n, " ", n.children, ", new ", newNode, " ", newNode.children );
         stdout.flush();
         
         return newNode;
@@ -337,7 +337,7 @@ unittest
         }
     }
     
-    for( float y = 0; y < 2; y++ )
+    for( float y = 0; y < 3; y++ )
         for( float x = 0; x < 8; x++ )
         {
             RTreePayload p;
@@ -345,7 +345,12 @@ unittest
             
             rtree.addObject( b, p );
     
-            writeln("\nShow tree:");
-            showTree( rtree.root );
+            debug(rtptrs)
+            {
+                writeln("\nShow tree:");
+                showTree( rtree.root );
+            }
         }
+
+    showTree( rtree.root );
 }
