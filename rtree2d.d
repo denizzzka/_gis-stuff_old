@@ -31,7 +31,7 @@ struct Box
         rightUpCorner.y = coords.y + ((size.y < 0) ? 0 : size.y);
     }
     
-    bool isOverlappedBy( Box b )
+    bool isOverlappedBy( in Box b ) const pure
     {
         auto ld2 = b.leftDownCorner;
         auto ru2 = b.rightUpCorner;
@@ -41,6 +41,13 @@ struct Box
             ru.x >= ld2.x &&
             ld.y <= ru2.y &&
             ru.y >= ld2.y;
+    }
+    unittest
+    {
+        Box b1 = Box( Vector2D(2, 2), Vector2D(1, 1) );
+        Box b2 = Box( Vector2D(3, 3), Vector2D(1, 1) );
+        
+        assert( b1.isOverlappedBy( b2 ) );
     }
     
     Vector2D getSizeVector() const
@@ -165,6 +172,22 @@ class RTreePtrs
         
         // correction of the tree
         correct( place );
+    }
+    
+    Leaf*[] search( in Box boundary, const (Node)* curr = null, size_t currDepth = 0 )
+    {
+        if( curr is null ) curr = root;
+        
+        Leaf*[] res;
+        
+        if( currDepth > depth )
+            res ~= cast( Leaf* ) curr;
+        else
+            foreach( i, c; curr.children )
+                if( c.boundary.isOverlappedBy( boundary ) )
+                    res ~= search( boundary, c, currDepth+1 );
+        
+        return res;
     }
     
     private:
@@ -314,7 +337,7 @@ class RTreePtrs
 unittest
 {
     import core.memory;
-    GC.disable();    
+    debug GC.disable();    
     
     auto rtree = new RTreePtrs;
     
@@ -337,7 +360,7 @@ unittest
         }
     }
     
-    for( float y = 0; y < 3; y++ )
+    for( float y = 0; y < 4; y++ )
         for( float x = 0; x < 8; x++ )
         {
             RTreePayload p;
@@ -353,4 +376,8 @@ unittest
         }
 
     showTree( rtree.root );
+    debug GC.enable();
+    
+    auto s = rtree.search( Box( Vector2D( 2, 2 ), Vector2D( 1, 1 ) ) );
+    assert( s.length == 9 );
 }
