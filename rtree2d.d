@@ -129,11 +129,15 @@ class RTreeArray
     {
         alias source s;
         
-        size_t nodesNum, leafsNum, leafsBlocks;
+        size_t nodesNum, leafsNum, leafBlocksNum;        
+        s.statistic( nodesNum, leafsNum, leafBlocksNum );
+        nodesNum -= leafBlocksNum;
         
-        s.statistic( nodesNum, leafsNum, leafsBlocks );
-        
-        auto size = depth.sizeof + Node.sizeof * nodesNum;
+        auto arrSize =
+            depth.sizeof +
+            Node.sizeof * nodesNum +
+            LeafBlock.sizeof * leafBlocksNum +
+            Leaf.sizeof * leafsNum;
         
     }
     
@@ -200,14 +204,14 @@ class RTreePtrs
     void statistic(
         out size_t nodesNum,
         out size_t leafsNum,
-        out size_t leafsBlocks
+        out size_t leafBlocksNum
     )
     {
         nodesNum = 1;
         leafsNum = 0;
-        leafsBlocks = 0;
+        leafBlocksNum = 0;
         
-        statistic( root, nodesNum, leafsNum, leafsBlocks );
+        statistic( root, nodesNum, leafsNum, leafBlocksNum );
     }
     
     debug(rtree) void showTree( Node* from, uint depth = 0 )
@@ -249,13 +253,13 @@ class RTreePtrs
         in Node* curr,
         ref size_t nodesNum,
         ref size_t leafsNum,
-        ref size_t leafsBlocks,
+        ref size_t leafBlocksNum,
         size_t currDepth = 0
     )
     {
         if( currDepth == depth )
         {
-            leafsBlocks++;
+            leafBlocksNum++;
             leafsNum += curr.children.length;
         }
         else
@@ -263,7 +267,7 @@ class RTreePtrs
             nodesNum += curr.children.length;
             
             foreach( i, c; curr.children )
-                statistic( c, nodesNum, leafsNum, leafsBlocks, currDepth+1 );
+                statistic( c, nodesNum, leafsNum, leafBlocksNum, currDepth+1 );
         }
     }
     
@@ -436,11 +440,11 @@ unittest
     
     debug(rtree) showTree( rtree.root );
     
-    size_t leafs, nodes, leafsBlocks;
-    rtree.statistic( nodes, leafs, leafsBlocks );
+    size_t leafs, nodes, leafBlocksNum;
+    rtree.statistic( nodes, leafs, leafBlocksNum );
     assert( leafs == 32 );
     assert( nodes == 51 );
-    assert( leafsBlocks == 20 );
+    assert( leafBlocksNum == 20 );
     
     debug GC.enable();
     
