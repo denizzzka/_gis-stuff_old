@@ -104,15 +104,20 @@ struct RTreePayload
     string data; 
 }
 
-struct RTreeArray
+class RTreeArray
 {
     ubyte depth = 0;
     ubyte[] data;
     
     static struct Node
     {
-        Box bound;
+        Box boundary;
         ubyte childOffset;
+    }
+    
+    static struct LeafBlock
+    {
+        ubyte num;
     }
     
     static struct Leaf
@@ -120,9 +125,7 @@ struct RTreeArray
         RTreePayload payload;
     }
     
-    void addObject( RTreePayload o )
-    {
-    }
+    //this( RTreePtrs source )
 }
 
 
@@ -167,7 +170,7 @@ class RTreePtrs
     void addObject( Box boundary, in RTreePayload o )
     {
         // unconditional add a leaf
-        auto place = selectLeafPlace( root, boundary );
+        auto place = selectLeafPlace( boundary );
         auto l = new Leaf( boundary, o );
         place.assignChild( cast( Node* ) l );
         
@@ -176,11 +179,21 @@ class RTreePtrs
         // correction of the tree
         correct( place );
     }
-    
-    Leaf*[] search( in Box boundary, const (Node)* curr = null, size_t currDepth = 0 )
+
+    Leaf*[] search( in Box boundary )
     {
-        if( curr is null ) curr = root;
-        
+        return search( boundary, root );
+    }
+    
+    void statistic( out size_t nodesNum, out size_t leafsNum )
+    {
+        statistic( root, nodesNum, leafsNum );
+    }
+    
+    private:
+    
+    Leaf*[] search( in Box boundary, const (Node)* curr, size_t currDepth = 0 )
+    {
         Leaf*[] res;
         
         if( currDepth > depth )
@@ -193,10 +206,23 @@ class RTreePtrs
         return res;
     }
     
-    private:
-    
-    Node* selectLeafPlace( Node* curr, in Box newItemBoundary )
+    void statistic( in Node* curr, out size_t nodesNum, out size_t leafsNum, size_t currDepth = 0 )
     {
+        if( currDepth == depth )
+            leafsNum += curr.children.length;
+        else
+        {
+            nodesNum += curr.children.length;
+            
+            foreach( i, c; curr.children )
+                statistic( c, nodesNum, leafsNum, currDepth+1 );
+        }
+    }
+    
+    Node* selectLeafPlace( in Box newItemBoundary )
+    {
+        Node* curr = root;
+        
         for( auto currDepth = 0; currDepth < depth; currDepth++ )
         {
             auto area = new float[ curr.children.length ];
