@@ -4,6 +4,7 @@ import protobuf;
 
 import std.algorithm;
 debug import std.stdio;
+version(unittest) import std.string;
 import core.bitop: bt;
 
 struct Vector2D
@@ -100,7 +101,7 @@ unittest
 
 struct RTreePayload
 {
-    string data = "123"; 
+    string data; 
 }
 
 struct RTreeArray
@@ -366,6 +367,7 @@ unittest
         for( float x = 0; x < 8; x++ )
         {
             RTreePayload p;
+            p.data = format( "x=%f y=%f", x, y );
             Box b = Box( Vector2D( x, y ), Vector2D( 1, 1 ) );
             
             rtree.addObject( b, p );
