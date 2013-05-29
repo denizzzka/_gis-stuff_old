@@ -127,10 +127,15 @@ class RTreeArray
     
     this( RTreePtrs source )
     {
-        alias source s;
-        
+        setArraySize( source );
+    }
+    
+    private:
+    
+    void setArraySize( RTreePtrs source )
+    {
         size_t nodesNum, leafsNum, leafBlocksNum;        
-        s.statistic( nodesNum, leafsNum, leafBlocksNum );
+        source.statistic( nodesNum, leafsNum, leafBlocksNum );
         nodesNum -= leafBlocksNum;
         
         auto arrSize =
@@ -139,9 +144,8 @@ class RTreeArray
             LeafBlock.sizeof * leafBlocksNum +
             Leaf.sizeof * leafsNum;
         
+        data = new ubyte[ arrSize ];
     }
-    
-    private:
 }
 
 
