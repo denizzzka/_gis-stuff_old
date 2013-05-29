@@ -125,7 +125,20 @@ class RTreeArray
         RTreePayload payload;
     }
     
-    //this( RTreePtrs source )
+    this( RTreePtrs source )
+    {
+        alias source s;
+        
+        size_t leafsNum;
+        size_t nodesNum;
+        
+        s.statistic( nodesNum, leafsNum );
+        
+        auto size = depth.sizeof;
+        
+    }
+    
+    private:
 }
 
 
@@ -191,6 +204,25 @@ class RTreePtrs
         leafsNum = 0;
         
         statistic( root, nodesNum, leafsNum );
+    }
+    
+    debug(rtree) void showTree( Node* from, uint depth = 0 )
+    {
+        writeln( "Depth: ", depth );
+        
+        if( depth > rtree.depth )
+        {
+            writeln( "Leaf: ", from, " parent: ", from.parent );
+        }
+        else
+        {
+            writeln( "Node: ", from, " parent: ", from.parent, " children: ", from.children );
+            
+            foreach( i, c; from.children )
+            {
+                showTree( c, depth+1 );
+            }
+        }
     }
     
     private:
@@ -373,25 +405,6 @@ unittest
     
     auto rtree = new RTreePtrs;
     
-    void showTree( RTreePtrs.Node* from, uint depth = 0 )
-    {
-        writeln( "Depth: ", depth );
-        
-        if( depth > rtree.depth )
-        {
-            writeln( "Leaf: ", from, " parent: ", from.parent );
-        }
-        else
-        {
-            writeln( "Node: ", from, " parent: ", from.parent, " children: ", from.children );
-            
-            foreach( i, c; from.children )
-            {
-                showTree( c, depth+1 );
-            }
-        }
-    }
-    
     for( float y = 0; y < 4; y++ )
         for( float x = 0; x < 8; x++ )
         {
@@ -408,14 +421,12 @@ unittest
             }
         }
     
-    showTree( rtree.root );
+    debug(rtree) showTree( rtree.root );
     
     size_t leafs, nodes;
     rtree.statistic( nodes, leafs );
     assert( leafs == 32 );
     assert( nodes == 51 );
-    
-    debug(rtptrs) writeln( "Statistic: nodes=", nodes, " leafs=", leafs );
     
     debug GC.enable();
     
