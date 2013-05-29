@@ -129,12 +129,11 @@ class RTreeArray
     {
         alias source s;
         
-        size_t leafsNum;
-        size_t nodesNum;
+        size_t nodesNum, leafsNum, leafsBlocks;
         
-        s.statistic( nodesNum, leafsNum );
+        s.statistic( nodesNum, leafsNum, leafsBlocks );
         
-        auto size = depth.sizeof;
+        auto size = depth.sizeof + Node.sizeof * nodesNum;
         
     }
     
@@ -198,12 +197,17 @@ class RTreePtrs
         return search( boundary, root );
     }
     
-    void statistic( out size_t nodesNum, out size_t leafsNum )
+    void statistic(
+        out size_t nodesNum,
+        out size_t leafsNum,
+        out size_t leafsBlocks
+    )
     {
         nodesNum = 1;
         leafsNum = 0;
+        leafsBlocks = 0;
         
-        statistic( root, nodesNum, leafsNum );
+        statistic( root, nodesNum, leafsNum, leafsBlocks );
     }
     
     debug(rtree) void showTree( Node* from, uint depth = 0 )
@@ -241,16 +245,25 @@ class RTreePtrs
         return res;
     }
     
-    void statistic( in Node* curr, ref size_t nodesNum, ref size_t leafsNum, size_t currDepth = 0 )
+    void statistic(
+        in Node* curr,
+        ref size_t nodesNum,
+        ref size_t leafsNum,
+        ref size_t leafsBlocks,
+        size_t currDepth = 0
+    )
     {
         if( currDepth == depth )
+        {
+            leafsBlocks++;
             leafsNum += curr.children.length;
+        }
         else
         {
             nodesNum += curr.children.length;
             
             foreach( i, c; curr.children )
-                statistic( c, nodesNum, leafsNum, currDepth+1 );
+                statistic( c, nodesNum, leafsNum, leafsBlocks, currDepth+1 );
         }
     }
     
@@ -423,10 +436,11 @@ unittest
     
     debug(rtree) showTree( rtree.root );
     
-    size_t leafs, nodes;
-    rtree.statistic( nodes, leafs );
+    size_t leafs, nodes, leafsBlocks;
+    rtree.statistic( nodes, leafs, leafsBlocks );
     assert( leafs == 32 );
     assert( nodes == 51 );
+    assert( leafsBlocks == 20 );
     
     debug GC.enable();
     
