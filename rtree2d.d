@@ -187,6 +187,9 @@ class RTreePtrs
     
     void statistic( out size_t nodesNum, out size_t leafsNum )
     {
+        nodesNum = 1;
+        leafsNum = 0;
+        
         statistic( root, nodesNum, leafsNum );
     }
     
@@ -206,7 +209,7 @@ class RTreePtrs
         return res;
     }
     
-    void statistic( in Node* curr, out size_t nodesNum, out size_t leafsNum, size_t currDepth = 0 )
+    void statistic( in Node* curr, ref size_t nodesNum, ref size_t leafsNum, size_t currDepth = 0 )
     {
         if( currDepth == depth )
             leafsNum += curr.children.length;
@@ -404,8 +407,16 @@ unittest
                 showTree( rtree.root );
             }
         }
-
+    
     showTree( rtree.root );
+    
+    size_t leafs, nodes;
+    rtree.statistic( nodes, leafs );
+    assert( leafs == 32 );
+    assert( nodes == 51 );
+    
+    debug(rtptrs) writeln( "Statistic: nodes=", nodes, " leafs=", leafs );
+    
     debug GC.enable();
     
     auto s = rtree.search( Box( Vector2D( 2, 2 ), Vector2D( 1, 1 ) ) );
