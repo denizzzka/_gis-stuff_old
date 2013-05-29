@@ -169,27 +169,26 @@ class RTreePtrs
     
     private:
     
-    Node* selectLeafPlace( Node* curr, in Box newItemBoundary, ubyte currDepth = 0 )
+    Node* selectLeafPlace( Node* curr, in Box newItemBoundary )
     {
-        if( currDepth == depth )
-            return curr;
-        
-        auto area = new float[ curr.children.length ];
-        
-        // search for min area of child nodes
-        size_t minKey;
-        foreach( i, c; curr.children )
+        for( auto currDepth = 0; currDepth < depth; currDepth++ )
         {
-            area[i] = c.boundary.getCircumscribed( newItemBoundary ).getArea();
+            auto area = new float[ curr.children.length ];
             
-            if( area[i] < area[minKey] )
-                minKey = i;
+            // search for min area of child nodes
+            size_t minKey;
+            foreach( i, c; curr.children )
+            {
+                area[i] = c.boundary.getCircumscribed( newItemBoundary ).getArea();
+                
+                if( area[i] < area[minKey] )
+                    minKey = i;
+            }
+            
+            curr = curr.children[minKey];
         }
         
-        //writeln( curr, " >>> ", curr.children );
-        auto r = curr.children[minKey];
-        
-        return selectLeafPlace( r, newItemBoundary, ++currDepth );
+        return curr;
     }
     
     Node* createParentNode( Node* child )
