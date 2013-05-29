@@ -161,8 +161,10 @@ class RTreePtrs
         auto l = new Leaf( boundary, o );
         place.assignChild( cast( Node* ) l );
         
+        writeln( "Add leaf ", l, " to node ", place );
+        
         // correction of the tree
-        correctRecursive( place );
+        correct( place );
     }
     
     private:
@@ -184,7 +186,7 @@ class RTreePtrs
                 minKey = i;
         }
         
-        writeln( curr, " >>> ", curr.children );
+        //writeln( curr, " >>> ", curr.children );
         auto r = curr.children[minKey];
         
         return selectLeafPlace( r, newItemBoundary, ++currDepth );
@@ -197,32 +199,35 @@ class RTreePtrs
         return r;
     }
     
-    void correctRecursive( Node* mainNode )
+    void correct( Node* fromNode )
     {
-        if( mainNode.children.length > maxChildren )
+        auto node = fromNode;
+        
+        while( node )
         {
-            if( mainNode.parent is null )
+            if( node.children.length > maxChildren ) // need split?
             {
-                root = createParentNode( mainNode );
-                depth++;
+                if( node.parent is null ) // for root split need a new root node
+                {
+                    root = createParentNode( node );
+                    depth++;
+                    
+                    writeln( "Added new root, depth (without leafs) now is: ", depth );
+                }
+                
+                Node* n = splitNode( node );
+                node.parent.assignChild( n );
+            }
+            else // just recalculate boundary
+            {
+                Box boundary;
+                foreach( c; node.children )
+                    boundary.addCircumscribe( c.boundary );
+                    
+                node.boundary = boundary;
             }
             
-            Node* n = splitNode( mainNode );
-            mainNode.parent.assignChild( n );
-            
-            correctRecursive( mainNode.parent );
-        }
-        else
-        {
-            // recalculate boundary
-            Box boundary;
-            foreach( c; mainNode.children )
-                boundary.addCircumscribe( c.boundary );
-                
-            mainNode.boundary = boundary;
-            
-            if( mainNode.parent )
-                correctRecursive( mainNode.parent );
+            node = node.parent;
         }
     }
     
@@ -248,9 +253,6 @@ class RTreePtrs
     }
     body
     {
-        writeln( "Begin split!" );
-        stdout.flush();
-        
         size_t len = n.children.length;
         
         float minArea = float.max;
@@ -299,7 +301,7 @@ class RTreePtrs
                 newNode.assignChild( c );
         }
         
-        n.children = tmpNode.children.dup;
+        n.children = tmpNode.children;
         n.boundary = tmpNode.boundary;
         
         writeln( "Split node ", n, " ", n.children, ", new ", newNode, " ", newNode.children );
@@ -312,7 +314,29 @@ class RTreePtrs
 
 unittest
 {
+    import core.memory;
+    GC.disable();    
+    
     auto rtree = new RTreePtrs;
+    
+    void showTree( RTreePtrs.Node* from, uint depth = 0 )
+    {
+        writeln( "Depth: ", depth );
+        
+        if( depth > rtree.depth )
+        {
+            writeln( "Leaf: ", from, " parent: ", from.parent );
+        }
+        else
+        {
+            writeln( "Node: ", from, " parent: ", from.parent, " children: ", from.children );
+            
+            foreach( i, c; from.children )
+            {
+                showTree( c, depth+1 );
+            }
+        }
+    }
     
     for( float y = 0; y < 2; y++ )
         for( float x = 0; x < 8; x++ )
@@ -321,25 +345,8 @@ unittest
             Box b = Box( Vector2D( x, y ), Vector2D( 1, 1 ) );
             
             rtree.addObject( b, p );
-        }
     
-    void showTree( RTreePtrs.Node* from, uint depth = 0 )
-    {
-        if( depth > rtree.depth )
-        {
-            writeln( "Leaf: ", from );
+            writeln("\nShow tree:");
+            showTree( rtree.root );
         }
-        else
-        {
-            writeln( "Node: ", from );
-            
-            foreach( i, c; from.children )
-            {
-                showTree( c, ++depth );
-            }
-        }
-    }
-    
-    writeln("\nShow tree:");
-    showTree( rtree.root );
 }
