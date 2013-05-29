@@ -287,21 +287,21 @@ class RTreePtrs
         }
         
         // split by places specified by bits of key
+        auto nChildren = n.children.dup;
+        n.children.destroy();
+        n.boundary = Box( Vector2D(), Vector2D() );
+        
         auto newNode = new Node;
-        auto tmpNode = new Node;
         
         for( auto i = 0; i < len; i++ )
         {
-            auto c = n.children[i];
+            auto c = nChildren[i];
             
             if( bt( cast( ulong* ) &minAreaKey, i ) == 0 )
-                tmpNode.assignChild( c );
+                n.assignChild( c );
             else
                 newNode.assignChild( c );
         }
-        
-        n.children = tmpNode.children;
-        n.boundary = tmpNode.boundary;
         
         writeln( "Split node ", n, " ", n.children, ", new ", newNode, " ", newNode.children );
         stdout.flush();
