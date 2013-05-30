@@ -164,6 +164,14 @@ class RTreeArray
     }
     
     this( RTreePtrs source )
+    in
+    {
+        size_t nodes, leafs, leafsBlocks;
+        source.statistic( nodes, leafs, leafsBlocks );
+        
+        assert( leafs > 0 );
+    }
+    body
     {
         alias source s;
         
