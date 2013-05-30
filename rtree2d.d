@@ -118,7 +118,7 @@ unittest
     assert( box2 == box1 );
 }
 
-struct RTreePayload
+struct Payload
 {
     string data;
     
@@ -137,8 +137,8 @@ struct RTreePayload
 }
 unittest
 {
-    RTreePayload a = { data: "abc" };
-    RTreePayload b = { data: "def" };
+    Payload a = { data: "abc" };
+    Payload b = { data: "def" };
     
     auto serialized = &(a.Serialize())[0];
     auto size = b.Deserialize( serialized );
@@ -170,17 +170,17 @@ class RTreeArray
         fillFrom( s.root, offset );
     }
     
-    RTreePayload[] search( in Box boundary, size_t offset = 0, size_t currDepth = 0 );
+    Payload[] search( in Box boundary, size_t offset = 0, size_t currDepth = 0 )
     {
-        RTreePayload[] res;
+        Payload[] res;
         
-        if( currDepth = depth ) // returning leafs
+        if( currDepth == depth ) // returning leafs
         {
-            size_t leafsNum = cast (size_t) data[ offset ];
+            auto leafs = data[ offset ];
             
-            for( auto i = 0; i < leafsNum; i++ )
+            for( auto i = 0; i < leafs; i++ )
             {
-                RTreePayload o;
+                Payload o;
                 offset += o.Deserialize( &data[offset] );
                 res ~= o;
             }
@@ -188,17 +188,18 @@ class RTreeArray
         else // searching in nodes
         {
             Box testBox;
+            bool msb;
             
             do
             {
                 offset += testBox.Deserialize( &data[offset] );
                 size_t jumpTo;
                 
-                if( testBox.boundary.isOverlappedBy( boundary ) )
+                if( testBox.isOverlappedBy( boundary ) )
                 {
                     // check msb
                     offset++;
-                    auto msb = btr( cast(size_t*) &data[ offset ], 7 );
+                    msb = btr( cast(size_t*) &data[ offset ], 7 ) != 0;
                     res ~= search( boundary, offset + data[ offset ], currDepth+1 );
                 }
                 
@@ -218,7 +219,7 @@ class RTreeArray
             
             foreach( i, c; curr.children ) // adding leafs
             {
-                auto s = (cast (Leaf*) c).payload.Serialize();
+                auto s = (cast (RTreePtrs.Leaf*) c).payload.Serialize();
                 data ~= s;
             }
         }
@@ -277,16 +278,16 @@ class RTreePtrs
     {
         Node* parent;
         Box boundary;
-        RTreePayload payload;
+        Payload payload;
         
-        this( in Box boundary, in RTreePayload payload )
+        this( in Box boundary, in Payload payload )
         {
             this.boundary = boundary;
             this.payload = payload;
         }
     }
     
-    void addObject( Box boundary, in RTreePayload o )
+    void addObject( Box boundary, in Payload o )
     {
         // unconditional add a leaf
         auto place = selectLeafPlace( boundary );
@@ -528,7 +529,7 @@ unittest
     for( float y = 0; y < 4; y++ )
         for( float x = 0; x < 8; x++ )
         {
-            RTreePayload p;
+            Payload p;
             p.data = format( "x=%f y=%f", x, y );
             Box b = Box( Vector2D( x, y ), Vector2D( 1, 1 ) );
             
