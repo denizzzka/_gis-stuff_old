@@ -181,45 +181,40 @@ class RTreeArray
         fillFrom( s.root, offset );
     }
     
-    size_t fillFrom( RTreePtrs.Node* curr, ref size_t offset, size_t currDepth = 0 )
+    void fillFrom( RTreePtrs.Node* curr, size_t currDepth = 0 )
     {
         if( currDepth == depth ) // adding leafs block?
         {
             data ~= cast(ubyte) curr.children.length; // save number of leafs
-            offset++;
             
             foreach( i, c; curr.children ) // adding leafs
             {
                 auto s = (cast (Leaf*) c).payload.Serialize();
                 data ~= s;
-                offset += s.length;
             }
         }
         else // adding nodes
         {
             auto size = new ubyte[ curr.children.length ];
+            auto start = data.length-1;
             
             foreach( i, c; curr.children )
             {
                 auto s = c.boundary.Serialize() ~ 0x00; // here will be offset to its child
                 data ~= s;
                 size[i] = cast(ubyte) s.length;
-                offset += s.length;
             }
             
-            auto next = offset;
-            auto nextOffset = offset;
+            auto indexPlace = start;
             
             foreach( i, c; curr.children )
             {
-                nextOffset += size[i];
-                data[ nextOffset ] = cast(ubyte) next; // set offset to the child
+                indexPlace += size[i];
+                data[ indexPlace-1 ] = cast(ubyte) (data.length - start); // set offset to the child
                 
-                offset = fillFrom( c, offset, currDepth+1 );
+                fillFrom( c, currDepth+1 );
             }
         }
-        
-        return offset;
     }
 }
 
@@ -528,4 +523,6 @@ unittest
     
     auto s = rtree.search( Box( Vector2D( 2, 2 ), Vector2D( 1, 1 ) ) );
     assert( s.length == 9 );
+    
+    auto rarr = new RTreeArray( rtree );
 }
