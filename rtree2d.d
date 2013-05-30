@@ -5,7 +5,7 @@ import protobuf;
 import std.algorithm;
 debug import std.stdio;
 version(unittest) import std.string;
-import core.bitop: bt;
+import core.bitop;
 
 struct Vector2D
 {
@@ -152,17 +152,6 @@ class RTreeArray
     ubyte depth = 0;
     ubyte[] data;
     
-    static struct Node
-    {
-        Box boundary;
-        ubyte childOffset;
-    }
-    
-    static struct Leaf
-    {
-        RTreePayload payload;
-    }
-    
     this( RTreePtrs source )
     in
     {
@@ -180,6 +169,46 @@ class RTreeArray
         size_t offset;
         fillFrom( s.root, offset );
     }
+    
+    RTreePayload[] search( in Box boundary, size_t offset = 0, size_t currDepth = 0 );
+    {
+        RTreePayload[] res;
+        
+        if( currDepth = depth ) // returning leafs
+        {
+            size_t leafsNum = cast (size_t) data[ offset ];
+            
+            for( auto i = 0; i < leafsNum; i++ )
+            {
+                RTreePayload o;
+                offset += o.Deserialize( &data[offset] );
+                res ~= o;
+            }
+        }
+        else // searching in nodes
+        {
+            Box testBox;
+            
+            do
+            {
+                offset += testBox.Deserialize( &data[offset] );
+                size_t jumpTo;
+                
+                if( testBox.boundary.isOverlappedBy( boundary ) )
+                {
+                    // check msb
+                    offset++;
+                    auto msb = btr( cast(size_t*) &data[ offset ], 7 );
+                    res ~= search( boundary, offset + data[ offset ], currDepth+1 );
+                }
+                
+            } while( msb );
+        }
+        
+        return res;
+    }
+        
+    private:
     
     void fillFrom( RTreePtrs.Node* curr, size_t currDepth = 0 )
     {
@@ -288,7 +317,8 @@ class RTreePtrs
         statistic( root, nodesNum, leafsNum, leafBlocksNum );
     }
     
-    debug(rtree) void showTree( Node* from, uint depth = 0 )
+    debug(rtree)
+    void showTree( Node* from, uint depth = 0 )
     {
         writeln( "Depth: ", depth );
         
