@@ -158,36 +158,6 @@ class RTreeArray
         ubyte childOffset;
     }
     
-    static struct LeafBlock
-    {
-        ubyte num;
-        
-        ubyte[] Serialize() /// TODO: real serialization
-        {
-            ubyte res[] = (cast (ubyte*) &this) [ 0 .. this.sizeof ];
-            return res;
-        }
-        
-        size_t Deserialize( ubyte* data ) /// TODO: real serialization
-        {
-            (cast (ubyte*) &this)[ 0 .. this.sizeof] = data[ 0 .. this.sizeof ].dup;
-            
-            return this.sizeof;
-        }
-        
-        unittest
-        {
-            LeafBlock a = { num: 3 };
-            LeafBlock b = { num: 12 };
-            
-            auto serialized = &(a.Serialize())[0];
-            auto size = b.Deserialize( serialized );
-            
-            assert( size == a.sizeof );
-            assert( a == b );
-        }
-    }
-    
     static struct Leaf
     {
         RTreePayload payload;
@@ -202,28 +172,44 @@ class RTreeArray
         fillFrom( s.root );
     }
     
-    void fillFrom( RTreePtrs.Node* curr, size_t currDepth = 0, size_t offset = 0 )
+    size_t fillFrom( RTreePtrs.Node* curr, size_t currDepth = 0, size_t offset = 0 )
     {
+        size_t oldLength = curr.children.length;
+        
         if( currDepth == depth ) // adding leafs block?
         {
-            size_t oldLength = curr.children.length;
+            data ~= cast(ubyte) curr.children.length;
             
             foreach( i, c; curr.children ) // adding leafs
-            {
-                auto s = (cast (Leaf*) curr).payload.Serialize();
-                data = s ~ data;
-            }
-            
-            // adding leaf header block
-            LeafBlock block = { num: cast(ubyte) curr.children.length };
-            data = block.Serialize() ~ data;
+                data ~= (cast (Leaf*) c).payload.Serialize();
         }
         else
+        {
+            auto size = new ubyte[ curr.children.length ];
+            
             foreach( i, c; curr.children )
             {
-                fillFrom( c, currDepth+1 );
-                //data ~= curr.Serialize();
+                auto s = c.boundary.Serialize();
+                data ~= s ~ 0x00; // here will be offset to its child
+                size[i] = cast(ubyte) s.length;
+                offset += s.length + 1;
             }
+            
+            auto next = offset;
+            auto nextOffset = offset;
+            
+            foreach( i, c; curr.children )
+            {
+                nextOffset += size[i] + 1;
+                data[ nextOffset-1 ] = cast(ubyte) next; // set offset to the child
+                
+                next = fillFrom( c, currDepth+1, next );
+            }
+            
+            return next;
+        }
+        
+        return curr.children.length - oldLength;
     }
 }
 
