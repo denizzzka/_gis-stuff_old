@@ -557,6 +557,6 @@ unittest
     assert( s.length == 9 );
     
     auto rarr = new RTreeArray( rtree );
-    
+    writeln( rarr.data );
     writeln( rarr.search( search ) );
 }

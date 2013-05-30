@@ -2,7 +2,7 @@ module protobuf;
 
 import std.exception;
 import std.traits;
-public import std.stdio;
+debug(protobuf) import std.stdio;
 
 enum WireType : ubyte {
     VARINT           = 0,

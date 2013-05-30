@@ -8,6 +8,7 @@ import std.string;
 import std.typecons;
 import std.typetuple;
 import std.mmfile;
+debug(protobuf) import std.stdio;
 
 
 string searchFirstStatementText( string code )
@@ -259,7 +260,7 @@ EOS";
 
     // remove comments
     example = replace( example, regex( "//.*", "gm" ), "" );
-    writeln( example );
+    debug(protobuf) writeln( example );
 
     // load file
     MmFile mmfile = new MmFile( "book.bin" );
@@ -270,7 +271,7 @@ EOS";
     parsers["message"] = &Parser.Message;
     auto res = parseBlock( example, parsers );
 
-    writeln( "Total:\n", res );
+    debug(protobuf) writeln( "Total:\n", res );
 
     // test reading
     AddressBook msg;
@@ -288,7 +289,7 @@ EOS";
     msg.email = unpackDelimited!char( f1, f1 );
     */
     
-    writeln( msg );
+    debug(protobuf) writeln( msg );
 }
 
 struct AddressBook
