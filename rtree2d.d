@@ -127,7 +127,11 @@ class RTreeArray
     
     this( RTreePtrs source )
     {
-        setArraySize( source );
+        alias source s;
+        
+        setArraySize( s );
+        
+        
     }
     
     private:
@@ -145,6 +149,18 @@ class RTreeArray
             Leaf.sizeof * leafsNum;
         
         data = new ubyte[ arrSize ];
+    }
+    
+    size_t fillArray( in size_t currOffset, in RTreePtrs.Node* curr )
+    {
+        foreach( i, c; curr.children )
+        {
+            Node n;
+            n.boundary = c.boundary;
+            //c.children
+        }
+        
+        return 0;
     }
 }
 
