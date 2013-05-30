@@ -113,12 +113,38 @@ unittest
     
     auto serialized = &(box1.Serialize())[0];
     auto size = box2.Deserialize( serialized );
+    
+    assert( size == box1.sizeof );
     assert( box2 == box1 );
 }
 
 struct RTreePayload
 {
-    string data; 
+    string data;
+    
+    ubyte[] Serialize() /// TODO: real serialization
+    {
+        ubyte res[] = (cast (ubyte*) &this) [ 0 .. this.sizeof ];
+        return res;
+    }
+    
+    size_t Deserialize( ubyte* data ) /// TODO: real serialization
+    {
+        (cast (ubyte*) &this)[ 0 .. this.sizeof] = data[ 0 .. this.sizeof ].dup;
+        
+        return this.sizeof;
+    }
+}
+unittest
+{
+    RTreePayload a = { data: "abc" };
+    RTreePayload b = { data: "def" };
+    
+    auto serialized = &(a.Serialize())[0];
+    auto size = b.Deserialize( serialized );
+    
+    assert( size == a.sizeof );
+    assert( a == b );
 }
 
 class RTreeArray
