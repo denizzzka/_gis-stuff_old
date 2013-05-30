@@ -552,8 +552,11 @@ unittest
     
     debug GC.enable();
     
-    auto s = rtree.search( Box( Vector2D( 2, 2 ), Vector2D( 1, 1 ) ) );
+    Box search = Box( Vector2D( 2, 2 ), Vector2D( 1, 1 ) );
+    auto s = rtree.search( search );
     assert( s.length == 9 );
     
     auto rarr = new RTreeArray( rtree );
+    
+    writeln( rarr.search( search ) );
 }
