@@ -161,6 +161,31 @@ class RTreeArray
     static struct LeafBlock
     {
         ubyte num;
+        
+        ubyte[] Serialize() /// TODO: real serialization
+        {
+            ubyte res[] = (cast (ubyte*) &this) [ 0 .. this.sizeof ];
+            return res;
+        }
+        
+        size_t Deserialize( ubyte* data ) /// TODO: real serialization
+        {
+            (cast (ubyte*) &this)[ 0 .. this.sizeof] = data[ 0 .. this.sizeof ].dup;
+            
+            return this.sizeof;
+        }
+        
+        unittest
+        {
+            LeafBlock a = { num: 3 };
+            LeafBlock b = { num: 12 };
+            
+            auto serialized = &(a.Serialize())[0];
+            auto size = b.Deserialize( serialized );
+            
+            assert( size == a.sizeof );
+            assert( a == b );
+        }
     }
     
     static struct Leaf
@@ -172,13 +197,33 @@ class RTreeArray
     {
         alias source s;
         
-        //foreach( 
+        depth = s.depth;
+        
+        fillFrom( s.root );
     }
     
     void fillFrom( RTreePtrs.Node* curr, size_t currDepth = 0, size_t offset = 0 )
     {
-        foreach( i, c; curr.children )
-            data ~= curr.Serialize();
+        if( currDepth == depth ) // adding leafs block?
+        {
+            size_t oldLength = curr.children.length;
+            
+            foreach( i, c; curr.children ) // adding leafs
+            {
+                auto s = (cast (Leaf*) curr).payload.Serialize();
+                data = s ~ data;
+            }
+            
+            // adding leaf header block
+            LeafBlock block = { num: cast(ubyte) curr.children.length };
+            data = block.Serialize() ~ data;
+        }
+        else
+            foreach( i, c; curr.children )
+            {
+                fillFrom( c, currDepth+1 );
+                //data ~= curr.Serialize();
+            }
     }
 }
 
@@ -205,30 +250,6 @@ class RTreePtrs
             children ~= child;
             boundary = boundary.getCircumscribed( child.boundary );
             child.parent = &this;
-        }
-        
-        ubyte[] Serialize() /// TODO: real serialization
-        {
-            ubyte res[] = (cast (ubyte*) &this) [ 0 .. this.sizeof ];
-            return res;
-        }
-        
-        size_t Deserialize( ubyte* data ) /// TODO: real serialization
-        {
-            (cast (ubyte*) &this)[ 0 .. this.sizeof] = data[ 0 .. this.sizeof ].dup;
-            
-            return this.sizeof;
-        }
-        unittest
-        {
-            Node b;
-            Node a = { parent: &b, boundary: Box( Vector2D(1,1), Vector2D(2,2) ) };
-            
-            auto serialized = &(a.Serialize())[0];
-            auto size = b.Deserialize( serialized );
-            
-            assert( size == a.sizeof );
-            assert( a == b );
         }
     }
     
