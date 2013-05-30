@@ -172,38 +172,13 @@ class RTreeArray
     {
         alias source s;
         
-        setArraySize( s );
-        
-        
+        //foreach( 
     }
     
-    private:
-    
-    void setArraySize( RTreePtrs source )
-    {
-        size_t nodesNum, leafsNum, leafBlocksNum;        
-        source.statistic( nodesNum, leafsNum, leafBlocksNum );
-        nodesNum -= leafBlocksNum;
-        
-        auto arrSize =
-            depth.sizeof +
-            Node.sizeof * nodesNum +
-            LeafBlock.sizeof * leafBlocksNum +
-            Leaf.sizeof * leafsNum;
-        
-        data = new ubyte[ arrSize ];
-    }
-    
-    size_t fillArray( in size_t currOffset, in RTreePtrs.Node* curr )
+    void fillFrom( RTreePtrs.Node* curr, size_t currDepth = 0, size_t offset = 0 )
     {
         foreach( i, c; curr.children )
-        {
-            Node n;
-            n.boundary = c.boundary;
-            //c.children
-        }
-        
-        return 0;
+            data ~= curr.Serialize();
     }
 }
 
@@ -230,6 +205,30 @@ class RTreePtrs
             children ~= child;
             boundary = boundary.getCircumscribed( child.boundary );
             child.parent = &this;
+        }
+        
+        ubyte[] Serialize() /// TODO: real serialization
+        {
+            ubyte res[] = (cast (ubyte*) &this) [ 0 .. this.sizeof ];
+            return res;
+        }
+        
+        size_t Deserialize( ubyte* data ) /// TODO: real serialization
+        {
+            (cast (ubyte*) &this)[ 0 .. this.sizeof] = data[ 0 .. this.sizeof ].dup;
+            
+            return this.sizeof;
+        }
+        unittest
+        {
+            Node b;
+            Node a = { parent: &b, boundary: Box( Vector2D(1,1), Vector2D(2,2) ) };
+            
+            auto serialized = &(a.Serialize())[0];
+            auto size = b.Deserialize( serialized );
+            
+            assert( size == a.sizeof );
+            assert( a == b );
         }
     }
     
@@ -476,7 +475,6 @@ class RTreePtrs
         return newNode;
     }
 }
-
 
 unittest
 {
