@@ -174,14 +174,17 @@ class RTreeArray
     
     size_t fillFrom( RTreePtrs.Node* curr, size_t currDepth = 0, size_t offset = 0 )
     {
-        size_t oldLength = curr.children.length;
-        
         if( currDepth == depth ) // adding leafs block?
         {
-            data ~= cast(ubyte) curr.children.length;
+            data ~= cast(ubyte) curr.children.length; // save number of leafs
+            offset++;
             
             foreach( i, c; curr.children ) // adding leafs
-                data ~= (cast (Leaf*) c).payload.Serialize();
+            {
+                auto s = (cast (Leaf*) c).payload.Serialize();
+                data ~= s;
+                offset += s.length;
+            }
         }
         else
         {
@@ -200,16 +203,14 @@ class RTreeArray
             
             foreach( i, c; curr.children )
             {
-                nextOffset += size[i] + 1;
-                data[ nextOffset-1 ] = cast(ubyte) next; // set offset to the child
+                nextOffset += size[i];
+                data[ nextOffset++ ] = cast(ubyte) next; // set offset to the child
                 
-                next = fillFrom( c, currDepth+1, next );
+                offset = fillFrom( c, currDepth+1, offset );
             }
-            
-            return next;
         }
         
-        return curr.children.length - oldLength;
+        return offset;
     }
 }
 
