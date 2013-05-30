@@ -81,6 +81,19 @@ struct Box
     {
         this = this.getCircumscribed( b );
     }
+    
+    ubyte[] Serialize() /// TODO: real serialization
+    {
+        ubyte res[] = (cast (ubyte*) &this) [ 0 .. this.sizeof ];
+        return res;
+    }
+    
+    size_t Deserialize( ubyte* data ) /// TODO: real serialization
+    {
+        (cast (ubyte*) &this)[ 0 .. this.sizeof] = data[ 0 .. this.sizeof ].dup;
+        
+        return this.sizeof;
+    }
 }
 
 unittest
@@ -97,6 +110,10 @@ unittest
     assert( box1.isOverlappedBy( box2 ) );
     
     assert( box1.getCircumscribed( box2 ) == Box(Vector2D(0, 0), Vector2D(2, 1)) );
+    
+    auto serialized = &(box1.Serialize())[0];
+    auto size = box2.Deserialize( serialized );
+    assert( box2 == box1 );
 }
 
 struct RTreePayload
