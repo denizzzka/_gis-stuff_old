@@ -180,7 +180,7 @@ class RTreeArray
         fillFrom( s.root );
     }
     
-    size_t fillFrom( RTreePtrs.Node* curr, size_t currDepth = 0, size_t offset = 0 )
+    size_t fillFrom( RTreePtrs.Node* curr, size_t currDepth = 0, ref size_t offset = 0 )
     {
         if( currDepth == depth ) // adding leafs block?
         {
