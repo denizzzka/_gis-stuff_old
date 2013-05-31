@@ -108,6 +108,7 @@ unittest
 
 /*
 pure ubyte[] packVarint( T )( T value )
+if( isUnsigned!( T ) )
 {
     
 }
@@ -152,6 +153,19 @@ unittest
 {
     assert( decodeZigZag!ulong( 4294967294 ) == 2147483647 );
     assert( decodeZigZag!ulong( 4294967295 ) == -2147483648 );
+}
+
+
+pure auto encodeZigZag( T )( T v )
+if( isSigned!( T ) )
+{
+    Unsigned!( T ) res = ( v > 0 )
+        ?
+            v * 2
+        :
+            -v * 2 - 1;
+    
+    return res;
 }
 
 
