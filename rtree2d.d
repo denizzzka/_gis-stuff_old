@@ -177,14 +177,11 @@ class RTreeArray
         
         place += unpackVarint( &data[place], num );
         
-        if( currDepth == depth ) // returning leafs
+        if( currDepth > depth ) // returning leaf
         {
-            for( auto i = 0; i < num; i++ )
-            {
-                Payload o;
-                place += o.Deserialize( &data[place] );
-                res ~= o;
-            }
+            Payload o;
+            o.Deserialize( &data[place] );
+            res ~= o;
         }
         else // searching in nodes
         {
@@ -211,19 +208,18 @@ class RTreeArray
     {
         ubyte[] res = packVarint( curr.children.length ); // number of items
         
-        if( currDepth == depth ) // adding leafs block?
+        if( currDepth > depth ) // adding leaf?
         {
-            foreach( i, c; curr.children ) // adding leafs
-                res ~= (cast (RTreePtrs.Leaf*) c).payload.Serialize();
+            res ~= (cast (RTreePtrs.Leaf*) curr).payload.Serialize();
         }
-        else // adding nodes
+        else // adding node
         {
-            auto offset = new size_t[ curr.children.length ];
+            auto offsets = new size_t[ curr.children.length ];
             ubyte[] nodes;
             
             foreach( i, c; curr.children )
             {
-                offset[i] = nodes.length;
+                offsets[i] = nodes.length;
                 nodes ~= fillFrom( c, currDepth+1 );
             }
             
@@ -232,7 +228,7 @@ class RTreeArray
             foreach_reverse( i, c; curr.children )
             {
                 auto s = c.boundary.Serialize();
-                s ~= packVarint( offset[i] + boundaries.length );
+                s ~= packVarint( offsets[i] + boundaries.length );
                 boundaries = s ~ boundaries;
             }
             
@@ -550,12 +546,9 @@ unittest
     auto s = rtree.search( search1 );
     assert( s.length == 9 );
     
-    writeln( "Box size=", Box.sizeof, " Payload size=", Payload.sizeof );
     auto rarr = new RTreeArray( rtree );
-    foreach( i, c; rarr.data )
-        writeln( i, " ", c );
-        
+    
     Box search2 = Box( Vector2D( 1.1, 1.1 ), Vector2D( 0.8, 0.8 ) );
-    writeln( rarr.search( search2 ) );
-    writeln( rtree.search( search2 ) );
+    assert( rarr.search( search1 ).length == 9 );
+    assert( rarr.search( search2 ).length == 1 );
 }
