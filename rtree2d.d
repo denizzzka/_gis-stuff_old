@@ -177,7 +177,7 @@ class RTreeArray
         
         place += unpackVarint( &data[place], num );
         
-        if( currDepth > depth ) // returning leafs
+        if( currDepth == depth ) // returning leafs
         {
             for( auto i = 0; i < num; i++ )
             {
