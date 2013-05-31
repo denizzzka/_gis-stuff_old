@@ -120,7 +120,7 @@ unittest
 
 struct Payload
 {
-    string data;
+    char[6] data = [ 0x58, 0x58, 0x58, 0x58, 0x58, 0x58 ];
     
     ubyte[] Serialize() /// TODO: real serialization
     {
@@ -137,8 +137,8 @@ struct Payload
 }
 unittest
 {
-    Payload a = { data: "abc" };
-    Payload b = { data: "def" };
+    Payload a;
+    Payload b;
     
     auto serialized = &(a.Serialize())[0];
     auto size = b.Deserialize( serialized );
@@ -170,10 +170,9 @@ class RTreeArray
         data = fillFrom( s.root, offset );
     }
     
-    Payload[] search( in Box boundary, size_t place = 0, size_t currDepth = 0 )
+    Payload[] search( in Box boundary, size_t place = 0, in size_t currDepth = 0 )
     {
         Payload[] res;
-        
         size_t num;
         
         place += unpackVarint( &data[place], num );
@@ -276,14 +275,14 @@ class RTreePtrs
         Box boundary;
         Payload payload;
         
-        this( in Box boundary, in Payload payload )
+        this( in Box boundary, Payload payload )
         {
             this.boundary = boundary;
             this.payload = payload;
         }
     }
     
-    void addObject( Box boundary, in Payload o )
+    void addObject( Box boundary, Payload o )
     {
         // unconditional add a leaf
         auto place = selectLeafPlace( boundary );
@@ -526,7 +525,6 @@ unittest
         for( float x = 0; x < 3; x++ )
         {
             Payload p;
-            p.data = format( "x=%f y=%f", x, y );
             Box b = Box( Vector2D( x, y ), Vector2D( 1, 1 ) );
             
             rtree.addObject( b, p );
@@ -552,7 +550,10 @@ unittest
     auto s = rtree.search( search );
     assert( s.length == 9 );
     
+    writeln( "Box size=", Box.sizeof, " Payload size=", Payload.sizeof );
     auto rarr = new RTreeArray( rtree );
-    writeln( rarr.data );
+    foreach( i, c; rarr.data )
+        writeln( i, " ", c );
+        
     writeln( rarr.search( search ) );
 }
