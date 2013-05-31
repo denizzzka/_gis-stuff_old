@@ -85,7 +85,6 @@ pure T unpackVarint( T )( in ubyte* data, out size_t nextElement )
 if( isUnsigned!( T ) )
 {
     alias nextElement i;
-    const (ubyte)* old;
     T res;
     
     do {
@@ -106,10 +105,26 @@ unittest
 }
 
 
-pure ubyte[] packVarint( T )( in T value )
+pure ubyte[] packVarint( T )( T value )
 if( isUnsigned!( T ) )
 {
+    ubyte[] res;
     
+    while( value >= 0b_1000_0000 )
+    {
+        res ~= cast( ubyte )( value | 0b_1000_0000 );
+        value >>= 7;
+    }
+    
+    res ~= cast( ubyte ) value;
+    
+    return res;
+}
+unittest
+{
+    auto v = packVarint!ulong( 300 );
+    assert( v.length == 2 );
+    assert( v == [ 0b_10101100, 0b_00000010 ] );
 }
 
 
