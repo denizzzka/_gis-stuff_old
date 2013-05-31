@@ -215,32 +215,35 @@ class RTreeArray
     {
         if( currDepth == depth ) // adding leafs block?
         {
-            data ~= cast(ubyte) curr.children.length; // save number of leafs
+            // save number of leafs
+            immutable auto len = curr.children.length;
+            assert( len < 128, "Leafs block is too big" );
+            data ~= cast(ubyte) len;
             
             foreach( i, c; curr.children ) // adding leafs
-            {
-                auto s = (cast (RTreePtrs.Leaf*) c).payload.Serialize();
-                data ~= s;
-            }
+                data ~= (cast (RTreePtrs.Leaf*) c).payload.Serialize();
         }
         else // adding nodes
         {
             auto size = new ubyte[ curr.children.length ];
-            auto start = data.length-1;
+            auto nextNode = data.length;
             
             foreach( i, c; curr.children )
             {
-                auto s = c.boundary.Serialize() ~ 0x00; // here will be offset to its child
-                data ~= s;
+                auto s = c.boundary.Serialize() ~ 0x00; // here will be offset to this node child
+                assert( s.length < 128, "Node is too big" );
                 size[i] = cast(ubyte) s.length;
+                data ~= s;
             }
             
-            auto indexPlace = start;
+            auto start = data.length;
             
             foreach( i, c; curr.children )
             {
-                indexPlace += size[i];
-                data[ indexPlace-1 ] = cast(ubyte) (data.length - start); // set offset to the child
+                nextNode += size[i];
+                auto childOffset = data.length - start;
+                assert( childOffset < 128, "Child of node offset is too big" );
+                data[ nextNode-1 ] = cast(ubyte) childOffset;
                 
                 fillFrom( c, currDepth+1 );
             }
