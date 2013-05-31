@@ -92,8 +92,7 @@ if( isUnsigned!( T ) )
         enforce( i < T.sizeof, "Varint is too big for type " ~ T.stringof );
         
         res |= ( data[i] & 0b_01111111 ) << 7 * i;
-        i++;
-    } while( msbIsSet( &data[i-1] ) );
+    } while( msbIsSet( &data[i++] ) );
     
     return res;
 }
@@ -106,13 +105,13 @@ unittest
     assert( next == 2 );
 }
 
-/*
-pure ubyte[] packVarint( T )( T value )
+
+pure ubyte[] packVarint( T )( in T value )
 if( isUnsigned!( T ) )
 {
     
 }
-*/
+
 
 pure size_t parseTag( in ubyte* data, out uint fieldNumber, out WireType wireType )
 {
@@ -138,7 +137,7 @@ unittest
 }
 
 
-pure auto decodeZigZag( T )( T v )
+pure auto decodeZigZag( T )( in T v )
 if( isUnsigned!( T ) )
 {
     Signed!( T ) res = ( v & 1 )
@@ -156,7 +155,7 @@ unittest
 }
 
 
-pure auto encodeZigZag( T )( T v )
+pure auto encodeZigZag( T )( in T v )
 if( isSigned!( T ) )
 {
     Unsigned!( T ) res = ( v > 0 )
