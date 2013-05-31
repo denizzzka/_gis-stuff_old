@@ -81,44 +81,48 @@ unittest
 }
 
 
-pure T unpackVarint( T )( const ubyte* data, out const (ubyte)* nextElement )
+pure T unpackVarint( T )( in ubyte* data, out size_t nextElement )
+if( isUnsigned!( T ) )
 {
-    nextElement = data;
-    size_t i = 0;
+    alias nextElement i;
     const (ubyte)* old;
     T res;
     
     do {
         enforce( i < T.sizeof, "Varint is too big for type " ~ T.stringof );
         
-        res |= ( *nextElement & 0b_01111111 ) << 7 * i;
-        old = nextElement;
-        nextElement++;
+        res |= ( data[i] & 0b_01111111 ) << 7 * i;
         i++;
-    } while( msbIsSet( old ) );
+    } while( msbIsSet( &data[i-1] ) );
     
     return res;
 }
 unittest
 {
     ubyte d[2] = [ 0b_10101100, 0b_00000010 ];
-    const (ubyte)* next;
+    size_t next;
     
     assert( unpackVarint!ulong( &d[0], next ) == 300 );
-    assert( next == &d[0] + 2 );
+    assert( next == 2 );
 }
 
-
-pure const (ubyte)* parseTag( const ubyte* data, out uint fieldNumber, out WireType wireType )
+/*
+pure ubyte[] packVarint( T )( T value )
 {
-    const (ubyte)* nextElement;
+    
+}
+*/
+
+pure size_t parseTag( in ubyte* data, out uint fieldNumber, out WireType wireType )
+{
+    size_t next;
     
     wireType = cast( WireType ) ( *data & 0b_0000_0111 );
     
     // Parses as Varint, but takes the value of first byte and adds its real value without additional load
-    fieldNumber = unpackVarint!uint( data, nextElement ) - ( *data & 0b_1111_1111 ) + (( *data & 0b_0111_1000 ) >> 3 );
+    fieldNumber = unpackVarint!uint( data, next ) - ( *data & 0b_1111_1111 ) + (( *data & 0b_0111_1000 ) >> 3 );
     
-    return nextElement;
+    return next;
 }
 unittest
 {
@@ -129,7 +133,7 @@ unittest
     
     assert( field == 1 );
     assert( wire == WireType.VARINT );
-    assert( res == &d[1] );
+    assert( res == 1 );
 }
 
 
@@ -151,21 +155,23 @@ unittest
 }
 
 
-T[] unpackDelimited( T )( const ubyte* data, out const (ubyte)* nextElement )
+T[] unpackDelimited( T )( const ubyte* data, out size_t next )
 if( T.sizeof == 1 )
 {
     // find start and size of string
-    auto len = unpackVarint!size_t( data, nextElement );
-    auto res = cast( T[] ) nextElement[0..len];
-    nextElement += len;
+    auto str_len = unpackVarint!size_t( data, next );
+    auto end = next + str_len;
+    auto res = cast( T[] ) data[ next .. end ];
+    next = end;
     return res;
 }
 unittest
 {
     ubyte[8] d = [ 0x07, 0x74, 0x65, 0x73, 0x74, 0x69, 0x6e, 0x67 ];
-    const (ubyte)* next;
+    size_t next;
     
     assert( unpackDelimited!char( &d[0], next ) == "testing" );
+    assert( next == 8 );
 }
 
 /* // waiting answer from protobuf google group

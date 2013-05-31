@@ -316,52 +316,66 @@ struct AddressBook
     
     void fillStruct( const ubyte[] messageData )
     {
-        const (ubyte)* next = &messageData[0];
+        /* need to be rewritten:
+         * 
+        size_t next;
         
         // unpackMessage:
-        uint field; WireType wire;
-        next = parseTag( next, field, wire );
+        uint field;
+        WireType wire;
+        
+        next = parseTag( messageData[next], field, wire );
         enforce( wire.LENGTH_DELIMITED, "Wrong wire type" );
-        auto msg = unpackDelimited!ubyte( next, next );
+        
+        auto msg = unpackDelimited!ubyte( messageData[next], next );
         next -= msg.length;
         
         while( next < &messageData[$-1] )
             next = fillField( next );
+        */
     }
     
-    private const (ubyte)* fillField( const ubyte* data )
+    private size_t fillField( const ubyte* data )
     {
         WireType wire;
         uint field;
-        auto next = parseTag( data, field, wire );
+        auto nextItem = parseTag( data, field, wire );
 
         switch( field )
         {
             case 1:
                 enforce( wire == WireType.LENGTH_DELIMITED, "Wrong wire type" );
-                name = unpackDelimited!char( next, next );
+                size_t next;
+                name = unpackDelimited!char( &data[nextItem], next );
+                nextItem += next;
                 break;
                 
             case 2:
                 enforce( wire == WireType.VARINT, "Wrong wire type" );
-                id = unpackVarint!uint( next, next );
+                size_t next;
+                id = unpackVarint!uint( &data[nextItem], next );
+                nextItem += next;
                 break;
                 
             case 3:
                 enforce( wire == WireType.LENGTH_DELIMITED, "Wrong wire type" );
-                email = unpackDelimited!char( next, next );
+                size_t next;
+                email = unpackDelimited!char( &data[nextItem], next );
+                nextItem += next;
                 break;
                 
             case 4:
                 enforce( wire == WireType.LENGTH_DELIMITED, "Wrong wire type" );
-                unpackDelimited!ubyte( next, next );
+                size_t next;
+                unpackDelimited!ubyte( &data[nextItem], next );
+                nextItem += next;
                 break;
                 
             default:
                 break;
         }
         
-        return next;
+        return nextItem;
     }
 }
 
