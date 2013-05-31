@@ -546,8 +546,8 @@ unittest
     
     debug GC.enable();
     
-    Box search = Box( Vector2D( 1, 1 ), Vector2D( 1, 1 ) );
-    auto s = rtree.search( search );
+    Box search1 = Box( Vector2D( 1, 1 ), Vector2D( 1, 1 ) );
+    auto s = rtree.search( search1 );
     assert( s.length == 9 );
     
     writeln( "Box size=", Box.sizeof, " Payload size=", Payload.sizeof );
@@ -555,5 +555,7 @@ unittest
     foreach( i, c; rarr.data )
         writeln( i, " ", c );
         
-    writeln( rarr.search( search ) );
+    Box search2 = Box( Vector2D( 1.1, 1.1 ), Vector2D( 0.8, 0.8 ) );
+    writeln( rarr.search( search2 ) );
+    writeln( rtree.search( search2 ) );
 }
