@@ -517,8 +517,8 @@ unittest
     
     auto rtree = new RTreePtrs;
     
-    for( float y = 0; y < 4; y++ )
-        for( float x = 0; x < 8; x++ )
+    for( float y = 0; y < 3; y++ )
+        for( float x = 0; x < 3; x++ )
         {
             Payload p;
             p.data = format( "x=%f y=%f", x, y );
@@ -537,13 +537,13 @@ unittest
     
     size_t leafs, nodes, leafBlocksNum;
     rtree.statistic( nodes, leafs, leafBlocksNum );
-    assert( leafs == 32 );
-    assert( nodes == 51 );
-    assert( leafBlocksNum == 20 );
+    assert( leafs == 9 );
+    assert( nodes == 13 );
+    assert( leafBlocksNum == 6 );
     
     debug GC.enable();
     
-    Box search = Box( Vector2D( 2, 2 ), Vector2D( 1, 1 ) );
+    Box search = Box( Vector2D( 1, 1 ), Vector2D( 1, 1 ) );
     auto s = rtree.search( search );
     assert( s.length == 9 );
     
