@@ -102,7 +102,7 @@ unittest
     size_t next;
     
     assert( unpackVarint!ulong( &d[0], next ) == 300 );
-    assert( next == 2 );
+    assert( next == d.length );
 }
 
 
