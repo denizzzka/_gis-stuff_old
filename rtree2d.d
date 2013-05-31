@@ -543,12 +543,13 @@ unittest
     debug GC.enable();
     
     Box search1 = Box( Vector2D( 1, 1 ), Vector2D( 1, 1 ) );
-    auto s = rtree.search( search1 );
-    assert( s.length == 9 );
+    Box search2 = Box( Vector2D( 1.1, 1.1 ), Vector2D( 0.8, 0.8 ) );
+    
+    assert( rtree.search( search1 ).length == 9 );
+    assert( rtree.search( search2 ).length == 1 );
     
     auto rarr = new RTreeArray( rtree );
     
-    Box search2 = Box( Vector2D( 1.1, 1.1 ), Vector2D( 0.8, 0.8 ) );
     assert( rarr.search( search1 ).length == 9 );
     assert( rarr.search( search2 ).length == 1 );
 }
