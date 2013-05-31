@@ -309,12 +309,12 @@ class RTreePtrs
         statistic( root, nodesNum, leafsNum, leafBlocksNum );
     }
     
-    debug(rtree)
+    debug
     void showTree( Node* from, uint depth = 0 )
     {
         writeln( "Depth: ", depth );
         
-        if( depth > rtree.depth )
+        if( depth > this.depth )
         {
             writeln( "Leaf: ", from, " parent: ", from.parent );
         }
@@ -533,7 +533,7 @@ unittest
             }
         }
     
-    debug(rtree) showTree( rtree.root );
+    debug(rtree) rtree.showTree( rtree.root );
     
     size_t leafs, nodes, leafBlocksNum;
     rtree.statistic( nodes, leafs, leafBlocksNum );
