@@ -170,18 +170,20 @@ class RTreeArray
         data = fillFrom( s.root, offset );
     }
     
-    Payload[] search( in Box boundary, size_t offset = 0, size_t currDepth = 0 )
+    Payload[] search( in Box boundary, size_t place = 0, size_t currDepth = 0 )
     {
         Payload[] res;
+        size_t offset;
         
-        auto num = unpackVarint!size_t( &data[offset], offset );
+        auto num = unpackVarint!size_t( &data[place], offset );
+        place += offset;
         
         if( currDepth > depth ) // returning leafs
         {
             for( auto i = 0; i < num; i++ )
             {
                 Payload o;
-                offset += o.Deserialize( &data[offset] );
+                place += o.Deserialize( &data[place] );
                 res ~= o;
             }
         }
@@ -191,7 +193,9 @@ class RTreeArray
             
             for( auto i = 0; i < num; i++ )
             {
-                offset += box.Deserialize( &data[offset] );
+                place += box.Deserialize( &data[place] );
+                unpackVarint!size_t( &data[place], offset );
+                place += offset;
                 
                 if( box.isOverlappedBy( boundary ) )
                     res ~= search( boundary, offset, currDepth+1 );
