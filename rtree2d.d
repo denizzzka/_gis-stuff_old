@@ -167,18 +167,18 @@ class RTreeArray
         depth = s.depth;
         
         size_t offset;
-        fillFrom( s.root, offset );
+        data = fillFrom( s.root, offset );
     }
     
     Payload[] search( in Box boundary, size_t offset = 0, size_t currDepth = 0 )
     {
         Payload[] res;
         
-        if( currDepth == depth ) // returning leafs
+        auto num = unpackVarint!size_t( &data[offset], offset );
+        
+        if( currDepth > depth ) // returning leafs
         {
-            auto leafs = data[ offset ];
-            
-            for( auto i = 0; i < leafs; i++ )
+            for( auto i = 0; i < num; i++ )
             {
                 Payload o;
                 offset += o.Deserialize( &data[offset] );
@@ -187,23 +187,15 @@ class RTreeArray
         }
         else // searching in nodes
         {
-            Box testBox;
-            bool msb;
+            Box box;
             
-            do
+            for( auto i = 0; i < num; i++ )
             {
-                offset += testBox.Deserialize( &data[offset] );
-                size_t jumpTo;
+                offset += box.Deserialize( &data[offset] );
                 
-                if( testBox.isOverlappedBy( boundary ) )
-                {
-                    // check msb
-                    offset++;
-                    msb = btr( cast(size_t*) &data[ offset ], 7 ) != 0;
-                    res ~= search( boundary, offset + data[ offset ], currDepth+1 );
-                }
-                
-            } while( msb );
+                if( box.isOverlappedBy( boundary ) )
+                    res ~= search( boundary, offset, currDepth+1 );
+            }
         }
         
         return res;
@@ -211,43 +203,39 @@ class RTreeArray
         
     private:
     
-    void fillFrom( RTreePtrs.Node* curr, size_t currDepth = 0 )
+    ubyte[] fillFrom( RTreePtrs.Node* curr, size_t currDepth = 0 )
     {
+        ubyte[] res = packVarint( curr.children.length ); // number of items
+        
         if( currDepth == depth ) // adding leafs block?
         {
-            // save number of leafs
-            immutable auto len = curr.children.length;
-            assert( len < 128, "Leafs block is too big" );
-            data ~= cast(ubyte) len;
-            
             foreach( i, c; curr.children ) // adding leafs
-                data ~= (cast (RTreePtrs.Leaf*) c).payload.Serialize();
+                res ~= (cast (RTreePtrs.Leaf*) c).payload.Serialize();
         }
         else // adding nodes
         {
-            auto size = new ubyte[ curr.children.length ];
-            auto nextNode = data.length;
+            auto offset = new size_t[ curr.children.length ];
+            ubyte[] nodes;
             
             foreach( i, c; curr.children )
             {
-                auto s = c.boundary.Serialize() ~ 0x00; // here will be offset to this node child
-                assert( s.length < 128, "Node is too big" );
-                size[i] = cast(ubyte) s.length;
-                data ~= s;
+                offset[i] = nodes.length;
+                nodes ~= fillFrom( c, currDepth+1 );
             }
             
-            auto start = data.length;
+            ubyte[] boundaries;
             
-            foreach( i, c; curr.children )
+            foreach_reverse( i, c; curr.children )
             {
-                nextNode += size[i];
-                auto childOffset = data.length - start;
-                assert( childOffset < 128, "Child of node offset is too big" );
-                data[ nextNode-1 ] = cast(ubyte) childOffset;
-                
-                fillFrom( c, currDepth+1 );
+                auto s = c.boundary.Serialize();
+                s ~= packVarint( offset[i] + boundaries.length );
+                boundaries = s ~ boundaries;
             }
+            
+            res ~= boundaries ~ nodes;
         }
+        
+        return res;
     }
 }
 
