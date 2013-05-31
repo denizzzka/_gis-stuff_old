@@ -81,27 +81,26 @@ unittest
 }
 
 
-pure T unpackVarint( T )( in ubyte* data, out size_t nextElement )
+pure size_t unpackVarint( T )( in ubyte* data, out T result )
 if( isUnsigned!( T ) )
 {
-    alias nextElement i;
-    T res;
+    size_t i;
     
     do {
         enforce( i < T.sizeof, "Varint is too big for type " ~ T.stringof );
         
-        res |= ( data[i] & 0b_01111111 ) << 7 * i;
+        result |= ( data[i] & 0b_0111_1111 ) << 7 * i;
     } while( msbIsSet( &data[i++] ) );
     
-    return res;
+    return i;
 }
 unittest
 {
     ubyte d[2] = [ 0b_10101100, 0b_00000010 ];
-    size_t next;
+    size_t result;
     
-    assert( unpackVarint!ulong( &d[0], next ) == 300 );
-    assert( next == d.length );
+    assert( unpackVarint!ulong( &d[0], result ) == d.length );
+    assert( result == 300 );
 }
 
 
@@ -130,12 +129,13 @@ unittest
 
 pure size_t parseTag( in ubyte* data, out uint fieldNumber, out WireType wireType )
 {
-    size_t next;
-    
     wireType = cast( WireType ) ( *data & 0b_0000_0111 );
     
+    uint v;
+    auto next = unpackVarint( data, v );
+    
     // Parses as Varint, but takes the value of first byte and adds its real value without additional load
-    fieldNumber = unpackVarint!uint( data, next ) - ( *data & 0b_1111_1111 ) + (( *data & 0b_0111_1000 ) >> 3 );
+    fieldNumber = v - ( *data & 0b_1111_1111 ) + (( *data & 0b_0111_1000 ) >> 3 );
     
     return next;
 }
@@ -192,7 +192,8 @@ T[] unpackDelimited( T )( const ubyte* data, out size_t next )
 if( T.sizeof == 1 )
 {
     // find start and size of string
-    auto str_len = unpackVarint!size_t( data, next );
+    size_t str_len;
+    next = unpackVarint( data, str_len );
     auto end = next + str_len;
     auto res = cast( T[] ) data[ next .. end ];
     next = end;

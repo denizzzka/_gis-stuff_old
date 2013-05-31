@@ -352,9 +352,7 @@ struct AddressBook
                 
             case 2:
                 enforce( wire == WireType.VARINT, "Wrong wire type" );
-                size_t next;
-                id = unpackVarint!uint( &data[nextItem], next );
-                nextItem += next;
+                nextItem += unpackVarint!uint( &data[nextItem], id );
                 break;
                 
             case 3:
