@@ -167,6 +167,11 @@ if( isSigned!( T ) )
     
     return res;
 }
+unittest
+{
+    assert( encodeZigZag!long( 2147483647 ) == 4294967294 );
+    assert( encodeZigZag!long( -2147483648 ) == 4294967295 );
+}
 
 
 T[] unpackDelimited( T )( const ubyte* data, out size_t next )
