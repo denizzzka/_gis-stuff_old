@@ -85,14 +85,14 @@ pure size_t unpackVarint( T )( in ubyte* data, out T result )
 if( isUnsigned!( T ) )
 {
     size_t i;
-    size_t control; // for overflow checking
+    size_t res; // big sized type used also for overflow checking
     
     do {
-        auto to_add = ( data[i] & 0b_0111_1111 ) << 7 * i;
-        control |= to_add;
-        enforce( control <= T.max, "Varint is too big for type " ~ T.stringof );
-        result |= to_add;
+        res |= ( data[i] & 0b_0111_1111 ) << 7 * i;
+        enforce( res <= T.max, "Varint is too big for type " ~ T.stringof );
     } while( msbIsSet( &data[i++] ) );
+    
+    result = cast(T) res;
     
     return i;
 }
