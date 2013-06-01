@@ -1,6 +1,6 @@
-module rtree2d;
+module math.rtree2d;
 
-import protobuf;
+import protobuf.runtime;
 
 import std.algorithm;
 debug import std.stdio;
