@@ -470,7 +470,7 @@ class RTreePtrs
             {
                 auto boundary = n.children[j].boundary;
                 
-                if( bt( cast( ulong* ) &i, j ) == 0 )
+                if( bt( cast( size_t* ) &i, j ) == 0 )
                     b1 = b1.getCircumscribed( boundary );
                 else
                     b2 = b2.getCircumscribed( boundary );
@@ -497,7 +497,7 @@ class RTreePtrs
         {
             auto c = nChildren[i];
             
-            if( bt( cast( ulong* ) &minAreaKey, i ) == 0 )
+            if( bt( cast( size_t* ) &minAreaKey, i ) == 0 )
                 n.assignChild( c );
             else
                 newNode.assignChild( c );

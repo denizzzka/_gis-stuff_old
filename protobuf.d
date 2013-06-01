@@ -40,7 +40,7 @@ pure bool msbIsSet( const ubyte* a )
 {
     import core.bitop: bt;
     
-    return bt( cast(ulong*) a, 7 ) != 0;
+    return bt( cast(size_t*) a, 7 ) != 0;
 }
 unittest
 {
@@ -55,7 +55,7 @@ void msbSet( ubyte* a )
 {
     import core.bitop: bts;
     
-    enforce( !bts( cast(ulong*) a, 7 ), "MSB is already set" );
+    enforce( !bts( cast(size_t*) a, 7 ), "MSB is already set" );
 }
 unittest
 {
@@ -99,7 +99,7 @@ unittest
     ubyte d[2] = [ 0b_10101100, 0b_00000010 ];
     size_t result;
     
-    assert( unpackVarint!ulong( &d[0], result ) == d.length );
+    assert( unpackVarint( &d[0], result ) == d.length );
     assert( result == 300 );
 }
 
