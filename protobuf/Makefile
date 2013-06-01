@@ -1,13 +1,16 @@
 DC = dmd
 
-.PHONY: all
+ifeq ($(ARGS),"")
+	ARGS = "-release"
+endif
+
 all: lib compiler
 
 lib:
-	$(DC) -lib -oflibprotobuf runtime.d
+	$(DC) $(ARGS) -lib -oflibprotobuf runtime.d
 
 compiler:
-	$(DC) -L-lprotobuf -ofcompiler runtime.d compiler.d
+	$(DC) $(ARGS) -L-lprotobuf -ofcompiler runtime.d compiler.d
 
 clean:
 	rm -rf *.o *.a compiler
