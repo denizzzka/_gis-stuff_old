@@ -118,41 +118,12 @@ unittest
     assert( box2 == box1 );
 }
 
-struct Payload
-{
-    char[6] data = [ 0x58, 0x58, 0x58, 0x58, 0x58, 0x58 ];
-    
-    ubyte[] Serialize() /// TODO: real serialization
-    {
-        ubyte res[] = (cast (ubyte*) &this) [ 0 .. this.sizeof ];
-        return res;
-    }
-    
-    size_t Deserialize( ubyte* data ) /// TODO: real serialization
-    {
-        (cast (ubyte*) &this)[ 0 .. this.sizeof] = data[ 0 .. this.sizeof ].dup;
-        
-        return this.sizeof;
-    }
-}
-unittest
-{
-    Payload a;
-    Payload b;
-    
-    auto serialized = &(a.Serialize())[0];
-    auto size = b.Deserialize( serialized );
-    
-    assert( size == a.sizeof );
-    assert( a == b );
-}
-
-class RTreeArray
+class RTreeArray( Payload )
 {
     ubyte depth = 0;
     ubyte[] data;
     
-    this( RTreePtrs source )
+    this( RTreePtrs!Payload source )
     in
     {
         size_t nodes, leafs, leafsBlocks;
@@ -202,15 +173,15 @@ class RTreeArray
         return res;
     }
         
-    private:
+private:
     
-    ubyte[] fillFrom( RTreePtrs.Node* curr, size_t currDepth = 0 )
+    ubyte[] fillFrom( RTreePtrs!Payload.Node* curr, size_t currDepth = 0 )
     {
         ubyte[] res = packVarint( curr.children.length ); // number of items
         
         if( currDepth > depth ) // adding leaf?
         {
-            res ~= (cast (RTreePtrs.Leaf*) curr).payload.Serialize();
+            res ~= (cast (RTreePtrs!Payload.Leaf*) curr).payload.Serialize();
         }
         else // adding node
         {
@@ -240,7 +211,7 @@ class RTreeArray
 }
 
 
-class RTreePtrs
+class RTreePtrs( Payload )
 {
     immutable ubyte maxChildren = 2;
     ubyte depth = 0;
@@ -329,7 +300,7 @@ class RTreePtrs
         }
     }
     
-    private:
+private:
     
     Leaf*[] search( in Box boundary, const (Node)* curr, size_t currDepth = 0 )
     {
@@ -503,24 +474,61 @@ class RTreePtrs
                 newNode.assignChild( c );
         }
         
-        debug(rtptrs) writeln( "Split node ", n, " ", n.children, ", new ", newNode, " ", newNode.children );
-        stdout.flush();
+        debug(rtptrs)
+        {
+            writeln( "Split node ", n, " ", n.children, ", new ", newNode, " ", newNode.children );
+            stdout.flush();
+        }
         
         return newNode;
     }
 }
+
+
+version(unittest)
+{
+    struct DumbPayload
+    {
+        char[6] data = [ 0x58, 0x58, 0x58, 0x58, 0x58, 0x58 ];
+        
+        ubyte[] Serialize() /// TODO: real serialization
+        {
+            ubyte res[] = (cast (ubyte*) &this) [ 0 .. this.sizeof ];
+            return res;
+        }
+        
+        size_t Deserialize( ubyte* data ) /// TODO: real serialization
+        {
+            (cast (ubyte*) &this)[ 0 .. this.sizeof] = data[ 0 .. this.sizeof ].dup;
+            
+            return this.sizeof;
+        }
+    }
+    unittest
+    {
+        DumbPayload a;
+        DumbPayload b;
+        
+        auto serialized = &(a.Serialize())[0];
+        auto size = b.Deserialize( serialized );
+        
+        assert( size == a.sizeof );
+        assert( a == b );
+    }
+}
+
 
 unittest
 {
     import core.memory;
     debug GC.disable();    
     
-    auto rtree = new RTreePtrs;
+    auto rtree = new RTreePtrs!DumbPayload;
     
     for( float y = 0; y < 3; y++ )
         for( float x = 0; x < 3; x++ )
         {
-            Payload p;
+            DumbPayload p;
             Box b = Box( Vector2D( x, y ), Vector2D( 1, 1 ) );
             
             rtree.addObject( b, p );
@@ -548,7 +556,7 @@ unittest
     assert( rtree.search( search1 ).length == 9 );
     assert( rtree.search( search2 ).length == 1 );
     
-    auto rarr = new RTreeArray( rtree );
+    auto rarr = new RTreeArray!DumbPayload( rtree );
     
     assert( rarr.search( search1 ).length == 9 );
     assert( rarr.search( search2 ).length == 1 );
