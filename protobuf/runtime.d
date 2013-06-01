@@ -85,11 +85,13 @@ pure size_t unpackVarint( T )( in ubyte* data, out T result )
 if( isUnsigned!( T ) )
 {
     size_t i;
+    size_t control; // for overflow checking
     
     do {
-        enforce( i < T.sizeof, "Varint is too big for type " ~ T.stringof );
-        
-        result |= ( data[i] & 0b_0111_1111 ) << 7 * i;
+        auto to_add = ( data[i] & 0b_0111_1111 ) << 7 * i;
+        control |= to_add;
+        enforce( control <= T.max, "Varint is too big for type " ~ T.stringof );
+        result |= to_add;
     } while( msbIsSet( &data[i++] ) );
     
     return i;
