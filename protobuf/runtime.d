@@ -1,4 +1,4 @@
-module protobuf;
+module protobuf.runtime;
 
 import std.exception;
 import std.traits;

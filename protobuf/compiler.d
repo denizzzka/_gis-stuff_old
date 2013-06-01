@@ -1,6 +1,7 @@
-module compiler;
+module protobuf.compiler;
 
-import protobuf;
+import protobuf.runtime;
+
 import std.array;
 import std.regex;
 import std.exception;
