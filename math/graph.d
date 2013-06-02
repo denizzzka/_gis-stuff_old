@@ -20,3 +20,9 @@ struct Node
     Vector2D coords;
     Knot[] knots;
 }
+
+
+class Graph
+{
+    Node* root;
+}
