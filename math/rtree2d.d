@@ -130,7 +130,7 @@ class RTreePtrs( Payload )
     {
         Node* parent;
         Box boundary;
-        immutable Payload payload;
+        Payload payload;
         
         this( in Box boundary, in Payload payload )
         {
