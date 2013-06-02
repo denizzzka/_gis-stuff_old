@@ -1,19 +1,21 @@
 module math.graph;
 
 import math.geometry;
+import math.rtree2d;
 
 
-class Graph( Point, Payload )
+class Graph( Point, Weight, Payload )
 {
 private:
 
     Node*[] entry; // entry points
+    RTreePtrs!Node rtree; // for fast node search
     
 public:
     
     struct Edge
     {
-        const float weight;
+        const Weight weight;
         const Node* node;
         
         invariant()
@@ -30,6 +32,16 @@ public:
         Edge[] edges;
         Payload payload;
     }
+    
+    this()
+    {
+        rtree = new RTreePtrs!Node;
+    }
+    
+    void addEdge( in Point from, in Point to, in Weight w )
+    {
+        
+    }
 }
 
 unittest
@@ -45,7 +57,7 @@ unittest
         }
     }
     
-    alias Graph!( Coords, string ) G;
+    alias Graph!( Coords, float, string ) G;
     
     auto g = new G;
     G.Node* prev;

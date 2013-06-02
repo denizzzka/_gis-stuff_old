@@ -133,7 +133,7 @@ class RTreePtrs( Payload )
         Box boundary;
         Payload payload;
         
-        this( in Box boundary, in Payload payload )
+        this( in Box boundary, Payload payload )
         {
             this.boundary = boundary;
             this.payload = payload;
