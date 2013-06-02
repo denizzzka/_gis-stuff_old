@@ -3,7 +3,7 @@ module math.graph;
 import math.geometry;
 
 
-class Graph( Point )
+class Graph( Point, Payload )
 {
 private:
 
@@ -22,21 +22,13 @@ public:
         }
     }
     
-    
     struct Node
     {
         const Point point;
         
-        void addEdge( in Node* n, in float weight )
-        {
-            Edge e = { node: n, weight: weight };
-            edges ~= e;
-        }
-        
     private:
-
         Edge[] edges;
-        string payload = "123";
+        Payload payload;
     }
 }
 
@@ -53,7 +45,7 @@ unittest
         }
     }
     
-    alias Graph!Coords G;
+    alias Graph!( Coords, string ) G;
     
     auto g = new G;
     G.Node* prev;
