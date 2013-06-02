@@ -18,11 +18,22 @@ struct Edge
 struct Node
 {
     Vector2D coords;
-    Knot[] knots;
+    Edge[] edges;
 }
 
 
 class Graph
 {
     Node* root;
+}
+
+unittest
+{
+    auto g = new Graph;
+    
+    for( auto y=0; y<3; y++ )
+        for( auto x=0; x<3; x++ )
+        {
+            Node n = { coords: Vector2D(x, y) };
+        }
 }
