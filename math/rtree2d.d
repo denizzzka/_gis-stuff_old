@@ -114,22 +114,26 @@ class RTreePtrs( Payload )
     
     static struct Node
     {
+    private:    
+        Node* parent;
+        Box boundary;
+        Node*[] children;
+        
+    public:
         void assignChild( Node* child )
         {
             children ~= child;
             boundary = boundary.getCircumscribed( child.boundary );
             child.parent = &this;
         }
-        
-    private:    
-        Node* parent;
-        Box boundary;
-        Node*[] children;
     }
     
     static struct Leaf
     {
+    private:
         Node* parent;
+        
+    public:
         Box boundary;
         Payload payload;
         
@@ -140,7 +144,7 @@ class RTreePtrs( Payload )
         }
     }
     
-    void addObject( Box boundary, Payload o )
+    Payload* addObject( Box boundary, Payload o )
     {
         // unconditional add a leaf
         auto place = selectLeafPlace( boundary );
@@ -151,6 +155,8 @@ class RTreePtrs( Payload )
         
         // correction of the tree
         correct( place );
+        
+        return &l.payload;
     }
 
     Leaf*[] search( in Box boundary )

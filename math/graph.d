@@ -27,8 +27,6 @@ public:
     struct Node
     {
         const Point point;
-        
-    private:
         Edge[] edges;
         Payload payload;
     }
@@ -40,8 +38,26 @@ public:
     
     void addEdge( in Point from, in Point to, in Weight w )
     {
-        auto bbox = Box( from.coords, Vector2D(0,0) );
+        Node* f = addPoint( from );
+        Node* t = addPoint( to );
+        
+        Edge e = { node: t, weight: w };
+        
+        f.edges ~= e;
+    }
+    
+private:
+    Node* addPoint( in Point point )
+    {
+        auto bbox = Box( point.coords, Vector2D(0,0) );
         auto r = rtree.search( bbox );
+        
+        foreach( i, c; r )
+            if( c.payload.point == point )
+                return &c.payload;
+                
+        Node n = Node( point );
+        return rtree.addObject( bbox, n );
     }
 }
 
@@ -50,11 +66,10 @@ unittest
     struct Coords
     {
         Vector2D coords;
-        byte level;
         
-        bool opEquals( Coords a, Coords b )
+        bool opEquals( in Coords c ) const
         {
-            return a.coords == b.coords && a.level == b.level;
+            return coords == c.coords;
         }
     }
     
