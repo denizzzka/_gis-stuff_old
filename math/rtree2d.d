@@ -114,16 +114,17 @@ class RTreePtrs( Payload )
     
     static struct Node
     {
-        Node* parent;
-        Box boundary;
-        Node*[] children;
-    
         void assignChild( Node* child )
         {
             children ~= child;
             boundary = boundary.getCircumscribed( child.boundary );
             child.parent = &this;
         }
+        
+    private:    
+        Node* parent;
+        Box boundary;
+        Node*[] children;
     }
     
     static struct Leaf
