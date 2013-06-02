@@ -40,7 +40,8 @@ public:
     
     void addEdge( in Point from, in Point to, in Weight w )
     {
-        
+        auto bbox = Box( from.coords, Vector2D(0,0) );
+        auto r = rtree.search( bbox );
     }
 }
 
