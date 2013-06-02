@@ -130,9 +130,9 @@ class RTreePtrs( Payload )
     {
         Node* parent;
         Box boundary;
-        Payload payload;
+        immutable Payload payload;
         
-        this( in Box boundary, Payload payload )
+        this( in Box boundary, in Payload payload )
         {
             this.boundary = boundary;
             this.payload = payload;
@@ -381,7 +381,7 @@ version(unittest)
     {
         char[6] data = [ 0x58, 0x58, 0x58, 0x58, 0x58, 0x58 ];
         
-        ubyte[] Serialize() /// TODO: real serialization
+        ubyte[] Serialize() const /// TODO: real serialization
         {
             ubyte res[] = (cast (ubyte*) &this) [ 0 .. this.sizeof ];
             return res;
