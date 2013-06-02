@@ -3,47 +3,71 @@ module math.graph;
 import math.geometry;
 
 
-struct Edge
+class Graph( Point )
 {
-    const float weight;
-    const Node* node;
+private:
+
+    Node*[] entry; // entry points
     
-    invariant()
-    {
-        assert( weight >= 0 );
-    }
-}
-
-
-struct Node
-{
-    Vector2D coords;
-    Edge[] edges;
-    string payload;
+public:
     
-    void addPathToEdge( in Node* n, in float weight )
+    struct Edge
     {
-        Edge e = { node: n, weight: weight };
+        const float weight;
+        const Node* node;
+        
+        invariant()
+        {
+            assert( weight >= 0 );
+        }
     }
-}
+    
+    
+    struct Node
+    {
+        const Point point;
+        
+        void addEdge( in Node* n, in float weight )
+        {
+            Edge e = { node: n, weight: weight };
+            edges ~= e;
+        }
+        
+    private:
 
-
-class Graph
-{
-    Node* root;
+        Edge[] edges;
+        string payload = "123";
+    }
 }
 
 unittest
 {
-    auto g = new Graph;
-    Node* prev;
+    struct Coords
+    {
+        Vector2D coords;
+        byte level;
+        
+        bool opEquals( Coords a, Coords b )
+        {
+            return a.coords == b.coords && a.level == b.level;
+        }
+    }
+    
+    alias Graph!Coords G;
+    
+    auto g = new G;
+    G.Node* prev;
     
     for( auto y=0; y<3; y++ )
         for( auto x=0; x<3; x++ )
         {
-            Node n = { coords: Vector2D(x, y) };
+            /*
+            G.Node n = { coords: Vector2D(x, y) };
             
-            //if( prev )
+            if( prev )
                 
+            
+            prev = n;
+            */
         }
 }
