@@ -44,6 +44,15 @@ public:
         Edge e = { node: t, weight: w };
         
         f.edges ~= e;
+        
+        if( entry.length == 0 )
+        {
+            entry ~= f;
+        }
+        else
+        {
+            // тут сделать поиск пути от каждого entry[] до t и если пути нет то entry ~= t;
+        }
     }
     
 private:
