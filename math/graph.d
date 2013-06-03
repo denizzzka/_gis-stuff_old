@@ -48,6 +48,10 @@ public:
         if( entry.length == 0 ) entry ~= f; // TODO: заменить на вышенаписанное
     }
     
+    void searchPath( Point from, Point to )
+    {
+    }
+    
 private:
     Node* addPoint( in Point point )
     {

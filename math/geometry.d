@@ -1,6 +1,7 @@
 module math.geometry;
 
 import std.algorithm;
+import std.math;
 
 
 struct Vector2D
@@ -10,6 +11,42 @@ struct Vector2D
     
     alias x lon;
     alias y lat;
+    
+    Vector2D opBinary( string op )( Vector2D v )
+    {
+        static if( op == "+" )
+            return Vector2D( x + v.x, y + v.y );
+        else static if( op == "-" )
+            return Vector2D( x - v.x, y - v.y );
+        else
+            static assert( false, "op not found" );
+    }
+    
+    void opOpAssign( string op )( Vector2D v )
+    {
+        static if( op == "+" )
+            x += v.x, y += v.y;
+        else static if( op == "-" )
+            x -= v.x, y -= v.y;
+        else
+            static assert( false, "op not found" );
+    }
+    
+    auto length()
+    {
+        return hypot( x, y );
+    }
+}
+unittest
+{
+    Vector2D a = { x: 3, y: 2 };
+    Vector2D b = { x: -2, y: 2 };
+    
+    auto c = a - b;
+    a -= b;
+    
+    assert( c == a );
+    assert( a.length() == 5 );
 }
 
 struct Box
