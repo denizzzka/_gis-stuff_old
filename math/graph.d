@@ -8,9 +8,9 @@ import std.algorithm;
 class Graph( Point, Weight, Payload )
 {
 private:
-
+    
     Node*[] entry; // entry points
-    RTreePtrs!Node rtree; // for fast node search
+    Node[const Point] points;
     
 public:
     
@@ -32,11 +32,6 @@ public:
         Payload payload;
     }
     
-    this()
-    {
-        rtree = new RTreePtrs!Node;
-    }
-    
     void addEdge( in Point from, in Point to, in Weight w )
     {
         Node* f = addPoint( from );
@@ -47,6 +42,11 @@ public:
         
         // тут сделать поиск пути от каждого entry[] до t и если пути нет то entry ~= t;
         if( entry.length == 0 ) entry ~= f; // TODO: заменить на вышенаписанное
+    }
+    
+    Node* search( in Point point )
+    {
+        return ( point in points )? &points[point] : null;
     }
     
     const (Node*)[] findPath( in Node* start, in Node* goal )
@@ -110,15 +110,13 @@ public:
 private:
     Node* addPoint( in Point point )
     {
-        auto bbox = Box( point.coords, Vector2D(0,0) );
-        auto r = rtree.search( bbox );
+        if( point !in points )
+        {
+            Node n = { point: point };
+            points[point] = n;
+        }
         
-        foreach( i, c; r )
-            if( c.payload.point == point )
-                return &c.payload;
-                
-        Node n = Node( point );
-        return rtree.addObject( bbox, n );
+        return &points[point];
     }
     
     const (Node*)[] reconstructPath( in Node*[Node*] came_from, const (Node)* curr )
@@ -162,4 +160,15 @@ unittest
             g.addEdge( prev, curr, 10 );
             prev = curr;
         }
+        
+    DumbPoint f_p = { Vector2D(1,0) };
+    DumbPoint g_p = { Vector2D(2,2) };
+    
+    auto from = g.search( f_p );
+    auto goal = g.search( g_p );
+    
+    auto s = g.findPath( from, goal );
+    
+    import std.stdio;
+    writeln( s );
 }
