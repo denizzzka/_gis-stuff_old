@@ -49,6 +49,7 @@ unittest
     assert( a.length() == 5 );
 }
 
+
 struct Box
 {
     Vector2D leftDownCorner;
@@ -128,6 +129,7 @@ struct Box
         return this.sizeof;
     }
 }
+
 
 unittest
 {
