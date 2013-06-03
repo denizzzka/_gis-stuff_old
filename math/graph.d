@@ -51,7 +51,7 @@ public:
     
     void searchPath( in Node* start, in Node* goal )
     {
-        Node*[] closed; // The set of nodes already evaluated
+        const (Node)*[] closed; // The set of nodes already evaluated
         const (Node)*[] open; // The set of tentative nodes to be evaluated
         Node*[Node*] came_from; // Navigated nodes
         float[Node*] g_score; // Cost from start along best known path
@@ -76,12 +76,24 @@ public:
                 }
                 
             const (Node)* curr = open[k];
-            open.remove(k);
             
             if( curr == goal )
                 return; // TODO
-                
             
+            open.remove(k);
+            closed ~= curr;
+            
+            foreach( i, e; curr.edges )
+            {
+                auto neighbor = e.node;
+                
+                auto tentative = g_score[curr] + curr.point.heuristic( neighbor.point );
+                
+                if( canFind( closed, neighbor ) && tentative >= g_score[neighbor] )
+                {
+                    
+                }
+            }
         }
     }
     
