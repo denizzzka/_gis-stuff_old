@@ -49,38 +49,36 @@ public:
         if( entry.length == 0 ) entry ~= f; // TODO: заменить на вышенаписанное
     }
     
-    void searchPath( in Node* start, in Node* goal )
+    const (Node*)[] findPath( in Node* start, in Node* goal )
     {
-        const (Node)*[] closed; // The set of nodes already evaluated
         const (Node)*[] open; // The set of tentative nodes to be evaluated
-        const (Node)*[Node*] came_from; // Navigated nodes
-        float[Node*] g_score; // Cost from start along best known path
-        float[Node*] f_score; // // Estimated total cost from start to goal through node
-        
-        Node* res;
+        const (Node*)[] closed; // The set of nodes already evaluated
+        const (Node*)[Node*] came_from; // Navigated nodes
+        const (float)[Node*] g_score; // Cost from start along best known path
+        const (float)[Node*] full_score; // // Estimated total cost from start to goal through node
         
         open ~= start;
         g_score[start] = 0;
-        f_score[start] = g_score[start] + start.point.heuristic( goal.point );
+        full_score[start] = start.point.heuristic( goal.point );
         
         while( open.length > 0 )
         {
             // Search for open node having the lowest heuristic value
-            size_t k;
-            float k_score;
+            size_t key;
+            float key_score;
             foreach( i, n; open )
-                if( f_score[n] < k_score )
+                if( full_score[n] < key_score )
                 {
-                    k = i;
-                    k_score = f_score[n];
+                    key = i;
+                    key_score = full_score[n];
                 }
                 
-            const (Node)* curr = open[k];
+            const (Node)* curr = open[key];
             
             if( curr == goal )
-                return; // TODO
+                return reconstructPath( came_from, goal );
             
-            open.remove(k);
+            open.remove(key);
             closed ~= curr;
             
             foreach( i, e; curr.edges )
@@ -96,7 +94,7 @@ public:
                     {
                         came_from[neighbor] = curr;
                         g_score[neighbor] = tentative;
-                        f_score[neighbor] = tentative +  neighbor.point.heuristic( goal.point );
+                        full_score[neighbor] = tentative +  neighbor.point.heuristic( goal.point );
                         
                         if( !canFind( open, neighbor ) )
                             open ~= neighbor;
@@ -105,6 +103,8 @@ public:
             
             assert( false, "bug detected" );
         }
+        
+        assert( false, "bug detected" );
     }
     
 private:
@@ -121,9 +121,9 @@ private:
         return rtree.addObject( bbox, n );
     }
     
-    auto reconstructPath( Node*[Node*] came_from, const (Node)* curr )
+    const (Node*)[] reconstructPath( in Node*[Node*] came_from, const (Node)* curr )
     {
-        typeof(curr)[] res;
+        const (Node*)[] res;
         
         do
             res ~= curr;
