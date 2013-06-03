@@ -12,7 +12,7 @@ struct Vector2D
     alias x lon;
     alias y lat;
     
-    Vector2D opBinary( string op )( Vector2D v )
+    Vector2D opBinary( string op )( in Vector2D v )
     {
         static if( op == "+" )
             return Vector2D( x + v.x, y + v.y );
@@ -22,7 +22,7 @@ struct Vector2D
             static assert( false, "op not found" );
     }
     
-    void opOpAssign( string op )( Vector2D v )
+    void opOpAssign( string op )( in Vector2D v )
     {
         static if( op == "+" )
             x += v.x, y += v.y;
