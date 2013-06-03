@@ -3,6 +3,7 @@ module math.graph;
 import math.geometry;
 import math.rtree2d;
 
+import std.algorithm;
 
 class Graph( Point, Weight, Payload )
 {
@@ -48,9 +49,40 @@ public:
         if( entry.length == 0 ) entry ~= f; // TODO: заменить на вышенаписанное
     }
     
-    void searchPath( Point from, Point to )
+    void searchPath( in Node* start, in Node* goal )
     {
+        Node*[] closed; // The set of nodes already evaluated
+        const (Node)*[] open; // The set of tentative nodes to be evaluated
+        Node*[Node*] came_from; // Navigated nodes
+        float[Node*] g_score; // Cost from start along best known path
+        float[Node*] f_score; // // Estimated total cost from start to goal through node
         
+        Node* res;
+        
+        open ~= start;
+        g_score[start] = 0;
+        f_score[start] = g_score[start] + start.point.heuristic( goal.point );
+        
+        while( open.length > 0 )
+        {
+            // Search for open node having the lowest heuristic value
+            size_t k;
+            float k_score;
+            foreach( i, n; open )
+                if( f_score[n] < k_score )
+                {
+                    k = i;
+                    k_score = f_score[n];
+                }
+                
+            const (Node)* curr = open[k];
+            open.remove(k);
+            
+            if( curr == goal )
+                return; // TODO
+                
+            
+        }
     }
     
 private:
@@ -79,7 +111,7 @@ unittest
             return coords == v.coords;
         }
         
-        float heuristic( in DumbPoint v )
+        float heuristic( in DumbPoint v ) const
         {
             return (coords - v.coords).length;
         }
