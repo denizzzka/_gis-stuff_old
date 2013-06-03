@@ -53,7 +53,7 @@ public:
     {
         const (Node)*[] closed; // The set of nodes already evaluated
         const (Node)*[] open; // The set of tentative nodes to be evaluated
-        Node*[Node*] came_from; // Navigated nodes
+        const (Node)*[Node*] came_from; // Navigated nodes
         float[Node*] g_score; // Cost from start along best known path
         float[Node*] f_score; // // Estimated total cost from start to goal through node
         
@@ -90,10 +90,20 @@ public:
                 auto tentative = g_score[curr] + curr.point.heuristic( neighbor.point );
                 
                 if( canFind( closed, neighbor ) && tentative >= g_score[neighbor] )
-                {
-                    
-                }
+                    continue;
+                else
+                    if( !canFind( open, neighbor ) || tentative < g_score[neighbor] )
+                    {
+                        came_from[neighbor] = curr;
+                        g_score[neighbor] = tentative;
+                        f_score[neighbor] = tentative +  neighbor.point.heuristic( goal.point );
+                        
+                        if( !canFind( open, neighbor ) )
+                            open ~= neighbor;
+                    }
             }
+            
+            assert( false, "bug detected" );
         }
     }
     
@@ -109,6 +119,17 @@ private:
                 
         Node n = Node( point );
         return rtree.addObject( bbox, n );
+    }
+    
+    auto reconstructPath( Node*[Node*] came_from, const (Node)* curr )
+    {
+        typeof(curr)[] res;
+        
+        do
+            res ~= curr;
+        while( curr in came_from, curr = came_from[curr] );
+        
+        return res;
     }
 }
 
