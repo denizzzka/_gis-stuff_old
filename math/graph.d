@@ -50,6 +50,7 @@ public:
     
     void searchPath( Point from, Point to )
     {
+        
     }
     
 private:
@@ -69,25 +70,30 @@ private:
 
 unittest
 {
-    struct Coords
+    struct DumbPoint
     {
         Vector2D coords;
         
-        bool opEquals( in Coords c ) const
+        bool opEquals( in DumbPoint v ) const
         {
-            return coords == c.coords;
+            return coords == v.coords;
+        }
+        
+        float heuristic( in DumbPoint v )
+        {
+            return (coords - v.coords).length;
         }
     }
     
-    alias Graph!( Coords, float, string ) G;
+    alias Graph!( DumbPoint, float, string ) G;
     
     auto g = new G;
-    Coords prev;
+    DumbPoint prev;
     
     for( auto y=0; y<3; y++ )
         for( auto x=0; x<3; x++ )
         {
-            Coords curr = { coords: Vector2D(x, y) };
+            DumbPoint curr = { coords: Vector2D(x, y) };
             g.addEdge( prev, curr, 10 );
             prev = curr;
         }
