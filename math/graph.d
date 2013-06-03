@@ -42,17 +42,10 @@ public:
         Node* t = addPoint( to );
         
         Edge e = { node: t, weight: w };
-        
         f.edges ~= e;
         
-        if( entry.length == 0 )
-        {
-            entry ~= f;
-        }
-        else
-        {
-            // тут сделать поиск пути от каждого entry[] до t и если пути нет то entry ~= t;
-        }
+        // тут сделать поиск пути от каждого entry[] до t и если пути нет то entry ~= t;
+        if( entry.length == 0 ) entry ~= f; // TODO: заменить на вышенаписанное
     }
     
 private:
@@ -85,18 +78,13 @@ unittest
     alias Graph!( Coords, float, string ) G;
     
     auto g = new G;
-    G.Node* prev;
+    Coords prev;
     
     for( auto y=0; y<3; y++ )
         for( auto x=0; x<3; x++ )
         {
-            /*
-            G.Node n = { coords: Vector2D(x, y) };
-            
-            if( prev )
-                
-            
-            prev = n;
-            */
+            Coords curr = { coords: Vector2D(x, y) };
+            g.addEdge( prev, curr, 10 );
+            prev = curr;
         }
 }
