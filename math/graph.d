@@ -4,6 +4,7 @@ import math.geometry;
 import math.rtree2d;
 
 import std.algorithm;
+version(unittest) import std.string;
 
 class Graph( Point, Weight, Payload )
 {
@@ -30,6 +31,17 @@ public:
         const Point point;
         Edge[] edges;
         Payload payload;
+    }
+    
+    debug(graph)
+    override string toString()
+    {
+        string res;
+        
+        foreach( c; points )
+            res ~= format( "%s\n", c );
+            
+        return res;
     }
     
     void addEdge( in Point from, in Point to, in Weight w )
@@ -108,15 +120,15 @@ public:
     }
     
 private:
-    Node* addPoint( in Point point )
+    Node* addPoint( in Point v )
     {
-        if( point !in points )
+        if( v !in points )
         {
-            Node n = { point: point };
-            points[point] = n;
+            Node n = { point: v };
+            points[v] = n;
         }
         
-        return &points[point];
+        return &points[v];
     }
     
     const (Node*)[] reconstructPath( in Node*[Node*] came_from, const (Node)* curr )
@@ -133,6 +145,8 @@ private:
 
 unittest
 {
+    import std.stdio;
+    
     struct DumbPoint
     {
         Vector2D coords;
@@ -145,6 +159,11 @@ unittest
         float heuristic( in DumbPoint v ) const
         {
             return (coords - v.coords).length;
+        }
+        
+        string toString()
+        {
+            return format("x=%r y=%r", coords.x, coords.y);
         }
     }
     
@@ -159,6 +178,8 @@ unittest
             DumbPoint curr = { coords: Vector2D(x, y) };
             g.addEdge( prev, curr, 10 );
             prev = curr;
+            
+            writeln( g );
         }
         
     DumbPoint f_p = { Vector2D(1,0) };
@@ -169,6 +190,5 @@ unittest
     
     auto s = g.findPath( from, goal );
     
-    import std.stdio;
     writeln( s );
 }
