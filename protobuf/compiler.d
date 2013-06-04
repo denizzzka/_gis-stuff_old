@@ -106,15 +106,15 @@ struct Parser
         res.structure ~= DType[w.word];
         
         // adding field name
-        w = getFirstWord( w_type.remain );
+        w = getFirstWord( w.remain );
         res.structure ~= DType[w.word];
         
         // here is should be a '='
-        w = getFirstWord( w_type.remain );
-        assert( w.word == '=' );
+        w = getFirstWord( w.remain );
+        assert( w.word == "=" );
         
         // get a field number
-        w = getFirstWord( w_type.remain );
+        w = getFirstWord( w.remain );
         res.methods ~= "field number is "~w.word;
         
         // TODO: here can be a [] options why also need parser
@@ -125,24 +125,21 @@ struct Parser
         return res;
     }
     
-    /*
+    
     static string Message( string statementContent )
     {
         StatementParser[string] Parsers;
-
-        //Parsers["package"] = &Parser.Package;
-        //Parsers["message"] = &Parser.Message;
-        //Parsers["option"] = &Parser.Option;
-        Parsers["required"] = &Parser.Required;
-        Parsers["optional"] = &Parser.Optional;
-        Parsers["repeated"] = &Parser.Repeated;
-        //Parsers["enum"] = &Parser.Enum;
-
+        /*
+        Parsers["required"] = &Parser.Field!"required";
+        Parsers["optional"] = &Parser.Field!"optional";
+        Parsers["repeated"] = &Parser.Field!"repeated";
+        */
+        
         string res;
 
         auto m = getFirstWord( statementContent );
 
-        res ~= "Message " ~ m.word ~ " {\n";
+        res ~= "struct " ~ m.word ~ " {\n";
         res ~= parseBlock( removeTopLevelBraces( m.remain ), Parsers );
         res ~= "} // message " ~ m.word ~ " end\n";
 
@@ -162,7 +159,6 @@ struct Parser
 
         return res;
     }
-    */
 }
 
 
@@ -172,7 +168,10 @@ string removeEndDelimiter( string s )
 }
 
 
-string removeTopLevelBraces(char LEFT, char RIGHT)( string s )
+alias removeTopLevelBrackets!('{','}') removeTopLevelBraces;
+
+
+string removeTopLevelBrackets(char LEFT, char RIGHT)( string s )
 {
     string res;
 
@@ -197,7 +196,7 @@ string removeTopLevelBraces(char LEFT, char RIGHT)( string s )
 }
 unittest
 {
-    assert( removeTopLevelBraces!('{', '}')( "a { s { d } f } g" ) == "a  s { d } f  g" );
+    assert( removeTopLevelBrackets!('{', '}')( "a { s { d } f } g" ) == "a  s { d } f  g" );
 }
 
 
