@@ -8,8 +8,9 @@ class Graph( Point, Weight, Payload )
 {
 private:
 
-    Node*[] entry; // entry points
+    Node*[] entry; /// entry points
     Node[const Point] points;
+    Node[] nodes; // работать здесь :)
 
 public:
 
@@ -61,8 +62,7 @@ public:
         const (Node*)[] closed; /// The set of nodes already evaluated
         Score[Node*] score;
         
-        // here is need to use heuristic() but it requires weight
-        score[start] = Score( null, 0, start.point.distance( goal.point ) );
+        score[start] = Score( null, 0, start.point.heuristic( goal.point ) );
         open ~= start;
         
         debug(graph) writefln("Path goal point: %s", goal.point );
@@ -97,7 +97,7 @@ public:
                 if( canFind( closed, neighbor ) )
                     continue;
                 
-                auto tentative = score[curr].g + curr.point.distance( neighbor.point );
+                auto tentative = score[curr].g + curr.point.distance( neighbor.point, e.weight );
                 
                 if( !canFind( open, neighbor ) )
                 {
@@ -112,7 +112,7 @@ public:
                 score[neighbor].came_from = curr;
                 score[neighbor].g = tentative;
                 score[neighbor].full = tentative +
-                    neighbor.point.heuristic( goal.point, e.weight );
+                    neighbor.point.heuristic( goal.point );
                 
                 debug(graph)
                     writefln("Upd neighbor %s %s tentative=%s full=%s",
@@ -167,14 +167,14 @@ unittest
             return coords == v.coords;
         }
 
-        float distance( in DumbPoint v ) const
+        float distance( in DumbPoint v, in W weight ) const
         {
-            return (coords - v.coords).length;
+            return (coords - v.coords).length * weight;
         }
 
-        float heuristic( in DumbPoint v, in W weight ) const
+        float heuristic( in DumbPoint v ) const
         {
-            return distance(v) * weight;
+            return (coords - v.coords).length;
         }
     }
     
@@ -190,8 +190,8 @@ unittest
             DP to_up = { coords: Vector2D(x, y+1) };
             DP to_right = { coords: Vector2D(x+1, y) };
             
-            g.addEdge( from, to_up, 10 );
-            g.addEdge( from, to_right, 9 );
+            g.addEdge( from, to_up, 5 );
+            g.addEdge( from, to_right, 4 );
         }
 
     DP f_p = { Vector2D(2,0) };
@@ -204,4 +204,8 @@ unittest
     
     assert( s !is null );
     assert( s.length == 7 );
+    
+    debug(graph)
+        foreach( i, c; s )
+            writeln( c, " ", c.point );
 }
