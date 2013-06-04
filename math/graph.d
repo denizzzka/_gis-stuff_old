@@ -113,12 +113,10 @@ public:
                 score[neighbor].came_from = curr;
                 score[neighbor].g = tentative;
                 score[neighbor].full = tentative + neighbor.point.heuristic( goal.point );
-            }
-            
-            assert( false, "Path is not found" );
+            }            
         }
         
-        assert( false );
+        return null;
     }
     
 private:
