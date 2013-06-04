@@ -44,7 +44,7 @@ public:
         {
             auto r = findPathScore( entrances[0], entrances[i] );
             
-            // if path is found remove entry
+            // if path is found remove entrance
             if( r !is null )
                 entrances = entrances[0..i] ~ entrances[i+1..$];
         }
