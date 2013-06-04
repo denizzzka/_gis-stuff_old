@@ -81,7 +81,7 @@ public:
         {
             // Search for open node having the lowest heuristic value
             size_t key;
-            float key_score;
+            float key_score = float.max;
             foreach( i, n; open )
                 if( score[n].full < key_score )
                 {
