@@ -38,8 +38,8 @@ public:
     {
         string res;
         
-        foreach( c; points )
-            res ~= format( "%s\n", c );
+        foreach( ref c; points )
+            res ~= format( "%s %s\n", &c, c );
             
         return res;
     }
@@ -160,17 +160,12 @@ unittest
         {
             return (coords - v.coords).length;
         }
-        
-        string toString()
-        {
-            return format("x=%r y=%r", coords.x, coords.y);
-        }
     }
     
     alias Graph!( DumbPoint, float, string ) G;
     
     auto g = new G;
-    DumbPoint prev;
+    DumbPoint prev = { coords: Vector2D(2,2) };
     
     for( auto y=0; y<3; y++ )
         for( auto x=0; x<3; x++ )
@@ -179,9 +174,10 @@ unittest
             g.addEdge( prev, curr, 10 );
             prev = curr;
             
-            writeln( g );
         }
         
+    writeln( g );
+    
     DumbPoint f_p = { Vector2D(1,0) };
     DumbPoint g_p = { Vector2D(2,2) };
     
