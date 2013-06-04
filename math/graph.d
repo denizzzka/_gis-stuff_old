@@ -8,8 +8,8 @@ class Graph( Point, Weight )
 {
 private:
     
-    Node[] nodes;
-    size_t[const Point] points;
+    Node[] nodes; /// contains nodes with all payload
+    size_t[const Point] points; /// AA used for fast search of stored points
     Node*[] entry; /// graph entry points
     
 public:
@@ -173,7 +173,7 @@ unittest
 {
     import math.geometry;
     
-    struct DumbPoint( W )
+    struct DumbPoint
     {
         Vector2D coords;
 
@@ -182,7 +182,7 @@ unittest
             return coords == v.coords;
         }
 
-        float distance( in DumbPoint v, in W weight ) const
+        float distance( in DumbPoint v, in float weight ) const
         {
             return (coords - v.coords).length * weight;
         }
@@ -193,7 +193,7 @@ unittest
         }
     }
     
-    alias DumbPoint!float DP;
+    alias DumbPoint DP;
     alias Graph!( DP, float ) G;
 
     auto g = new G;
