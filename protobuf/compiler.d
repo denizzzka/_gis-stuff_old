@@ -95,7 +95,7 @@ struct Parser
         MERGE
     };
 
-    struct RuleProperties
+    static struct RuleProperties
     {
         Rule rule;
         FillType fill;
@@ -108,24 +108,46 @@ struct Parser
         { rule: Rule.OPTIONAL, fill: FillType.REPLACE, necessarilyFill: false },
         { rule: Rule.REPEATED, fill: FillType.CONCATENATE, necessarilyFill: false }
     ];
-
-    static string Field( string statementContent )
+    
+    static immutable string[string] DType; /// conversion of types
+    static this()
     {
+        DType["string"] = "string";
+        DType["int32"] = "int";
+        DType["sint32"] = "int";
+        DType["uint32"] = "uint";
+    }
+    
+    struct Dcode
+    {
+        string structure; /// will be added to D's struct {...}
+        string flags; /// boolean flags for fields fill checking
+        string methods; /// text of functions for access to the struct fields
+    }
+    
+    static Dcode Field( string rule )( string statementContent )
+    {
+        Dcode res;
+        
+        // adding type to struct
         auto w = getFirstWord( statementContent );
-
-        /*
-        switch( w.word )
-        {
-            case "int32":
-                Tuple!(
-            ( "int32", int ),
-            ( "uint32", uint ),
-            ( "int64", long ),
-            ( "uint64", ulong )
-        ) Scalars;
-        */
-
-        return "//FIXME required found \"" ~ removeEndDelimiter( statementContent ) ~ "\"\n";
+        res.structure ~= DType[w.word];
+        
+        // adding field name
+        w = getFirstWord( w_type.remain );
+        res.structure ~= DType[w.word];
+        
+        // here should be a '='
+        w = getFirstWord( w_type.remain );
+        assert( w.word == '=' );
+        
+        // get a field number
+        w = getFirstWord( w_type.remain );
+        res.methods ~= "field number is "~w.word;
+        
+        
+        
+        return "    " ~ removeEndDelimiter( statementContent ) ~ "\"\n";
     }
     
     /*
@@ -175,16 +197,16 @@ string removeEndDelimiter( string s )
 }
 
 
-string removeTopLevelBraces( string s )
+string removeTopLevelBraces(char LEFT, char RIGHT)( string s )
 {
     string res;
 
     foreach( size_t i, char first; s )
     {
-        if( first == '{' )
+        if( first == LEFT )
         {
             for( size_t j = s.length-1; j > i; j-- )
-                if( s[j] == '}' )
+                if( s[j] == RIGHT )
                 {
                     // remove found pair of braces
                     res = s[0 .. i] ~ s[i+1 .. j] ~ s[j+1 .. $];
@@ -200,7 +222,7 @@ string removeTopLevelBraces( string s )
 }
 unittest
 {
-    assert( removeTopLevelBraces( "a { s { d } f } g" ) == "a  s { d } f  g" );
+    assert( removeTopLevelBraces!('{', '}')( "a { s { d } f } g" ) == "a  s { d } f  g" );
 }
 
 
