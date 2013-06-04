@@ -115,7 +115,7 @@ public:
                 score[neighbor].full = tentative + neighbor.point.heuristic( goal.point );
             }
             
-            assert( false, "bug detected" );
+            assert( false, "Path is not found" );
         }
         
         assert( false, "bug detected" );
