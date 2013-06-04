@@ -118,7 +118,7 @@ public:
             assert( false, "Path is not found" );
         }
         
-        assert( false, "bug detected" );
+        assert( false );
     }
     
 private:
