@@ -66,7 +66,7 @@ public:
     {
         const (Node)*[] open; /// The set of tentative nodes to be evaluated
         const (Node*)[] closed; /// The set of nodes already evaluated
-        Score[Node*] score; /// Navigated nodes
+        Score[Node*] score;
         
         open ~= start;
         score[start] = Score( null, 0, start.point.heuristic( goal.point ) );
