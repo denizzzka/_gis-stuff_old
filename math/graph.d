@@ -74,10 +74,11 @@ public:
         const (Node)*[] open; /// The set of tentative nodes to be evaluated
         const (Node*)[] closed; /// The set of nodes already evaluated
         Score[Node*] score;
-
+        
+        // here is need heuristic() but it requires weight
+        score[start] = Score( null, 0, start.point.distance( goal.point ) );
         open ~= start;
-        score[start] = Score( null, 0, start.point.heuristic( goal.point ) );
-
+        
         debug(graph) writefln("Path goal point: %s", goal.point );
         
         while( open.length > 0 )
@@ -124,7 +125,8 @@ public:
                 // Updating neighbor score
                 score[neighbor].came_from = curr;
                 score[neighbor].g = tentative;
-                score[neighbor].full = tentative + neighbor.point.heuristic( goal.point );
+                score[neighbor].full = tentative +
+                    neighbor.point.heuristic( goal.point, e.weight );
                 
                 debug(graph)
                     writefln("Upd neighbor %s %s tentative=%s full=%s",
@@ -162,15 +164,13 @@ private:
     {
         const (Node)* came_from; /// Navigated node
         float g; /// Cost from start along best known path
-        float full; /// Estimated total cost from start to goal through node
+        float full; /// f(x), estimated total cost from start to goal through node
     }
 }
 
 unittest
 {
-    import std.stdio;
-
-    struct DumbPoint
+    struct DumbPoint( W )
     {
         Vector2D coords;
 
@@ -181,32 +181,33 @@ unittest
 
         float distance( in DumbPoint v ) const
         {
-            return heuristic( v );
-        }
-
-        float heuristic( in DumbPoint v ) const
-        {
             return (coords - v.coords).length;
         }
-    }
 
-    alias Graph!( DumbPoint, float, string ) G;
+        float heuristic( in DumbPoint v, in W weight ) const
+        {
+            return distance(v) * weight;
+        }
+    }
+    
+    alias DumbPoint!float DP;
+    alias Graph!( DP, float, string ) G;
 
     auto g = new G;
 
     for( auto y=0; y<5; y++ )
         for( auto x=0; x<5; x++ )
         {
-            DumbPoint from = { coords: Vector2D(x, y) };
-            DumbPoint to = { coords: Vector2D(x, y+1) };
+            DP from = { coords: Vector2D(x, y) };
+            DP to_up = { coords: Vector2D(x, y+1) };
+            DP to_right = { coords: Vector2D(x+1, y) };
             
-            g.addEdge( from, to, 10 );
+            g.addEdge( from, to_up, 10 );
+            g.addEdge( from, to_right, 9 );
         }
 
-    writeln( g );
-
-    DumbPoint f_p = { Vector2D(2,0) };
-    DumbPoint g_p = { Vector2D(4,4) };
+    DP f_p = { Vector2D(2,0) };
+    DP g_p = { Vector2D(4,4) };
 
     auto from = g.search( f_p );
     auto goal = g.search( g_p );
@@ -214,6 +215,9 @@ unittest
     auto s = g.findPath( from, goal );
     
     assert( s !is null );
+    assert( s.length == 7 );
+    
+    debug(graph)
     foreach( i, c; s )
-        writeln( c );
+        writeln( c.point );
 }
