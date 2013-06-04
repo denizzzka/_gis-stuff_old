@@ -1,9 +1,7 @@
 module math.graph;
 
 import std.algorithm;
-
 debug(graph) import std.stdio;
-version(unittest) import math.geometry;
 
 
 class Graph( Point, Weight, Payload )
@@ -158,6 +156,8 @@ private:
 
 unittest
 {
+    import math.geometry;
+    
     struct DumbPoint( W )
     {
         Vector2D coords;
