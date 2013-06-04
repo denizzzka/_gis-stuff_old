@@ -101,8 +101,10 @@ public:
                 auto tentative = score[curr].g + curr.point.distance( neighbor.point );
                 
                 if( !canFind( open, neighbor ) )
+                {
                     open ~= neighbor;
-                    
+                    score[neighbor] = Score();
+                }
                 else
                     if( tentative >= score[neighbor].g )
                         continue;
