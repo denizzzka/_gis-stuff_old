@@ -66,38 +66,50 @@ Word getFirstWord( string statementText )
     return ret;
 }
 
-
 alias string function( string ) StatementParser;
 
-
-string recognizeStatement( string statementText, StatementParser[string] parsers = null )
+string recognizeStatement( string statementText, StatementParser[string] parsers )
 {
     auto s = getFirstWord( statementText );
-
-    //enforce( ( s.word in parsers ) != null, "Unexpected \""~s.word~"\"" );
-
-    if( ( s.word in parsers ) == null )
+    
+    if( s.word !in parsers )
         return "// Unexpected \""~s.word~"\"\n";
-
+    
     return parsers[s.word] ( s.remain );
 }
 
 
 struct Parser
 {
-    static string Package( string statementContent )
+    enum Rule
     {
-        return "//FIXME adding package \"" ~ removeEndDelimiter( statementContent ) ~ "\"\n";
+        REQUIRED,
+        OPTIONAL,
+        REPEATED
     }
 
-
-    static string Option( string statementContent )
+    enum FillType
     {
-        return "//FIXME option found \"" ~ removeEndDelimiter( statementContent ) ~ "\"\n";
+        REPLACE,
+        CONCATENATE,
+        MERGE
+    };
+
+    struct RuleProperties
+    {
+        Rule rule;
+        FillType fill;
+        bool necessarilyFill;
     }
 
+    immutable RuleProperties[] RulesProperties =
+    [
+        { rule: Rule.REQUIRED, fill: FillType.REPLACE, necessarilyFill: true },
+        { rule: Rule.OPTIONAL, fill: FillType.REPLACE, necessarilyFill: false },
+        { rule: Rule.REPEATED, fill: FillType.CONCATENATE, necessarilyFill: false }
+    ];
 
-    static string Required( string statementContent )
+    static string Field( string statementContent )
     {
         auto w = getFirstWord( statementContent );
 
@@ -115,31 +127,19 @@ struct Parser
 
         return "//FIXME required found \"" ~ removeEndDelimiter( statementContent ) ~ "\"\n";
     }
-
-
-    static string Optional( string statementContent )
-    {
-        return "//FIXME optional found \"" ~ removeEndDelimiter( statementContent ) ~ "\"\n";
-    }
-
-
-    static string Repeated( string statementContent )
-    {
-        return "//FIXME repeated found \"" ~ removeEndDelimiter( statementContent ) ~ "\"\n";
-    }
-
-
+    
+    /*
     static string Message( string statementContent )
     {
         StatementParser[string] Parsers;
 
-        Parsers["package"] = &Parser.Package;
-        Parsers["message"] = &Parser.Message;
-        Parsers["option"] = &Parser.Option;
+        //Parsers["package"] = &Parser.Package;
+        //Parsers["message"] = &Parser.Message;
+        //Parsers["option"] = &Parser.Option;
         Parsers["required"] = &Parser.Required;
         Parsers["optional"] = &Parser.Optional;
         Parsers["repeated"] = &Parser.Repeated;
-        Parsers["enum"] = &Parser.Enum;
+        //Parsers["enum"] = &Parser.Enum;
 
         string res;
 
@@ -165,6 +165,7 @@ struct Parser
 
         return res;
     }
+    */
 }
 
 
@@ -224,7 +225,7 @@ string parseBlock( string block, StatementParser[string] parsers )
 }
 
 
-unittest
+void unittest_old()
 {
 string example = q"EOS
 // See README.txt for information and build instructions.
@@ -269,7 +270,7 @@ EOS";
 
     // begin parsing
     StatementParser[string] parsers;
-    parsers["message"] = &Parser.Message;
+    //parsers["message"] = &Parser.Message;
     auto res = parseBlock( example, parsers );
 
     debug(protobuf) writeln( "Total:\n", res );
@@ -278,17 +279,6 @@ EOS";
     AddressBook msg;
     
     msg.fillStruct( f );
-    
-    /*
-    auto f1 = parseTag( &f[2], field, wire );
-    msg.name = unpackDelimited!char( f1, f1 );
-
-    f1 = parseTag( f1, field, wire );
-    msg.id = unpackVarint!uint( f1, f1 );
-
-    f1 = parseTag( f1, field, wire );
-    msg.email = unpackDelimited!char( f1, f1 );
-    */
     
     debug(protobuf) writeln( msg );
 }
@@ -317,23 +307,6 @@ struct AddressBook
     
     void fillStruct( const ubyte[] messageData )
     {
-        /* need to be rewritten:
-         * 
-        size_t next;
-        
-        // unpackMessage:
-        uint field;
-        WireType wire;
-        
-        next = parseTag( messageData[next], field, wire );
-        enforce( wire.LENGTH_DELIMITED, "Wrong wire type" );
-        
-        auto msg = unpackDelimited!ubyte( messageData[next], next );
-        next -= msg.length;
-        
-        while( next < &messageData[$-1] )
-            next = fillField( next );
-        */
     }
     
     private size_t fillField( const ubyte* data )
@@ -377,33 +350,3 @@ struct AddressBook
         return nextItem;
     }
 }
-
-
-enum Rule
-{
-    REQUIRED,
-    OPTIONAL,
-    REPEATED
-}
-
-enum FillType
-{
-    REPLACE,
-    CONCATENATE,
-    MERGE
-};
-
-struct RuleProperties
-{
-    Rule rule;
-    FillType fill;
-    bool necessarilyFill;
-}
-
-immutable RuleProperties[] RulesProperties =
-[
-    { rule: Rule.REQUIRED, fill: FillType.REPLACE, necessarilyFill: true },
-    { rule: Rule.OPTIONAL, fill: FillType.REPLACE, necessarilyFill: false },
-    { rule: Rule.REPEATED, fill: FillType.CONCATENATE, necessarilyFill: false }
-];
-
