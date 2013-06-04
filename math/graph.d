@@ -10,7 +10,7 @@ private:
     
     Node[] nodes; /// contains nodes with all payload
     size_t[const Point] points; /// AA used for fast search of stored points
-    Node*[] entry; /// graph entry points
+    size_t[] entrances; /// graph entry points
     
 public:
     
@@ -38,9 +38,16 @@ public:
 
         Edge e = { node: t, weight: w };
         nodes[f].edges ~= e;
-
-        // тут сделать поиск пути от каждого entry[] до t и если пути нет то entry ~= t;
-        //if( entry.length == 0 ) entry ~= f; // TODO: заменить на вышенаписанное
+        
+        // Check for pathes between entrances
+        for( auto i = 1; i < entrances.length; i++ ) // skip first entry
+        {
+            auto r = findPath( entrances[0], entrances[i] );
+            
+            // if path is found remove entry
+            if( r !is null )
+                entrances = entrances[0..i] ~ entrances[i+1..$];
+        }
     }
     
     bool search( in Point point, out size_t index )
