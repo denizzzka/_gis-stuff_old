@@ -5,6 +5,7 @@ import math.rtree2d;
 
 import std.algorithm;
 version(unittest) import std.string;
+debug(graph) import std.stdio;
 
 class Graph( Point, Weight, Payload )
 {
@@ -77,8 +78,12 @@ public:
         open ~= start;
         score[start] = Score( null, 0, start.point.heuristic( goal.point ) );
 
+        debug(graph) writefln("Path goal point: %s", goal.point );
+        
         while( open.length > 0 )
         {
+            debug(graph) writeln("Open: ", open);
+            
             // Search for open node having the lowest heuristic value
             size_t key;
             float key_score = float.max;
@@ -90,22 +95,23 @@ public:
                 }
 
             const (Node)* curr = open[key];
+            debug(graph) writefln("Curr %s %s lowest full=%s", curr, curr.point, key_score);
 
             if( curr == goal )
                 return reconstructPath( score, goal );
-
-            open.remove(key);
+            
+            open = open[0..key] ~ open[key+1..$];
             closed ~= curr;
-
+            
             foreach( i, e; curr.edges )
             {
                 auto neighbor = e.node;
 
                 if( canFind( closed, neighbor ) )
                     continue;
-
+                
                 auto tentative = score[curr].g + curr.point.distance( neighbor.point );
-
+                
                 if( !canFind( open, neighbor ) )
                 {
                     open ~= neighbor;
@@ -119,6 +125,10 @@ public:
                 score[neighbor].came_from = curr;
                 score[neighbor].g = tentative;
                 score[neighbor].full = tentative + neighbor.point.heuristic( goal.point );
+                
+                debug(graph)
+                    writefln("Upd neighbor %s %s tentative=%s full=%s",
+                        neighbor, neighbor.point, tentative, score[neighbor].full);                
             }
         }
 
