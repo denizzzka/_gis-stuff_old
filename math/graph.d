@@ -4,8 +4,8 @@ import math.geometry;
 import math.rtree2d;
 
 import std.algorithm;
-version(unittest) import std.string;
 debug(graph) import std.stdio;
+
 
 class Graph( Point, Weight, Payload )
 {
@@ -33,18 +33,7 @@ public:
         Edge[] edges;
         Payload payload;
     }
-
-    debug(graph)
-    override string toString()
-    {
-        string res;
-
-        foreach( ref c; points )
-            res ~= format( "%s %s\n", &c, c );
-
-        return res;
-    }
-
+    
     void addEdge( in Point from, in Point to, in Weight w )
     {
         Node* f = addPoint( from );
@@ -216,8 +205,4 @@ unittest
     
     assert( s !is null );
     assert( s.length == 7 );
-    
-    debug(graph)
-    foreach( i, c; s )
-        writeln( c.point );
 }
