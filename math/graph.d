@@ -7,17 +7,17 @@ debug(graph) import std.stdio;
 class Graph( Point, Weight, Payload )
 {
 private:
-
-    Node*[] entry; /// entry points
-    Node[const Point] points;
-    Node[] nodes; // работать здесь :)
-
+    
+    Node[] nodes;
+    size_t[const Point] points;
+    Node*[] entry; /// graph entry points
+    
 public:
-
+    
     struct Edge
     {
         const Weight weight;
-        const Node* node;
+        const size_t node;
 
         invariant()
         {
@@ -34,36 +34,45 @@ public:
     
     void addEdge( in Point from, in Point to, in Weight w )
     {
-        Node* f = addPoint( from );
-        Node* t = addPoint( to );
+        size_t f = addPoint( from );
+        size_t t = addPoint( to );
 
         Edge e = { node: t, weight: w };
-        f.edges ~= e;
+        nodes[f].edges ~= e;
 
         // тут сделать поиск пути от каждого entry[] до t и если пути нет то entry ~= t;
-        if( entry.length == 0 ) entry ~= f; // TODO: заменить на вышенаписанное
+        //if( entry.length == 0 ) entry ~= f; // TODO: заменить на вышенаписанное
     }
-
-    Node* search( in Point point )
+    
+    bool search( in Point point, out size_t index )
     {
-        return ( point in points )? &points[point] : null;
+        if( point in points )
+        {
+            index = points[point];
+            return true;
+        }
+        else
+            return false;
     }
-
+    
     /// A* algorithm
-    const (Node*)[] findPath( in Node* start, in Node* goal )
+    size_t[] findPath( in size_t startNode, in size_t goalNode )
     in
     {
-        assert( start );
-        assert( goal );
+        assert( startNode );
+        assert( goalNode );
     }
     body
     {
-        const (Node)*[] open; /// The set of tentative nodes to be evaluated
-        const (Node*)[] closed; /// The set of nodes already evaluated
-        Score[Node*] score;
+        const (size_t)[] open; /// The set of tentative nodes to be evaluated
+        const (size_t)[] closed; /// The set of nodes already evaluated
+        Score[size_t] score;
         
-        score[start] = Score( null, 0, start.point.heuristic( goal.point ) );
-        open ~= start;
+        const Node* start = &nodes[startNode];
+        const Node* goal = &nodes[goalNode];
+        
+        score[startNode] = Score( 0, 0, start.point.heuristic( goal.point ) );
+        open ~= startNode;
         
         debug(graph) writefln("Path goal point: %s", goal.point );
         
@@ -81,42 +90,45 @@ public:
                     key_score = score[n].full;
                 }
 
-            const (Node)* curr = open[key];
+            const size_t currNode = open[key];
+            
+            if( currNode == goalNode )
+                return reconstructPath( score, goalNode );
+            
+            const Node* curr = &nodes[currNode];
             debug(graph) writefln("Curr %s %s lowest full=%s", curr, curr.point, key_score);
-
-            if( curr == goal )
-                return reconstructPath( score, goal );
             
             open = open[0..key] ~ open[key+1..$];
-            closed ~= curr;
+            closed ~= currNode;
             
             foreach( i, e; curr.edges )
             {
-                auto neighbor = e.node;
+                size_t neighborNode = e.node;
+                Node* neighbor = &nodes[neighborNode];
 
-                if( canFind( closed, neighbor ) )
+                if( canFind( closed, neighborNode ) )
                     continue;
                 
-                auto tentative = score[curr].g + curr.point.distance( neighbor.point, e.weight );
+                auto tentative = score[currNode].g + curr.point.distance( neighbor.point, e.weight );
                 
-                if( !canFind( open, neighbor ) )
+                if( !canFind( open, neighborNode ) )
                 {
-                    open ~= neighbor;
-                    score[neighbor] = Score();
+                    open ~= neighborNode;
+                    score[neighborNode] = Score();
                 }
                 else
-                    if( tentative >= score[neighbor].g )
+                    if( tentative >= score[neighborNode].g )
                         continue;
 
                 // Updating neighbor score
-                score[neighbor].came_from = curr;
-                score[neighbor].g = tentative;
-                score[neighbor].full = tentative +
+                score[neighborNode].came_from = currNode;
+                score[neighborNode].g = tentative;
+                score[neighborNode].full = tentative +
                     neighbor.point.heuristic( goal.point );
                 
                 debug(graph)
                     writefln("Upd neighbor %s %s tentative=%s full=%s",
-                        neighbor, neighbor.point, tentative, score[neighbor].full);                
+                        neighborNode, neighbor.point, tentative, score[neighborNode].full);                
             }
         }
 
@@ -124,20 +136,24 @@ public:
     }
 
 private:
-    Node* addPoint( in Point v )
+    size_t addPoint( in Point v )
     {
         if( v !in points )
         {
+            points[v] = nodes.length;
+            
             Node n = { point: v };
-            points[v] = n;
+            nodes ~= n;
+            
+            return nodes.length-1;
         }
 
-        return &points[v];
+        return points[v];
     }
 
-    const (Node*)[] reconstructPath( in Score[Node*] came_from, const (Node)* curr )
+    auto reconstructPath( in Score[size_t] came_from, size_t curr )
     {
-        const (Node*)[] res;
+        size_t[] res;
 
         do
             res ~= curr;
@@ -148,7 +164,7 @@ private:
 
     struct Score
     {
-        const (Node)* came_from; /// Navigated node
+        size_t came_from; /// Navigated node
         float g; /// Cost from start along best known path
         float full; /// f(x), estimated total cost from start to goal through node
     }
@@ -196,10 +212,11 @@ unittest
 
     DP f_p = { Vector2D(2,0) };
     DP g_p = { Vector2D(4,4) };
-
-    auto from = g.search( f_p );
-    auto goal = g.search( g_p );
-
+    
+    size_t from, goal;
+    assert( g.search( f_p, from ) );
+    assert( g.search( g_p, goal ) );
+    
     auto s = g.findPath( from, goal );
     
     assert( s !is null );
@@ -207,5 +224,5 @@ unittest
     
     debug(graph)
         foreach( i, c; s )
-            writeln( c, " ", c.point );
+            writeln( c, " ", g.nodes[c].point );
 }
