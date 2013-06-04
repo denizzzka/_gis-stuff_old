@@ -61,6 +61,7 @@ public:
         return ( point in points )? &points[point] : null;
     }
     
+    /// A* algorithm
     const (Node*)[] findPath( in Node* start, in Node* goal )
     {
         const (Node)*[] open; // The set of tentative nodes to be evaluated
@@ -101,16 +102,16 @@ public:
                 
                 if( canFind( closed, neighbor ) && tentative >= g_score[neighbor] )
                     continue;
-                else
-                    if( !canFind( open, neighbor ) || tentative < g_score[neighbor] )
-                    {
-                        came_from[neighbor] = curr;
-                        g_score[neighbor] = tentative;
-                        full_score[neighbor] = tentative +  neighbor.point.heuristic( goal.point );
-                        
-                        if( !canFind( open, neighbor ) )
-                            open ~= neighbor;
-                    }
+                
+                if( !canFind( open, neighbor ) || tentative < g_score[neighbor] )
+                {
+                    came_from[neighbor] = curr;
+                    g_score[neighbor] = tentative;
+                    full_score[neighbor] = tentative +  neighbor.point.heuristic( goal.point );
+                    
+                    if( !canFind( open, neighbor ) )
+                        open ~= neighbor;
+                }
             }
             
             assert( false, "bug detected" );
