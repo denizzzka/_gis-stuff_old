@@ -63,7 +63,7 @@ public:
         const (Node*)[] closed; /// The set of nodes already evaluated
         Score[Node*] score;
         
-        // here is need heuristic() but it requires weight
+        // here is need to use heuristic() but it requires weight
         score[start] = Score( null, 0, start.point.distance( goal.point ) );
         open ~= start;
         
