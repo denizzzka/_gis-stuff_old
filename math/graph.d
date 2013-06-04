@@ -95,20 +95,22 @@ public:
             {
                 auto neighbor = e.node;
                 
-                auto tentative = score[curr].g + curr.point.heuristic( neighbor.point );
-                
-                if( canFind( closed, neighbor ) && tentative >= score[neighbor].g )
+                if( canFind( closed, neighbor ) )
                     continue;
                 
-                if( !canFind( open, neighbor ) || tentative < score[neighbor].g )
-                {
-                    score[neighbor].came_from = curr;
-                    score[neighbor].g = tentative;
-                    score[neighbor].full = tentative +  neighbor.point.heuristic( goal.point );
+                auto tentative = score[curr].g + curr.point.distance( neighbor.point );
+                
+                if( !canFind( open, neighbor ) )
+                    open ~= neighbor;
                     
-                    if( !canFind( open, neighbor ) )
-                        open ~= neighbor;
-                }
+                else
+                    if( tentative >= score[neighbor].g )
+                        continue;
+                
+                // Updating neighbor score
+                score[neighbor].came_from = curr;
+                score[neighbor].g = tentative;
+                score[neighbor].full = tentative + neighbor.point.heuristic( goal.point );
             }
             
             assert( false, "bug detected" );
@@ -159,6 +161,11 @@ unittest
         bool opEquals( in DumbPoint v ) const
         {
             return coords == v.coords;
+        }
+        
+        float distance( in DumbPoint v ) const
+        {
+            return heuristic( v );
         }
         
         float heuristic( in DumbPoint v ) const
