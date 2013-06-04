@@ -224,7 +224,7 @@ string parseBlock( string block, StatementParser[string] parsers )
 }
 
 
-void main()
+unittest
 {
 string example = q"EOS
 // See README.txt for information and build instructions.
