@@ -63,6 +63,12 @@ public:
 
     /// A* algorithm
     const (Node*)[] findPath( in Node* start, in Node* goal )
+    in
+    {
+        assert( start );
+        assert( goal );
+    }
+    body
     {
         const (Node)*[] open; /// The set of tentative nodes to be evaluated
         const (Node*)[] closed; /// The set of nodes already evaluated
@@ -177,25 +183,27 @@ unittest
     alias Graph!( DumbPoint, float, string ) G;
 
     auto g = new G;
-    DumbPoint prev = { coords: Vector2D(2,2) };
 
-    for( auto y=0; y<3; y++ )
-        for( auto x=0; x<3; x++ )
+    for( auto y=0; y<5; y++ )
+        for( auto x=0; x<5; x++ )
         {
-            DumbPoint curr = { coords: Vector2D(x, y) };
-            g.addEdge( prev, curr, 10 );
-            prev = curr;
+            DumbPoint from = { coords: Vector2D(x, y) };
+            DumbPoint to = { coords: Vector2D(x, y+1) };
+            
+            g.addEdge( from, to, 10 );
         }
 
     writeln( g );
 
-    DumbPoint f_p = { Vector2D(1,0) };
-    DumbPoint g_p = { Vector2D(2,2) };
+    DumbPoint f_p = { Vector2D(2,0) };
+    DumbPoint g_p = { Vector2D(4,4) };
 
     auto from = g.search( f_p );
     auto goal = g.search( g_p );
 
     auto s = g.findPath( from, goal );
-
-    writeln( s );
+    
+    assert( s !is null );
+    foreach( i, c; s )
+        writeln( c );
 }
