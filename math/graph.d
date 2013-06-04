@@ -173,9 +173,8 @@ unittest
             DumbPoint curr = { coords: Vector2D(x, y) };
             g.addEdge( prev, curr, 10 );
             prev = curr;
-            
         }
-        
+    
     writeln( g );
     
     DumbPoint f_p = { Vector2D(1,0) };
