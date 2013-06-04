@@ -42,7 +42,7 @@ public:
         // Check for pathes between entrances
         for( auto i = 1; i < entrances.length; i++ ) // skip first entry
         {
-            auto r = findPath( entrances[0], entrances[i] );
+            auto r = findPathScore( entrances[0], entrances[i] );
             
             // if path is found remove entry
             if( r !is null )
@@ -63,10 +63,19 @@ public:
     
     /// A* algorithm
     size_t[] findPath( in size_t startNode, in size_t goalNode )
+    {
+        auto r = findPathScore( startNode, goalNode );
+        return (r is null) ? null : reconstructPath( r, goalNode );
+    }
+    
+private:
+    
+    /// A* algorithm
+    Score[size_t] findPathScore( in size_t startNode, in size_t goalNode )
     in
     {
-        assert( startNode );
-        assert( goalNode );
+        assert( startNode < nodes.length );
+        assert( goalNode < nodes.length );
     }
     body
     {
@@ -99,7 +108,7 @@ public:
             const size_t currNode = open[key];
             
             if( currNode == goalNode )
-                return reconstructPath( score, goalNode );
+                return score;
             
             const Node* curr = &nodes[currNode];
             debug(graph) writefln("Curr %s %s lowest full=%s", curr, curr.point, key_score);
@@ -140,8 +149,7 @@ public:
 
         return null;
     }
-
-private:
+    
     size_t addPoint( in Point v )
     {
         if( v !in points )
