@@ -4,7 +4,7 @@ import std.algorithm;
 debug(graph) import std.stdio;
 
 
-class Graph( Point, Weight, Payload )
+class Graph( Point, Weight )
 {
 private:
     
@@ -29,7 +29,6 @@ public:
     {
         const Point point;
         Edge[] edges;
-        Payload payload;
     }
     
     void addEdge( in Point from, in Point to, in Weight w )
@@ -195,7 +194,7 @@ unittest
     }
     
     alias DumbPoint!float DP;
-    alias Graph!( DP, float, string ) G;
+    alias Graph!( DP, float ) G;
 
     auto g = new G;
 
