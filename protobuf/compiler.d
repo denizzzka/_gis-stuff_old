@@ -81,34 +81,6 @@ string recognizeStatement( string statementText, StatementParser[string] parsers
 
 struct Parser
 {
-    enum Rule
-    {
-        REQUIRED,
-        OPTIONAL,
-        REPEATED
-    }
-
-    enum FillType
-    {
-        REPLACE,
-        CONCATENATE,
-        MERGE
-    };
-
-    static struct RuleProperties
-    {
-        Rule rule;
-        FillType fill;
-        bool necessarilyFill;
-    }
-
-    immutable RuleProperties[] RulesProperties =
-    [
-        { rule: Rule.REQUIRED, fill: FillType.REPLACE, necessarilyFill: true },
-        { rule: Rule.OPTIONAL, fill: FillType.REPLACE, necessarilyFill: false },
-        { rule: Rule.REPEATED, fill: FillType.CONCATENATE, necessarilyFill: false }
-    ];
-    
     static immutable string[string] DType; /// conversion of types
     static this()
     {
@@ -137,7 +109,7 @@ struct Parser
         w = getFirstWord( w_type.remain );
         res.structure ~= DType[w.word];
         
-        // here should be a '='
+        // here is should be a '='
         w = getFirstWord( w_type.remain );
         assert( w.word == '=' );
         
@@ -145,9 +117,12 @@ struct Parser
         w = getFirstWord( w_type.remain );
         res.methods ~= "field number is "~w.word;
         
+        // TODO: here can be a [] options why also need parser
         
+        // fill flags (actually it will be a additional checking methods)
+        res.flags ~= rule;
         
-        return "    " ~ removeEndDelimiter( statementContent ) ~ "\"\n";
+        return res;
     }
     
     /*
