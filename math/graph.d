@@ -1,10 +1,9 @@
 module math.graph;
 
-import math.geometry;
-import math.rtree2d;
-
 import std.algorithm;
+
 debug(graph) import std.stdio;
+version(unittest) import math.geometry;
 
 
 class Graph( Point, Weight, Payload )
