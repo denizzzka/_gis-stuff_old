@@ -64,15 +64,12 @@ public:
     /// A* algorithm
     const (Node*)[] findPath( in Node* start, in Node* goal )
     {
-        const (Node)*[] open; // The set of tentative nodes to be evaluated
-        const (Node*)[] closed; // The set of nodes already evaluated
-        const (Node*)[Node*] came_from; // Navigated nodes
-        const (float)[Node*] g_score; // Cost from start along best known path
-        const (float)[Node*] full_score; // // Estimated total cost from start to goal through node
+        const (Node)*[] open; /// The set of tentative nodes to be evaluated
+        const (Node*)[] closed; /// The set of nodes already evaluated
+        Score[Node*] score; /// Navigated nodes
         
         open ~= start;
-        g_score[start] = 0;
-        full_score[start] = start.point.heuristic( goal.point );
+        score[start] = Score( null, 0, start.point.heuristic( goal.point ) );
         
         while( open.length > 0 )
         {
@@ -80,16 +77,16 @@ public:
             size_t key;
             float key_score;
             foreach( i, n; open )
-                if( full_score[n] < key_score )
+                if( score[n].full < key_score )
                 {
                     key = i;
-                    key_score = full_score[n];
+                    key_score = score[n].full;
                 }
                 
             const (Node)* curr = open[key];
             
             if( curr == goal )
-                return reconstructPath( came_from, goal );
+                return reconstructPath( score, goal );
             
             open.remove(key);
             closed ~= curr;
@@ -98,16 +95,16 @@ public:
             {
                 auto neighbor = e.node;
                 
-                auto tentative = g_score[curr] + curr.point.heuristic( neighbor.point );
+                auto tentative = score[curr].g + curr.point.heuristic( neighbor.point );
                 
-                if( canFind( closed, neighbor ) && tentative >= g_score[neighbor] )
+                if( canFind( closed, neighbor ) && tentative >= score[neighbor].g )
                     continue;
                 
-                if( !canFind( open, neighbor ) || tentative < g_score[neighbor] )
+                if( !canFind( open, neighbor ) || tentative < score[neighbor].g )
                 {
-                    came_from[neighbor] = curr;
-                    g_score[neighbor] = tentative;
-                    full_score[neighbor] = tentative +  neighbor.point.heuristic( goal.point );
+                    score[neighbor].came_from = curr;
+                    score[neighbor].g = tentative;
+                    score[neighbor].full = tentative +  neighbor.point.heuristic( goal.point );
                     
                     if( !canFind( open, neighbor ) )
                         open ~= neighbor;
@@ -132,15 +129,22 @@ private:
         return &points[v];
     }
     
-    const (Node*)[] reconstructPath( in Node*[Node*] came_from, const (Node)* curr )
+    const (Node*)[] reconstructPath( in Score[Node*] came_from, const (Node)* curr )
     {
         const (Node*)[] res;
         
         do
             res ~= curr;
-        while( curr in came_from, curr = came_from[curr] );
+        while( curr in came_from, curr = came_from[curr].came_from );
         
         return res;
+    }
+    
+    struct Score
+    {
+        const (Node)* came_from; /// Navigated node
+        float g; /// Cost from start along best known path
+        float full; /// Estimated total cost from start to goal through node
     }
 }
 
