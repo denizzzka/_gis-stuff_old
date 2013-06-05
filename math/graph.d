@@ -100,7 +100,7 @@ private:
                 return score;
             
             const Node* curr = &nodes[currNode];
-            debug(graph) writefln("Curr %s %s lowest full=%s", curr, curr.point, key_score);
+            debug(graph) writefln("Curr %s %s lowest full=%s", currNode, curr.point, key_score);
             
             open = open[0..key] ~ open[key+1..$];
             closed ~= currNode;
