@@ -65,6 +65,10 @@ Word getFirstWord( string statementText )
 
     return ret;
 }
+unittest
+{
+    assert( getFirstWord( " abc = def " ).word == "abc" );
+}
 
     
 struct Dcode
@@ -100,7 +104,7 @@ Dcode recognizeStatement( string statementText, StatementParser[string] parsers 
 
 struct Parser
 {
-    static immutable string[string] DType; /// conversion of types
+    static immutable string[string] DType; /// conversion of protobuf types to D
     static this()
     {
         DType["string"] = "string";
@@ -113,26 +117,33 @@ struct Parser
     {
         Dcode res;
         
-        // adding type to struct
+        // type of variable
         auto w = getFirstWord( statementContent );
-        res.structure ~= DType[w.word];
+        auto type = DType[w.word];
         
-        // adding field name
+        // variable name
         w = getFirstWord( w.remain );
-        res.structure ~= DType[w.word];
+        auto name = w.word;
         
         // here is should be a '='
+        // TODO: disabled, need to fix getFirstWord()
+        //w = getFirstWord( w.remain );
+        //enforce( w.word == "=" );
+        
+        // field number
         w = getFirstWord( w.remain );
-        assert( w.word == "=" );
+        auto field_num = w.word;
         
-        // get a field number
-        w = getFirstWord( w.remain );
-        res.methods ~= "field number is "~w.word;
+        static if( rule == "required" )
+            res.flags ~= "// \""~name~"\" field is required";
+        else static if( rule == "optional" )
+            res.flags ~= "// \""~name~"\" this field is optional";
+        else static if( rule == "repeated" )
+            res.flags ~= "// \""~name~"\" this field is repeated";
+        else
+            static assert( false );
         
-        // TODO: here can be a [] options why also need parser
-        
-        // fill flags (actually it will be a additional checking methods)
-        res.flags ~= rule;
+        res.structure = format( "%s %s;\n", type, name );
         
         return res;
     }
@@ -141,9 +152,9 @@ struct Parser
     static Dcode Message( string statementContent )
     {
         StatementParser[string] Parsers;
-        //Parsers["required"] = &Parser.Field!"required";
-        //Parsers["optional"] = &Parser.Field!"optional";
-        //Parsers["repeated"] = &Parser.Field!"repeated";
+        Parsers["required"] = &Parser.Field!"required";
+        Parsers["optional"] = &Parser.Field!"optional";
+        Parsers["repeated"] = &Parser.Field!"repeated";
         
         Dcode res;
 
@@ -152,7 +163,7 @@ struct Parser
         res.structure ~= "struct " ~ m.word ~ " {\n";
         res ~= parseBlock( removeTopLevelBraces( m.remain ), Parsers );
         res.structure ~= "} // struct " ~ m.word ~ "\n";
-
+        
         return res;
     }
 
