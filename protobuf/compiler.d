@@ -59,23 +59,42 @@ Word getFirstWord( string statementText )
     if( !s.empty )
     {
         auto c = s.captures;
-        ret.word = toLower( s.front.hit );
+        ret.word = s.front.hit;
         ret.remain = c.post;
     }
 
     return ret;
 }
 
-alias string function( string ) StatementParser;
+    
+struct Dcode
+{
+    string structure; /// will be added to D's struct {...}
+    string flags; /// boolean flags for fields fill checking
+    string methods; /// text of functions for access to the struct fields
+    
+    void opOpAssign( string op )( in Dcode v )
+    if( op == "~" )
+    {
+        structure ~= v.structure;
+        flags ~= v.flags;
+        methods ~= v.methods;
+    }
+}
 
-string recognizeStatement( string statementText, StatementParser[string] parsers )
+alias Dcode function( string ) StatementParser;
+
+Dcode recognizeStatement( string statementText, StatementParser[string] parsers )
 {
     auto s = getFirstWord( statementText );
+    Dcode res;
     
-    if( s.word !in parsers )
-        return "// Unexpected word \""~s.word~"\"\n";
-    
-    return parsers[s.word] ( s.remain );
+    if( toLower( s.word ) !in parsers )
+        res.structure = "// Unexpected word \""~s.word~"\"\n";
+    else
+        res = parsers[s.word] ( s.remain );
+        
+    return res;
 }
 
 
@@ -88,13 +107,6 @@ struct Parser
         DType["int32"] = "int";
         DType["sint32"] = "int";
         DType["uint32"] = "uint";
-    }
-    
-    struct Dcode
-    {
-        string structure; /// will be added to D's struct {...}
-        string flags; /// boolean flags for fields fill checking
-        string methods; /// text of functions for access to the struct fields
     }
     
     static Dcode Field( string rule )( string statementContent )
@@ -126,22 +138,20 @@ struct Parser
     }
     
     
-    static string Message( string statementContent )
+    static Dcode Message( string statementContent )
     {
         StatementParser[string] Parsers;
-        /*
-        Parsers["required"] = &Parser.Field!"required";
-        Parsers["optional"] = &Parser.Field!"optional";
-        Parsers["repeated"] = &Parser.Field!"repeated";
-        */
+        //Parsers["required"] = &Parser.Field!"required";
+        //Parsers["optional"] = &Parser.Field!"optional";
+        //Parsers["repeated"] = &Parser.Field!"repeated";
         
-        string res;
+        Dcode res;
 
         auto m = getFirstWord( statementContent );
 
-        res ~= "struct " ~ m.word ~ " {\n";
+        res.structure ~= "struct " ~ m.word ~ " {\n";
         res ~= parseBlock( removeTopLevelBraces( m.remain ), Parsers );
-        res ~= "} // message " ~ m.word ~ " end\n";
+        res.structure ~= "} // struct " ~ m.word ~ "\n";
 
         return res;
     }
@@ -200,11 +210,11 @@ unittest
 }
 
 
-string parseBlock( string block, StatementParser[string] parsers )
+Dcode parseBlock( string block, StatementParser[string] parsers )
 {
     size_t next; // next statement start position
     string statement; // statement text
-    string res;
+    Dcode res;
 
     while( next < block.length )
     {
@@ -235,10 +245,11 @@ unittest
 
     // begin parsing
     StatementParser[string] parsers;
-    //parsers["message"] = &Parser.Message;
+    parsers["message"] = &Parser.Message;
     auto res = parseBlock( example, parsers );
 
-    debug(protobuf) writeln( "Total:\n", res );
+    debug(protobuf)
+        writefln( "Total:\n%s\n%s\n%s\n", res.structure, res.flags, res.methods );
 
     // test reading
     Simple msg;
