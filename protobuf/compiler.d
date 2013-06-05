@@ -243,12 +243,19 @@ unittest
     // test reading
     AddressBook msg;
     
-    msg.fillStruct( f );
+    //msg.fillStruct( &msg.fillField );
     
     debug(protobuf) writeln( msg );
 }
 
+
+
 struct AddressBook
+{
+    Person[] person;
+}
+
+struct Person
 {
     char[] name;
     uint id;
@@ -278,20 +285,7 @@ struct AddressBook
     }
     
     Internal.IsSet is_set;
-        
-    void fillStruct( const ubyte[] msg )
-    {
-        uint field;
-        WireType wire;
-        const(ubyte)* curr = &msg[0];
-        
-        while( curr <= &msg[$-1] )
-        {
-            curr += parseTag( curr, field, wire );
-            curr = fillField( curr, field, wire );
-        }
-    }
-        
+            
 private:
     
     size_t fillDelimited( T, string fieldName )( const (ubyte)* curr, uint fieldNum, WireType wire )

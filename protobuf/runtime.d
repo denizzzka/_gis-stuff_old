@@ -216,3 +216,20 @@ const (ubyte)[] unpackMessage( const ubyte* data, out size_t next )
     auto size = unpackVarint!size_t( data, next );
     return unpackDelimited!ubyte( data+next, next );
 }
+
+
+alias const (ubyte)* delegate( const (ubyte)* curr, uint fieldNum, WireType wire ) FillOneField;
+
+
+void fillStruct( const ubyte[] msg, FillOneField fof )
+{
+    uint field;
+    WireType wire;
+    const(ubyte)* curr = &msg[0];
+    
+    while( curr <= &msg[$-1] )
+    {
+        curr += parseTag( curr, field, wire );
+        curr = fof( curr, field, wire );
+    }
+}
