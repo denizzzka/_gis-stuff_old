@@ -275,39 +275,41 @@ struct AddressBook
         {
             bool name;
         }
+    }
+    
+    Internal.IsSet is_set;
         
-        IsSet is_set;
+    void fillStruct( const ubyte[] msg )
+    {
+        uint field;
+        WireType wire;
+        const(ubyte)* curr = &msg[0];
         
-        void fillStruct( const ubyte[] msg )
+        while( curr <= &msg[$-1] )
         {
-            uint field;
-            WireType wire;
-            const(ubyte)* curr = &msg[0];
-            
-            while( curr <= &msg[$-1] )
-            {
-                curr += parseTag( curr, field, wire );
-                curr += fillField( curr, field, wire );
-            }
+            curr += parseTag( curr, field, wire );
+            curr = fillField( curr, field, wire );
         }
+    }
         
-        size_t fillField( const (ubyte)* data, uint fieldNum, WireType wire )
+private:
+    
+    const (ubyte)* fillField( const (ubyte)* curr, uint fieldNum, WireType wire )
+    {
+        size_t next;
+        
+        switch( fieldNum )
         {
-            size_t size;
-            
-            switch( fieldNum )
-            {
-                case 1:
-                    enforce( wire == WireType.LENGTH_DELIMITED );
-                    //name = Field!"required"( 
-                    is_set.name = true;
-                    break;
-                    
-                default:
-                    break;
-            }
-            
-            return size;
+            case 1:
+                enforce( wire == WireType.LENGTH_DELIMITED );
+                AddressBook.name = unpackDelimited!char( curr, next );
+                is_set.name = true;
+                break;
+                
+            default:
+                break;
         }
+
+        return curr + next;
     }
 }
