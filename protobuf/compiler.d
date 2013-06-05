@@ -231,7 +231,7 @@ unittest
 
     // load file
     MmFile mmfile = new MmFile( "book.bin" );
-    ubyte[] f = cast( ubyte[] ) mmfile[2..mmfile.length];
+    ubyte[] f = cast( ubyte[] ) mmfile[0..mmfile.length];
 
     // begin parsing
     StatementParser[string] parsers;

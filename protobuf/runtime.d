@@ -210,13 +210,9 @@ unittest
     assert( next == 8 );
 }
 
-/* // waiting answer from protobuf google group
-size_t unpackMessageHeader( const ubyte* data, out const (ubyte)* nextElement )
+
+const (ubyte)[] unpackMessage( const ubyte* data, out size_t next )
 {
-    uint field; WireType wire;
-    next = parseTag( next, field, wire );
-    enforce( wire.LENGTH_DELIMITED, "Wrong wire type" );
-    
-    return unpackVarint!size_t( data, nextElement );
+    auto size = unpackVarint!size_t( data, next );
+    return unpackDelimited!ubyte( data+next, next );
 }
-*/
