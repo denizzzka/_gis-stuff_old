@@ -269,10 +269,15 @@ struct AddressBook
 
     PhoneNumber[] phone; // repeated
     
-private:
-    
-    struct Serialization
+    struct Internal
     {
+        struct IsSet
+        {
+            bool name;
+        }
+        
+        IsSet is_set;
+        
         void fillStruct( const ubyte[] msg )
         {
             uint field;
@@ -293,7 +298,9 @@ private:
             switch( fieldNum )
             {
                 case 1:
+                    enforce( wire == WireType.LENGTH_DELIMITED );
                     //name = Field!"required"( 
+                    is_set.name = true;
                     break;
                     
                 default:
