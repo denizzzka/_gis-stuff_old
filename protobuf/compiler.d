@@ -221,7 +221,7 @@ string parseBlock( string block, StatementParser[string] parsers )
 }
 
 
-void unittest_old()
+unittest
 {
     string example = import( "example.proto" );
     
@@ -243,7 +243,7 @@ void unittest_old()
     // test reading
     AddressBook msg;
     
-    msg.fillStruct( f );
+    //msg.fillStruct( f );
     
     debug(protobuf) writeln( msg );
 }
@@ -269,49 +269,38 @@ struct AddressBook
 
     PhoneNumber[] phone; // repeated
     
+private:
     
-    void fillStruct( const ubyte[] messageData )
+    struct Serialization
     {
-    }
-    
-    private size_t fillField( const ubyte* data )
-    {
-        WireType wire;
-        uint field;
-        auto nextItem = parseTag( data, field, wire );
-
-        switch( field )
+        void fillStruct( const ubyte[] msg )
         {
-            case 1:
-                enforce( wire == WireType.LENGTH_DELIMITED, "Wrong wire type" );
-                size_t next;
-                name = unpackDelimited!char( &data[nextItem], next );
-                nextItem += next;
-                break;
-                
-            case 2:
-                enforce( wire == WireType.VARINT, "Wrong wire type" );
-                nextItem += unpackVarint!uint( &data[nextItem], id );
-                break;
-                
-            case 3:
-                enforce( wire == WireType.LENGTH_DELIMITED, "Wrong wire type" );
-                size_t next;
-                email = unpackDelimited!char( &data[nextItem], next );
-                nextItem += next;
-                break;
-                
-            case 4:
-                enforce( wire == WireType.LENGTH_DELIMITED, "Wrong wire type" );
-                size_t next;
-                unpackDelimited!ubyte( &data[nextItem], next );
-                nextItem += next;
-                break;
-                
-            default:
-                break;
+            uint field;
+            WireType wire;
+            const(ubyte)* curr = &msg[0];
+            
+            while( curr <= &msg[$-1] )
+            {
+                curr += parseTag( curr, field, wire );
+                curr += fillField( curr, field, wire );
+            }
         }
         
-        return nextItem;
+        size_t fillField( const (ubyte)* data, uint fieldNum, WireType wire )
+        {
+            size_t size;
+            
+            switch( fieldNum )
+            {
+                case 1:
+                    //name = Field!"required"( 
+                    break;
+                    
+                default:
+                    break;
+            }
+            
+            return size;
+        }
     }
 }
