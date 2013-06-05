@@ -231,7 +231,7 @@ unittest
 
     // load file
     MmFile mmfile = new MmFile( "book.bin" );
-    ubyte[] f = cast( ubyte[] ) mmfile[0..mmfile.length];
+    ubyte[] f = cast( ubyte[] ) mmfile[2..mmfile.length];
 
     // begin parsing
     StatementParser[string] parsers;
@@ -243,7 +243,7 @@ unittest
     // test reading
     AddressBook msg;
     
-    //msg.fillStruct( f );
+    msg.fillStruct( f );
     
     debug(protobuf) writeln( msg );
 }
@@ -294,6 +294,15 @@ struct AddressBook
         
 private:
     
+    size_t fillDelimited( T, string fieldName )( const (ubyte)* curr, uint fieldNum, WireType wire )
+    {
+        enforce( wire == WireType.LENGTH_DELIMITED );
+        size_t next;
+        mixin( fieldName~" = unpackDelimited!T( curr, next );" );
+        mixin( "is_set."~fieldName~" = true;" );
+        return next;
+    }
+    
     const (ubyte)* fillField( const (ubyte)* curr, uint fieldNum, WireType wire )
     {
         size_t next;
@@ -301,9 +310,8 @@ private:
         switch( fieldNum )
         {
             case 1:
-                enforce( wire == WireType.LENGTH_DELIMITED );
-                AddressBook.name = unpackDelimited!char( curr, next );
-                is_set.name = true;
+                writeln( wire );
+                next = fillDelimited!(char, "name")( curr, fieldNum, wire );
                 break;
                 
             default:
