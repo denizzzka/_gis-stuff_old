@@ -73,7 +73,7 @@ string recognizeStatement( string statementText, StatementParser[string] parsers
     auto s = getFirstWord( statementText );
     
     if( s.word !in parsers )
-        return "// Unexpected \""~s.word~"\"\n";
+        return "// Unexpected word \""~s.word~"\"\n";
     
     return parsers[s.word] ( s.remain );
 }
@@ -241,62 +241,18 @@ unittest
     debug(protobuf) writeln( "Total:\n", res );
 
     // test reading
-    AddressBook msg;
+    Simple msg;
     
-    //msg.fillStruct( &msg.fillField );
+    fillStruct( f, &msg.fillField );
     
     debug(protobuf) writeln( msg );
 }
 
-
-
-struct AddressBook
+struct Simple
 {
-    Person[] person;
-}
+    string name;
 
-struct Person
-{
-    char[] name;
-    uint id;
-    char[] email; // optional
 
-    enum PhoneType : uint
-    {
-        MOBILE = 0,
-        HOME = 1,
-        WORK = 2
-    };
-
-    struct PhoneNumber
-    {
-        char[] number;
-        PhoneType type = PhoneType.HOME; // optional [default = HOME]
-    };
-
-    PhoneNumber[] phone; // repeated
-    
-    struct Internal
-    {
-        struct IsSet
-        {
-            bool name;
-        }
-    }
-    
-    Internal.IsSet is_set;
-            
-private:
-    
-    size_t fillDelimited( T, string fieldName )( const (ubyte)* curr, uint fieldNum, WireType wire )
-    {
-        enforce( wire == WireType.LENGTH_DELIMITED );
-        size_t next;
-        mixin( fieldName~" = unpackDelimited!T( curr, next );" );
-        mixin( "is_set."~fieldName~" = true;" );
-        return next;
-    }
-    
     const (ubyte)* fillField( const (ubyte)* curr, uint fieldNum, WireType wire )
     {
         size_t next;
@@ -305,7 +261,7 @@ private:
         {
             case 1:
                 writeln( wire );
-                next = fillDelimited!(char, "name")( curr, fieldNum, wire );
+                name = unpackDelimited!char( curr, next );
                 break;
                 
             default:
