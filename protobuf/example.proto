@@ -1,5 +1,6 @@
 message Simple
 {
   required string name = 1;
-  required string phone = 1;
+  optional string phone = 2;
+  repeated string something = 3;
 }

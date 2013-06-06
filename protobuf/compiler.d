@@ -168,17 +168,18 @@ struct Parser
         auto field_num = w.word;
         
         static if( rule == "required" )
-            res.flags ~= "// \""~name~"\" field is required";
+            res.flags ~= "// \""~name~"\" field is required\n";
         else static if( rule == "optional" )
-            res.flags ~= "// \""~name~"\" this field is optional";
+            res.flags ~= "// \""~name~"\" this field is optional\n";
         else static if( rule == "repeated" )
-            res.flags ~= "// \""~name~"\" this field is repeated";
+            res.flags ~= "// \""~name~"\" this field is repeated\n";
         else
             static assert( false );
         
         res.structure = format( "%s %s;\n", type, name );
         res.methods = "case "~field_num~":\n"
-                      "    "~name~" = fillDelimited!( "~type~" )( a );\n"
+                      "    "~name~" "~((rule != "repeated")? "=" : "~=")~" fillDelimited!( "~type~" )( a );\n"
+                      "    "~name~"_flag = true;\n"
                       "    break;\n";
         
         return res;
