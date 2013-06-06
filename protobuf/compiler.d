@@ -131,7 +131,7 @@ struct Parser
     static immutable string[string] DType; /// conversion of protobuf types to D
     static this()
     {
-        DType["string"] = "string";
+        DType["string"] = "char[]";
         DType["int32"] = "int";
         DType["sint32"] = "int";
         DType["uint32"] = "uint";
