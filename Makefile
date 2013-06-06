@@ -11,7 +11,6 @@ endif
 all: main
 
 main:
-	
 	make -C ProtocolBuffer libdprotobuf
 	$(DC) $(ARGS) -ofmain $(PB) $(PBLIB) $(DFILES)
 
