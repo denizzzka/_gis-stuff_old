@@ -218,18 +218,25 @@ const (ubyte)[] unpackMessage( const ubyte* data, out size_t next )
 }
 
 
-alias const (ubyte)* delegate( const (ubyte)* curr, uint fieldNum, WireType wire ) FillOneField;
+struct FillArgs
+{
+    const (ubyte)* curr;
+    uint fieldNum;
+    WireType wire;
+}
+
+
+alias void delegate( ref FillArgs ) FillOneField;
 
 
 void fillStruct( const ubyte[] msg, FillOneField fof )
 {
-    uint field;
-    WireType wire;
-    const(ubyte)* curr = &msg[0];
+    FillArgs a;
+    a.curr = &msg[0];
     
-    while( curr <= &msg[$-1] )
+    while( a.curr <= &msg[$-1] )
     {
-        curr += parseTag( curr, field, wire );
-        curr = fof( curr, field, wire );
+        a.curr += parseTag( a.curr, a.fieldNum, a.wire );
+        fof( a );
     }
 }

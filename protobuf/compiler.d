@@ -295,25 +295,26 @@ unittest
     debug(protobuf) writeln( msg );
 }
 
+
 struct Simple
 {
     string name;
 
-    const (ubyte)* fillField( const (ubyte)* curr, uint fieldNum, WireType wire )
+    void fillField( ref FillArgs a )
     {
         size_t next;
         
-        switch( fieldNum )
+        switch( a.fieldNum )
         {
             case 1:
-                writeln( wire );
-                name = unpackDelimited!char( curr, next );
+                writeln( a.wire );
+                name = unpackDelimited!char( a.curr, next );
                 break;
                 
             default:
                 break;
         }
 
-        return curr + next;
+        a.curr += next;
     }
 }
