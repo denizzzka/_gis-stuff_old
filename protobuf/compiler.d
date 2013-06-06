@@ -183,9 +183,11 @@ struct Parser
 
         auto m = getFirstWord( statementContent );
 
-        res.structure ~= "struct " ~ m.word ~ " {\n";
-        res ~= parseBlock( removeTopLevelBraces( m.remain ), Parsers );
-        res.structure ~= "} // struct " ~ m.word ~ "\n";
+        res.structure ~= "struct " ~ m.word ~ "\n{\n";
+        auto inner = parseBlock( removeTopLevelBraces( m.remain ), Parsers );
+        inner.structure = addIndents( inner.structure );
+        res ~= inner;
+        res.structure ~= "\n}\n";
         
         return res;
     }
