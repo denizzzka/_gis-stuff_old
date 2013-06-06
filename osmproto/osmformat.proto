@@ -1,6 +1,6 @@
 option optimize_for = LITE_RUNTIME;
 option java_package = "crosby.binary";
-package OSMPBF;
+package osmproto.osmformat;
 
 
 //////////////////////////////////////////////////////////////////////////
