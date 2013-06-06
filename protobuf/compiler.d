@@ -199,6 +199,7 @@ struct Parser
         res.structure ~= "struct " ~ m.word ~ "\n{\n";
         auto inner = parseBlock( removeTopLevelBraces( m.remain ), Parsers );
         res ~= inner.addIndent();
+        res.structure ~= "\n" ~ res.methods;
         res.structure ~= "\n}\n";
         
         return res;
