@@ -18,3 +18,4 @@ main:
 clean:
 	rm -rf *.o *.a main
 	rm -rf doc/*
+	make -C ProtocolBuffer 
