@@ -1,6 +1,0 @@
-message Simple
-{
-  required string name = 1;
-  optional string phone = 2;
-  repeated string something = 3;
-}
