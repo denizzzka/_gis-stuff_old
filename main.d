@@ -20,7 +20,7 @@ void main( string[] args )
         "osmpbf", &filename,
     );
     
-    void log( string s )
+    void log(T)( T s )
     {
         if(verbose) writeln(s);
     }
@@ -31,7 +31,7 @@ void main( string[] args )
     ubyte[4] bs = f.rawRead( new ubyte[4] );
     
     auto BlobHeader_size = bigEndianToNative!uint( bs );
-    log(format("%d", BlobHeader_size ));
+    log(BlobHeader_size);
     
     auto bhc = f.rawRead( new ubyte[BlobHeader_size] );
     auto bh = BlobHeader( bhc );
