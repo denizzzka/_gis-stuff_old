@@ -108,6 +108,15 @@ struct Dcode
         flags ~= v.flags;
         methods ~= v.methods;
     }
+    
+    Dcode addIndent()
+    {
+        structure = addIndents( structure );
+        flags = addIndents( flags );
+        methods = addIndents( methods );
+        
+        return this;
+    }
 }
 
 alias Dcode function( string ) StatementParser;
@@ -170,7 +179,7 @@ struct Parser
         res.structure = format( "%s %s;\n", type, name );
         res.methods = "case "~field_num~":\n"
                       "    "~name~" = fillDelimited!( "~type~" )( a );\n"
-                      "    break;";
+                      "    break;\n";
         
         return res;
     }
@@ -189,8 +198,7 @@ struct Parser
 
         res.structure ~= "struct " ~ m.word ~ "\n{\n";
         auto inner = parseBlock( removeTopLevelBraces( m.remain ), Parsers );
-        inner.structure = addIndents( inner.structure );
-        res ~= inner;
+        res ~= inner.addIndent();
         res.structure ~= "\n}\n";
         
         return res;
