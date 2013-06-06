@@ -69,5 +69,11 @@ void main( string[] args )
     log("Open file "~filename);
     auto f = File(filename);
     
+    auto header = readBlob( f );
+    enforce( header.type == "OSMHeader" );
+    
+    auto data = readBlob( f );
+    enforce( data.type == "OSMData" );
+    
     writeln( readBlob( f ) );
 }
