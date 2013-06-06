@@ -299,23 +299,18 @@ unittest
 
 struct Simple
 {
-    string name;
+    char[] name;
 
     void fillField( ref FillArgs a )
     {
-        size_t next;
-        
         switch( a.fieldNum )
         {
             case 1:
-                writeln( a.wire );
-                name = unpackDelimited!char( a.curr, next );
+                name = fillDelimited!( char[] )( a );
                 break;
                 
             default:
                 break;
         }
-
-        a.curr += next;
     }
 }

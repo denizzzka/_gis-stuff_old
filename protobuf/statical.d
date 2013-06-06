@@ -1,6 +1,7 @@
 module protobuf.statical;
 
 import protobuf.runtime;
+debug(protobuf) import std.stdio;
 
 
 struct FillArgs
@@ -24,4 +25,19 @@ void fillStruct( const ubyte[] msg, FillOneField fof )
         a.curr += parseTag( a.curr, a.fieldNum, a.wire );
         fof( a );
     }
+}
+
+
+T fillDelimited( T )( ref FillArgs a )
+{
+    size_t next;
+    writeln( a.wire );
+    
+    T res;
+    alias typeof( res[0] ) I;
+    
+    res = unpackDelimited!I( a.curr, next );
+    a.curr += next;
+    
+    return res;
 }
