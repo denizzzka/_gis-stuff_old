@@ -70,7 +70,30 @@ unittest
     assert( getFirstWord( " abc = def " ).word == "abc" );
 }
 
+
+string addIndents( string v )
+{
+    string insert( string v, size_t place )
+    {
+        return v[0..place]~"    "~v[place..$];
+    }
     
+    v = chomp( v );
+    v = insert( v, 0 );
+    
+    foreach_reverse( i, c; v )
+        if( c == '\n' )
+            v = insert( v, i+1 );
+    
+    return v;
+}
+unittest
+{
+    auto s = addIndents("abc\ndef\n");
+    assert( s == "    abc\n    def" );
+}
+
+
 struct Dcode
 {
     string structure; /// will be added to D's struct {...}
@@ -273,7 +296,6 @@ unittest
 struct Simple
 {
     string name;
-
 
     const (ubyte)* fillField( const (ubyte)* curr, uint fieldNum, WireType wire )
     {
