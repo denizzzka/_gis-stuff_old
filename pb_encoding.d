@@ -1,3 +1,5 @@
+// Protocol Buffer encoding/decoding functions
+
 module protobuf.runtime;
 
 import std.exception;
