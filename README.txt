@@ -5,14 +5,9 @@ Under construction! / В процессе разработки!
 
 Roadmap:
 
-Примитивы
-    2-d tree (двумерное kd-tree) для хранения точек
-        Поиск
-
 Makefile
 
 Чтение OSM PBF (http://www.openstreetmap.org/)
-    Возможно, компилятор для Google Protocol Buffers
 
 Хранение геоданных слоями (для легковых авто, грузовых, пешеходов, самолётов, кораблей)
     Хранение изолиний
