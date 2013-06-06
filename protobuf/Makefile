@@ -10,7 +10,7 @@ lib:
 	$(DC) $(ARGS) -lib -oflibprotobuf runtime.d
 
 compiler:
-	$(DC) $(ARGS) -L-lprotobuf -J. -ofcompiler runtime.d compiler.d
+	$(DC) $(ARGS) -L-lprotobuf -J. -ofcompiler runtime.d compiler.d statical.d
 
 clean:
 	rm -rf *.o *.a compiler

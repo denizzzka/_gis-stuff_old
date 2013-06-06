@@ -1,6 +1,7 @@
 module protobuf.compiler;
 
 import protobuf.runtime;
+import protobuf.statical;
 
 import std.array;
 import std.regex;
