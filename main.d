@@ -69,8 +69,18 @@ void main( string[] args )
     log("Open file "~filename);
     auto f = File(filename);
     
-    auto header = readBlob( f );
-    enforce( header.type == "OSMHeader" );
+    auto hb = readBlob( f );
+    enforce( hb.type == "OSMHeader" );                 
+    
+    auto h = HeaderBlock( hb.data );
+    
+    debug(osmpbf)
+    {
+        typeof(h.source) empty;
+        typeof(h.optional_features) emptyA;
+        
+        writefln( "required_features=%s", h.required_features );
+    }
     
     auto data = readBlob( f );
     enforce( data.type == "OSMData" );
