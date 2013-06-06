@@ -168,6 +168,9 @@ struct Parser
             static assert( false );
         
         res.structure = format( "%s %s;\n", type, name );
+        res.methods = "case "~field_num~":\n"
+                      "    "~name~" = fillDelimited!( "~type~" )( a );\n"
+                      "    break;";
         
         return res;
     }
