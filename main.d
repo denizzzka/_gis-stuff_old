@@ -33,6 +33,6 @@ void main( string[] args )
     auto BlobHeader_size = bigEndianToNative!uint( bs );
     log(format("%d", BlobHeader_size ));
     
-    //auto bha = b[4..$];
-    //auto bh = BlobHeader( bha );
+    auto bhc = f.rawRead( new ubyte[BlobHeader_size] );
+    auto bh = BlobHeader( bhc );
 }
