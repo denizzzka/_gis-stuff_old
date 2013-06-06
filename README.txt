@@ -1,7 +1,10 @@
 Under construction! / В процессе разработки!
 
-Тут должна получиться программа для навигации и набор утилит для создания карт для неё.
+Use "--recursive" for cloning this repository:
+git clone --recursive git://github.com/denizzzka/gis-stuff.git
 
+
+Тут должна получиться программа для навигации и набор утилит для создания карт для неё.
 
 Roadmap:
 
