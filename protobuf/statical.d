@@ -1,6 +1,8 @@
 module protobuf.statical;
 
 import protobuf.runtime;
+
+import std.exception;
 debug(protobuf) import std.stdio;
 
 
@@ -30,8 +32,9 @@ void fillStruct( const ubyte[] msg, FillOneField fof )
 
 T fillDelimited( T )( ref FillArgs a )
 {
+    enforce( a.wire == WireType.LENGTH_DELIMITED );
+    
     size_t next;
-    writeln( a.wire );
     
     T res;
     alias typeof( res[0] ) I;
