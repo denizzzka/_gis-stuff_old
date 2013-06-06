@@ -2,18 +2,27 @@ module main;
 import osmproto.fileformat;
 import osmproto.osmformat;
 
-
+import std.stdio;
 import std.getopt;
-debug import std.stdio;
+import std.stdio;
+
 
 void main( string[] args )
 {
-    string file;
+    string filename;
+    bool verbose;
     
     getopt(
         args,
-        "osmpbf", &file,
+        "verbose", &verbose,
+        "osmpbf", &filename,
     );
     
-    debug(osmpbf) writeln("Open file", file);
+    void log( string s )
+    {
+        if(verbose) writeln("Open file", filename);
+    }
+    
+    log("Open file "~filename);
+    auto file = File(filename, "r");
 }
