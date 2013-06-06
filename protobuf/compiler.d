@@ -285,7 +285,7 @@ unittest
     auto res = parseBlock( example, parsers );
 
     debug(protobuf)
-        writefln( "Total:\n%s\n%s\n%s\n", res.structure, res.flags, res.methods );
+        writefln( "Total:\n\n%s\n%s\n%s\n", res.structure, res.flags, res.methods );
 
     // test reading
     Simple msg;
