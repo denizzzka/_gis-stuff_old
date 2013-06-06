@@ -1,4 +1,5 @@
 #include <google/protobuf/compiler/code_generator.h>
+#include <google/protobuf/compiler/plugin.h>
 
 using namespace google::protobuf;
 
@@ -13,6 +14,5 @@ class DCodeGenerator : public compiler::CodeGenerator
 int main(int argc, char* argv[])
 {
     DCodeGenerator generator;
-    return 0;
-    //return PluginMain(argc, argv, &generator);
+    return google::protobuf::compiler::PluginMain(argc, argv, &generator);
 }

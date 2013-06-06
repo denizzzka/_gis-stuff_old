@@ -13,7 +13,6 @@ lib:
 
 compiler:
 	gcc -I$(PROTOBUF_PATH)/src/ -L$(PROTOBUF_PATH)/src/.libs/ -lprotobuf -lprotoc -oprotoc-gen-d plugin.cc
-	#$(DC) $(ARGS) -L-lprotobuf -J. -ofcompiler runtime.d compiler.d statical.d
 
 clean:
 	rm -rf *.o *.a compiler protoc-gen-d
