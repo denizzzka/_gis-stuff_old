@@ -151,7 +151,7 @@ void main( string[] args )
             
             if( !c.nodes.isNull )
                 foreach( n; c.nodes )
-                    writefln( "id=%d lat=%d lon=%d", n.id, n.lat, n.lon );;
+                    writefln( "id=%d coords=%s", n.id, decodeCoords( prim, n ) );
         }
     }
 }
