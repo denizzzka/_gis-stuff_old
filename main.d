@@ -20,7 +20,9 @@ PureBlob readBlob( ref File f )
 {
     PureBlob res;
     
-    ubyte[4] bs = f.rawRead( new ubyte[4] );
+    ubyte[] bs_slice = f.rawRead( new ubyte[4] );
+    if( bs_slice.length != 4 ) return res; // file end
+    ubyte[4] bs = bs_slice;
     
     auto BlobHeader_size = bigEndianToNative!uint( bs );
     enforce( BlobHeader_size > 0 );
@@ -49,10 +51,11 @@ PureBlob readBlob( ref File f )
     return res;
 }
 
-ubyte[] readOSMData( ref File f )
+HeaderBlock readOSMHeader( ref File f )
 {
     auto hb = readBlob( f );
-    enforce( hb.type == "OSMHeader" );                 
+    
+    enforce( hb.type == "OSMHeader", "\""~hb.type~"\" instead of OSMHeader" );                 
     
     auto h = HeaderBlock( hb.data );
     
@@ -61,8 +64,15 @@ ubyte[] readOSMData( ref File f )
         writefln( "required_features=%s", h.required_features );
     }
     
+    return h;
+}
+
+ubyte[] readOSMData( ref File f )
+{
     auto d = readBlob( f );
-    enforce( d.type == "OSMData" );
+    
+    if( d.data.length != 0 )
+        enforce( d.type == "OSMData", "\""~d.type~"\" instead of OSMData" );
     
     return d.data;
 }    
@@ -86,7 +96,19 @@ void main( string[] args )
     log("Open file "~filename);
     auto f = File(filename);
     
-    auto d = readOSMData( f );
+    auto h = readOSMHeader( f );
     
-    writeln( PrimitiveBlock( d ) );
+    while(true)
+    {
+        auto d = readOSMData( f );
+        if(d.length == 0 ) break; // eof
+        
+        auto prim = PrimitiveBlock( d );
+        
+        foreach( i, c; prim.primitivegroup )
+        {
+            if( !c.nodes.isNull )
+                writeln( c.nodes );
+        }
+    }
 }
