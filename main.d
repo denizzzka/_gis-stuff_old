@@ -139,9 +139,9 @@ void main( string[] args )
                     writefln( "id=%d lat=%d lon=%d", n.id, n.lat, n.lon );
             }
             
-            if( false || !c.nodes.isNull )
-                foreach( j, node; c.nodes )
-                    writeln( node );
+            if( !c.nodes.isNull )
+                foreach( n; c.nodes )
+                    writefln( "id=%d lat=%d lon=%d", n.id, n.lat, n.lon );;
         }
     }
 }
