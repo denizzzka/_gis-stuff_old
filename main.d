@@ -104,11 +104,16 @@ void main( string[] args )
         if(d.length == 0 ) break; // eof
         
         auto prim = PrimitiveBlock( d );
+        writefln("lat_offset=%d lon_offset=%d", prim.lat_offset, prim.lon_offset );
+        writeln("granularity=", prim.granularity);
+        //writeln("stringtable=", prim.stringtable);
         
-        foreach( i, c; prim.primitivegroup )
-        {
+        foreach( i, c; prim.primitivegroup ){}
+            //writeln( c );
+            /*
             if( !c.nodes.isNull )
-                writeln( c.nodes );
-        }
+                foreach( j, n; c.nodes )
+                    writeln( n );
+            */
     }
 }
