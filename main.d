@@ -1,4 +1,5 @@
 module main;
+
 import osmproto.fileformat;
 import osmproto.osmformat;
 
