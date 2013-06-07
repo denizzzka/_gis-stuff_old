@@ -78,6 +78,28 @@ ubyte[] readOSMData( ref File f )
     return d.data;
 }    
 
+Node[] decodeDenseNodes(DenseNodesArray)( DenseNodesArray dn )
+{
+    Node[] res;
+    Node curr;
+    curr.id = 0;
+    curr.lat = 0;
+    curr.lon = 0;
+    
+    foreach( i, c; dn.id )
+    {
+        // decode delta
+        curr.id += dn.id[i];
+        curr.lat += dn.lat[i];
+        curr.lon += dn.lon[i];
+        
+        res ~= curr;
+    }
+    
+    return res;
+}
+        
+
 void main( string[] args )
 {
     string filename;
@@ -107,14 +129,19 @@ void main( string[] args )
         auto prim = PrimitiveBlock( d );
         writefln("lat_offset=%d lon_offset=%d", prim.lat_offset, prim.lon_offset );
         writeln("granularity=", prim.granularity);
-        //writeln("stringtable=", prim.stringtable);
         
-        foreach( i, c; prim.primitivegroup ){}
-            //writeln( c );
-            /*
-            if( !c.nodes.isNull )
-                foreach( j, n; c.nodes )
-                    writeln( n );
-            */
+        foreach( i, c; prim.primitivegroup )
+        {
+            if( !c.dense.isNull )
+            {
+                auto nodes = decodeDenseNodes( c.dense );
+                foreach( n; nodes)
+                    writefln( "id=%d lat=%d lon=%d", n.id, n.lat, n.lon );
+            }
+            
+            if( false || !c.nodes.isNull )
+                foreach( j, node; c.nodes )
+                    writeln( node );
+        }
     }
 }
