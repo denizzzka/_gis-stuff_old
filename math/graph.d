@@ -179,7 +179,7 @@ unittest
     
     struct DumbPoint
     {
-        Vector2D coords;
+        Vector2D!float coords;
 
         bool opEquals( in DumbPoint v ) const
         {
@@ -206,16 +206,16 @@ unittest
         for( auto y=0; y<5; y++ )
             for( auto x=0; x<5; x++ )
             {
-                DP from = { coords: Vector2D(x+s, y) };
-                DP to_up = { coords: Vector2D(x+s, y+1) };
-                DP to_right = { coords: Vector2D(x+1+s, y) };
+                DP from = { coords: Vector2D!float(x+s, y) };
+                DP to_up = { coords: Vector2D!float(x+s, y+1) };
+                DP to_right = { coords: Vector2D!float(x+1+s, y) };
                 
                 g.addEdge( from, to_up, 5 );
                 g.addEdge( from, to_right, 4.7 );
             }
 
-    DP f_p = { Vector2D(2,0) };
-    DP g_p = { Vector2D(4,4) };
+    DP f_p = { Vector2D!float(2,0) };
+    DP g_p = { Vector2D!float(4,4) };
     
     size_t from, goal;
     assert( g.search( f_p, from ) );
@@ -230,7 +230,7 @@ unittest
         foreach( i, c; s )
             writeln( c, " ", g.nodes[c].point );
             
-    DP g2_p = { Vector2D(11,4) };
+    DP g2_p = { Vector2D!float(11,4) };
     size_t goal2;
     assert( g.search( g2_p, goal2 ) );
     s = g.findPath( from, goal2 );

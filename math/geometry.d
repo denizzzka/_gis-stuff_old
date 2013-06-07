@@ -4,7 +4,7 @@ import std.algorithm;
 import std.math;
 
 
-struct Vector2DT( T )
+struct Vector2D( T )
 {
     T x = 0;
     T y = 0;
@@ -12,17 +12,17 @@ struct Vector2DT( T )
     alias x lon;
     alias y lat;
     
-    Vector2D opBinary( string op )( in Vector2D v ) const
+    Vector2D!T opBinary( string op )( in Vector2D!float v ) const
     {
         static if( op == "+" )
-            return Vector2D( x + v.x, y + v.y );
+            return Vector2D!float( x + v.x, y + v.y );
         else static if( op == "-" )
-            return Vector2D( x - v.x, y - v.y );
+            return Vector2D!float( x - v.x, y - v.y );
         else
             static assert( false, "op not found" );
     }
     
-    void opOpAssign( string op )( in Vector2D v )
+    void opOpAssign( string op )( in Vector2D!float v )
     {
         static if( op == "+" )
             x += v.x, y += v.y;
@@ -38,12 +38,10 @@ struct Vector2DT( T )
     }
 }
 
-alias Vector2DT!float Vector2D;
-
 unittest
 {
-    Vector2D a = { x: 3, y: 2 };
-    Vector2D b = { x: -2, y: 2 };
+    Vector2D!float a = { x: 3, y: 2 };
+    Vector2D!float b = { x: -2, y: 2 };
     
     auto c = a - b;
     a -= b;
@@ -55,13 +53,13 @@ unittest
 
 struct Box
 {
-    Vector2D leftDownCorner;
-    Vector2D rightUpCorner;
+    Vector2D!float leftDownCorner;
+    Vector2D!float rightUpCorner;
     
     alias leftDownCorner ld;
     alias rightUpCorner ru;
     
-    this( in Vector2D coords, in Vector2D size )
+    this( in Vector2D!float coords, in Vector2D!float size )
     {
         leftDownCorner.x = coords.x + ((size.x > 0) ? 0 : size.x);
         leftDownCorner.y = coords.y + ((size.y > 0) ? 0 : size.y);
@@ -82,17 +80,17 @@ struct Box
     }
     unittest
     {
-        Box b1 = Box( Vector2D(2, 2), Vector2D(1, 1) );
-        Box b2 = Box( Vector2D(3, 3), Vector2D(1, 1) );
-        Box b3 = Box( Vector2D(4, 4), Vector2D(1, 1) );
+        Box b1 = Box( Vector2D!float(2, 2), Vector2D!float(1, 1) );
+        Box b2 = Box( Vector2D!float(3, 3), Vector2D!float(1, 1) );
+        Box b3 = Box( Vector2D!float(4, 4), Vector2D!float(1, 1) );
         
         assert( b1.isOverlappedBy( b2 ) );
         assert( !b1.isOverlappedBy( b3 ) );
     }
     
-    Vector2D getSizeVector() const
+    Vector2D!float getSizeVector() const
     {
-        return Vector2D( ru.x - ld.x, ru.y - ld.y );
+        return Vector2D!float( ru.x - ld.x, ru.y - ld.y );
     }
     
     auto getArea() const
@@ -136,18 +134,18 @@ struct Box
 
 unittest
 {
-    Vector2D coords1 = { 0, 0 };
-    Vector2D size1 = { 1, 1 };
+    Vector2D!float coords1 = { 0, 0 };
+    Vector2D!float size1 = { 1, 1 };
     
-    Vector2D coords2 = { 1, 0 };
-    Vector2D size2 = { 1, 1 };
+    Vector2D!float coords2 = { 1, 0 };
+    Vector2D!float size2 = { 1, 1 };
     
     Box box1 = Box( coords1, size1 );
     Box box2 = Box( coords2, size2 );
     
     assert( box1.isOverlappedBy( box2 ) );
     
-    assert( box1.getCircumscribed( box2 ) == Box(Vector2D(0, 0), Vector2D(2, 1)) );
+    assert( box1.getCircumscribed( box2 ) == Box(Vector2D!float(0, 0), Vector2D!float(2, 1)) );
     
     auto serialized = &(box1.Serialize())[0];
     auto size = box2.Deserialize( serialized );

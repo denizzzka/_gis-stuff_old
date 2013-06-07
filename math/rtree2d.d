@@ -357,7 +357,7 @@ private:
         // split by places specified by bits of key
         auto nChildren = n.children.dup;
         n.children.destroy();
-        n.boundary = Box( Vector2D(), Vector2D() );
+        n.boundary = Box( Vector2D!float(), Vector2D!float() );
         
         auto newNode = new Node;
         
@@ -426,7 +426,7 @@ unittest
         for( float x = 0; x < 3; x++ )
         {
             DumbPayload p;
-            Box b = Box( Vector2D( x, y ), Vector2D( 1, 1 ) );
+            Box b = Box( Vector2D!float( x, y ), Vector2D!float( 1, 1 ) );
             
             rtree.addObject( b, p );
     
@@ -447,8 +447,8 @@ unittest
     
     debug GC.enable();
     
-    Box search1 = Box( Vector2D( 1, 1 ), Vector2D( 1, 1 ) );
-    Box search2 = Box( Vector2D( 1.1, 1.1 ), Vector2D( 0.8, 0.8 ) );
+    Box search1 = Box( Vector2D!float( 1, 1 ), Vector2D!float( 1, 1 ) );
+    Box search2 = Box( Vector2D!float( 1.1, 1.1 ), Vector2D!float( 0.8, 0.8 ) );
     
     assert( rtree.search( search1 ).length == 9 );
     assert( rtree.search( search2 ).length == 1 );
