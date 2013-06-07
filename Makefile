@@ -1,12 +1,11 @@
-DC = dmd
-PB = osmproto/fileformat.d osmproto/osmformat.d
-PBLIB = ./ProtocolBuffer/libdprotobuf.a
-DFILES = math/rtree2d.d math/geometry.d math/graph.d pb_encoding.d main.d
+DC := dmd
+PB := osmproto/fileformat.d osmproto/osmformat.d
+PBLIB := ./ProtocolBuffer/libdprotobuf.a
+DFILES := math/rtree2d.d math/geometry.d math/graph.d pb_encoding.d main.d
 
 
-ifeq ($(ARGS),"")
-	ARGS = "-release"
-endif
+ARGS ?= -d -release
+
 
 all: main
 
