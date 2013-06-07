@@ -49,7 +49,7 @@ PureBlob readBlob( ref File f )
     return res;
 }
 
-PrimitiveBlock readPrimitiveBlock( ref File f )
+ubyte[] readOSMData( ref File f )
 {
     auto hb = readBlob( f );
     enforce( hb.type == "OSMHeader" );                 
@@ -64,7 +64,7 @@ PrimitiveBlock readPrimitiveBlock( ref File f )
     auto d = readBlob( f );
     enforce( d.type == "OSMData" );
     
-    return PrimitiveBlock( d.data );
+    return d.data;
 }    
 
 void main( string[] args )
@@ -86,8 +86,7 @@ void main( string[] args )
     log("Open file "~filename);
     auto f = File(filename);
     
-    auto primitive = readPrimitiveBlock( f );
+    auto d = readOSMData( f );
     
-    //foreach( i, c; primitive.PrimitiveGroup )
-    writeln( primitive );
+    writeln( PrimitiveBlock( d ) );
 }
