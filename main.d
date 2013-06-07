@@ -49,6 +49,23 @@ PureBlob readBlob( ref File f )
     return res;
 }
 
+PrimitiveBlock readPrimitiveBlock( ref File f )
+{
+    auto hb = readBlob( f );
+    enforce( hb.type == "OSMHeader" );                 
+    
+    auto h = HeaderBlock( hb.data );
+    
+    debug(osmpbf)
+    {
+        writefln( "required_features=%s", h.required_features );
+    }
+    
+    auto d = readBlob( f );
+    enforce( d.type == "OSMData" );
+    
+    return PrimitiveBlock( d.data );
+}    
 
 void main( string[] args )
 {
@@ -69,21 +86,8 @@ void main( string[] args )
     log("Open file "~filename);
     auto f = File(filename);
     
-    auto hb = readBlob( f );
-    enforce( hb.type == "OSMHeader" );                 
+    auto primitive = readPrimitiveBlock( f );
     
-    auto h = HeaderBlock( hb.data );
-    
-    debug(osmpbf)
-    {
-        typeof(h.source) empty;
-        typeof(h.optional_features) emptyA;
-        
-        writefln( "required_features=%s", h.required_features );
-    }
-    
-    auto data = readBlob( f );
-    enforce( data.type == "OSMData" );
-    
-    writeln( readBlob( f ) );
+    //foreach( i, c; primitive.PrimitiveGroup )
+    writeln( primitive );
 }
