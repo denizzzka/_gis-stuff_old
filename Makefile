@@ -10,8 +10,8 @@ ARGS ?= -d -release
 all: main
 
 main:
-	make -C ProtocolBuffer libdprotobuf
-	$(DC) $(ARGS) -ofmain $(PB) $(PBLIB) $(DFILES)
+	make -C ProtocolBuffer args="$(BITS)" libdprotobuf
+	$(DC) $(ARGS) $(BITS) -ofmain $(PB) $(PBLIB) $(DFILES)
 
 clean:
 	rm -rf *.o *.a main
