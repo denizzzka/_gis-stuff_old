@@ -4,10 +4,10 @@ import std.algorithm;
 import std.math;
 
 
-struct Vector2D
+struct Vector2DT( T )
 {
-    float x = 0;
-    float y = 0;
+    T x = 0;
+    T y = 0;
     
     alias x lon;
     alias y lat;
@@ -37,6 +37,9 @@ struct Vector2D
         return hypot( x, y );
     }
 }
+
+alias Vector2DT!float Vector2D;
+
 unittest
 {
     Vector2D a = { x: 3, y: 2 };

@@ -2,6 +2,7 @@ module main;
 
 import osmproto.fileformat;
 import osmproto.osmformat;
+import math.geometry;
 
 import std.stdio;
 import std.string;
@@ -98,7 +99,16 @@ Node[] decodeDenseNodes(DenseNodesArray)( DenseNodesArray dn )
     
     return res;
 }
-        
+
+auto decodeCoords( in PrimitiveBlock pb, in Node n )
+{
+    Vector2DT!long r;
+    
+    r.lat = (pb.lat_offset + pb.granularity * n.lat);// * 0.000_000_001;
+    r.lon = (pb.lon_offset + pb.granularity * n.lon);// * 0.000_000_001;
+    
+    return r;
+}
 
 void main( string[] args )
 {
@@ -136,7 +146,7 @@ void main( string[] args )
             {
                 auto nodes = decodeDenseNodes( c.dense );
                 foreach( n; nodes)
-                    writefln( "id=%d lat=%d lon=%d", n.id, n.lat, n.lon );
+                    writefln( "id=%d coords=%s", n.id, decodeCoords( prim, n ) );
             }
             
             if( !c.nodes.isNull )
