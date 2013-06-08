@@ -15,7 +15,7 @@ $(OSMPBFLIB):
 	$(DC) -d $(ARGS) $(BITS) -lib -of$(OSMPBFLIB) $(PBLIB) $(PB)
 
 main:
-	$(DC) $(INCLUDE) $(ARGS) $(BITS) $(DERELICTLIB) -ofmain $(OSMPBFLIB).a $(DFILES)
+	$(DC) $(INCLUDE) $(DERELICTLIB) $(ARGS) $(BITS) -ofmain $(OSMPBFLIB).a $(DFILES)
 
 clean:
 	rm -rf *.o *.a main

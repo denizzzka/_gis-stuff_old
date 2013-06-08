@@ -159,12 +159,3 @@ void main( string[] args )
         }
     }
 }
-
-unittest
-{
-    DerelictSFML2Window.load();
-    DerelictSFML2System.load();
-    DerelictSFML2Graphics.load();
-    
-    sfRenderWindow* window;
-}

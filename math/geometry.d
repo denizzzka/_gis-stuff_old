@@ -51,15 +51,15 @@ unittest
 }
 
 
-struct Box
+struct Box( Vector )
 {
-    Vector2D!float leftDownCorner;
-    Vector2D!float rightUpCorner;
+    Vector leftDownCorner;
+    Vector rightUpCorner;
     
     alias leftDownCorner ld;
     alias rightUpCorner ru;
     
-    this( in Vector2D!float coords, in Vector2D!float size )
+    this( in Vector coords, in Vector size )
     {
         leftDownCorner.x = coords.x + ((size.x > 0) ? 0 : size.x);
         leftDownCorner.y = coords.y + ((size.y > 0) ? 0 : size.y);
@@ -67,7 +67,7 @@ struct Box
         rightUpCorner.y = coords.y + ((size.y < 0) ? 0 : size.y);
     }
     
-    bool isOverlappedBy( in Box b ) const pure
+    bool isOverlappedBy( in Box!Vector b ) const pure
     {
         auto ld2 = b.leftDownCorner;
         auto ru2 = b.rightUpCorner;
@@ -80,6 +80,7 @@ struct Box
     }
     unittest
     {
+        alias Box!Vector BBox;
         Box b1 = Box( Vector2D!float(2, 2), Vector2D!float(1, 1) );
         Box b2 = Box( Vector2D!float(3, 3), Vector2D!float(1, 1) );
         Box b3 = Box( Vector2D!float(4, 4), Vector2D!float(1, 1) );
@@ -88,9 +89,9 @@ struct Box
         assert( !b1.isOverlappedBy( b3 ) );
     }
     
-    Vector2D!float getSizeVector() const
+    Vector getSizeVector() const
     {
-        return Vector2D!float( ru.x - ld.x, ru.y - ld.y );
+        return Vector( ru.x - ld.x, ru.y - ld.y );
     }
     
     auto getArea() const
@@ -99,9 +100,9 @@ struct Box
         return size.x * size.y;
     }
     
-    Box getCircumscribed( in Box b ) const pure
+    Box!Vector getCircumscribed( in Box!Vector b ) const pure
     {
-        Box res;
+        Box!Vector res;
         
         res.ld.x = min( ld.x, b.ld.x );
         res.ld.y = min( ld.y, b.ld.y );
@@ -112,7 +113,7 @@ struct Box
         return res;
     }
     
-    void addCircumscribe( in Box b ) pure
+    void addCircumscribe( in Box!Vector b ) pure
     {
         this = this.getCircumscribed( b );
     }
@@ -140,12 +141,14 @@ unittest
     Vector2D!float coords2 = { 1, 0 };
     Vector2D!float size2 = { 1, 1 };
     
-    Box box1 = Box( coords1, size1 );
-    Box box2 = Box( coords2, size2 );
+    alias Box!(Vector2D!float) BBox;
+    
+    BBox box1 = BBox( coords1, size1 );
+    BBox box2 = BBox( coords2, size2 );
     
     assert( box1.isOverlappedBy( box2 ) );
     
-    assert( box1.getCircumscribed( box2 ) == Box(Vector2D!float(0, 0), Vector2D!float(2, 1)) );
+    assert( box1.getCircumscribed( box2 ) == BBox(Vector2D!float(0, 0), Vector2D!float(2, 1)) );
     
     auto serialized = &(box1.Serialize())[0];
     auto size = box2.Deserialize( serialized );

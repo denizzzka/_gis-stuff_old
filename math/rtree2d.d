@@ -8,12 +8,15 @@ version(unittest) import std.string;
 import core.bitop;
 
 
-class RTreeArray( Payload )
+class RTreeArray( RTreePtrs )
 {
+    alias typeof(RTreePtrs.Leaf.payload) Payload;
+    alias typeof(RTreePtrs.Leaf.boundary) Box;
+    
     ubyte depth = 0;
     ubyte[] data;
     
-    this( RTreePtrs!Payload source )
+    this( RTreePtrs source )
     in
     {
         size_t nodes, leafs, leafsBlocks;
@@ -65,13 +68,13 @@ class RTreeArray( Payload )
         
 private:
     
-    ubyte[] fillFrom( RTreePtrs!Payload.Node* curr, size_t currDepth = 0 )
+    ubyte[] fillFrom( RTreePtrs!(Box, Payload).Node* curr, size_t currDepth = 0 )
     {
         ubyte[] res = packVarint( curr.children.length ); // number of items
         
         if( currDepth > depth ) // adding leaf?
         {
-            res ~= (cast (RTreePtrs!Payload.Leaf*) curr).payload.Serialize();
+            res ~= (cast (RTreePtrs.Leaf*) curr).payload.Serialize();
         }
         else // adding node
         {
@@ -101,7 +104,7 @@ private:
 }
 
 
-class RTreePtrs( Payload )
+class RTreePtrs( Box, Payload )
 {
     immutable ubyte maxChildren = 2;
     ubyte depth = 0;
@@ -420,13 +423,16 @@ unittest
     import core.memory;
     debug GC.disable();    
     
-    auto rtree = new RTreePtrs!DumbPayload;
+    alias Vector2D!float Vector;
+    alias Box!Vector BBox;
+    
+    auto rtree = new RTreePtrs!(BBox, DumbPayload);
     
     for( float y = 0; y < 3; y++ )
         for( float x = 0; x < 3; x++ )
         {
             DumbPayload p;
-            Box b = Box( Vector2D!float( x, y ), Vector2D!float( 1, 1 ) );
+            BBox b = BBox( Vector( x, y ), Vector( 1, 1 ) );
             
             rtree.addObject( b, p );
     
@@ -447,13 +453,13 @@ unittest
     
     debug GC.enable();
     
-    Box search1 = Box( Vector2D!float( 1, 1 ), Vector2D!float( 1, 1 ) );
-    Box search2 = Box( Vector2D!float( 1.1, 1.1 ), Vector2D!float( 0.8, 0.8 ) );
+    BBox search1 = BBox( Vector2D!float( 1, 1 ), Vector2D!float( 1, 1 ) );
+    BBox search2 = BBox( Vector2D!float( 1.1, 1.1 ), Vector2D!float( 0.8, 0.8 ) );
     
     assert( rtree.search( search1 ).length == 9 );
     assert( rtree.search( search2 ).length == 1 );
     
-    auto rarr = new RTreeArray!DumbPayload( rtree );
+    auto rarr = new RTreeArray!(typeof(rtree))( rtree );
     
     assert( rarr.search( search1 ).length == 9 );
     assert( rarr.search( search2 ).length == 1 );
