@@ -11,7 +11,7 @@ import std.exception;
 import std.bitmanip: bigEndianToNative;
 import std.zlib;
 
-//import derelict.sdl2.sdl;
+import derelict.sdl2.sdl;
 
 
 struct PureBlob
