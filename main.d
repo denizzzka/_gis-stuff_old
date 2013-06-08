@@ -1,7 +1,7 @@
 module main;
 
-import osmproto.fileformat;
-import osmproto.osmformat;
+import osmpbf.fileformat;
+import osmpbf.osmformat;
 import math.geometry;
 
 import std.stdio;
@@ -10,6 +10,8 @@ import std.getopt;
 import std.exception;
 import std.bitmanip: bigEndianToNative;
 import std.zlib;
+
+//import derelict.sdl2.sdl;
 
 
 struct PureBlob
