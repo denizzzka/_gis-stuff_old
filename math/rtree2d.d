@@ -10,8 +10,8 @@ import core.bitop;
 
 class RTreeArray( RTreePtrs )
 {
-    alias typeof(RTreePtrs.Leaf.payload) Payload;
-    alias typeof(RTreePtrs.Leaf.boundary) Box;
+    alias RTreePtrs.Payload Payload;
+    alias RTreePtrs.Box Box;
     
     ubyte depth = 0;
     ubyte[] data;
@@ -104,8 +104,11 @@ private:
 }
 
 
-class RTreePtrs( Box, Payload )
+class RTreePtrs( _Box, _Payload )
 {
+    alias _Box Box;
+    alias _Payload Payload;
+    
     immutable ubyte maxChildren = 2;
     ubyte depth = 0;
     Node* root;
