@@ -2,6 +2,7 @@ DC := dmd
 PB := osmpbf/fileformat.d osmpbf/osmformat.d
 PBLIB := ProtocolBuffer/libdprotobuf.a
 OSMPBFLIB := libosmpbfd
+DERELICTLIB := -L-lDerelictSDL2 -L-lDerelictUtil -L-ldl
 DFILES := math/rtree2d.d math/geometry.d math/graph.d pb_encoding.d main.d
 INCLUDE := -I/usr/include/dmd/
 
@@ -14,7 +15,7 @@ $(OSMPBFLIB):
 	$(DC) -d $(ARGS) $(BITS) -lib -of$(OSMPBFLIB) $(PBLIB) $(PB)
 
 main:
-	$(DC) $(INCLUDE) $(ARGS) $(BITS) -ofmain $(OSMPBFLIB).a $(DFILES)
+	$(DC) $(INCLUDE) $(ARGS) $(BITS) $(DERELICTLIB) -ofmain $(OSMPBFLIB).a $(DFILES)
 
 clean:
 	rm -rf *.o *.a main
