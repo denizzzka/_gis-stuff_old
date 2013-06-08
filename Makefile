@@ -2,7 +2,7 @@ DC := dmd
 PB := osmpbf/fileformat.d osmpbf/osmformat.d
 PBLIB := ProtocolBuffer/libdprotobuf.a
 OSMPBFLIB := libosmpbfd
-DERELICTLIB := -L-lDerelictSDL2 -L-lDerelictUtil -L-ldl
+DERELICTLIB := -L-lDerelictSFML2 -L-lDerelictUtil -L-ldl
 DFILES := math/rtree2d.d math/geometry.d math/graph.d pb_encoding.d main.d
 INCLUDE := -I/usr/include/dmd/
 
