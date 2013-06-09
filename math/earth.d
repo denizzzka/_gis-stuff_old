@@ -12,22 +12,25 @@ unittest
     assert( degree2radian(360) == PI * 2 );
 }
 
-auto lon2mercator( Datum, T )( T longitude )
+struct Conv ( Datum )
 {
-    return Datum.a * degree2radian( longitude );
-}
+    static auto lon2mercator( T )( T longitude )
+    {
+        return Datum.a * degree2radian( longitude );
+    }
 
-auto lat2mercator( Datum, T )( T latitude )
-{
-    alias Datum D;
-    
-    auto  lat = degree2radian( latitude );
-    auto e1 = tan( PI_4 + lat/2 );
-    auto eccentr = sqrt( 1 - pow((D.b/D.a), 2) );
-    auto esinl = eccentr * sin( lat );
-    auto e2 = pow( (1.0 - esinl) / (1.0 + esinl), eccentr/2 );
-    
-    return D.a * log( e1 * e2 );
+    static auto lat2mercator( T )( T latitude )
+    {
+        alias Datum D;
+        
+        auto  lat = degree2radian( latitude );
+        auto e1 = tan( PI_4 + lat/2 );
+        auto eccentr = sqrt( 1 - pow((D.b/D.a), 2) );
+        auto esinl = eccentr * sin( lat );
+        auto e2 = pow( (1.0 - esinl) / (1.0 + esinl), eccentr/2 );
+        
+        return D.a * log( e1 * e2 );
+    }
 }
 
 struct WGS84
@@ -49,7 +52,9 @@ struct WGS84
 
 unittest
 {
+    alias Conv!WGS84 C;
+    
     // Latitude and longitude of Moscow 
-    assert( abs( lat2mercator!WGS84( 55.751667 ) - 7473789.46 ) < 0.01 );
-    assert( abs( lon2mercator!WGS84( 37.617778 ) - 4187591.89 ) < 0.01 );
+    assert( abs( C.lat2mercator( 55.751667 ) - 7473789.46 ) < 0.01 );
+    assert( abs( C.lon2mercator( 37.617778 ) - 4187591.89 ) < 0.01 );
 }
