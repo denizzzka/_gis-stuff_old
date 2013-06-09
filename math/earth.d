@@ -149,4 +149,11 @@ unittest
     auto t = C.orthodromicDistance( t1, t2 );
     assert( t > 0.01 );
     assert( t < 0.015 );
+    
+    // Through North Pole
+    auto from = Coords( 0, 89.99 ).getRadiansFromDegrees;
+    auto to = Coords( 180, 89.99 ).getRadiansFromDegrees;
+    auto pole_dist = C.orthodromicDistance( from, to );
+    assert( pole_dist > 2224.523 );
+    assert( pole_dist < 2224.524 );
 }
