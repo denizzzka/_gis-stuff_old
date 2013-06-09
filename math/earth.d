@@ -50,9 +50,5 @@ auto lat2mercatorY( Datum, T )( T latitude )
 
 unittest
 {
-    import std.stdio;
-    writeln( typeid( WGS84.b ) );
-    writeln( WGS84.b );
-    
-    writeln( lat2mercatorY!WGS84( 55.751667 ) );
+    assert( abs( lat2mercatorY!WGS84( 55.751667 ) - 7473789.46 ) < 0.01  );
 }
