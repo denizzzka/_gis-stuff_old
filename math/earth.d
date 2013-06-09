@@ -45,7 +45,7 @@ struct Conv ( Datum )
     
     static auto orthodromicDistance( Coords )( Coords from, Coords to )
     {
-        auto immutable radius = ( 2 * Datum.a + Datum.b ) / 3; // approximation
+        auto immutable radius = ( 3 * Datum.a + Datum.b ) / 4; // approximation
         
         alias from s; // standpoint
         alias to f; // forepoint
@@ -60,7 +60,8 @@ struct Conv ( Datum )
         
         auto e1 = cos_phi_f * sin(dLamb);
         auto e2 = cos_phi_s * sin_phi_f - sin_phi_s * cos_phi_f * cos_dLamb;
-        auto dividend =  hypot( e1, e2 );
+        
+        auto dividend = hypot( e1, e2 );
         auto divider = sin_phi_s * sin_phi_f + cos_phi_s * cos_phi_f * cos_dLamb;
         
         auto angle = atan2( dividend, divider );
@@ -98,18 +99,21 @@ unittest
     auto krsk = Vector2D!double( 56.171667, 92.493333 );
     auto msk = Vector2D!double( 55.408611, 37.906111 );
     
-    auto t1 = Vector2D!double( 92.8618363, 56.0339152 );
-    auto t2 = Vector2D!double( 92.8618363, 56.0322406 );
+    //auto t1 = Vector2D!double( 92.8618363, 56.0339152 );
+    //auto t2 = Vector2D!double( 92.8618363, 56.0322406 );
     
+    auto t1 = Vector2D!double( 0, 0 );
+    auto t2 = Vector2D!double( 0, 0.000001 );
+
     //auto t1 = Vector2D!double( 92.8650337, 56.0322406 );
     //auto t2 = Vector2D!double( 92.8617626, 56.0322406 );
     
     import std.stdio;
+    //writeln( t1, t2 );
     writefln( "orthodromic=%f", C.orthodromicDistance( t1, t2 ) );
     
     auto f = C.coords2mercator( t1 );
     auto t = C.coords2mercator( t2 );
-    writeln( t1, t2 );
     writeln( f, t );
     f -= t;
     
