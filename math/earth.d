@@ -2,7 +2,7 @@ import math.geometry;
 import std.math;
 
 
-auto degree2radian( T )( T val )
+auto degree2radian( T )( T val ) pure
 {
     return val * (PI / 180);
 }
@@ -13,27 +13,61 @@ unittest
     assert( degree2radian(360) == PI * 2 );
 }
 
-struct Conv ( Datum )
+struct Coords2D( Vector2DT )
 {
-    static auto lon2mercator( T )( T longitude )
+    Vector2DT coords;
+    alias coords this;
+    
+    this( X, Y )( X x, Y y )
     {
-        return Datum.a * degree2radian( longitude );
+        this.x = x;
+        this.y = y;
+    }
+    
+    Coords2D getRadiansFromDegrees()
+    {
+        Coords2D res;
+        
+        res.lat = degree2radian( lat );
+        res.lon = degree2radian( lon );
+        
+        return res;
+    }
+}
+
+struct Conv( Datum )
+{
+    static auto lon2mercator( T )( T longitude ) pure
+    in
+    {
+        assert( longitude >= -PI );
+        assert( longitude <= PI );
+    }
+    body
+    {
+        return Datum.a * longitude;
     }
 
-    static auto lat2mercator( T )( T latitude )
+    static auto lat2mercator( T )( T latitude ) pure
+    in
+    {
+        assert( latitude >= -PI_2 );
+        assert( latitude <= PI_2 );
+    }
+    body
     {
         alias Datum D;
         
-        auto  lat = degree2radian( latitude );
-        auto e1 = tan( PI_4 + lat/2 );
+        auto e1 = tan( PI_4 + latitude / 2 );
         auto eccentr = sqrt( 1 - pow((D.b/D.a), 2) );
-        auto esinl = eccentr * sin( lat );
+        auto esinl = eccentr * sin( latitude );
         auto e2 = pow( (1.0 - esinl) / (1.0 + esinl), eccentr/2 );
+        auto res = D.a * log( e1 * e2 );
         
-        return D.a * log( e1 * e2 );
+        return res;
     }
     
-    static T coords2mercator( T )( T coords )
+    static T coords2mercator( T )( T coords ) pure
     {
         T r;
         
@@ -44,13 +78,18 @@ struct Conv ( Datum )
     }
     
     static auto orthodromicDistance( Coords )( Coords from, Coords to )
+    out( r )
+    {
+        assert( r >= 0 );
+    }
+    body
     {
         auto immutable radius = ( 3 * Datum.a + Datum.b ) / 4; // approximation
         
         alias from s; // standpoint
         alias to f; // forepoint
         
-        auto dLamb = degree2radian( f.lon - s.lon );
+        auto dLamb = f.lon - s.lon;
         
         auto cos_phi_f = cos(f.lat);
         auto sin_phi_f = sin(f.lat);
@@ -89,33 +128,25 @@ struct WGS84
 
 unittest
 {
+    alias Vector2D!double Vector;
+    alias Coords2D!Vector Coords;
     alias Conv!WGS84 C;
     
-    // Latitude and longitude of Moscow 
-    assert( abs( C.lat2mercator( 55.751667 ) - 7473789.46 ) < 0.01 );
-    assert( abs( C.lon2mercator( 37.617778 ) - 4187591.89 ) < 0.01 );
+    // Latitude and longitude of Moscow
+    assert( abs( C.lat2mercator( degree2radian( 55.751667 ) ) - 7473789.46 ) < 0.01 );
+    assert( abs( C.lon2mercator( degree2radian( 37.617778 ) ) - 4187591.89 ) < 0.01 );
     
-    // distance between Krasnoyarsk airport and Moscow Domodedovo airport
-    auto krsk = Vector2D!double( 56.171667, 92.493333 );
-    auto msk = Vector2D!double( 55.408611, 37.906111 );
+    // Distance between Krasnoyarsk airport and Moscow Domodedovo airport
+    auto krsk = Coords( 92.493333, 56.171667 ).getRadiansFromDegrees;
+    auto msk = Coords( 37.906111, 55.408611 ).getRadiansFromDegrees;
+    auto msk_krsk = C.orthodromicDistance( msk, krsk );
+    assert( msk_krsk > 3324352 );
+    assert( msk_krsk < 3324354 );
     
-    //auto t1 = Vector2D!double( 92.8618363, 56.0339152 );
-    //auto t2 = Vector2D!double( 92.8618363, 56.0322406 );
-    
-    auto t1 = Vector2D!double( 0, 0 );
-    auto t2 = Vector2D!double( 0, 0.000001 );
-
-    //auto t1 = Vector2D!double( 92.8650337, 56.0322406 );
-    //auto t2 = Vector2D!double( 92.8617626, 56.0322406 );
-    
-    import std.stdio;
-    //writeln( t1, t2 );
-    writefln( "orthodromic=%f", C.orthodromicDistance( t1, t2 ) );
-    
-    auto f = C.coords2mercator( t1 );
-    auto t = C.coords2mercator( t2 );
-    writeln( f, t );
-    f -= t;
-    
-    writefln( "mercator=%f", f.length() );
+    // Small distance
+    auto t1 = Coords( 92.8650337, 56.0339152 ).getRadiansFromDegrees;
+    auto t2 = Coords( 92.8650338, 56.0339153 ).getRadiansFromDegrees;
+    auto t = C.orthodromicDistance( t1, t2 );
+    assert( t > 0.01 );
+    assert( t < 0.015 );
 }
