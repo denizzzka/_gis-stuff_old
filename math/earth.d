@@ -19,7 +19,7 @@ auto radian2degree( T )( T val ) pure
 }
 unittest
 {
-    assert( radian2degree( degree2radian(500) ) == 500 );
+    assert( degree2radian(500).radian2degree == 500 );
 }
 
 void assertLongitude( T )( in T longitude ) pure
