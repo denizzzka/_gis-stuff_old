@@ -53,12 +53,10 @@ struct Coords2D( Datum, Vector2DT )
     {
         auto immutable radius = ( 3 * Datum.a + Datum.b ) / 4; // approximation
         
-        alias to f; // forepoint
+        auto dLamb = to.lon - lon;
         
-        auto dLamb = f.lon - lon;
-        
-        auto cos_phi_f = cos(f.lat);
-        auto sin_phi_f = sin(f.lat);
+        auto cos_phi_f = cos(to.lat);
+        auto sin_phi_f = sin(to.lat);
         auto cos_phi_s = cos(lat);
         auto sin_phi_s = sin(lat);
         auto cos_dLamb = cos(dLamb);
@@ -136,7 +134,7 @@ unittest
     assert( abs( C.lon2mercator( degree2radian( 37.617778 ) ) - 4187591.89 ) < 0.01 );
     
     // Ditto
-    auto m = Coords( 37.617778, 55.751667 ).getRadiansFromDegrees().coords2mercator();
+    auto m = Coords( 37.617778, 55.751667 ).getRadiansFromDegrees.coords2mercator;
     assert( abs( m.lat ) - 7473789.46 < 0.01 );
     assert( abs( m.lon ) - 4187591.89 < 0.01 );
     
