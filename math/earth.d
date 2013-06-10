@@ -179,7 +179,6 @@ unittest
     auto from = Coords( 0, PI_2 - 0.00001 );
     auto to = Coords( PI, PI_2 - 0.00001 );
     auto pole_dist = from.getOrthodromicDistance( to );
-    auto ppp = degree2radian( 180 );
     
     assert( pole_dist > 127 );
     assert( pole_dist < 128 );
