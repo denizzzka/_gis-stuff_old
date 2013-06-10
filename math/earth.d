@@ -91,6 +91,11 @@ struct Coords2D( Datum, Vector2DT )
         
         return radius * angle;
     }
+    
+    auto getOrthodromicAzimuth( Coords )( in Coords to ) const pure
+    {
+        
+    }    
 }
 
 struct Conv( Datum )
@@ -171,9 +176,11 @@ unittest
     assert( t < 0.015 );
     
     // Through North Pole
-    auto from = Coords( 0, 89.99 ).getRadiansFromDegrees;
-    auto to = Coords( 180, 89.99 ).getRadiansFromDegrees;
+    auto from = Coords( 0, PI_2 - 0.00001 );
+    auto to = Coords( PI, PI_2 - 0.00001 );
     auto pole_dist = from.getOrthodromicDistance( to );
-    assert( pole_dist > 2224.523 );
-    assert( pole_dist < 2224.524 );
+    auto ppp = degree2radian( 180 );
+    
+    assert( pole_dist > 127 );
+    assert( pole_dist < 128 );
 }
