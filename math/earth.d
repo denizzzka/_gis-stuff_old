@@ -13,18 +13,18 @@ unittest
     assert( degree2radian(360) == PI * 2 );
 }
 
-struct Coords2D( Vector2DT )
+struct Coords2D( Datum, Vector2DT )
 {
     Vector2DT coords;
     alias coords this;
     
-    this( X, Y )( X x, Y y )
+    this( X, Y )( X longitude, Y latitude )
     {
-        this.x = x;
-        this.y = y;
+        this.x = longitude;
+        this.y = latitude;
     }
     
-    Coords2D getRadiansFromDegrees()
+    Coords2D getRadiansFromDegrees() const pure
     {
         Coords2D res;
         
@@ -32,6 +32,46 @@ struct Coords2D( Vector2DT )
         res.lon = degree2radian( lon );
         
         return res;
+    }
+    
+    Coords2D coords2mercator() const pure
+    {
+        Coords2D res;
+        
+        res.lon = Conv!Datum.lon2mercator( lon );
+        res.lat = Conv!Datum.lat2mercator( lat );
+        
+        return res;
+    }
+    
+    auto getOrthodromicDistance( Coords )( Coords to )
+    out( r )
+    {
+        assert( r >= 0 );
+    }
+    body
+    {
+        auto immutable radius = ( 3 * Datum.a + Datum.b ) / 4; // approximation
+        
+        alias to f; // forepoint
+        
+        auto dLamb = f.lon - lon;
+        
+        auto cos_phi_f = cos(f.lat);
+        auto sin_phi_f = sin(f.lat);
+        auto cos_phi_s = cos(lat);
+        auto sin_phi_s = sin(lat);
+        auto cos_dLamb = cos(dLamb);
+        
+        auto e1 = cos_phi_f * sin(dLamb);
+        auto e2 = cos_phi_s * sin_phi_f - sin_phi_s * cos_phi_f * cos_dLamb;
+        
+        auto dividend = hypot( e1, e2 );
+        auto divider = sin_phi_s * sin_phi_f + cos_phi_s * cos_phi_f * cos_dLamb;
+        
+        auto angle = atan2( dividend, divider );
+        
+        return radius * angle;
     }
 }
 
@@ -66,47 +106,6 @@ struct Conv( Datum )
         
         return res;
     }
-    
-    static T coords2mercator( T )( T coords ) pure
-    {
-        T r;
-        
-        r.lon = lon2mercator( coords.lon );
-        r.lat = lat2mercator( coords.lat );
-        
-        return r;
-    }
-    
-    static auto orthodromicDistance( Coords )( Coords from, Coords to )
-    out( r )
-    {
-        assert( r >= 0 );
-    }
-    body
-    {
-        auto immutable radius = ( 3 * Datum.a + Datum.b ) / 4; // approximation
-        
-        alias from s; // standpoint
-        alias to f; // forepoint
-        
-        auto dLamb = f.lon - s.lon;
-        
-        auto cos_phi_f = cos(f.lat);
-        auto sin_phi_f = sin(f.lat);
-        auto cos_phi_s = cos(s.lat);
-        auto sin_phi_s = sin(s.lat);
-        auto cos_dLamb = cos(dLamb);
-        
-        auto e1 = cos_phi_f * sin(dLamb);
-        auto e2 = cos_phi_s * sin_phi_f - sin_phi_s * cos_phi_f * cos_dLamb;
-        
-        auto dividend = hypot( e1, e2 );
-        auto divider = sin_phi_s * sin_phi_f + cos_phi_s * cos_phi_f * cos_dLamb;
-        
-        auto angle = atan2( dividend, divider );
-        
-        return radius * angle;
-    }
 }
 
 struct WGS84
@@ -129,31 +128,36 @@ struct WGS84
 unittest
 {
     alias Vector2D!double Vector;
-    alias Coords2D!Vector Coords;
+    alias Coords2D!(WGS84, Vector) Coords;
     alias Conv!WGS84 C;
     
     // Latitude and longitude of Moscow
     assert( abs( C.lat2mercator( degree2radian( 55.751667 ) ) - 7473789.46 ) < 0.01 );
     assert( abs( C.lon2mercator( degree2radian( 37.617778 ) ) - 4187591.89 ) < 0.01 );
     
+    // Ditto
+    auto m = Coords( 37.617778, 55.751667 ).getRadiansFromDegrees().coords2mercator();
+    assert( abs( m.lat ) - 7473789.46 < 0.01 );
+    assert( abs( m.lon ) - 4187591.89 < 0.01 );
+    
     // Distance between Krasnoyarsk airport and Moscow Domodedovo airport
     auto krsk = Coords( 92.493333, 56.171667 ).getRadiansFromDegrees;
     auto msk = Coords( 37.906111, 55.408611 ).getRadiansFromDegrees;
-    auto msk_krsk = C.orthodromicDistance( msk, krsk );
+    auto msk_krsk = msk.getOrthodromicDistance( krsk );
     assert( msk_krsk > 3324352 );
     assert( msk_krsk < 3324354 );
     
     // Small distance
     auto t1 = Coords( 92.8650337, 56.0339152 ).getRadiansFromDegrees;
     auto t2 = Coords( 92.8650338, 56.0339153 ).getRadiansFromDegrees;
-    auto t = C.orthodromicDistance( t1, t2 );
+    auto t = t1.getOrthodromicDistance( t2 );
     assert( t > 0.01 );
     assert( t < 0.015 );
     
     // Through North Pole
     auto from = Coords( 0, 89.99 ).getRadiansFromDegrees;
     auto to = Coords( 180, 89.99 ).getRadiansFromDegrees;
-    auto pole_dist = C.orthodromicDistance( from, to );
+    auto pole_dist = from.getOrthodromicDistance( to );
     assert( pole_dist > 2224.523 );
     assert( pole_dist < 2224.524 );
 }
