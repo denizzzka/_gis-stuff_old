@@ -1,7 +1,7 @@
 module main;
 
 import osm;
-static import sdl;
+static import sfml2;
 
 import std.getopt;
 
@@ -17,7 +17,7 @@ void main( string[] args )
         "osmpbf", &filename,
     );
     
-    sdl.init;
+    sfml2.init;
     
     getRegionMap( filename, verbose );
 }
