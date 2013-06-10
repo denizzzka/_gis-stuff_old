@@ -13,6 +13,18 @@ unittest
     assert( degree2radian(360) == PI * 2 );
 }
 
+void assertLongitude( T )( in T longitude ) pure
+{
+    assert( longitude >= -PI, "Longitude is too small" );
+    assert( longitude <= PI, "Longitude is too big" );
+}
+
+void assertLatitude( T )( in T latitude ) pure
+{
+    assert( latitude >= -PI_2, "Latitude is too small" );
+    assert( latitude <= PI_2, "Latitude is too big" );
+}
+
 struct Coords2D( Datum, Vector2DT )
 {
     Vector2DT coords;
@@ -45,6 +57,14 @@ struct Coords2D( Datum, Vector2DT )
     }
     
     auto getOrthodromicDistance( Coords )( in Coords to ) const pure
+    in
+    {
+        assertLatitude( lat );
+        assertLatitude( to.lat );
+        
+        assertLongitude( lon );
+        assertLongitude( to.lon );
+    }
     out( r )
     {
         assert( r >= 0 );
@@ -78,8 +98,7 @@ struct Conv( Datum )
     static auto lon2mercator( T )( in T longitude ) pure
     in
     {
-        assert( longitude >= -PI );
-        assert( longitude <= PI );
+        assertLongitude( longitude );
     }
     body
     {
@@ -89,8 +108,7 @@ struct Conv( Datum )
     static auto lat2mercator( T )( in T latitude ) pure
     in
     {
-        assert( latitude >= -PI_2 );
-        assert( latitude <= PI_2 );
+        assertLatitude( latitude );
     }
     body
     {
