@@ -34,7 +34,7 @@ struct Coords2D( Datum, Vector2DT )
         return res;
     }
     
-    Coords2D coords2mercator() const pure
+    Coords2D getCoords2mercator() const pure
     {
         Coords2D res;
         
@@ -44,7 +44,7 @@ struct Coords2D( Datum, Vector2DT )
         return res;
     }
     
-    auto getOrthodromicDistance( Coords )( Coords to )
+    auto getOrthodromicDistance( Coords )( in Coords to ) const pure
     out( r )
     {
         assert( r >= 0 );
@@ -75,7 +75,7 @@ struct Coords2D( Datum, Vector2DT )
 
 struct Conv( Datum )
 {
-    static auto lon2mercator( T )( T longitude ) pure
+    static auto lon2mercator( T )( in T longitude ) pure
     in
     {
         assert( longitude >= -PI );
@@ -86,7 +86,7 @@ struct Conv( Datum )
         return Datum.a * longitude;
     }
 
-    static auto lat2mercator( T )( T latitude ) pure
+    static auto lat2mercator( T )( in T latitude ) pure
     in
     {
         assert( latitude >= -PI_2 );
@@ -134,7 +134,7 @@ unittest
     assert( abs( C.lon2mercator( degree2radian( 37.617778 ) ) - 4187591.89 ) < 0.01 );
     
     // Ditto
-    auto m = Coords( 37.617778, 55.751667 ).getRadiansFromDegrees.coords2mercator;
+    auto m = Coords( 37.617778, 55.751667 ).getRadiansFromDegrees.getCoords2mercator;
     assert( abs( m.lat ) - 7473789.46 < 0.01 );
     assert( abs( m.lon ) - 4187591.89 < 0.01 );
     
