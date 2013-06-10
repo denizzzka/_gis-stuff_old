@@ -65,7 +65,7 @@ struct Coords2D( Datum, Vector2DT )
         return res;
     }
     
-    auto getOrthodromicDistance( Coords )( in Coords to ) const pure
+    auto getSphericalDistance( Coords )( in Coords to ) const pure
     in
     {
         assertLatitude( lat );
@@ -101,7 +101,7 @@ struct Coords2D( Datum, Vector2DT )
         return radius * angle;
     }
     
-    auto getOrthodromicAzimuth( Coords )( in Coords to ) const pure
+    auto getSphericalAzimuth( Coords )( in Coords to ) const pure
     in
     {
         assertLatitude( lat );
@@ -194,26 +194,26 @@ unittest
     // Distance between Krasnoyarsk airport and Moscow Domodedovo airport
     auto krsk = Coords( 92.493333, 56.171667 ).getRadiansFromDegrees;
     auto msk = Coords( 37.906111, 55.408611 ).getRadiansFromDegrees;
-    auto msk_krsk = msk.getOrthodromicDistance( krsk );
+    auto msk_krsk = msk.getSphericalDistance( krsk );
     assert( msk_krsk > 3324352 );
     assert( msk_krsk < 3324354 );
     
     // Small distance
     auto t1 = Coords( 92.8650337, 56.0339152 ).getRadiansFromDegrees;
     auto t2 = Coords( 92.8650338, 56.0339153 ).getRadiansFromDegrees;
-    auto t = t1.getOrthodromicDistance( t2 );
+    auto t = t1.getSphericalDistance( t2 );
     assert( t > 0.01 );
     assert( t < 0.015 );
     
     // Through North Pole
     auto from = Coords( 0, PI_2 - 0.00001 );
     auto to = Coords( PI, PI_2 - 0.00001 );
-    auto pole_dist = from.getOrthodromicDistance( to );
+    auto pole_dist = from.getSphericalDistance( to );
     assert( pole_dist > 127 );
     assert( pole_dist < 128 );
     
     // Azimuth
     auto az_from = Coords( 0, 0 );
     auto az_to = Coords( -0.1, 0 );
-    assert( az_from.getOrthodromicAzimuth( az_to ) == -PI_2 );
+    assert( az_from.getSphericalAzimuth( az_to ) == -PI_2 );
 }
