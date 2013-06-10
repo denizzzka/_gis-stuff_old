@@ -13,6 +13,15 @@ unittest
     assert( degree2radian(360) == PI * 2 );
 }
 
+auto radian2degree( T )( T val ) pure
+{
+    return val * (180 / PI);
+}
+unittest
+{
+    assert( radian2degree( degree2radian(500) ) == 500 );
+}
+
 void assertLongitude( T )( in T longitude ) pure
 {
     assert( longitude >= -PI, "Longitude is too small" );
@@ -93,9 +102,30 @@ struct Coords2D( Datum, Vector2DT )
     }
     
     auto getOrthodromicAzimuth( Coords )( in Coords to ) const pure
+    in
     {
+        assertLatitude( lat );
+        assertLatitude( to.lat );
         
-    }    
+        assertLongitude( lon );
+        assertLongitude( to.lon );
+    }
+    body
+    {
+        auto dLamb = to.lon - lon;
+        
+        auto cos_phi_f = cos(to.lat);
+        auto sin_phi_f = sin(to.lat);
+        auto cos_phi_s = cos(lat);
+        auto sin_phi_s = sin(lat);
+        auto cos_dLamb = cos(dLamb);
+        
+        // (e1 and e2 same as in getOrthodromicDistance())
+        auto e1 = cos_phi_f * sin( dLamb );
+        auto e2 = cos_phi_s * sin_phi_f - sin_phi_s * cos_phi_f * cos_dLamb;
+        
+        return atan2( e1, e2 );
+    }
 }
 
 struct Conv( Datum )
@@ -179,7 +209,11 @@ unittest
     auto from = Coords( 0, PI_2 - 0.00001 );
     auto to = Coords( PI, PI_2 - 0.00001 );
     auto pole_dist = from.getOrthodromicDistance( to );
-    
     assert( pole_dist > 127 );
     assert( pole_dist < 128 );
+    
+    // Azimuth
+    auto az_from = Coords( 0, 0 );
+    auto az_to = Coords( -0.1, 0 );
+    assert( az_from.getOrthodromicAzimuth( az_to ) == -PI_2 );
 }
