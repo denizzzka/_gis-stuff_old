@@ -120,7 +120,7 @@ struct Coords2D( Datum, Vector2DT )
         auto sin_phi_s = sin(lat);
         auto cos_dLamb = cos(dLamb);
         
-        // (e1 and e2 same as in getOrthodromicDistance())
+        // (e1 and e2 is same as in getOrthodromicDistance())
         auto e1 = cos_phi_f * sin( dLamb );
         auto e2 = cos_phi_s * sin_phi_f - sin_phi_s * cos_phi_f * cos_dLamb;
         
