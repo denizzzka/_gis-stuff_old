@@ -21,7 +21,7 @@ void init()
 	text.font = font;
 	text.string = "Hello world";
 	text.color = Color.Blue;
-	text.position = Vector2f(10,10);
+	text.position = sfVector2f(10,10);
 
 	Event ev;
 
