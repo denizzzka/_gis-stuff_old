@@ -3,7 +3,7 @@ PB := osmpbf/fileformat.d osmpbf/osmformat.d
 PBLIB := ProtocolBuffer/libdprotobuf.a
 OSMPBFLIB := libosmpbfd
 DSFMLFLIB := libdsfml
-#DERELICTLIB := -L-ldl -L-lDerelictSFML2 -L-lDerelictUtil
+DERELICTLIB := -L-ldl -L-lDerelictSFML2 -L-lDerelictUtil
 DFILES := math/rtree2d.d math/geometry.d math/graph.d math/earth.d \
 	pb_encoding.d osm.d sfml.d main.d
 INCLUDE := -I/usr/include/dmd/ -I./DSFML/

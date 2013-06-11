@@ -17,7 +17,7 @@ void main( string[] args )
         "osmpbf", &filename,
     );
     
-    sfml2.init;
+    sfml.init;
     
     getRegionMap( filename, verbose );
 }
