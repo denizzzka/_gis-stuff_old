@@ -77,11 +77,10 @@ struct Coords2D( Datum, Vector2DT )
     out( r )
     {
         assert( r >= 0 );
+        assert( r <= Datum.approx_radius * PI );
     }
     body
     {
-        auto immutable radius = ( 3 * Datum.a + Datum.b ) / 4; // approximation
-        
         auto dLamb = to.lon - lon;
         
         auto cos_phi_f = cos(to.lat);
@@ -98,7 +97,7 @@ struct Coords2D( Datum, Vector2DT )
         
         auto angle = atan2( dividend, divider );
         
-        return radius * angle;
+        return Datum.approx_radius * angle;
     }
     
     auto getSphericalAzimuth( Coords )( in Coords to ) const pure
@@ -174,6 +173,9 @@ struct WGS84
         // Comparison with the value from WGS84 spec
         assert( abs(b - 6356752.314245) < 0.000_001 );
     }
+    
+     // Approximated radius
+    static immutable approx_radius = ( 3 * a + b ) / 4;
 }
 
 unittest
