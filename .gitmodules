@@ -3,4 +3,4 @@
 	url = git@github.com:denizzzka/ProtocolBuffer.git
 [submodule "DSFML"]
 	path = DSFML
-	url = ./DSFML
+	url = git@github.com:denizzzka/DSFML.git
