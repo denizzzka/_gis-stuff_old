@@ -1,7 +1,7 @@
 module main;
 
 import osm;
-static import sfml2;
+static import sfml;
 
 import std.getopt;
 
