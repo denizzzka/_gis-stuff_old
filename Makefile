@@ -6,7 +6,7 @@ LIBS := -L-ldl -L-lDerelictSFML2 -L-lDerelictUtil
 #LIBS := -L-ldl -L-lcsfml-graphics -L-lcsfml-window -L-lcsfml-system
 DFILES := math/rtree2d.d math/geometry.d math/graph.d math/earth.d \
 	pb_encoding.d osm.d sfml.d main.d
-INCLUDE := -I/usr/include/dmd/ -I./DSFML/
+INCLUDE := -I/usr/include/dmd/ -I./SFML-D/
 
 ARGS ?= -d -release
 
@@ -18,7 +18,7 @@ $(OSMPBFLIB):
 
 main:
 	$(DC) $(INCLUDE) $(LIBS) $(ARGS) $(BITS) -ofmain \
-		$(OSMPBFLIB).a ./DSFML/dsfml/*.d $(DFILES)
+		$(OSMPBFLIB).a ./SFML-D/sf/*.d $(DFILES)
 
 clean:
 	rm -rf *.o *.a main

@@ -1,8 +1,8 @@
 module sfml;
 
-import dsfml.system;
-import dsfml.window;
-import dsfml.graphics;
+import sf.system;
+import sf.window;
+import sf.graphics;
 
 import std.string;
 import std.exception;
@@ -10,32 +10,32 @@ import std.exception;
 
 void init()
 {
-    auto Mode = VideoMode( 800, 600 );
-    
-    auto window = new RenderWindow(
-        Mode,
-        "My window"c,
-        Window.Style.Resize | Window.Style.Close );
-    
-    // run the program as long as the window is open
-    while( window.isOpen )
-    {
-        // check all the window's events that were triggered since the last iteration of the loop
-        Event event;
-        while ( window.pollEvent(event) )
-        {
-            // "close requested" event: we close the window
-            if (event.type == Event.Closed)
-                window.close();
-        }
+	auto screen = new RenderWindow(
+        VideoMode(800, 600),
+        "Game",
+        WindowStyle.Default,
+        null);
 
-        // clear the window with black color
-        window.clear(Color.Black);
+	auto font = new Font("arial.ttf");
+	auto text = new Text();
+	text.font = font;
+	text.string = "Hello world";
+	text.color = Color.Blue;
+	text.position = Vector2f(10,10);
 
-        // draw everything here...
-        // window.draw(...);
+	Event ev;
 
-        // end the current frame
-        window.display();
-    }
+	while(screen.isOpen)
+	{	
+		while(screen.pollEvent(&ev))
+		{
+			if(ev.type == EventType.Closed)
+				screen.close();
+		}
+
+		screen.clear(Color.Black);
+		screen.draw(text, null);			
+		screen.display();
+
+	}
 }
