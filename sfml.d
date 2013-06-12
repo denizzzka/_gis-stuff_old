@@ -8,11 +8,15 @@ import std.exception;
 
 void init()
 {
+    sfVideoMode vmode = { 800, 600 };
+    sfContextSettings settings = { 24 };
+    
 	auto screen = new RenderWindow(
-        sfVideoMode(800, 600),
+        vmode,
         "Game",
         sfDefaultStyle,
-        null);
+        &settings
+    );
 
 	auto font = new Font("arial.ttf");
 	auto text = new Text();
