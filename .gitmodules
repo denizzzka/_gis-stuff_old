@@ -4,3 +4,6 @@
 [submodule "SFML-D"]
 	path = SFML-D
 	url = git@github.com:denizzzka/SFML-D.git
+[submodule "SFML2_wrapper"]
+	path = SFML2_wrapper
+	url = git@github.com:denizzzka/SFML2_wrapper.git

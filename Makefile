@@ -5,7 +5,7 @@ OSMPBFLIB := libosmpbfd
 LIBS := -L-ldl -L-lDerelictSFML2 -L-lDerelictUtil
 DFILES := math/rtree2d.d math/geometry.d math/graph.d math/earth.d \
 	pb_encoding.d osm.d sfml.d main.d
-INCLUDE := -I/usr/include/dmd/ -I./SFML-D/
+INCLUDE := -I/usr/include/dmd/ -I./SFML2_wrapper/
 
 ARGS ?= -d -release
 
@@ -17,7 +17,7 @@ $(OSMPBFLIB):
 
 main:
 	$(DC) $(INCLUDE) $(LIBS) $(ARGS) $(BITS) -ofmain \
-		$(OSMPBFLIB).a ./SFML-D/sf/*.d $(DFILES)
+		$(OSMPBFLIB).a ./SFML2_wrapper/sf/*.d $(DFILES)
 
 clean:
 	rm -rf *.o *.a main
