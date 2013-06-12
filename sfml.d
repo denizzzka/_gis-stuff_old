@@ -11,29 +11,29 @@ import std.exception;
 void init()
 {
 	auto screen = new RenderWindow(
-        VideoMode(800, 600),
+        sfVideoMode(800, 600),
         "Game",
-        WindowStyle.Default,
+        sfDefaultStyle,
         null);
 
 	auto font = new Font("arial.ttf");
 	auto text = new Text();
 	text.font = font;
 	text.string = "Hello world";
-	text.color = Color.Blue;
+	text.color = sfBlue;
 	text.position = sfVector2f(10,10);
 
-	Event ev;
+	sfEvent ev;
 
 	while(screen.isOpen)
 	{	
 		while(screen.pollEvent(&ev))
 		{
-			if(ev.type == EventType.Closed)
+			if(ev.type == sfEvtClosed)
 				screen.close();
 		}
 
-		screen.clear(Color.Black);
+		screen.clear(sfBlack);
 		screen.draw(text, null);			
 		screen.display();
 
