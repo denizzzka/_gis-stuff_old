@@ -1,7 +1,5 @@
 module sfml;
 
-import sf.system;
-import sf.window;
 import sf.graphics;
 
 import std.string;

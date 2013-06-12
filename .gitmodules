@@ -1,9 +1,6 @@
 [submodule "ProtocolBuffer"]
 	path = ProtocolBuffer
 	url = git@github.com:denizzzka/ProtocolBuffer.git
-[submodule "DSFML"]
-	path = DSFML
-	url = git@github.com:denizzzka/DSFML.git
 [submodule "SFML-D"]
 	path = SFML-D
 	url = git@github.com:denizzzka/SFML-D.git
