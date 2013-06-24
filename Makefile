@@ -6,7 +6,7 @@ DSFMLLIB := libdsfml
 LIBS := -L-ldl -L-lcsfml-system -L-lcsfml-window -L-lcsfml-graphics
 DFILES := math/rtree2d.d math/geometry.d math/graph.d math/earth.d \
 	pb_encoding.d osm.d sfml.d main.d
-INCLUDE := -I/usr/include/dmd/ -I./Derelict3/import/ -I./DSFML/
+INCLUDE := -I/usr/include/dmd/ -I./DSFML/
 
 ARGS ?= -d -release
 
