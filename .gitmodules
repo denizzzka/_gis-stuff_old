@@ -7,3 +7,7 @@
 [submodule "Derelict3"]
 	path = Derelict3
 	url = git@github.com:denizzzka/Derelict3.git
+[submodule "DSFML"]
+	path = DSFML
+	url = git@github.com:denizzzka/DSFML.git
+

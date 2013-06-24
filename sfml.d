@@ -1,22 +1,26 @@
 module sfml;
 
-import sf.graphics;
+import dsfml.window;
+import dsfml.graphics;
 
 import std.exception;
 
 
 void init()
 {
-    sfVideoMode vmode = { width: 640, height: 480, bitsPerPixel: 24 };
-    sfContextSettings settings = { depthBits: 24 };
+    auto vmode = VideoMode( 640, 480 );
+    ContextSettings settings = { depthBits: 24 };
+    
+    string title = "hello world!";
     
     auto screen = new RenderWindow(
 	vmode,
-	"Game",
-	sfDefaultStyle,
+	title,
+	Window.Style.DefaultStyle,
 	settings
     );
     
+    /*
     auto font = new Font("arial.ttf");
     auto text = new Text();
     text.font = font;
@@ -38,4 +42,5 @@ void init()
 	screen.draw(text, null);			
 	screen.display();
     }
+    */
 }
