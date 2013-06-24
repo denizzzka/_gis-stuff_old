@@ -16,7 +16,7 @@ $(OSMPBFLIB):
 	$(DC) -d $(ARGS) $(BITS) -lib -of$(OSMPBFLIB) $(PBLIB) $(PB)
 
 derelict3:
-	cd ./Derelict3/build/; $(DC) build.d; ./build
+	cd ./Derelict3/build/; $(DC) build.d; ./build sfml2
 
 main:
 	$(DC) $(INCLUDE) $(LIBS) $(ARGS) $(BITS) -ofmain \
