@@ -1,9 +1,5 @@
 module sfml;
 
-import derelict.sfml2.system;
-import derelict.sfml2.window;
-import derelict.sfml2.graphics;
-
 import sf.graphics;
 
 import std.string;
@@ -12,10 +8,6 @@ import std.exception;
 
 void init()
 {
-    DerelictSFML2System.load();
-    DerelictSFML2Window.load();
-    DerelictSFML2Graphics.load();
-    
     sfVideoMode vmode = { 800, 600 };
     sfContextSettings settings = { 24 };
     
