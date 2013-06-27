@@ -363,7 +363,7 @@ private:
         // split by places specified by bits of key
         auto nChildren = n.children.dup;
         n.children.destroy();
-        n.boundary = Box( Vector2D!float(), Vector2D!float() );
+        n.boundary = Box( Box.Vector(), Box.Vector() );
         
         auto newNode = new Node;
         

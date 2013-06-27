@@ -51,8 +51,10 @@ unittest
 }
 
 
-struct Box( Vector )
+struct Box( _Vector )
 {
+    alias _Vector Vector;
+    
     Vector leftDownCorner;
     Vector rightUpCorner;
     
@@ -80,10 +82,12 @@ struct Box( Vector )
     }
     unittest
     {
-        alias Box!Vector BBox;
-        Box b1 = Box( Vector2D!float(2, 2), Vector2D!float(1, 1) );
-        Box b2 = Box( Vector2D!float(3, 3), Vector2D!float(1, 1) );
-        Box b3 = Box( Vector2D!float(4, 4), Vector2D!float(1, 1) );
+        alias Vector2D!float Vector2;
+        alias Box!Vector2 BBox;
+        
+        BBox b1 = BBox( Vector2(2, 2), Vector2(1, 1) );
+        BBox b2 = BBox( Vector2(3, 3), Vector2(1, 1) );
+        BBox b3 = BBox( Vector2(4, 4), Vector2(1, 1) );
         
         assert( b1.isOverlappedBy( b2 ) );
         assert( !b1.isOverlappedBy( b3 ) );
