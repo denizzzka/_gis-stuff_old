@@ -100,11 +100,11 @@ Node[] decodeDenseNodes(DenseNodesArray)( DenseNodesArray dn )
     return res;
 }
 
-alias Vector2D!long Vector2;
+alias Vector2D!long Coords;
 
 auto decodeCoords( in PrimitiveBlock pb, in Node n )
 {
-    Vector2 r;
+    Coords r;
     
     r.lat = (pb.lat_offset + pb.granularity * n.lat);
     r.lon = (pb.lon_offset + pb.granularity * n.lon);

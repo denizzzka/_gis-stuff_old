@@ -2,7 +2,7 @@ module map;
 
 import math.geometry;
 import math.rtree2d;
-import osm: Vector2;
+import osm: Coords;
 
 
 struct Node
@@ -13,11 +13,15 @@ struct Node
 
 class Region
 {
-    private Node[] nodes;
-    
-    alias Box!Vector2 BBox;
-    alias RTreePtrs!(BBox, size_t) NRT;
-    private NRT nodes_rtree;
+    private
+    {
+        Node[] nodes;
+        
+        alias Box!Coords BBox;
+        alias RTreePtrs!(BBox, size_t) NRT;
+        
+        NRT nodes_rtree;
+    }
     
     this()
     {
