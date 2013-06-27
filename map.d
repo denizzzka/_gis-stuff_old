@@ -6,6 +6,7 @@ import osm: Coords;
 
 
 alias Coords Node;
+alias Box!Coords BBox;
 
 class Region
 {
@@ -13,7 +14,6 @@ class Region
     {
         Node[] nodes;
         
-        alias Box!Coords BBox;
         alias RTreePtrs!(BBox, size_t) NRT;
         
         NRT nodes_rtree;
@@ -41,4 +41,9 @@ class Region
 class Map
 {
     Region[] regions;
+    
+    Node[] getScene( in BBox box )
+    {
+        return regions[0].nodes;
+    }
 }
