@@ -19,5 +19,5 @@ void main( string[] args )
     
     auto w = new sfml.Window;
     
-    getRegionMap( filename, verbose );
+    auto r = getRegionMap( filename, verbose );
 }

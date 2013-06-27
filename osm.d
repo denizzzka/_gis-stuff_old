@@ -110,7 +110,7 @@ auto decodeCoords( in PrimitiveBlock pb, in Node n )
     return r;
 }
 
-void getRegionMap( string filename, bool verbose )
+Region getRegionMap( string filename, bool verbose )
 {
     void log(T)( T s )
     {
@@ -157,5 +157,7 @@ void getRegionMap( string filename, bool verbose )
                 }
         }
     }
+    
+    return res;
 }
 
