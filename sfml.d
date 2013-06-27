@@ -3,10 +3,15 @@ module sfml;
 import dsfml.graphics;
 
 
-void init()
+class Window
 {
-    auto vmode = VideoMode( 640, 480 );
-    string title = "hello world!";
+    RenderWindow window;
     
-    auto screen = new RenderWindow( vmode, title );
+    this()
+    {
+	auto vmode = VideoMode( 640, 480 );
+	string title = "hello world!";
+	
+	window = new RenderWindow( vmode, title );
+    }
 }

@@ -127,8 +127,8 @@ void getRegionMap( string filename, bool verbose )
         if(d.length == 0 ) break; // eof
         
         auto prim = PrimitiveBlock( d );
-        writefln("lat_offset=%d lon_offset=%d", prim.lat_offset, prim.lon_offset );
-        writeln("granularity=", prim.granularity);
+        debug(osm) writefln("lat_offset=%d lon_offset=%d", prim.lat_offset, prim.lon_offset );
+        debug(osm) writeln("granularity=", prim.granularity);
         
         foreach( i, c; prim.primitivegroup )
         {
@@ -136,12 +136,12 @@ void getRegionMap( string filename, bool verbose )
             {
                 auto nodes = decodeDenseNodes( c.dense );
                 foreach( n; nodes)
-                    writefln( "id=%d coords=%s", n.id, decodeCoords( prim, n ) );
+                    debug(osm) writefln( "id=%d coords=%s", n.id, decodeCoords( prim, n ) );
             }
             
             if( !c.nodes.isNull )
                 foreach( n; c.nodes )
-                    writefln( "id=%d coords=%s", n.id, decodeCoords( prim, n ) );
+                    debug(osm) writefln( "id=%d coords=%s", n.id, decodeCoords( prim, n ) );
         }
     }
 }
