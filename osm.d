@@ -3,7 +3,7 @@ module osm;
 import osmpbf.fileformat;
 import osmpbf.osmformat;
 import math.geometry;
-import map: Region, MapNode = Node;
+import map: Map, Region, MapNode = Node;
 
 import std.stdio;
 import std.string;
@@ -112,14 +112,14 @@ auto decodeCoords( in PrimitiveBlock pb, in Node n )
     return r;
 }
 
-Region getRegionMap( string filename, bool verbose )
+Region getRegion( string filename, bool verbose )
 {
     void log(T)( T s )
     {
         if(verbose) writeln(s);
     }
     
-    log("Open file "~filename);
+    log("Opening file "~filename);
     auto f = File(filename);
     
     auto h = readOSMHeader( f );
@@ -163,3 +163,12 @@ Region getRegionMap( string filename, bool verbose )
     return res;
 }
 
+Map getMap( string[] filenames, bool verbose )
+{
+    auto res = new Map;
+    
+    foreach( s; filenames )
+        res.regions ~= getRegion( s, verbose );
+    
+    return res;
+}
