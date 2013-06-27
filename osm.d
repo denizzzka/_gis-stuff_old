@@ -143,7 +143,7 @@ Region getRegionMap( string filename, bool verbose )
                     debug(osm) writefln( "id=%d coords=%s", n.id, decodeCoords( prim, n ) );
                     
                     MapNode mn = { lat: n.lat, lon: n.lon };
-                    res.nodes ~= mn;
+                    res.addNode( mn );
                 }
             }
             
@@ -153,7 +153,7 @@ Region getRegionMap( string filename, bool verbose )
                     debug(osm) writefln( "id=%d coords=%s", n.id, decodeCoords( prim, n ) );
                     
                     MapNode mn = { lat: n.lat, lon: n.lon };
-                    res.nodes ~= mn;
+                    res.addNode( mn );
                 }
         }
     }

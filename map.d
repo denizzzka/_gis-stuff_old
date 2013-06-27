@@ -1,5 +1,7 @@
 module map;
 
+import math.rtree2d;
+
 
 struct Node
 {
@@ -9,7 +11,14 @@ struct Node
 
 class Region
 {
-    Node[] nodes;
+    private Node[] nodes;
+    
+    void addNode( in Node n )
+    {
+        
+        
+        nodes ~= n;
+    }
     
     // r-tree of ways links to r-tree
     
