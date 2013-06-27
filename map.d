@@ -1,8 +1,15 @@
 module map;
 
+
+struct Node
+{
+    long lat;
+    long lon;
+}
+
 class Region
 {
-    // points
+    Node[] nodes;
     
     // r-tree of ways links to r-tree
     

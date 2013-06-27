@@ -3,6 +3,7 @@ module osm;
 import osmpbf.fileformat;
 import osmpbf.osmformat;
 import math.geometry;
+import map: Region, MapNode = Node;
 
 import std.stdio;
 import std.string;
@@ -121,6 +122,8 @@ void getRegionMap( string filename, bool verbose )
     
     auto h = readOSMHeader( f );
     
+    auto res = new Region;
+    
     while(true)
     {
         auto d = readOSMData( f );
@@ -136,12 +139,22 @@ void getRegionMap( string filename, bool verbose )
             {
                 auto nodes = decodeDenseNodes( c.dense );
                 foreach( n; nodes)
+                {
                     debug(osm) writefln( "id=%d coords=%s", n.id, decodeCoords( prim, n ) );
+                    
+                    MapNode mn = { lat: n.lat, lon: n.lon };
+                    res.nodes ~= mn;
+                }
             }
             
             if( !c.nodes.isNull )
                 foreach( n; c.nodes )
+                {
                     debug(osm) writefln( "id=%d coords=%s", n.id, decodeCoords( prim, n ) );
+                    
+                    MapNode mn = { lat: n.lat, lon: n.lon };
+                    res.nodes ~= mn;
+                }
         }
     }
 }
