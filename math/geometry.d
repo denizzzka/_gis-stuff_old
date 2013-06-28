@@ -4,8 +4,10 @@ import std.algorithm;
 import std.math;
 
 
-struct Vector2D( T )
+struct Vector2D( _T )
 {
+    alias _T T;
+    
     T x = 0;
     T y = 0;
     
@@ -135,7 +137,6 @@ struct Box( _Vector )
         return this.sizeof;
     }
 }
-
 
 unittest
 {
