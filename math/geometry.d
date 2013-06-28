@@ -53,7 +53,7 @@ unittest
 }
 
 
-struct Box( _Vector )
+struct Box( _Vector, string S = "size" )
 {
     alias _Vector Vector;
     
@@ -65,10 +65,18 @@ struct Box( _Vector )
     
     this( in Vector coords, in Vector size )
     {
-        leftDownCorner.x = coords.x + ((size.x > 0) ? 0 : size.x);
-        leftDownCorner.y = coords.y + ((size.y > 0) ? 0 : size.y);
-        rightUpCorner.x = coords.x + ((size.x < 0) ? 0 : size.x);
-        rightUpCorner.y = coords.y + ((size.y < 0) ? 0 : size.y);
+        static if( S == "size" )
+        {
+            leftDownCorner.x = coords.x + ((size.x > 0) ? 0 : size.x);
+            leftDownCorner.y = coords.y + ((size.y > 0) ? 0 : size.y);
+            rightUpCorner.x = coords.x + ((size.x < 0) ? 0 : size.x);
+            rightUpCorner.y = coords.y + ((size.y < 0) ? 0 : size.y);
+        }
+        else // corners
+        {
+            leftDownCorner = coords;
+            rightUpCorner = size;
+        }
     }
     
     bool isOverlappedBy( in Box!Vector b ) const pure
