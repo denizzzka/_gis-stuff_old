@@ -198,7 +198,7 @@ class RTreePtrs( _Box, _Payload )
     }
     
     debug
-    void showTree( Node* from, uint depth = 0 )
+    void showBranch( Node* from, uint depth = 0 )
     {
         writeln( "Depth: ", depth );
         
@@ -212,7 +212,7 @@ class RTreePtrs( _Box, _Payload )
             
             foreach( i, c; from.children )
             {
-                showTree( c, depth+1 );
+                showBranch( c, depth+1 );
             }
         }
     }
@@ -457,11 +457,11 @@ unittest
             debug(rtptrs)
             {
                 writeln("\nShow tree:");
-                showTree( rtree.root );
+                rtree.showBranch( rtree.root );
             }
         }
     
-    debug(rtree) rtree.showTree( rtree.root );
+    debug(rtree) rtree.showBranch( rtree.root );
     
     size_t leafs, nodes, leafBlocksNum;
     rtree.statistic( nodes, leafs, leafBlocksNum );
