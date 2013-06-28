@@ -6,6 +6,7 @@ import protobuf.runtime;
 debug import std.stdio;
 version(unittest) import std.string;
 import core.bitop;
+import std.typecons;
 
 
 class RTreeArray( RTreePtrs )
@@ -123,13 +124,8 @@ class RTreePtrs( _Box, _Payload )
         private
         {
             Node* parent;
-            Box _boundary;
+            Nullable!Box boundary;
             Node*[] children;
-            
-            void boundary( Box box )
-            {
-                _boundary = box;
-            }
         }
     
         public
@@ -137,13 +133,17 @@ class RTreePtrs( _Box, _Payload )
             void assignChild( Node* child )
             {
                 children ~= child;
-                boundary = boundary.getCircumscribed( child.boundary );
+                
+                boundary = boundary.isNull ?
+                    child.boundary :
+                    boundary.getCircumscribed( child.boundary );
+                    
                 child.parent = &this;
             }
             
-            Box boundary() const
+            Box getBoundary() const
             {
-                return _boundary;
+                return boundary;
             }
         }
     }
@@ -377,8 +377,8 @@ private:
         
         // split by places specified by bits of key
         auto nChildren = n.children.dup;
-        n.children.destroy();
-        n.boundary = Box( Box.Vector(), Box.Vector() );
+        n.children.destroy;
+        n.boundary.nullify;
         
         auto newNode = new Node;
         
@@ -446,18 +446,20 @@ unittest
     
     auto rtree = new RTreePtrs!(BBox, DumbPayload);
     
-    for( float y = 0; y < 3; y++ )
-        for( float x = 0; x < 3; x++ )
+    for( float y = 1; y < 4; y++ )
+        for( float x = 1; x < 4; x++ )
         {
-            DumbPayload p;
-            BBox b = BBox( Vector( x, y ), Vector( 1, 1 ) );
+            DumbPayload payload;
+            BBox boundary = BBox( Vector( x, y ), Vector( 1, 1 ) );
             
-            rtree.addObject( b, p );
+            rtree.addObject( boundary, payload );
     
             debug(rtptrs)
             {
                 writeln("\nShow tree:");
                 rtree.showBranch( rtree.root );
+                
+                writeln( "Boundary: ", rtree.root.getBoundary );
             }
         }
     
@@ -471,8 +473,10 @@ unittest
     
     debug GC.enable();
     
-    BBox search1 = BBox( Vector2D!float( 1, 1 ), Vector2D!float( 1, 1 ) );
-    BBox search2 = BBox( Vector2D!float( 1.1, 1.1 ), Vector2D!float( 0.8, 0.8 ) );
+    assert( rtree.root.getBoundary == BBox(Vector(1, 1), Vector(3, 3)) );
+    
+    BBox search1 = BBox( Vector( 2, 2 ), Vector( 1, 1 ) );
+    BBox search2 = BBox( Vector( 2.1, 2.1 ), Vector( 0.8, 0.8 ) );
     
     assert( rtree.search( search1 ).length == 9 );
     assert( rtree.search( search2 ).length == 1 );

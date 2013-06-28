@@ -26,7 +26,7 @@ class Region
     
     BBox boundary()
     {
-        return nodes_rtree.root.boundary;
+        return nodes_rtree.root.getBoundary;
     }
     
     void addNode( in Node n )
