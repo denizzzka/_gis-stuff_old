@@ -307,8 +307,9 @@ private:
             }
             else // just recalculate boundary
             {
-                Box boundary;
-                foreach( c; node.children )
+                Box boundary = node.children[0].boundary;
+                
+                foreach( c; node.children[1..$] )
                     boundary.addCircumscribe( c.boundary );
                     
                 node.boundary = boundary;
