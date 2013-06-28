@@ -3,6 +3,7 @@ module osm;
 import osmpbf.fileformat;
 import osmpbf.osmformat;
 import math.geometry;
+import math.earth;
 import map: Map, Region, MapNode = Node;
 
 import std.stdio;
@@ -144,7 +145,7 @@ Region getRegion( string filename, bool verbose )
                 {
                     debug(osm) writefln( "id=%d coords=%s", n.id, decodeCoords( prim, n ) );
                     
-                    MapNode mn = { lat: n.lat, lon: n.lon };
+                    auto mn = MapNode( n.lat, n.lon );
                     res.addNode( mn );
                 }
             }
@@ -154,7 +155,7 @@ Region getRegion( string filename, bool verbose )
                 {
                     debug(osm) writefln( "id=%d coords=%s", n.id, decodeCoords( prim, n ) );
                     
-                    MapNode mn = { lat: n.lat, lon: n.lon };
+                    auto mn = MapNode( n.lat, n.lon );
                     res.addNode( mn );
                 }
         }

@@ -2,6 +2,9 @@ module sfml;
 
 import dsfml.graphics;
 import map;
+import osm: Coords;
+import math.earth;
+import math.geometry;
 
 
 class Window
@@ -24,7 +27,7 @@ class Window
 	while(window.isOpen)
 	{
 	    window.clear(Color.Black);
-	    showMap( region );
+	    //showMap( region );
 	    window.display();
      
 	    Event event;
@@ -42,14 +45,40 @@ class Window
 	}
     }
     
-    void showMap( Region region )
+    void showPoint( Vector2f coords )
     {
-	auto r = new RectangleShape( Vector2f(100,100) );
-	r.position( Vector2f(50,50) );
+	auto r = new RectangleShape( Vector2f(1,1) );
+	r.position( coords );
 	r.fillColor(Color.Yellow);
 	r.outlineColor(Color.Blue);
-	r.outlineThickness(3);
+	r.outlineThickness(1);
 	
 	window.draw( r );
+    }
+    
+    class ShowRegion
+    {
+	private Region region;
+	
+	this( Region r )
+	{
+	    region = r;
+	}
+	
+	Vector2f calcPointPosition( Coords coords )
+	{
+	    alias Coords2D!(WGS84, Vector2D!real) C;
+	    
+	    auto k = C( 320.0/coords.x, 240.0/coords.y ); 
+	    auto mercator = C.coords2mercator( C.degrees2radians( coords ) );
+	    
+	    return Vector2f( k.x * mercator.x,  k.y * mercator.y );
+	}
+	
+	void drawRegion()
+	{
+	    foreach( i, c; region.getNodes )
+		showPoint( calcPointPosition( c ) );
+	}
     }
 }

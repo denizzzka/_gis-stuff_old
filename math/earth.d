@@ -1,3 +1,5 @@
+module math.earth;
+
 import math.geometry;
 import std.math;
 
@@ -45,22 +47,22 @@ struct Coords2D( Datum, Vector2DT )
         this.y = latitude;
     }
     
-    Coords2D getRadiansFromDegrees() const pure
+    static Coords2D degrees2radians(T)(T from) pure
     {
         Coords2D res;
         
-        res.lat = degree2radian( lat );
-        res.lon = degree2radian( lon );
+        res.lat = degree2radian( from.lat );
+        res.lon = degree2radian( from.lon );
         
         return res;
     }
     
-    Coords2D getCoords2mercator() const pure
+    static Coords2D coords2mercator(T)(T from) pure
     {
         Coords2D res;
         
-        res.lon = Conv!Datum.lon2mercator( lon );
-        res.lat = Conv!Datum.lat2mercator( lat );
+        res.lat = Conv!Datum.lat2mercator( from.lat );
+        res.lon = Conv!Datum.lon2mercator( from.lon );
         
         return res;
     }
@@ -189,20 +191,20 @@ unittest
     assert( abs( C.lon2mercator( degree2radian( 37.617778 ) ) - 4187591.89 ) < 0.01 );
     
     // Ditto
-    auto m = Coords( 37.617778, 55.751667 ).getRadiansFromDegrees.getCoords2mercator;
+    auto m = Coords.coords2mercator( Coords.degrees2radians( Coords( 37.617778, 55.751667 ) ) );
     assert( abs( m.lat ) - 7473789.46 < 0.01 );
     assert( abs( m.lon ) - 4187591.89 < 0.01 );
     
     // Distance between Krasnoyarsk airport and Moscow Domodedovo airport
-    auto krsk = Coords( 92.493333, 56.171667 ).getRadiansFromDegrees;
-    auto msk = Coords( 37.906111, 55.408611 ).getRadiansFromDegrees;
+    auto krsk = Coords.degrees2radians( Coords( 92.493333, 56.171667 ) );
+    auto msk = Coords.degrees2radians( Coords( 37.906111, 55.408611 ) );
     auto msk_krsk = msk.getSphericalDistance( krsk );
     assert( msk_krsk > 3324352 );
     assert( msk_krsk < 3324354 );
     
     // Small distance
-    auto t1 = Coords( 92.8650337, 56.0339152 ).getRadiansFromDegrees;
-    auto t2 = Coords( 92.8650338, 56.0339153 ).getRadiansFromDegrees;
+    auto t1 = Coords.degrees2radians( Coords( 92.8650337, 56.0339152 ) );
+    auto t2 = Coords.degrees2radians( Coords( 92.8650338, 56.0339153 ) );
     auto t = t1.getSphericalDistance( t2 );
     assert( t > 0.01 );
     assert( t < 0.015 );

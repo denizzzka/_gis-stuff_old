@@ -38,6 +38,11 @@ class Region
         nodes ~= n;
     }
     
+    Node[] getNodes()
+    {
+        return nodes;
+    }
+    
     // r-tree of ways links to r-tree
     
     // kd-tree of POI links to points    
