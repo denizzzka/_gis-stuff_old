@@ -121,15 +121,14 @@ class RTreePtrs( _Box, _Payload )
     
     static struct Node
     {
-        private
-        {
+        private:
+        
             Node* parent;
             Nullable!Box boundary;
             Node*[] children;
-        }
     
-        public
-        {
+        public:
+        
             void assignChild( Node* child )
             {
                 children ~= child;
@@ -145,7 +144,6 @@ class RTreePtrs( _Box, _Payload )
             {
                 return boundary;
             }
-        }
     }
     
     static struct Leaf
@@ -154,7 +152,7 @@ class RTreePtrs( _Box, _Payload )
         Node* parent;
         
     public:
-        Box boundary;
+        Nullable!Box boundary;
         Payload payload;
         
         this( in Box boundary, Payload payload )
