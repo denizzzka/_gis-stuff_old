@@ -14,6 +14,9 @@ class Window
 	string title = "hello world!";
 	
 	window = new RenderWindow( vmode, title );
+	
+	window.setFramerateLimit(10);
+	window.setVerticalSyncEnabled(true);
     }
     
     //void showMap( Region region )
