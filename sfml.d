@@ -19,12 +19,12 @@ class Window
 	window.setVerticalSyncEnabled(true);
     }
     
-    //void showMap( Region region )
-    
     void mainCycle( Region region )
     {
 	while(window.isOpen)
 	{
+	    window.clear(Color.Black);
+	    showMap( region );
 	    window.display();
      
 	    Event event;
@@ -40,5 +40,16 @@ class Window
 		}
 	    }
 	}
+    }
+    
+    void showMap( Region region )
+    {
+	auto r = new RectangleShape( Vector2f(100,100) );
+	r.position( Vector2f(50,50) );
+	r.fillColor(Color.Yellow);
+	r.outlineColor(Color.Blue);
+	r.outlineThickness(3);
+	
+	window.draw( r );
     }
 }
