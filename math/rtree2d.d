@@ -120,17 +120,31 @@ class RTreePtrs( _Box, _Payload )
     
     static struct Node
     {
-    private:    
-        Node* parent;
-        Box boundary;
-        Node*[] children;
-        
-    public:
-        void assignChild( Node* child )
+        private
         {
-            children ~= child;
-            boundary = boundary.getCircumscribed( child.boundary );
-            child.parent = &this;
+            Node* parent;
+            Box _boundary;
+            Node*[] children;
+            
+            void boundary( Box box )
+            {
+                _boundary = box;
+            }
+        }
+    
+        public
+        {
+            void assignChild( Node* child )
+            {
+                children ~= child;
+                boundary = boundary.getCircumscribed( child.boundary );
+                child.parent = &this;
+            }
+            
+            Box boundary() const
+            {
+                return _boundary;
+            }
         }
     }
     

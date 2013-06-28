@@ -1,10 +1,10 @@
 module main;
 
-import osm;
+import osm: getMap;
 static import sfml;
 
 import std.getopt;
-
+import std.stdio;
 
 void main( string[] args )
 {
@@ -18,4 +18,6 @@ void main( string[] args )
     auto w = new sfml.Window;
     
     auto map = getMap( args[1..$], verbose );
+    
+    writeln( map.regions[0].boundary );
 }

@@ -24,6 +24,11 @@ class Region
         nodes_rtree = new NRT;
     }
     
+    BBox boundary()
+    {
+        return nodes_rtree.root.boundary;
+    }
+    
     void addNode( in Node n )
     {
         Coords zero_sized;
@@ -42,8 +47,8 @@ class Map
 {
     Region[] regions;
     
-    Node[] getScene( in BBox box )
+    Region getScene( in BBox box )
     {
-        return regions[0].nodes;
+        return regions[0];
     }
 }
