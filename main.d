@@ -16,7 +16,7 @@ void main( string[] args )
         "verbose", &verbose,
     );
     
-    auto w = new sfml.Window;
+    auto window = new sfml.Window;
     
     auto map = getMap( args[1..$], verbose );
     
@@ -25,4 +25,6 @@ void main( string[] args )
     //map.regions[0].addNode( Node(1,2) );
     
     writeln( map.regions[0].boundary );
+    
+    window.mainCycle( map.regions[0] );
 }
