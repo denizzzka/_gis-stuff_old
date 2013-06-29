@@ -113,7 +113,7 @@ private auto decodeCoords( in PrimitiveBlock pb, in Node n )
     return r;
 }
 
-Vector2D!real decodeCoords( Coords c )
+Vector2D!real decodeCoords( Coords c ) pure
 {
     return Vector2D!real( c.x / 10_000_000f,  c.y / 10_000_000f );
 }

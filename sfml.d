@@ -11,6 +11,7 @@ debug(sfml) import std.stdio;
 class Window
 {
     RenderWindow window;
+    ShowRegion reg;
     
     this()
     {
@@ -28,8 +29,11 @@ class Window
 	while(window.isOpen)
 	{
 	    window.clear(Color.Black);
-	    //showMap( region );
-	    window.display();
+	    
+	    if( reg )
+		reg.drawRegion;
+		
+	    window.display;
      
 	    Event event;
 	    while (window.pollEvent(event))
@@ -54,7 +58,7 @@ class Window
 	r.position( coords );
 	r.fillColor(Color.Yellow);
 	r.outlineColor(Color.Blue);
-	r.outlineThickness(1);
+	r.outlineThickness(0.1);
 	
 	window.draw( r );
     }
@@ -70,7 +74,7 @@ class Window
 	
 	alias Coords2D!(WGS84, Vector2D!real) Vector2r;
 	    
-	Vector2r osm2meters( Coords coords )
+	static Vector2r osm2meters( Coords coords ) pure
 	{
 	    alias Vector2r C;
 	    
@@ -79,7 +83,7 @@ class Window
 	    return C.coords2mercator( radians );
 	}
 	
-	auto meters2window( Vector2r coords, Vector2r mapStart, Vector2r k )
+	static auto meters2window( Vector2r coords, Vector2r mapStart, Vector2r k ) pure
 	{
 	    auto res = coords - mapStart;
 	    
@@ -97,9 +101,9 @@ class Window
 	    
 	    auto map_start = osm2meters( b.leftDownCorner );
 	    
-	    writeln("Start drawing, window size=", window.size);
+	    debug(sfml) writeln("Start drawing, window size=", window.size);
 	    auto len = region.getNodes.length;
-	    for(auto i = 0; i < 1000 && i < len; i++)
+	    for(auto i = 0; i < len; i++)
 	    {
 		debug(sfml) writeln("i=", i);
 		
