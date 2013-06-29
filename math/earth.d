@@ -50,8 +50,8 @@ struct Coords2D( Datum, Vector2DT )
     {
         Coords2D res;
         
-        res.lat = degree2radian( from.lat );
         res.lon = degree2radian( from.lon );
+        res.lat = degree2radian( from.lat );
         
         return res;
     }
@@ -60,8 +60,8 @@ struct Coords2D( Datum, Vector2DT )
     {
         Coords2D res;
         
-        res.lat = Conv!Datum.lat2mercator( from.lat );
         res.lon = Conv!Datum.lon2mercator( from.lon );
+        res.lat = Conv!Datum.lat2mercator( from.lat );
         
         return res;
     }

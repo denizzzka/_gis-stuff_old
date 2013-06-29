@@ -16,8 +16,6 @@ If no options are passed "-release" option will be used.
 
 Roadmap:
 
-Чтение OSM PBF (http://www.openstreetmap.org/)
-
 Хранение геоданных слоями (для легковых авто, грузовых, пешеходов, самолётов, кораблей)
     Хранение изолиний
     Прокладка маршрутов с учётом высот
