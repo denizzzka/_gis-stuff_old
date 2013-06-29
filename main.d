@@ -25,6 +25,7 @@ void main( string[] args )
     //map.regions[0].addNode( Node(1,2) );
     
     writeln( map.regions[0].boundary );
-    
-    window.mainCycle( map.regions[0] );
+    auto r = window.new ShowRegion( map.regions[0] );
+    r.drawRegion();
+    window.mainCycle();
 }

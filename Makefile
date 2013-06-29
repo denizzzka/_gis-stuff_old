@@ -9,7 +9,7 @@ DFILES := math/rtree2d.d math/geometry.d math/graph.d math/earth.d \
 INCLUDE := -I/usr/include/dmd/ -I./DSFML/
 BITS := -m32
 
-ARGS ?= -d -release
+ARGS ?= -release
 
 all: $(OSMPBFLIB) dsfml main
 
@@ -21,7 +21,7 @@ derelict3:
 	cd ./Derelict3/build/; $(DC) build.d; ./build sfml2
 	
 dsfml:
-	$(DC) -d $(ARGS) $(BITS) -lib -of$(DSFMLLIB) ./DSFML/dsfml/*.d
+	$(DC) -d $(BITS) -lib -of$(DSFMLLIB) ./DSFML/dsfml/*.d
 
 main:
 	$(DC) $(INCLUDE) $(LIBS) $(ARGS) $(BITS) -ofmain \

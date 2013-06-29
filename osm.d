@@ -103,7 +103,7 @@ Node[] decodeDenseNodes(DenseNodesArray)( DenseNodesArray dn )
 
 alias Vector2D!long Coords;
 
-auto decodeCoords( in PrimitiveBlock pb, in Node n )
+private auto decodeCoords( in PrimitiveBlock pb, in Node n )
 {
     Coords r;
     
@@ -111,6 +111,11 @@ auto decodeCoords( in PrimitiveBlock pb, in Node n )
     r.lon = (pb.lon_offset + pb.granularity * n.lon);
     
     return r;
+}
+
+Vector2D!real decodeCoords( Coords c )
+{
+    return Vector2D!real( c.x / 10_000_000f,  c.y / 10_000_000f );
 }
 
 Region getRegion( string filename, bool verbose )

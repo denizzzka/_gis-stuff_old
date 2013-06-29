@@ -41,10 +41,9 @@ struct Coords2D( Datum, Vector2DT )
     Vector2DT coords;
     alias coords this;
     
-    this( X, Y )( X longitude, Y latitude )
+    this( Vector2DT.T x, Vector2DT.T y )
     {
-        this.x = longitude;
-        this.y = latitude;
+        coords = Vector2DT( x, y );
     }
     
     static Coords2D degrees2radians(T)(T from) pure

@@ -14,12 +14,23 @@ struct Vector2D( _T )
     alias x lon;
     alias y lat;
     
-    Vector2D!T opBinary( string op )( in Vector2D!T v ) const
+    this( T x, T y )
+    {
+        this.x = x;
+        this.y = y;
+    }
+    
+    auto length()
+    {
+        return hypot( x, y );
+    }
+    
+    Vector2D opBinary( string op, T )( in T v ) const
     {
         static if( op == "+" )
-            return Vector2D!float( x + v.x, y + v.y );
+            return Vector2D( x + v.x, y + v.y );
         else static if( op == "-" )
-            return Vector2D!float( x - v.x, y - v.y );
+            return Vector2D( x - v.x, y - v.y );
         else
             static assert( false, "op not found" );
     }
@@ -34,16 +45,17 @@ struct Vector2D( _T )
             static assert( false, "op not found" );
     }
     
-    auto length()
+    void opAssign(T)( T v )
     {
-        return hypot( x, y );
+        x = v.x;
+        y = v.y;
     }
 }
 
 unittest
 {
-    Vector2D!float a = { x: 3, y: 2 };
-    Vector2D!float b = { x: -2, y: 2 };
+    auto a = Vector2D!float( 3, 2 );
+    auto b = Vector2D!float( -2, 2 );
     
     auto c = a - b;
     a -= b;
@@ -148,20 +160,22 @@ struct Box( _Vector, string S = "size" )
 
 unittest
 {
-    Vector2D!float coords1 = { 0, 0 };
-    Vector2D!float size1 = { 1, 1 };
+    alias Vector2D!float Vector;
     
-    Vector2D!float coords2 = { 1, 0 };
-    Vector2D!float size2 = { 1, 1 };
+    auto coords1 = Vector( 0, 0 );
+    auto size1 = Vector( 1, 1 );
     
-    alias Box!(Vector2D!float) BBox;
+    auto coords2 = Vector( 1, 0 );
+    auto size2 = Vector( 1, 1 );
+    
+    alias Box!(Vector) BBox;
     
     BBox box1 = BBox( coords1, size1 );
     BBox box2 = BBox( coords2, size2 );
     
     assert( box1.isOverlappedBy( box2 ) );
     
-    assert( box1.getCircumscribed( box2 ) == BBox(Vector2D!float(0, 0), Vector2D!float(2, 1)) );
+    assert( box1.getCircumscribed( box2 ) == BBox(Vector(0, 0), Vector(2, 1)) );
     
     auto serialized = &(box1.Serialize())[0];
     auto size = box2.Deserialize( serialized );
