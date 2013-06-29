@@ -79,7 +79,7 @@ class Window
 	    return C.coords2mercator( radians );
 	}
 	
-	auto meters2window( Vector2r coords, Coords mapStart, Vector2r k )
+	auto meters2window( Vector2r coords, Vector2r mapStart, Vector2r k )
 	{
 	    auto res = coords - mapStart;
 	    
@@ -95,6 +95,7 @@ class Window
 	    auto map_size = osm2meters( b.rightUpCorner - b.leftDownCorner );
 	    auto k = Vector2r( window.size.x/map_size.x, window.size.y/map_size.y );
 	    
+	    auto map_start = osm2meters( b.leftDownCorner );
 	    
 	    writeln("Start drawing, window size=", window.size);
 	    auto len = region.getNodes.length;
@@ -103,7 +104,7 @@ class Window
 		debug(sfml) writeln("i=", i);
 		
 		auto m = osm2meters( region.getNodes[i] );
-		auto c = meters2window( m, b.leftDownCorner, k );
+		auto c = meters2window( m, map_start, k );
 		drawPoint( Vector2f( c.x, c.y ) );
 	    }
 	}
