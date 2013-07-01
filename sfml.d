@@ -2,7 +2,6 @@ module sfml;
 
 import dsfml.graphics;
 import scene;
-import math.earth;
 import math.geometry;
 debug(sfml) import std.stdio;
 debug(scene) import std.stdio;
@@ -12,9 +11,6 @@ class Window
 {
     RenderWindow window;
     Scene scene;
-    real k; // zoom
-    Vector2D!real center;
-    Vector2D!real map_size;
     
     this()
     {
@@ -48,38 +44,40 @@ class Window
 		{
 		    switch( event.key.code )
 		    {
+			auto p = &scene.properties;
+			
 			case Keyboard.Key.Escape:
 			    window.close();
 			    break;
 			    
 			case Keyboard.Key.P:
-			    k += 0.001;
-			    debug(scene) writeln("k=", k);
+			    p.zoom += 0.001;
+			    debug(scene) writeln("zoom=", p.zoom);
 			    break;
 			    
 			case Keyboard.Key.O:
-			    k -= 0.001;
-			    debug(scene) writeln("k=", k);
+			    p.zoom -= 0.001;
+			    debug(scene) writeln("zoom=", p.zoom);
 			    break;
 			    
 			case Keyboard.Key.Right:
-			    center.x += 0.001;
-			    debug(scene) writeln("center=", center);
+			    p.center.x += 0.001;
+			    debug(scene) writeln("center=", p.center);
 			    break;
 			    
 			case Keyboard.Key.Left:
-			    center.x -= 0.001;
-			    debug(scene) writeln("center=", center);
+			    p.center.x -= 0.001;
+			    debug(scene) writeln("center=", p.center);
 			    break;
 			    
 			case Keyboard.Key.Up:
-			    center.y += 0.001;
-			    debug(scene) writeln("center=", center);
+			    p.center.y += 0.001;
+			    debug(scene) writeln("center=", p.center);
 			    break;
 			    
 			case Keyboard.Key.Down:
-			    center.y -= 0.001;
-			    debug(scene) writeln("center=", center);
+			    p.center.y -= 0.001;
+			    debug(scene) writeln("center=", p.center);
 			    break;
 			    
 			default:
