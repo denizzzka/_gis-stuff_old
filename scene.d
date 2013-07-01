@@ -2,6 +2,7 @@ module scene;
 
 import map;
 import math.geometry;
+import osm: convert2meters;
 debug(scene) import std.stdio;
 
 
@@ -36,7 +37,7 @@ class Scene
         properties.zoom = properties.window_size.x / map_size.x;
     }
     
-    void draw( Decode2Meters )( void delegate(typeof( Decode2Meters ) coords) drawPoint )
+    void draw( void delegate(Vector2D!(real) coords) drawPoint )
     {
         debug(scene) writeln("Drawing, window size=", properties.window_size);
         
@@ -46,9 +47,9 @@ class Scene
             auto len = nodes.length;
             for(auto i = 0; i < 1000 && i < len; i++)
             {
-                debug(scene) writefln("draw point i=%i coords=%s\n", i, nodes[i]);
+                debug(scene) writeln("draw point i=", i, " coords=", nodes[i]);
                 
-                auto coords = Decode2Meters( nodes[i] );
+                auto coords = convert2meters( nodes[i] );
                 drawPoint( coords );
             }
         }

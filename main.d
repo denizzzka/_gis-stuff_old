@@ -24,8 +24,8 @@ void main( string[] args )
     Vector2s window_size;
     window_size = window.window.size;
     
-    auto scene = new Scene( map, window_size );
-    scene.viewToWholeMap;
+    window.scene = new Scene( map, window_size );
+    window.scene.viewToWholeMap;
     
     /*
     auto map = new Map;
@@ -37,6 +37,5 @@ void main( string[] args )
     
     writeln( "Map bbox:", map.regions[0].boundary );
     
-    //window.reg = window.new ShowRegion( map.regions[0] );
-    //window.mainCycle();
+    window.mainCycle();
 }

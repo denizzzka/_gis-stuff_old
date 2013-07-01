@@ -118,7 +118,7 @@ Vector2D!real decodeCoords( Coords c ) pure
     return Vector2D!real( c.x / 10_000_000f,  c.y / 10_000_000f );
 }
 
-auto osm2meters( Coords coords ) pure
+Vector2D!real convert2meters( Coords coords ) pure
 {
     auto c = decodeCoords( coords );
     auto radians = degrees2radians( c );
