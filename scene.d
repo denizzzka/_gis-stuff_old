@@ -36,9 +36,7 @@ class Scene
         properties.zoom = properties.window_size.x / map_size.x;
     }
     
-    alias typeof( map.regions[0].getNodes[0] ) Coords;
-    
-    void draw( void delegate(Coords coords) drawPoint )
+    void draw( Decode2Meters )( void delegate(typeof( Decode2Meters ) coords) drawPoint )
     {
         debug(scene) writeln("Drawing, window size=", properties.window_size);
         
@@ -50,8 +48,11 @@ class Scene
             {
                 debug(scene) writefln("draw point i=%i coords=%s\n", i, nodes[i]);
                 
-                drawPoint( nodes[i] );
+                auto coords = Decode2Meters( nodes[i] );
+                drawPoint( coords );
             }
         }
     }
+    
+    
 }

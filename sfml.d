@@ -2,7 +2,7 @@ module sfml;
 
 import dsfml.graphics;
 import map;
-import osm: Coords, decodeCoords;
+import osm: Coords, decodeCoords, osm2meters;
 import math.earth;
 import math.geometry;
 debug(sfml) import std.stdio;
@@ -121,16 +121,7 @@ class Window
 	}
 	
 	alias Vector2D!real Vector2r;
-	    
-	static Vector2r osm2meters( Coords coords ) pure
-	{
-	    alias Vector2r C;
-	    
-	    auto c = decodeCoords( coords );
-	    auto radians = degrees2radians( c );
-	    return coords2mercator( radians );
-	}
-	
+		
 	auto meters2window( Vector2r coords ) pure
 	{
 	    auto res = coords - center; 
