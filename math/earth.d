@@ -56,7 +56,7 @@ struct Conv( Datum )
         return res;
     }
     
-    static auto getSphericalDistance( Coords )( in Coords from, in Coords to ) pure
+    static auto getSphericalDistance( T1, T2 )( in T1 from, in T2 to ) pure
     in
     {
         assertLatitude( from.lat );
@@ -91,7 +91,7 @@ struct Conv( Datum )
         return Datum.approx_radius * angle;
     }
     
-    static auto getSphericalAzimuth( Coords )( in Coords from, in Coords to ) pure
+    static auto getSphericalAzimuth( T1, T2 )( in T1 from, in T2 to ) pure
     in
     {
         assertLatitude( from.lat );
@@ -152,7 +152,7 @@ unittest
     assert( abs( C.lon2mercator( degree2radian( 37.617778 ) ) - 4187591.89 ) < 0.01 );
     
     // Ditto
-    auto m = C.coords2mercator( degrees2radians( Vector( 37.617778, 55.751667 ) ) );
+    auto m = coords2mercator( degrees2radians( Vector( 37.617778, 55.751667 ) ) );
     assert( abs( m.lat ) - 7473789.46 < 0.01 );
     assert( abs( m.lon ) - 4187591.89 < 0.01 );
     
