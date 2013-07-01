@@ -36,7 +36,9 @@ class Scene
         properties.zoom = properties.window_size.x / map_size.x;
     }
     
-    void draw( void delegate(Vector2l coords) drawPoint )
+    alias typeof( map.regions[0].getNodes[0] ) Coords;
+    
+    void draw( void delegate(Coords coords) drawPoint )
     {
         debug(scene) writeln("Drawing, window size=", properties.window_size);
         
