@@ -120,15 +120,15 @@ class Window
 	    k = window.size.x/map_size.x;
 	}
 	
-	alias Coords2D!(WGS84, Vector2D!real) Vector2r;
+	alias Vector2D!real Vector2r;
 	    
 	static Vector2r osm2meters( Coords coords ) pure
 	{
 	    alias Vector2r C;
 	    
 	    auto c = decodeCoords( coords );
-	    auto radians = C.degrees2radians( c );
-	    return C.coords2mercator( radians );
+	    auto radians = degrees2radians( c );
+	    return coords2mercator( radians );
 	}
 	
 	auto meters2window( Vector2r coords ) pure

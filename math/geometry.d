@@ -185,3 +185,35 @@ unittest
     assert( size == box1.sizeof );
     assert( box2 == box1 );
 }
+
+auto degree2radian( T )( in T val ) pure
+{
+    return val * (PI / 180);
+}
+
+unittest
+{
+    assert( degree2radian(0) == 0 );
+    assert( degree2radian(45) == PI_4 );
+    assert( degree2radian(360) == PI * 2 );
+}
+
+auto radian2degree( T )( in T val ) pure
+{
+    return val * (180 / PI);
+}
+
+unittest
+{
+    assert( degree2radian(500).radian2degree == 500 );
+}
+
+auto degrees2radians(T)( in T from ) pure
+{
+    Vector2D!real res;
+    
+    res.lon = degree2radian( from.lon );
+    res.lat = degree2radian( from.lat );
+    
+    return res;
+}
