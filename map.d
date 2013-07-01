@@ -24,7 +24,7 @@ class Region
         nodes_rtree = new NRT;
     }
     
-    BBox boundary()
+    BBox boundary() const
     {
         return nodes_rtree.root.getBoundary;
     }
@@ -38,7 +38,7 @@ class Region
         nodes ~= n;
     }
     
-    Node[] getNodes()
+    const (Node[]) getNodes() const
     {
         return nodes;
     }
