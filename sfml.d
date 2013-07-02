@@ -5,6 +5,7 @@ import scene;
 import math.geometry;
 debug(sfml) import std.stdio;
 debug(scene) import std.stdio;
+debug(controls) import std.stdio;
 
 
 class Window
@@ -19,8 +20,8 @@ class Window
 	
 	window = new RenderWindow( vmode, title );
 	
-	//window.setFramerateLimit(5);
-	window.setVerticalSyncEnabled(true);
+	window.setFramerateLimit(1);
+	//window.setVerticalSyncEnabled(true);
     }
     
     void mainCycle()
@@ -42,44 +43,44 @@ class Window
 		else
 		if (event.type == Event.KeyPressed)
 		{
+		    auto sp = &scene.properties;
+		    
 		    switch( event.key.code )
 		    {
-			auto p = &scene.properties;
-			
 			case Keyboard.Key.Escape:
 			    window.close();
 			    break;
-			    
+			
 			case Keyboard.Key.P:
-			    p.zoom += 0.001;
-			    debug(scene) writeln("zoom=", p.zoom);
+			    sp.zoom += 0.001;
+			    debug(controls) writeln("zoom=", sp.zoom);
 			    break;
-			    
+			
 			case Keyboard.Key.O:
-			    p.zoom -= 0.001;
-			    debug(scene) writeln("zoom=", p.zoom);
+			    sp.zoom -= 0.001;
+			    debug(controls) writeln("zoom=", sp.zoom);
 			    break;
 			    
 			case Keyboard.Key.Right:
-			    p.center.x += 0.001;
-			    debug(scene) writeln("center=", p.center);
+			    sp.center.x += 0.001;
+			    debug(controls) writeln("center=", sp.center);
 			    break;
 			    
 			case Keyboard.Key.Left:
-			    p.center.x -= 0.001;
-			    debug(scene) writeln("center=", p.center);
+			    sp.center.x -= 0.001;
+			    debug(controls) writeln("center=", sp.center);
 			    break;
 			    
 			case Keyboard.Key.Up:
-			    p.center.y += 0.001;
-			    debug(scene) writeln("center=", p.center);
+			    sp.center.y += 0.001;
+			    debug(controls) writeln("center=", sp.center);
 			    break;
 			    
 			case Keyboard.Key.Down:
-			    p.center.y -= 0.001;
-			    debug(scene) writeln("center=", p.center);
+			    sp.center.y -= 0.001;
+			    debug(controls) writeln("center=", sp.center);
 			    break;
-			    
+			
 			default:
 			    break;
 		    }

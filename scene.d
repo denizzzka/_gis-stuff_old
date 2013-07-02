@@ -3,6 +3,7 @@ module scene;
 import map;
 import math.geometry;
 import osm: convert2meters;
+import std.conv;
 debug(scene) import std.stdio;
 
 
@@ -20,7 +21,6 @@ struct Properties
 class Scene
 {
     const Map map;
-    
     Properties properties;
     
     this( in Map m, in Vector2s windowPixelsSize )
@@ -34,7 +34,7 @@ class Scene
         auto b = map.regions[0].boundary;
         auto map_size = b.rightUpCorner - b.leftDownCorner;
         properties.center = map_size / 2;
-        properties.zoom = properties.window_size.x / map_size.x;
+        properties.zoom = to!real(properties.window_size.x) / map_size.x;
     }
     
     void draw( void delegate(Vector2D!(real) coords) drawPoint )
@@ -54,4 +54,6 @@ class Scene
             }
         }
     }
+    
+    //private Vector2r meters2window( Vector2r coords )
 }
