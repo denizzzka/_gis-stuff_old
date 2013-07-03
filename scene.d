@@ -29,7 +29,7 @@ class Scene
         map = m;
     }
     
-    auto getMapBoundary() const
+    auto getBoundary() const
     {
         auto v = Vector2r(properties.zoom, properties.zoom);
         
@@ -62,7 +62,7 @@ class Scene
     {
         debug(scene) writeln("Drawing, window size=", properties.window_size);
         
-        auto boundary = getMapBoundary();
+        auto boundary = getBoundary();
         
         foreach( reg; map.regions )
         {
