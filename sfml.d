@@ -3,6 +3,7 @@ module sfml;
 import dsfml.graphics;
 import scene;
 import math.geometry;
+import std.conv: to;
 debug(sfml) import std.stdio;
 debug(scene) import std.stdio;
 debug(controls) import std.stdio;
@@ -20,7 +21,7 @@ class Window
 	
 	window = new RenderWindow( vmode, title );
 	
-	window.setFramerateLimit(1);
+	window.setFramerateLimit(30);
 	//window.setVerticalSyncEnabled(true);
     }
     
@@ -31,8 +32,11 @@ class Window
 	    window.clear(Color.Black);
 	    
 	    if( scene )
+	    {
+		scene.properties.windowPixelSize = window.size;
 		scene.draw( &drawPoint );
-		
+	    }
+	    
 	    window.display;
      
 	    Event event;
@@ -43,6 +47,9 @@ class Window
 		else
 		if (event.type == Event.KeyPressed)
 		{
+		    immutable auto zoom_step = 1.05;
+		    immutable auto dir_step = 0.1;
+		    
 		    with(scene.properties)
 			switch( event.key.code )
 			{
@@ -51,32 +58,32 @@ class Window
 				break;
 			    
 			    case Keyboard.Key.P:
-				zoom += 0.001;
+				zoom *= zoom_step;
 				debug(controls) writeln(scene);
 				break;
 			    
 			    case Keyboard.Key.O:
-				zoom -= 0.001;
+				zoom /= zoom_step;
 				debug(controls) writeln(scene);
 				break;
 				
 			    case Keyboard.Key.Right:
-				center.x += 0.01;
+				center.x += dir_step;
 				debug(controls) writeln(scene);
 				break;
 				
 			    case Keyboard.Key.Left:
-				center.x -= 0.01;
+				center.x -= dir_step;
 				debug(controls) writeln(scene);
 				break;
 				
 			    case Keyboard.Key.Up:
-				center.y += 0.01;
+				center.y += dir_step;
 				debug(controls) writeln(scene);
 				break;
 				
 			    case Keyboard.Key.Down:
-				center.y -= 0.01;
+				center.y -= dir_step;
 				debug(controls) writeln(scene);
 				break;
 			    
@@ -90,9 +97,10 @@ class Window
     
     void drawPoint( Vector2r coords )
     {
-	debug(sfml) writeln("draw point at ", coords);
+	// convert Cartesian to SFML coords
+	//coords.y = to!real(window.size.y) - coords.y;
 	
-	//coords.y = -coords.y + window.size.y; // convert Cartesian to SFML coords
+	debug(sfml) writeln("draw point, window coords=", coords);
 	
 	auto c = Vector2f( coords.x, coords.y );
 	

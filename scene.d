@@ -35,9 +35,9 @@ class Scene
         with(properties)
         {
             auto b_size = Vector2r(zoom, zoom);
-            auto map_size = map.boundary.getSizeVector();
+            auto w_size = properties.windowPixelSize;
             
-            real ratio = to!real(map_size.x) / map_size.y;
+            real ratio = to!real(w_size.x) / w_size.y;
             
             if( ratio > 1 )
                 b_size.x *= ratio;
@@ -59,8 +59,10 @@ class Scene
             debug(scene) writeln("draw point i=", i, " coords=", nodes[i]);
             
             //auto coords = convert2meters( nodes[i] );
-            Vector2r c; c = nodes[i];
-            auto window_coords = c - getBoundary.leftDownCorner;
+            Vector2r node; node = nodes[i];
+            auto ld = getBoundary.leftDownCorner;
+            auto center_relative = node - ld;
+            auto window_coords = center_relative * properties.zoom;
             drawPoint( window_coords );
         }
     }

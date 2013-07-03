@@ -31,14 +31,14 @@ void main( string[] args )
         auto map = new Map;
         map.regions ~= new Region;
         map.regions[0].addNode( Node(56,94) );
-        map.regions[0].addNode( Node(56,95) );
+        //map.regions[0].addNode( Node(56,95) );
         map.regions[0].addNode( Node(57,95) );
     }
     
     Properties p;
-    p.zoom = to!real(window.window.size.x) / map.boundary.getSizeVector.x;
+    auto map_size = map.boundary.getSizeVector;
+    p.zoom = 20;
     p.center = map.boundary.getCenter;
-    p.windowPixelSize = window.window.size;
     
     writeln( p );
     

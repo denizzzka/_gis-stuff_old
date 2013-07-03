@@ -40,6 +40,8 @@ struct Vector2D( _T )
             return Vector2D( x + v.x, y + v.y );
         else static if( op == "-" )
             return Vector2D( x - v.x, y - v.y );
+        else static if( op == "*" )
+            return Vector2D( x*v, y*v );
         else static if( op == "/" )
             return Vector2D( x/v, y/v );
         else
