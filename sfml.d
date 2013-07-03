@@ -11,8 +11,13 @@ debug(controls) import std.stdio;
 
 class Window
 {
-    RenderWindow window;
     Scene scene;
+    RenderWindow window;    
+    
+    private
+    {
+	VertexArray vertices;
+    }
     
     this()
     {
@@ -34,7 +39,9 @@ class Window
 	    if( scene )
 	    {
 		scene.properties.windowPixelSize = window.size;
+		vertices = new VertexArray( PrimitiveType.Points, 0 );
 		scene.draw( &drawPoint );
+		window.draw( vertices );
 	    }
 	    
 	    window.display;
@@ -106,12 +113,8 @@ class Window
 	
 	debug(sfml) writeln("draw point, window coords=", c, " window size=", window.size);
 	
-	auto r = new RectangleShape( Vector2f(1,1) );
-	r.position( c );
-	r.fillColor(Color.Yellow);
-	//r.outlineColor(Color.Cyan);
-	//r.outlineThickness(1);
+	auto v = Vertex(c, Color.Yellow);
 	
-	window.draw( r );
+	vertices.append( v );
     }
 }
