@@ -83,6 +83,6 @@ class Scene
 	override string toString()
     {
         with(properties)
-            return format("center=%s zoom=%g scene boundary=%s", center, zoom, getBoundary);	
+            return format("center=%s zoom=%g scene bbox=%s size_len=%g", center, zoom, getBoundary, getBoundary.getSizeVector.length);	
 	}
 }

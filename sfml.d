@@ -100,7 +100,7 @@ class Window
 	// convert Cartesian to SFML coords
 	//coords.y = to!real(window.size.y) - coords.y;
 	
-	debug(sfml) writeln("draw point, window coords=", coords);
+	debug(sfml) writeln("draw point, window coords=", coords, " window size=", window.size);
 	
 	auto c = Vector2f( coords.x, coords.y );
 	
