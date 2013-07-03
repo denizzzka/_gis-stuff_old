@@ -47,10 +47,11 @@ class Window
 		else
 		if (event.type == Event.KeyPressed)
 		{
-		    immutable auto zoom_step = 1.05;
-		    immutable auto dir_step = 0.1;
-		    
 		    with(scene.properties)
+		    {
+			immutable auto zoom_step = 1.05;
+			auto dir_step = zoom * 0.05;
+			
 			switch( event.key.code )
 			{
 			    case Keyboard.Key.Escape:
@@ -90,6 +91,7 @@ class Window
 			    default:
 				break;
 			}
+		    }
 		}
 	    }
 	}
@@ -107,8 +109,8 @@ class Window
 	auto r = new RectangleShape( Vector2f(1,1) );
 	r.position( c );
 	r.fillColor(Color.Yellow);
-	//r.outlineColor(Color.Blue);
-	//r.outlineThickness(0.1);
+	r.outlineColor(Color.Cyan);
+	r.outlineThickness(1);
 	
 	window.draw( r );
     }

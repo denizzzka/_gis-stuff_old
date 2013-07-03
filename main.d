@@ -31,8 +31,8 @@ void main( string[] args )
         auto map = new Map;
         map.regions ~= new Region;
         map.regions[0].addNode( Node(56,94) );
-        //map.regions[0].addNode( Node(56,95) );
-        //map.regions[0].addNode( Node(57,95) );
+        map.regions[0].addNode( Node(56,95) );
+        map.regions[0].addNode( Node(57,95) );
     }
     
     Properties p;

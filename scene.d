@@ -34,14 +34,12 @@ class Scene
     {
         with(properties)
         {
-            auto b_size = Vector2r(zoom, zoom);
-            auto w_size = properties.windowPixelSize;
+            Vector2r b_size;
+            auto w_size = windowPixelSize;
             real ratio = to!real(w_size.x) / w_size.y;
             
-            if( ratio > 1 )
-                b_size.x *= ratio;
-            else
-                b_size.y /= ratio;
+            b_size.x = zoom * ratio;
+            b_size.y = b_size.x / ratio;
             
             auto leftDownCorner = center - b_size/2;
             
