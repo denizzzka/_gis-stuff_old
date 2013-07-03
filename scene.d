@@ -45,6 +45,7 @@ class Scene
         return Box!Vector2r( -v/2, v );
     }
     
+    private
     void drawNodes( in Node[] nodes, void delegate(Vector2D!(real) coords) drawPoint )
     {
             auto len = nodes.length;
