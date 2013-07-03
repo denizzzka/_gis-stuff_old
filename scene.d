@@ -36,7 +36,6 @@ class Scene
         {
             auto b_size = Vector2r(zoom, zoom);
             auto w_size = properties.windowPixelSize;
-            
             real ratio = to!real(w_size.x) / w_size.y;
             
             if( ratio > 1 )
@@ -61,8 +60,9 @@ class Scene
             //auto coords = convert2meters( nodes[i] );
             Vector2r node; node = nodes[i];
             auto ld = getBoundary.leftDownCorner;
-            auto center_relative = node - ld;
-            auto window_coords = center_relative * properties.zoom;
+            auto ld_relative = node - ld;
+            auto k = properties.windowPixelSize.x / getBoundary.getSizeVector.x;
+            auto window_coords = ld_relative * k;
             drawPoint( window_coords );
         }
     }

@@ -32,12 +32,12 @@ void main( string[] args )
         map.regions ~= new Region;
         map.regions[0].addNode( Node(56,94) );
         //map.regions[0].addNode( Node(56,95) );
-        map.regions[0].addNode( Node(57,95) );
+        //map.regions[0].addNode( Node(57,95) );
     }
     
     Properties p;
     auto map_size = map.boundary.getSizeVector;
-    p.zoom = 20;
+    p.zoom = 10;
     p.center = map.boundary.getCenter;
     
     writeln( p );

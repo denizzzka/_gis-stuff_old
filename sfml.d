@@ -98,11 +98,11 @@ class Window
     void drawPoint( Vector2r coords )
     {
 	// convert Cartesian to SFML coords
-	//coords.y = to!real(window.size.y) - coords.y;
-	
-	debug(sfml) writeln("draw point, window coords=", coords, " window size=", window.size);
+	coords.y = to!real(window.size.y) - coords.y;
 	
 	auto c = Vector2f( coords.x, coords.y );
+	
+	debug(sfml) writeln("draw point, window coords=", c, " window size=", window.size);
 	
 	auto r = new RectangleShape( Vector2f(1,1) );
 	r.position( c );
