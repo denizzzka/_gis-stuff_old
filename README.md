@@ -1,3 +1,5 @@
+#### Программа для навигации и набор утилит для создания карт для неё
+
 Under construction! / В процессе разработки!
 
 Use "--recursive" for cloning this repository:
@@ -10,9 +12,6 @@ make -B ARGS="-d -unittest -g -debug -debug=osmpbf"
 ```
 ("-B" is for unconditionally make target)
 If no options are passed "-release" option will be used.
-
-
-#### Тут должна получиться программа для навигации и набор утилит для создания карт для неё
 
 ![Image](https://raw.github.com/denizzzka/gis-stuff/master/screenshots/hello_world_malta.png)
 
