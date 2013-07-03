@@ -51,7 +51,7 @@ class Scene
     void drawNodes( in Node[] nodes, void delegate(Vector2D!(real) coords) drawPoint )
     {
         auto len = nodes.length;
-        for(auto i = 0; i < 1000 && i < len; i++)
+        for(auto i = 0; i < 2000 && i < len; i++)
         {
             debug(scene) writeln("draw point i=", i, " coords=", nodes[i]);
             

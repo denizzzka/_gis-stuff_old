@@ -21,7 +21,7 @@ class Window
 	
 	window = new RenderWindow( vmode, title );
 	
-	window.setFramerateLimit(30);
+	window.setFramerateLimit(5);
 	//window.setVerticalSyncEnabled(true);
     }
     
@@ -58,12 +58,12 @@ class Window
 				window.close();
 				break;
 			    
-			    case Keyboard.Key.P:
+			    case Keyboard.Key.Dash: // zoom out
 				zoom *= zoom_step;
 				debug(controls) writeln(scene);
 				break;
 			    
-			    case Keyboard.Key.O:
+			    case Keyboard.Key.Equal: // zoom in
 				zoom /= zoom_step;
 				debug(controls) writeln(scene);
 				break;
@@ -109,8 +109,8 @@ class Window
 	auto r = new RectangleShape( Vector2f(1,1) );
 	r.position( c );
 	r.fillColor(Color.Yellow);
-	r.outlineColor(Color.Cyan);
-	r.outlineThickness(1);
+	//r.outlineColor(Color.Cyan);
+	//r.outlineThickness(1);
 	
 	window.draw( r );
     }
