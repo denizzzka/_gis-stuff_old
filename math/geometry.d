@@ -3,6 +3,7 @@ module math.geometry;
 import std.algorithm;
 import std.math;
 import std.conv: to;
+import std.traits: isScalarType;
 
 
 struct Vector2D( _T )
@@ -35,12 +36,9 @@ struct Vector2D( _T )
     }
     
     Vector2D opBinary( string op, T )( in T v ) const
+    if( isScalarType!(T) )
     {
-        static if( op == "+" )
-            return Vector2D( x + v.x, y + v.y );
-        else static if( op == "-" )
-            return Vector2D( x - v.x, y - v.y );
-        else static if( op == "*" )
+        static if( op == "*" )
             return Vector2D( x*v, y*v );
         else static if( op == "/" )
             return Vector2D( x/v, y/v );
@@ -48,17 +46,39 @@ struct Vector2D( _T )
             static assert( false, "op \""~op~"\" is not found" );
     }
     
-    void opOpAssign( string op, R )( in Vector2D!R v )
+    Vector2D opBinary( string op, T )( in T v ) const
+    if( !isScalarType!(T) )
+    {
+        static if( op == "+" )
+            return Vector2D( x + v.x, y + v.y );
+        else static if( op == "-" )
+            return Vector2D( x - v.x, y - v.y );
+        else
+            static assert( false, "op \""~op~"\" is not found" );
+    }
+    
+    void opOpAssign( string op, T )( in T v )
+    if( isScalarType!(T) )
+    {
+        static if( op == "/" )
+            x /= v, y /= v;
+        else
+            static assert( false, "op \""~op~"\" is not found" );
+    }
+    
+    void opOpAssign( string op, T )( in T v )
+    if( !isScalarType!(T) )
     {
         static if( op == "+" )
             x += v.x, y += v.y;
         else static if( op == "-" )
             x -= v.x, y -= v.y;
         else
-            static assert( false, "op not found" );
+            static assert( false, "op \""~op~"\" is not found" );
     }
     
     void opAssign(T)( T v )
+    if( !isScalarType!(T) )
     {
         x = v.x;
         y = v.y;

@@ -15,7 +15,7 @@ alias Vector2D!long Vector2l;
 struct Properties
 {
     Vector2r center;
-    real zoom;
+    real zoom; /// pixels per degree
     Vector2s windowPixelSize;
 }
 
@@ -34,11 +34,8 @@ class Scene
         with(properties)
         {
             Vector2r b_size;
-            auto w_size = windowPixelSize;
-            real ratio = to!real(w_size.x) / w_size.y;
-            
-            b_size.x = zoom * ratio;
-            b_size.y = b_size.x / ratio;
+            b_size = windowPixelSize;
+            b_size /= zoom;
             
             auto leftDownCorner = center - b_size/2;
             

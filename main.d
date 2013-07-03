@@ -9,6 +9,7 @@ static import sfml;
 import std.getopt;
 import std.stdio;
 import std.math: fmax;
+import std.conv: to;
 
 
 void main( string[] args )
@@ -37,7 +38,8 @@ void main( string[] args )
     
     Properties p;
     auto map_size = map.boundary.getSizeVector;
-    p.zoom = fmax( map_size.x, map_size.y );
+    with( window.window.size )
+        p.zoom = fmax( to!real(x) / map_size.x, to!real(y) / map_size.y );
     p.center = map.boundary.getCenter;
     
     writeln( p );
