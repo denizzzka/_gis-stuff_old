@@ -29,6 +29,18 @@ class Scene
         properties.window_size = windowPixelsSize;
     }
     
+    auto getBoundary( real ratio )
+    {
+        auto v = Vector2r(properties.zoom, properties.zoom);
+        
+        if( ratio > 1 )
+            v.x *= ratio;
+        else
+            v.y /= ratio;
+        
+        return Box!Vector2r( -v/2, v );
+    }
+    
     void viewToWholeMap()
     {
         auto b = map.regions[0].boundary;

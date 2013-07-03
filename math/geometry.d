@@ -25,6 +25,14 @@ struct Vector2D( _T )
         return hypot( x, y );
     }
     
+    Vector2D opUnary( string op )() const
+    {
+        static if( op == "-" )
+            return Vector2D( -x, -y );
+        else
+            static assert( false, "op \""~op~"\" is not found" );
+    }
+    
     Vector2D opBinary( string op, T )( in T v ) const
     {
         static if( op == "+" )
@@ -34,7 +42,7 @@ struct Vector2D( _T )
         else static if( op == "/" )
             return Vector2D( x/v, y/v );
         else
-            static assert( false, "op not found" );
+            static assert( false, "op \""~op~"\" is not found" );
     }
     
     void opOpAssign( string op, R )( in Vector2D!R v )
