@@ -32,20 +32,22 @@ class Scene
     
     Box!Vector2r getBoundary() const
     {
-        auto v = Vector2r(properties.zoom, properties.zoom);
-        
-        auto map_size = map.boundary.getSizeVector();
-        
-        real ratio = to!real(map_size.x) / map_size.y;
-        
-        if( ratio > 1 )
-            v.x *= ratio;
-        else
-            v.y /= ratio;
-        
-        auto leftDownCorner = properties.center - v/2;
-        
-        return Box!Vector2r( leftDownCorner, v );
+        with(properties)
+        {
+            auto b_size = Vector2r(zoom, zoom);
+            auto map_size = map.boundary.getSizeVector();
+            
+            real ratio = to!real(map_size.x) / map_size.y;
+            
+            if( ratio > 1 )
+                b_size.x *= ratio;
+            else
+                b_size.y /= ratio;
+            
+            auto leftDownCorner = center - b_size/2;
+            
+            return Box!Vector2r( leftDownCorner, b_size );
+        }
     }
     
     private
@@ -79,6 +81,6 @@ class Scene
 	override string toString()
     {
         with(properties)
-            return format("zoom=%g scene boundary=%s", zoom, getBoundary);	
+            return format("center=%s zoom=%g scene boundary=%s", center, zoom, getBoundary);	
 	}
 }

@@ -64,7 +64,7 @@ struct Vector2D( _T )
     
     string toString() const
     {
-        return "("~to!string(x)~";"~to!string(x)~")";
+        return "("~to!string(x)~";"~to!string(y)~")";
     }
 }
 

@@ -43,47 +43,46 @@ class Window
 		else
 		if (event.type == Event.KeyPressed)
 		{
-		    auto sp = &scene.properties;
-		    
-		    switch( event.key.code )
-		    {
-			case Keyboard.Key.Escape:
-			    window.close();
-			    break;
-			
-			case Keyboard.Key.P:
-			    sp.zoom += 0.001;
-			    debug(controls) writeln(scene);
-			    break;
-			
-			case Keyboard.Key.O:
-			    sp.zoom -= 0.001;
-			    debug(controls) writeln("zoom=", sp.zoom, " scene boundary=", scene.getBoundary);
-			    break;
+		    with(scene.properties)
+			switch( event.key.code )
+			{
+			    case Keyboard.Key.Escape:
+				window.close();
+				break;
 			    
-			case Keyboard.Key.Right:
-			    sp.center.x += 0.001;
-			    debug(controls) writeln("center=", sp.center, " scene boundary=", scene.getBoundary);
-			    break;
+			    case Keyboard.Key.P:
+				zoom += 0.001;
+				debug(controls) writeln(scene);
+				break;
 			    
-			case Keyboard.Key.Left:
-			    sp.center.x -= 0.001;
-			    debug(controls) writeln("center=", sp.center, " scene boundary=", scene.getBoundary);
-			    break;
+			    case Keyboard.Key.O:
+				zoom -= 0.001;
+				debug(controls) writeln(scene);
+				break;
+				
+			    case Keyboard.Key.Right:
+				center.x += 0.01;
+				debug(controls) writeln(scene);
+				break;
+				
+			    case Keyboard.Key.Left:
+				center.x -= 0.01;
+				debug(controls) writeln(scene);
+				break;
+				
+			    case Keyboard.Key.Up:
+				center.y += 0.01;
+				debug(controls) writeln(scene);
+				break;
+				
+			    case Keyboard.Key.Down:
+				center.y -= 0.01;
+				debug(controls) writeln(scene);
+				break;
 			    
-			case Keyboard.Key.Up:
-			    sp.center.y += 0.001;
-			    debug(controls) writeln("center=", sp.center, " scene boundary=", scene.getBoundary);
-			    break;
-			    
-			case Keyboard.Key.Down:
-			    sp.center.y -= 0.001;
-			    debug(controls) writeln("center=", sp.center, " scene boundary=", scene.getBoundary);
-			    break;
-			
-			default:
-			    break;
-		    }
+			    default:
+				break;
+			}
 		}
 	    }
 	}
