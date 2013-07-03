@@ -21,11 +21,13 @@ void main( string[] args )
     auto window = new sfml.Window;
     auto map = getMap( args[1..$], verbose );
     
-    Vector2s window_size;
-    window_size = window.window.size;
+    Properties p;
+    p.zoom = 300;
+    p.center = map.boundary.getCenter;
+    p.windowPixelSize = window.window.size;
     
-    window.scene = new Scene( map, window_size );
-    window.scene.viewToWholeMap;
+    window.scene = new Scene( map );
+    window.scene.properties = p;
     
     /*
     auto map = new Map;

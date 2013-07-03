@@ -5,6 +5,7 @@ import math.geometry;
 import osm: convert2meters;
 import std.conv;
 debug(scene) import std.stdio;
+import dsfml.system: Vector2u; // TODO: need to remove it
 
 
 alias Vector2D!real Vector2r;
@@ -15,7 +16,7 @@ struct Properties
 {
     Vector2r center;
     real zoom;
-    Vector2s window_size;
+    Vector2u windowPixelSize;
 }
 
 class Scene
@@ -23,13 +24,12 @@ class Scene
     const Map map;
     Properties properties;
     
-    this( in Map m, in Vector2s windowPixelsSize )
+    this( in Map m )
     {
         map = m;
-        properties.window_size = windowPixelsSize;
     }
     
-    auto getBoundary( real ratio )
+    auto getBoundary( in real ratio ) const
     {
         auto v = Vector2r(properties.zoom, properties.zoom);
         
@@ -39,14 +39,6 @@ class Scene
             v.y /= ratio;
         
         return Box!Vector2r( -v/2, v );
-    }
-    
-    void viewToWholeMap()
-    {
-        auto b = map.regions[0].boundary;
-        auto map_size = b.rightUpCorner - b.leftDownCorner;
-        properties.center = map_size / 2;
-        properties.zoom = to!real(properties.window_size.x) / map_size.x;
     }
     
     void draw( void delegate(Vector2D!(real) coords) drawPoint )

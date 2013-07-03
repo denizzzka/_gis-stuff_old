@@ -127,7 +127,12 @@ struct Box( _Vector, string S = "size" )
     
     Vector getSizeVector() const
     {
-        return Vector( ru.x - ld.x, ru.y - ld.y );
+        return ru - ld;
+    }
+    
+    Vector getCenter() const
+    {
+        return ld + getSizeVector() / 2;
     }
     
     auto getArea() const

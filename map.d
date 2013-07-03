@@ -56,4 +56,9 @@ class Map
     {
         return regions[0];
     }
+    
+    BBox boundary() const // FIXME
+    {
+        return regions[0].boundary;
+    }
 }
