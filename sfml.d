@@ -16,7 +16,8 @@ class Window
     
     private
     {
-	VertexArray vertices;
+	Vertex[5_000_000] vertices;
+	size_t vertices_num;
     }
     
     this()
@@ -26,7 +27,7 @@ class Window
 	
 	window = new RenderWindow( vmode, title );
 	
-	window.setFramerateLimit(5);
+	window.setFramerateLimit(10);
 	//window.setVerticalSyncEnabled(true);
     }
     
@@ -39,9 +40,10 @@ class Window
 	    if( scene )
 	    {
 		scene.properties.windowPixelSize = window.size;
-		vertices = new VertexArray( PrimitiveType.Points, 0 );
+		vertices_num = 0;
 		scene.draw( &drawPoint );
-		window.draw( vertices );
+		auto vertex_array = new VertexArray( PrimitiveType.Points, vertices[0..vertices_num] );
+		window.draw( vertex_array );
 	    }
 	    
 	    window.display;
@@ -113,8 +115,7 @@ class Window
 	
 	debug(sfml) writeln("draw point, window coords=", c, " window size=", window.size);
 	
-	auto v = Vertex(c, Color.Yellow);
-	
-	vertices.append( v );
+	vertices[vertices_num] = Vertex(c, Color.Yellow);
+	vertices_num++;
     }
 }
