@@ -6,7 +6,6 @@ import osm: convert2meters;
 import std.conv;
 import std.string;
 debug(scene) import std.stdio;
-import dsfml.system: Vector2u; // TODO: need to remove it
 
 
 alias Vector2D!real Vector2r;
@@ -17,7 +16,7 @@ struct Properties
 {
     Vector2r center;
     real zoom;
-    Vector2u windowPixelSize;
+    Vector2s windowPixelSize;
 }
 
 class Scene
