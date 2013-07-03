@@ -53,32 +53,32 @@ class Window
 			
 			case Keyboard.Key.P:
 			    sp.zoom += 0.001;
-			    debug(controls) writeln("zoom=", sp.zoom);
+			    debug(controls) writeln(scene);
 			    break;
 			
 			case Keyboard.Key.O:
 			    sp.zoom -= 0.001;
-			    debug(controls) writeln("zoom=", sp.zoom);
+			    debug(controls) writeln("zoom=", sp.zoom, " scene boundary=", scene.getBoundary);
 			    break;
 			    
 			case Keyboard.Key.Right:
 			    sp.center.x += 0.001;
-			    debug(controls) writeln("center=", sp.center);
+			    debug(controls) writeln("center=", sp.center, " scene boundary=", scene.getBoundary);
 			    break;
 			    
 			case Keyboard.Key.Left:
 			    sp.center.x -= 0.001;
-			    debug(controls) writeln("center=", sp.center);
+			    debug(controls) writeln("center=", sp.center, " scene boundary=", scene.getBoundary);
 			    break;
 			    
 			case Keyboard.Key.Up:
 			    sp.center.y += 0.001;
-			    debug(controls) writeln("center=", sp.center);
+			    debug(controls) writeln("center=", sp.center, " scene boundary=", scene.getBoundary);
 			    break;
 			    
 			case Keyboard.Key.Down:
 			    sp.center.y -= 0.001;
-			    debug(controls) writeln("center=", sp.center);
+			    debug(controls) writeln("center=", sp.center, " scene boundary=", scene.getBoundary);
 			    break;
 			
 			default:
@@ -93,7 +93,7 @@ class Window
     {
 	debug(sfml) writeln("draw point at ", coords);
 	
-	coords.y = -coords.y + window.size.y; // convert Cartesian to SFML coords
+	//coords.y = -coords.y + window.size.y; // convert Cartesian to SFML coords
 	
 	auto c = Vector2f( coords.x, coords.y );
 	

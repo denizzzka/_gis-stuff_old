@@ -2,6 +2,7 @@ module math.geometry;
 
 import std.algorithm;
 import std.math;
+import std.conv: to;
 
 
 struct Vector2D( _T )
@@ -59,6 +60,11 @@ struct Vector2D( _T )
     {
         x = v.x;
         y = v.y;
+    }
+    
+    string toString() const
+    {
+        return "("~to!string(x)~";"~to!string(x)~")";
     }
 }
 
@@ -170,6 +176,11 @@ struct Box( _Vector, string S = "size" )
         (cast (ubyte*) &this)[ 0 .. this.sizeof] = data[ 0 .. this.sizeof ].dup;
         
         return this.sizeof;
+    }
+    
+    string toString() const
+    {
+        return "(ld:"~ld.toString~" ru:"~ru.toString~")";
     }
 }
 

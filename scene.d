@@ -4,6 +4,7 @@ import map;
 import math.geometry;
 import osm: convert2meters;
 import std.conv;
+import std.string;
 debug(scene) import std.stdio;
 import dsfml.system: Vector2u; // TODO: need to remove it
 
@@ -29,7 +30,7 @@ class Scene
         map = m;
     }
     
-    auto getBoundary() const
+    Box!Vector2r getBoundary() const
     {
         auto v = Vector2r(properties.zoom, properties.zoom);
         
@@ -42,7 +43,9 @@ class Scene
         else
             v.y /= ratio;
         
-        return Box!Vector2r( -v/2, v );
+        auto leftDownCorner = properties.center - v/2;
+        
+        return Box!Vector2r( leftDownCorner, v );
     }
     
     private
@@ -53,8 +56,10 @@ class Scene
         {
             debug(scene) writeln("draw point i=", i, " coords=", nodes[i]);
             
-            auto coords = convert2meters( nodes[i] );
-            drawPoint( coords );
+            //auto coords = convert2meters( nodes[i] );
+            Vector2r c; c = nodes[i];
+            auto window_coords = c - getBoundary.leftDownCorner;
+            drawPoint( window_coords );
         }
     }
     
@@ -71,5 +76,9 @@ class Scene
         }
     }
     
-    //private Vector2r meters2window( Vector2r coords )
+	override string toString()
+    {
+        with(properties)
+            return format("zoom=%g scene boundary=%s", zoom, getBoundary);	
+	}
 }
