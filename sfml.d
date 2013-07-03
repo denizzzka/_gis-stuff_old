@@ -27,7 +27,7 @@ class Window
 	window = new RenderWindow( vmode, title );
 	
 	window.setFramerateLimit(5);
-	window.setVerticalSyncEnabled(true);
+	//window.setVerticalSyncEnabled(true);
     }
     
     void mainCycle()
