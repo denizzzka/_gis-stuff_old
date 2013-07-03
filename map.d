@@ -6,7 +6,8 @@ import osm: Coords;
 
 
 alias Coords Node;
-alias Box!Coords BBox;
+alias Vector2D!real Vector2r;
+alias Box!Vector2r BBox;
 
 class Region
 {
@@ -31,16 +32,23 @@ class Region
     
     void addNode( in Node n )
     {
-        Coords zero_sized;
-        BBox box = BBox( n, zero_sized );
+        Vector2r zero_sized;
+        
+        Vector2r _n; _n = n;
+        BBox box = BBox( _n, zero_sized );
         
         nodes_rtree.addObject( box, nodes.length );
         nodes ~= n;
     }
     
-    const (Node[]) getNodes() const
+    Node[] searchNodes( in BBox boundary ) const
     {
-        return nodes;
+        Node[] res;
+        auto leafs = nodes_rtree.search( boundary );
+        foreach( n; leafs )
+            res ~= nodes[ n.payload ];
+            
+        return res;
     }
     
     // r-tree of ways links to r-tree

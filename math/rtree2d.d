@@ -177,7 +177,7 @@ class RTreePtrs( _Box, _Payload )
         return &l.payload;
     }
 
-    Leaf*[] search( in Box boundary )
+    Leaf*[] search( in Box boundary ) const
     {
         return search( boundary, root );
     }
@@ -217,7 +217,7 @@ class RTreePtrs( _Box, _Payload )
     
 private:
     
-    Leaf*[] search( in Box boundary, const (Node)* curr, size_t currDepth = 0 )
+    Leaf*[] search( in Box boundary, const (Node)* curr, size_t currDepth = 0 ) const
     {
         Leaf*[] res;
         
