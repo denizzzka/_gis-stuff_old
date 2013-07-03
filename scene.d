@@ -48,14 +48,14 @@ class Scene
     private
     void drawNodes( in Node[] nodes, void delegate(Vector2D!(real) coords) drawPoint )
     {
-            auto len = nodes.length;
-            for(auto i = 0; i < 1000 && i < len; i++)
-            {
-                debug(scene) writeln("draw point i=", i, " coords=", nodes[i]);
-                
-                auto coords = convert2meters( nodes[i] );
-                drawPoint( coords );
-            }
+        auto len = nodes.length;
+        for(auto i = 0; i < 1000 && i < len; i++)
+        {
+            debug(scene) writeln("draw point i=", i, " coords=", nodes[i]);
+            
+            auto coords = convert2meters( nodes[i] );
+            drawPoint( coords );
+        }
     }
     
     void draw( void delegate(Vector2D!(real) coords) drawPoint )
