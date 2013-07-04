@@ -76,8 +76,7 @@ class Scene
         
         foreach( reg; map.regions )
         {
-            //auto nodes = reg.searchNodes( boundary_radians );
-            auto nodes = reg.searchNodes( map.boundary );
+            auto nodes = reg.searchNodes( boundary_radians );
             debug(scene) writeln("found nodes=", nodes.length);
             drawNodes( nodes, drawPoint );
         }
