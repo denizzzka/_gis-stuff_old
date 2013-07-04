@@ -23,13 +23,14 @@ class Scene
 {
     const Map map;
     Properties properties;
+    Box!Vector2r boundary;
     
     this( in Map m )
     {
         map = m;
     }
     
-    Box!Vector2r getBoundary() const
+    void calcBoundary()
     {
         with(properties)
         {
@@ -38,7 +39,7 @@ class Scene
             
             auto leftDownCorner = center - b_size/2;
             
-            return Box!Vector2r( leftDownCorner, b_size );
+            boundary = Box!Vector2r( leftDownCorner, b_size );
         }
     }
     
@@ -52,9 +53,9 @@ class Scene
             
             //auto coords = convert2meters( nodes[i] );
             Vector2r node; node = nodes[i];
-            auto ld = getBoundary.leftDownCorner;
+            auto ld = boundary.leftDownCorner;
             auto ld_relative = node - ld;
-            auto k = properties.windowPixelSize.x / getBoundary.getSizeVector.x;
+            auto k = properties.windowPixelSize.x / boundary.getSizeVector.x;
             auto window_coords = ld_relative * properties.zoom;
             drawPoint( window_coords );
         }
@@ -64,7 +65,7 @@ class Scene
     {
         debug(scene) writeln("Drawing, window size=", properties.window_size);
         
-        auto boundary = getBoundary();
+        calcBoundary();
         
         foreach( reg; map.regions )
         {
@@ -76,6 +77,6 @@ class Scene
 	override string toString()
     {
         with(properties)
-            return format("center=%s zoom=%g scene bbox=%s size_len=%g", center, zoom, getBoundary, getBoundary.getSizeVector.length);	
+            return format("center=%s zoom=%g scene bbox=%s size_len=%g", center, zoom, boundary, boundary.getSizeVector.length);	
 	}
 }
