@@ -16,7 +16,7 @@ class Window
     
     private
     {
-	Vertex[5_000_000] vertices;
+	Vertex[5_000] vertices;
 	size_t vertices_num;
     }
     
@@ -59,7 +59,7 @@ class Window
 		    with(scene.properties)
 		    {
 			immutable auto zoom_step = 1.05;
-			auto dir_step = zoom * 0.05;
+			auto dir_step = 10.0 / zoom;
 			
 			switch( event.key.code )
 			{
@@ -67,12 +67,12 @@ class Window
 				window.close();
 				break;
 			    
-			    case Keyboard.Key.Dash: // zoom out
+			    case Keyboard.Key.Equal: // zoom in
 				zoom *= zoom_step;
 				debug(controls) writeln(scene);
 				break;
 			    
-			    case Keyboard.Key.Equal: // zoom in
+			    case Keyboard.Key.Dash: // zoom out
 				zoom /= zoom_step;
 				debug(controls) writeln(scene);
 				break;

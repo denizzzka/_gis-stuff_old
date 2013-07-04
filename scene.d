@@ -33,8 +33,7 @@ class Scene
     {
         with(properties)
         {
-            Vector2r b_size;
-            b_size = windowPixelSize;
+            Vector2r b_size; b_size = windowPixelSize;
             b_size /= zoom;
             
             auto leftDownCorner = center - b_size/2;
@@ -56,7 +55,7 @@ class Scene
             auto ld = getBoundary.leftDownCorner;
             auto ld_relative = node - ld;
             auto k = properties.windowPixelSize.x / getBoundary.getSizeVector.x;
-            auto window_coords = ld_relative * k;
+            auto window_coords = ld_relative * properties.zoom;
             drawPoint( window_coords );
         }
     }
