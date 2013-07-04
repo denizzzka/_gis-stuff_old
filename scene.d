@@ -86,18 +86,13 @@ Box!Vector2r getCoordsBox( in Box!Vector2r meters ) pure
 {
     Box!Vector2r res;
     
-    with( res )
-    {
-        ld = coords2mercator( meters.ld );
-        ru = coords2mercator( meters.ru );
-        auto lu = coords2mercator( meters.getLeftUpperCorner );
-        auto rd = coords2mercator( meters.getRightDownCorner );
-        
-        ld.x = fmin( ld.x, lu.x );
-        ru.x = fmax( ru.x, rd.x );
-        ld.y = fmin( ld.y, lu.y );
-        ru.y = fmax( ru.y, rd.y );
-    }
+    res.ld = coords2mercator( meters.ld );
+    res.ru = coords2mercator( meters.ru );
+    auto lu = coords2mercator( meters.lu );
+    auto rd = coords2mercator( meters.rd );
+    
+    res.addCircumscribe( lu );
+    res.addCircumscribe( rd );
     
     return res;
 }

@@ -112,6 +112,8 @@ struct Box( _Vector, string S = "size" )
     
     alias leftDownCorner ld;
     alias rightUpperCorner ru;
+    alias getLeftUpperCorner lu;
+    alias getRightDownCorner rd;
     
     this( in Vector coords, in Vector size )
     {
@@ -205,9 +207,9 @@ struct Box( _Vector, string S = "size" )
         return res;
     }
     
-    void addCircumscribe( in Box!Vector b ) pure
+    void addCircumscribe(T)( in T v ) pure
     {
-        this = this.getCircumscribed( b );
+        this = this.getCircumscribed( v );
     }
     
     ubyte[] Serialize() /// TODO: real serialization
