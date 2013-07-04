@@ -104,6 +104,8 @@ class Window
 		    break;
 		    
 		case Event.Resized:
+		    scene.properties.windowPixelSize = window.size;
+		    
 		    debug(controls)
 		    {
 			scene.calcBoundary();

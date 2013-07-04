@@ -15,7 +15,7 @@ alias Vector2D!long Vector2l;
 struct Properties
 {
     Vector2r center;
-    real zoom; /// pixels per degree
+    real zoom; /// pixels per meter
     Vector2s windowPixelSize;
 }
 
@@ -78,4 +78,13 @@ class Scene
         with(properties)
             return format("center=%s zoom=%g scene bbox=%s size_len=%g", center, zoom, boundary, boundary.getSizeVector.length);	
 	}
+}
+
+Box!Vector2r getDegreesBox( Box!Vector2r meters ) pure
+{
+    Box!Vector2r res;
+    
+    //auto  meters.leftDownCorner
+    
+    return res;
 }

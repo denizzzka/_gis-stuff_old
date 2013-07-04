@@ -38,12 +38,52 @@ struct Conv( Datum )
         alias Datum D;
         
         auto e1 = tan( PI_4 + latitude / 2 );
-        auto eccentr = sqrt( 1 - pow((D.b/D.a), 2) );
-        auto esinl = eccentr * sin( latitude );
-        auto e2 = pow( (1.0 - esinl) / (1.0 + esinl), eccentr/2 );
+        auto esinl = D.eccentr * sin( latitude );
+        auto e2 = pow( (1.0 - esinl) / (1.0 + esinl), D.eccentr/2 );
         auto res = D.a * log( e1 * e2 );
         
         return res;
+    }
+    
+    static auto mercator2lon( T )( in T x ) pure
+    out(r)
+    {
+        assertLongitude( r );
+    }
+    body
+    {
+        return x / Datum.a;
+    }
+    
+    static auto mercator2lat( T )( in T y ) pure
+    out(r)
+    {
+        assertLatitude( r );
+    }
+    body
+    {
+        alias Datum D;
+        
+        auto ts = exp( -y / D.a );
+        auto phi = PI_2 - 2 * atan(ts);
+        real dphi = 1.0;
+        auto i = 0;
+        while ((abs(dphi) > dphi.min_normal) && (i < 15))
+        {
+            auto con = D.eccentr * sin(phi);
+            dphi = PI_2 - 2 * atan(ts * pow((1.0 - con) / (1.0 + con), D.eccentr/2)) - phi;
+            phi += dphi;
+            i++;
+        }
+        
+        return phi;
+    }
+    unittest
+    {
+        auto rad = degree2radian(56.3);
+        auto merc = lat2mercator( rad );
+        auto lat = mercator2lat( merc );
+        assert( abs(lat-rad) < 0.000_000_000_000_1 );
     }
     
     static auto coords2mercator(T)(T from) pure
@@ -134,8 +174,11 @@ struct WGS84
         assert( abs(b - 6356752.314245) < 0.000_001 );
     }
     
-     // Approximated radius
+    // Approximated radius
     static immutable approx_radius = ( 3 * a + b ) / 4;
+    
+    // Eccentricity
+    static immutable eccentr = sqrt( 1 - pow(( b/a ), 2) );
 }
 
 alias Conv!WGS84 C;
