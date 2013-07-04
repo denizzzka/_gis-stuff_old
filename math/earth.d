@@ -96,6 +96,16 @@ struct Conv( Datum )
         return res;
     }
     
+    static auto mercator2coords(T)(T from) pure
+    {
+        Vector2D!real res;
+        
+        res.lon = Conv!Datum.mercator2lon( from.lon );
+        res.lat = Conv!Datum.mercator2lat( from.lat );
+        
+        return res;
+    }
+    
     static auto getSphericalDistance( T1, T2 )( in T1 from, in T2 to ) pure
     in
     {
@@ -183,6 +193,7 @@ struct WGS84
 
 alias Conv!WGS84 C;
 alias C.coords2mercator coords2mercator;
+alias C.mercator2coords mercator2coords;
 alias C.getSphericalDistance getSphericalDistance;
 alias C.getSphericalAzimuth getSphericalAzimuth;
 
@@ -195,13 +206,13 @@ unittest
     assert( abs( C.lon2mercator( degree2radian( 37.617778 ) ) - 4187591.89 ) < 0.01 );
     
     // Ditto
-    auto m = coords2mercator( degrees2radians( Vector( 37.617778, 55.751667 ) ) );
-    assert( abs( m.lat ) - 7473789.46 < 0.01 );
-    assert( abs( m.lon ) - 4187591.89 < 0.01 );
+    auto msk = degrees2radians( Vector( 37.906111, 55.408611 ) );
+    auto m = coords2mercator( msk );
+    auto diff = mercator2coords( m ) - msk;
+    assert( diff.length < 0.000_000_000_000_1 );
     
     // Distance between Krasnoyarsk airport and Moscow Domodedovo airport
     auto krsk = degrees2radians( Vector( 92.493333, 56.171667 ) );
-    auto msk = degrees2radians( Vector( 37.906111, 55.408611 ) );
     auto msk_krsk = msk.getSphericalDistance( krsk );
     assert( msk_krsk > 3324352 );
     assert( msk_krsk < 3324354 );
