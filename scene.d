@@ -6,6 +6,7 @@ import osm: convert2meters;
 import math.earth: coords2mercator;
 import std.conv;
 import std.string;
+import std.math: fmin, fmax;
 debug(scene) import std.stdio;
 
 
@@ -81,7 +82,6 @@ class Scene
 	}
 }
 
-/*
 Box!Vector2r getCoordsBox( in Box!Vector2r meters ) pure
 {
     Box!Vector2r res;
@@ -90,9 +90,14 @@ Box!Vector2r getCoordsBox( in Box!Vector2r meters ) pure
     {
         ld = coords2mercator( meters.ld );
         ru = coords2mercator( meters.ru );
-        auto lu = coords2mercator( Vector2r( r.ld.x, ) ); // left upper
-    }
+        auto lu = coords2mercator( meters.getLeftUpperCorner );
+        auto rd = coords2mercator( meters.getRightDownCorner );
         
+        ld.x = fmin( ld.x, lu.x );
+        ru.x = fmax( ru.x, rd.x );
+        ld.y = fmin( ld.y, lu.y );
+        ru.y = fmax( ru.y, rd.y );
+    }
+    
     return res;
 }
-*/

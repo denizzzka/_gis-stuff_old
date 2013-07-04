@@ -179,6 +179,19 @@ struct Box( _Vector, string S = "size" )
         return size.x * size.y;
     }
     
+    Box!Vector getCircumscribed( in Vector v ) const pure
+    {
+        Box!Vector res;
+        
+        res.ld.x = min( ld.x, v.x );
+        res.ld.y = min( ld.y, v.y );
+        
+        res.ru.x = max( ru.x, v.x );
+        res.ru.y = max( ru.y, v.y );
+        
+        return res;
+    }
+    
     Box!Vector getCircumscribed( in Box!Vector b ) const pure
     {
         Box!Vector res;
@@ -233,6 +246,7 @@ unittest
     
     assert( box1.isOverlappedBy( box2 ) );
     
+    assert( box1.getCircumscribed( Vector(3,3) ) == BBox(Vector(0, 0), Vector(3, 3)) );
     assert( box1.getCircumscribed( box2 ) == BBox(Vector(0, 0), Vector(2, 1)) );
     
     auto serialized = &(box1.Serialize())[0];
