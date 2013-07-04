@@ -42,7 +42,7 @@ class Scene
             auto leftDownCorner = center - b_size/2;
             
             boundary_meters = Box!Vector2r( leftDownCorner, b_size );            
-            boundary_radians = getRadiansCoordsBox( boundary_meters );
+            boundary_radians = getRadiansBox( boundary_meters );
         }
     }
     
@@ -76,7 +76,7 @@ class Scene
         
         foreach( reg; map.regions )
         {
-            //auto nodes = reg.searchNodes( boundary );
+            //auto nodes = reg.searchNodes( boundary_radians );
             auto nodes = reg.searchNodes( map.boundary );
             debug(scene) writeln("found nodes=", nodes.length);
             drawNodes( nodes, drawPoint );
@@ -91,8 +91,9 @@ class Scene
     
     void zoomToWholeMap()
     {
-        auto map_size = map.boundary.getSizeVector;
-        auto meters_size = coords2mercator( map_size );
+        auto meters_box = getMetersBox( map.boundary );
+        auto meters_size = meters_box.getSizeVector;
+        
         properties.zoom = fmin(
                 properties.windowPixelSize.x / meters_size.x,
                 properties.windowPixelSize.y / meters_size.y
@@ -106,7 +107,8 @@ class Scene
     }
 }
 
-Box!Vector2r getRadiansCoordsBox( in Box!Vector2r meters ) pure
+/// calculates radians circumscribe box for mercator meters box
+Box!Vector2r getRadiansBox( in Box!Vector2r meters ) pure
 {
     Box!Vector2r res;
     
@@ -114,6 +116,22 @@ Box!Vector2r getRadiansCoordsBox( in Box!Vector2r meters ) pure
     res.ru = mercator2coords( meters.ru );
     auto lu = mercator2coords( meters.lu );
     auto rd = mercator2coords( meters.rd );
+    
+    res.addCircumscribe( lu );
+    res.addCircumscribe( rd );
+    
+    return res;
+}
+
+/// calculates mercator meters circumscribe box for radians box
+Box!Vector2r getMetersBox( in Box!Vector2r radians ) pure
+{
+    Box!Vector2r res;
+    
+    res.ld = coords2mercator( radians.ld );
+    res.ru = coords2mercator( radians.ru );
+    auto lu = coords2mercator( radians.lu );
+    auto rd = coords2mercator( radians.rd );
     
     res.addCircumscribe( lu );
     res.addCircumscribe( rd );
