@@ -41,7 +41,7 @@ class Scene
             auto leftDownCorner = center - b_size/2;
             auto meters_boundary = Box!Vector2r( leftDownCorner, b_size );
             
-            boundary = getCoordsBox( meters_boundary );
+            boundary = getRadiansCoordsBox( meters_boundary );
         }
     }
     
@@ -53,7 +53,7 @@ class Scene
         {
             debug(scene) writeln("draw point i=", i, " coords=", nodes[i]);
             
-            Vector2r node; node = nodes[i];
+            Vector2r node = encodedCoordsToRadians( nodes[i] );
             auto ld = boundary.leftDownCorner;
             auto ld_relative = node - ld;
             auto window_coords = ld_relative * properties.zoom;
@@ -81,7 +81,7 @@ class Scene
 	}
 }
 
-Box!Vector2r getCoordsBox( in Box!Vector2r meters ) pure
+Box!Vector2r getRadiansCoordsBox( in Box!Vector2r meters ) pure
 {
     Box!Vector2r res;
     

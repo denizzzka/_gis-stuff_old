@@ -2,7 +2,7 @@ module map;
 
 import math.geometry;
 import math.rtree2d;
-import osm: Coords;
+import osm: Coords, encodedCoordsToRadians;
 
 
 alias Coords Node;
@@ -34,7 +34,7 @@ class Region
     {
         Vector2r zero_sized;
         
-        Vector2r _n; _n = n;
+        Vector2r _n = encodedCoordsToRadians( n );
         BBox box = BBox( _n, zero_sized );
         
         nodes_rtree.addObject( box, nodes.length );
