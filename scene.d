@@ -63,13 +63,14 @@ class Scene
     
     void draw( void delegate(Vector2D!(real) coords) drawPoint )
     {
-        debug(scene) writeln("Drawing, window size=", properties.window_size);
+        debug(scene) writeln("Drawing, window size=", properties.windowPixelSize);
         
         calcBoundary();
         
         foreach( reg; map.regions )
         {
             auto nodes = reg.searchNodes( boundary );
+            debug(scene) writeln("found nodes=",nodes.length);
             drawNodes( nodes, drawPoint );
         }
     }

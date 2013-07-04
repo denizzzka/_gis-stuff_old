@@ -3,6 +3,7 @@ module map;
 import math.geometry;
 import math.rtree2d;
 import osm: Coords, encodedCoordsToRadians;
+debug(map) import std.stdio;
 
 
 alias Coords Node;
@@ -39,6 +40,8 @@ class Region
         
         nodes_rtree.addObject( box, nodes.length );
         nodes ~= n;
+        
+        debug(map) writeln("Node added=", n, " radians=", _n, " boundary=", box);
     }
     
     Node[] searchNodes( in BBox boundary ) const
