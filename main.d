@@ -23,7 +23,7 @@ void main( string[] args )
     
     auto window = new sfml.Window;
     
-    static if(false)
+    static if(true)
     {
         auto map = getMap( args[1..$], verbose );
     }

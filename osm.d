@@ -150,9 +150,8 @@ Region getRegion( string filename, bool verbose )
         
         foreach( i, c; prim.primitivegroup )
         {
-            if( !c.dense.isNull )
+            void addNodes( Node[] nodes )
             {
-                auto nodes = decodeDenseNodes( c.dense );
                 foreach( n; nodes)
                 {
                     debug(osm) writefln( "id=%d coords=%s", n.id, decodeCoords( prim, n ) );
@@ -162,14 +161,14 @@ Region getRegion( string filename, bool verbose )
                 }
             }
             
+            if( !c.dense.isNull )
+            {
+                auto nodes = decodeDenseNodes( c.dense );
+                addNodes( nodes );
+            }
+            
             if( !c.nodes.isNull )
-                foreach( n; c.nodes )
-                {
-                    debug(osm) writefln( "id=%d coords=%s", n.id, decodeCoords( prim, n ) );
-                    
-                    auto mn = MapNode( n.lon, n.lat );
-                    res.addNode( mn );
-                }
+                addNodes( c.nodes );
         }
     }
     
