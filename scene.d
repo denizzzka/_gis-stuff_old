@@ -3,6 +3,7 @@ module scene;
 import map;
 import math.geometry;
 import osm: convert2meters;
+import math.earth: coords2mercator;
 import std.conv;
 import std.string;
 debug(scene) import std.stdio;
@@ -80,11 +81,18 @@ class Scene
 	}
 }
 
-Box!Vector2r getDegreesBox( Box!Vector2r meters ) pure
+/*
+Box!Vector2r getCoordsBox( in Box!Vector2r meters ) pure
 {
     Box!Vector2r res;
     
-    //auto  meters.leftDownCorner
-    
+    with( res )
+    {
+        ld = coords2mercator( meters.ld );
+        ru = coords2mercator( meters.ru );
+        auto lu = coords2mercator( Vector2r( r.ld.x, ) ); // left upper
+    }
+        
     return res;
 }
+*/

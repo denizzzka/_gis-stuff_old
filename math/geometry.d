@@ -108,10 +108,10 @@ struct Box( _Vector, string S = "size" )
     alias _Vector Vector;
     
     Vector leftDownCorner;
-    Vector rightUpCorner;
+    Vector rightUpperCorner;
     
     alias leftDownCorner ld;
-    alias rightUpCorner ru;
+    alias rightUpperCorner ru;
     
     this( in Vector coords, in Vector size )
     {
@@ -119,8 +119,8 @@ struct Box( _Vector, string S = "size" )
         {
             leftDownCorner.x = coords.x + ((size.x > 0) ? 0 : size.x);
             leftDownCorner.y = coords.y + ((size.y > 0) ? 0 : size.y);
-            rightUpCorner.x = coords.x + ((size.x < 0) ? 0 : size.x);
-            rightUpCorner.y = coords.y + ((size.y < 0) ? 0 : size.y);
+            rightUpperCorner.x = coords.x + ((size.x < 0) ? 0 : size.x);
+            rightUpperCorner.y = coords.y + ((size.y < 0) ? 0 : size.y);
         }
         else // corners
         {
@@ -129,10 +129,20 @@ struct Box( _Vector, string S = "size" )
         }
     }
     
+    Vector getLeftUpperCorner() const
+    {
+        return Vector( ld.x, ru.y );
+    }
+    
+    Vector getRightDownCorner() const
+    {
+        return Vector( ru.x, ld.y );
+    }
+    
     bool isOverlappedBy( in Box!Vector b ) const pure
     {
         auto ld2 = b.leftDownCorner;
-        auto ru2 = b.rightUpCorner;
+        auto ru2 = b.rightUpperCorner;
         
         return
             ld.x <= ru2.x &&
