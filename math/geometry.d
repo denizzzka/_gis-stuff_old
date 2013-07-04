@@ -246,7 +246,7 @@ unittest
     
     assert( box1.isOverlappedBy( box2 ) );
     
-    assert( box1.getCircumscribed( Vector(3,3) ) == BBox(Vector(0, 0), Vector(3, 3)) );
+    assert( box2.getCircumscribed( Vector(3,3) ) == BBox(Vector(1, 0), Vector(2, 3)) );
     assert( box1.getCircumscribed( box2 ) == BBox(Vector(0, 0), Vector(2, 1)) );
     
     auto serialized = &(box1.Serialize())[0];
