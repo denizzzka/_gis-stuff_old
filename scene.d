@@ -2,8 +2,7 @@ module scene;
 
 import map;
 import math.geometry;
-import osm: convert2meters;
-import math.earth: coords2mercator;
+import math.earth: mercator2coords;
 import std.conv;
 import std.string;
 import std.math: fmin, fmax;
@@ -25,7 +24,7 @@ class Scene
 {
     const Map map;
     Properties properties;
-    Box!Vector2r boundary;
+    Box!Vector2r boundary; /// coords in radians
     
     this( in Map m )
     {
@@ -40,8 +39,9 @@ class Scene
             b_size /= zoom;
             
             auto leftDownCorner = center - b_size/2;
+            auto meters_boundary = Box!Vector2r( leftDownCorner, b_size );
             
-            boundary = Box!Vector2r( leftDownCorner, b_size );
+            boundary = getCoordsBox( meters_boundary );
         }
     }
     
@@ -53,7 +53,6 @@ class Scene
         {
             debug(scene) writeln("draw point i=", i, " coords=", nodes[i]);
             
-            //auto coords = convert2meters( nodes[i] );
             Vector2r node; node = nodes[i];
             auto ld = boundary.leftDownCorner;
             auto ld_relative = node - ld;
@@ -86,10 +85,10 @@ Box!Vector2r getCoordsBox( in Box!Vector2r meters ) pure
 {
     Box!Vector2r res;
     
-    res.ld = coords2mercator( meters.ld );
-    res.ru = coords2mercator( meters.ru );
-    auto lu = coords2mercator( meters.lu );
-    auto rd = coords2mercator( meters.rd );
+    res.ld = mercator2coords( meters.ld );
+    res.ru = mercator2coords( meters.ru );
+    auto lu = mercator2coords( meters.lu );
+    auto rd = mercator2coords( meters.rd );
     
     res.addCircumscribe( lu );
     res.addCircumscribe( rd );
