@@ -2,7 +2,7 @@ module scene;
 
 import map;
 import math.geometry;
-import math.earth: mercator2coords;
+import math.earth: mercator2coords, coords2mercator;
 import std.conv;
 import std.string;
 import std.math: fmin, fmax;
@@ -15,7 +15,7 @@ alias Vector2D!long Vector2l;
 
 struct Properties
 {
-    Vector2r center;
+    Vector2r center; /// in meters
     real zoom; /// pixels per meter
     Vector2s windowPixelSize;
 }
@@ -24,7 +24,8 @@ class Scene
 {
     const Map map;
     Properties properties;
-    Box!Vector2r boundary; /// coords in radians
+    Box!Vector2r boundary_meters; /// coords in meters
+    Box!Vector2r boundary_radians; /// coords in radians
     
     this( in Map m )
     {
@@ -39,9 +40,9 @@ class Scene
             b_size /= zoom;
             
             auto leftDownCorner = center - b_size/2;
-            auto meters_boundary = Box!Vector2r( leftDownCorner, b_size );
             
-            boundary = getRadiansCoordsBox( meters_boundary );
+            boundary_meters = Box!Vector2r( leftDownCorner, b_size );            
+            boundary_radians = getRadiansCoordsBox( boundary_meters );
         }
     }
     
@@ -51,12 +52,15 @@ class Scene
         auto len = nodes.length;
         for(auto i = 0; i < 5000 && i < len; i++)
         {
-            debug(scene) writeln("draw point i=", i, " coords=", nodes[i]);
+            auto radians = encodedCoordsToRadians( nodes[i] );
+            Vector2r node = coords2mercator( radians );
             
-            Vector2r node = encodedCoordsToRadians( nodes[i] );
-            auto ld = boundary.leftDownCorner;
+            auto ld = boundary_meters.leftDownCorner;
             auto ld_relative = node - ld;
             auto window_coords = ld_relative * properties.zoom;
+            
+            debug(scene) writeln("draw point i=", i, " encoded coords=", nodes[i], " meters=", node, " window_coords=", window_coords);
+            
             drawPoint( window_coords );
         }
     }
@@ -69,8 +73,9 @@ class Scene
         
         foreach( reg; map.regions )
         {
-            auto nodes = reg.searchNodes( boundary );
-            debug(scene) writeln("found nodes=",nodes.length);
+            //auto nodes = reg.searchNodes( boundary );
+            auto nodes = reg.searchNodes( map.boundary );
+            debug(scene) writeln("found nodes=", nodes.length);
             drawNodes( nodes, drawPoint );
         }
     }
@@ -78,8 +83,24 @@ class Scene
 	override string toString()
     {
         with(properties)
-            return format("center=%s zoom=%g scene bbox=%s size_len=%g", center, zoom, boundary, boundary.getSizeVector.length);	
+            return format("center=%s zoom=%g scene bbox=%s size_len=%g", center, zoom, boundary_meters, boundary_meters.getSizeVector.length);	
 	}
+    
+    void zoomToWholeMap()
+    {
+        auto map_size = map.boundary.getSizeVector;
+        auto meters_size = coords2mercator( map_size );
+        properties.zoom = fmin(
+                properties.windowPixelSize.x / meters_size.x,
+                properties.windowPixelSize.y / meters_size.y
+            );
+    }
+    
+    void centerToWholeMap()
+    {
+        auto map_center = map.boundary.ld + map.boundary.getSizeVector/2;
+        properties.center = coords2mercator( map_center );
+    }
 }
 
 Box!Vector2r getRadiansCoordsBox( in Box!Vector2r meters ) pure

@@ -129,6 +129,7 @@ Vector2D!real encodedCoordsToRadians( Coords c )
     return degrees2radians( decoded );
 }
 
+deprecated
 Vector2D!real radiansCoordsToEncoded( Vector2D!real radians )
 {
     auto degrees = radians2degrees( radians );
