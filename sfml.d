@@ -39,8 +39,6 @@ class Window
 	    
 	    window.clear(Color.Black);
 	    
-	    drawCenter;
-	    
 	    if( scene )
 	    {
 		scene.properties.windowPixelSize = window.size;
@@ -49,6 +47,8 @@ class Window
 		auto vertex_array = new VertexArray( PrimitiveType.Points, vertices[0..vertices_num] );
 		window.draw( vertex_array );
 	    }
+	    
+	    drawCenter;
 	    
 	    window.display;
 	}
@@ -69,7 +69,7 @@ class Window
     
     void drawCenter()
     {
-	Vector2f c; c = getCenter();
+	auto c = Vector2f(320,240); // c = getCenter();
 	
 	auto horiz = Vector2f(8, 0);
 	auto vert = Vector2f(0, 8);
