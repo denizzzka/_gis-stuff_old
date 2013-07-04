@@ -2,7 +2,7 @@ module scene;
 
 import map;
 import math.geometry;
-import math.earth: mercator2coords, coords2mercator;
+import osm: Coords, metersToEncoded, encodedToMeters;
 import std.conv;
 import std.string;
 import std.math: fmin, fmax;
@@ -25,7 +25,7 @@ class Scene
     const Map map;
     Properties properties;
     Box!Vector2r boundary_meters; /// coords in meters
-    Box!Vector2r boundary_radians; /// coords in radians
+    Box!Coords boundary_encoded; /// coords in map encoding
     
     this( in Map m )
     {
@@ -42,7 +42,7 @@ class Scene
             auto leftDownCorner = center - b_size/2;
             
             boundary_meters = Box!Vector2r( leftDownCorner, b_size );            
-            boundary_radians = getRadiansBox( boundary_meters );
+            boundary_encoded = getEncodedBox( boundary_meters ).roundCircumscribe;
         }
     }
     
@@ -53,10 +53,9 @@ class Scene
         
         for(auto i = 0; i < len; i++)
         {
-            debug(fast) if( i >= 5000 ) break;
+            debug(fast) if( i >= 3000 ) break;
             
-            auto radians = encodedCoordsToRadians( nodes[i] );
-            Vector2r node = coords2mercator( radians );
+            Vector2r node = encodedToMeters( nodes[i] );
             
             auto ld = boundary_meters.leftDownCorner;
             auto ld_relative = node - ld;
@@ -76,7 +75,7 @@ class Scene
         
         foreach( reg; map.regions )
         {
-            auto nodes = reg.searchNodes( boundary_radians );
+            auto nodes = reg.searchNodes( boundary_encoded );
             debug(scene) writeln("found nodes=", nodes.length);
             drawNodes( nodes, drawPoint );
         }
@@ -102,19 +101,19 @@ class Scene
     void centerToWholeMap()
     {
         auto map_center = map.boundary.ld + map.boundary.getSizeVector/2;
-        properties.center = coords2mercator( map_center );
+        properties.center = encodedToMeters( map_center );
     }
 }
 
-/// calculates radians circumscribe box for mercator meters box
-Box!Vector2r getRadiansBox( in Box!Vector2r meters ) pure
+/// calculates encoded circumscribe box for mercator meters box
+Box!Coords getEncodedBox( in Box!Vector2r meters )
 {
-    Box!Vector2r res;
+    Box!Coords res;
     
-    res.ld = mercator2coords( meters.ld );
-    res.ru = mercator2coords( meters.ru );
-    auto lu = mercator2coords( meters.lu );
-    auto rd = mercator2coords( meters.rd );
+    res.ld = metersToEncoded( meters.ld );
+    res.ru = metersToEncoded( meters.ru );
+    auto lu = metersToEncoded( meters.lu );
+    auto rd = metersToEncoded( meters.rd );
     
     res.addCircumscribe( lu );
     res.addCircumscribe( rd );
@@ -122,15 +121,15 @@ Box!Vector2r getRadiansBox( in Box!Vector2r meters ) pure
     return res;
 }
 
-/// calculates mercator meters circumscribe box for radians box
-Box!Vector2r getMetersBox( in Box!Vector2r radians ) pure
+/// calculates mercator meters circumscribe box for encoded box
+Box!Vector2r getMetersBox( in Box!Coords encoded )
 {
     Box!Vector2r res;
     
-    res.ld = coords2mercator( radians.ld );
-    res.ru = coords2mercator( radians.ru );
-    auto lu = coords2mercator( radians.lu );
-    auto rd = coords2mercator( radians.rd );
+    res.ld = encodedToMeters( encoded.ld );
+    res.ru = encodedToMeters( encoded.ru );
+    auto lu = encodedToMeters( encoded.lu );
+    auto rd = encodedToMeters( encoded.rd );
     
     res.addCircumscribe( lu );
     res.addCircumscribe( rd );

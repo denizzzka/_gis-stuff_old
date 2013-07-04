@@ -11,6 +11,7 @@ import std.string;
 import std.exception;
 import std.bitmanip: bigEndianToNative;
 import std.zlib;
+import std.math: round;
 
 
 struct PureBlob
@@ -123,17 +124,20 @@ Vector2D!real encodeCoords( Vector2D!real c ) pure
     return Vector2D!real( c.x * 10_000_000f,  c.y * 10_000_000f );
 }
 
-Vector2D!real encodedCoordsToRadians( Coords c )
+Vector2D!real encodedToMeters( Coords c )
 {
     auto decoded = decodeCoords( c );
-    return degrees2radians( decoded );
+    auto radians = degrees2radians( decoded );
+    return coords2mercator( radians );
 }
 
-deprecated
-Vector2D!real radiansCoordsToEncoded( Vector2D!real radians )
+Coords metersToEncoded( Vector2D!real meters )
 {
+    auto radians = mercator2coords( meters );
     auto degrees = radians2degrees( radians );
-    return encodeCoords( degrees );
+    auto encoded = encodeCoords( degrees );
+    
+    return encoded.round;
 }
 
 Region getRegion( string filename, bool verbose )

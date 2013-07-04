@@ -2,13 +2,13 @@ module map;
 
 import math.geometry;
 import math.rtree2d;
-import osm: Coords, encodedCoordsToRadians;
+import osm: Coords, encodedToMeters;
 debug(map) import std.stdio;
 
 
 alias Coords Node;
 alias Vector2D!real Vector2r;
-alias Box!Vector2r BBox;
+alias Box!Node BBox;
 
 class Region
 {
@@ -33,15 +33,14 @@ class Region
     
     void addNode( in Node n )
     {
-        Vector2r zero_sized;
+        Coords zero_sized;
         
-        Vector2r _n = encodedCoordsToRadians( n );
-        BBox box = BBox( _n, zero_sized );
+        BBox box = BBox( n, zero_sized );
         
         nodes_rtree.addObject( box, nodes.length );
         nodes ~= n;
         
-        debug(map) writeln("Node added=", n, " radians=", _n, " boundary=", box);
+        debug(map) writeln("Node added=", n, " boundary=", box);
     }
     
     Node[] searchNodes( in BBox boundary ) const
