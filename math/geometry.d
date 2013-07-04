@@ -77,7 +77,7 @@ struct Vector2D( _T )
             static assert( false, "op \""~op~"\" is not found" );
     }
     
-    void opAssign(T)( T v )
+    void opAssign(T)( in T v )
     if( !isScalarType!(T) )
     {
         x = v.x;

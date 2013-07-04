@@ -39,6 +39,8 @@ class Window
 	    
 	    window.clear(Color.Black);
 	    
+	    drawCenter;
+	    
 	    if( scene )
 	    {
 		scene.properties.windowPixelSize = window.size;
@@ -65,6 +67,31 @@ class Window
 	vertices_num++;
     }
     
+    void drawCenter()
+    {
+	Vector2f c; c = getCenter();
+	
+	auto horiz = Vector2f(8, 0);
+	auto vert = Vector2f(0, 8);
+	
+	auto cross = new VertexArray( PrimitiveType.Lines, 4 );
+	
+	cross.append( Vertex(c-vert) );
+	cross.append( Vertex(c+vert) );
+	cross.append( Vertex(c-horiz) );
+	cross.append( Vertex(c+horiz) );
+	
+	window.draw( cross );
+    }
+    
+    Vector2r getCenter()
+    {
+	Vector2r res;
+	res = window.size;
+	res /= 2;
+	return res;
+    }
+    
     private void eventsProcessing()
     {
 	Event event;
@@ -81,6 +108,7 @@ class Window
 		    {
 			scene.calcBoundary();
 			writeln(scene);
+			writeln("window size=", window.size, " window center=", getCenter);
 		    }
 		    break;
 		
