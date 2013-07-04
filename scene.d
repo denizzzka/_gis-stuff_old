@@ -50,8 +50,11 @@ class Scene
     void drawNodes( in Node[] nodes, void delegate(Vector2D!(real) coords) drawPoint )
     {
         auto len = nodes.length;
-        for(auto i = 0; i < 5000 && i < len; i++)
+        
+        for(auto i = 0; i < len; i++)
         {
+            debug(fast) if( i >= 5000 ) break;
+            
             auto radians = encodedCoordsToRadians( nodes[i] );
             Vector2r node = coords2mercator( radians );
             
