@@ -55,7 +55,6 @@ class Scene
             Vector2r node; node = nodes[i];
             auto ld = boundary.leftDownCorner;
             auto ld_relative = node - ld;
-            auto k = properties.windowPixelSize.x / boundary.getSizeVector.x;
             auto window_coords = ld_relative * properties.zoom;
             drawPoint( window_coords );
         }

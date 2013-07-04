@@ -35,6 +35,8 @@ class Window
     {
 	while(window.isOpen)
 	{
+	    eventsProcessing();
+	    
 	    window.clear(Color.Black);
 	    
 	    if( scene )
@@ -47,15 +49,42 @@ class Window
 	    }
 	    
 	    window.display;
-     
-	    Event event;
-	    while (window.pollEvent(event))
+	}
+    }
+    
+    void drawPoint( Vector2r coords )
+    {
+	// convert Cartesian to SFML coords
+	coords.y = to!real(window.size.y) - coords.y;
+	
+	auto c = Vector2f( coords.x, coords.y );
+	
+	debug(sfml) writeln("draw point, window coords=", c, " window size=", window.size);
+	
+	vertices[vertices_num] = Vertex(c, Color.Yellow);
+	vertices_num++;
+    }
+    
+    private void eventsProcessing()
+    {
+	Event event;
+	while (window.pollEvent(event))
+	{
+	    switch( event.type )
 	    {
-		if (event.type == Event.Closed)
+		case Event.Closed:
 		    window.close();
-		else
-		if (event.type == Event.KeyPressed)
-		{
+		    break;
+		    
+		case Event.Resized:
+		    debug(controls)
+		    {
+			scene.calcBoundary();
+			writeln(scene);
+		    }
+		    break;
+		
+		case Event.KeyPressed:
 		    with(scene.properties)
 		    {
 			immutable auto zoom_step = 1.05;
@@ -101,21 +130,11 @@ class Window
 				break;
 			}
 		    }
-		}
+		    break;
+		    
+		default:
+		    break;
 	    }
 	}
-    }
-    
-    void drawPoint( Vector2r coords )
-    {
-	// convert Cartesian to SFML coords
-	coords.y = to!real(window.size.y) - coords.y;
-	
-	auto c = Vector2f( coords.x, coords.y );
-	
-	debug(sfml) writeln("draw point, window coords=", c, " window size=", window.size);
-	
-	vertices[vertices_num] = Vertex(c, Color.Yellow);
-	vertices_num++;
     }
 }
