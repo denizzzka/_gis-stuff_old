@@ -289,3 +289,13 @@ auto degrees2radians(T)( in T from ) pure
     
     return res;
 }
+
+auto radians2degrees(T)( in T from ) pure
+{
+    Vector2D!real res;
+    
+    res.lon = radian2degree( from.lon );
+    res.lat = radian2degree( from.lat );
+    
+    return res;
+}

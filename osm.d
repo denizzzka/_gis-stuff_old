@@ -113,16 +113,21 @@ private auto decodeGranularCoords( in PrimitiveBlock pb, in Node n )
     return r;
 }
 
+deprecated
 Vector2D!real decodeCoords( Coords c ) pure
 {
     return Vector2D!real( c.x / 10_000_000f,  c.y / 10_000_000f );
 }
 
-Vector2D!real convert2meters( Coords coords ) pure
+Vector2D!real encodeCoords( Vector2D!real c ) pure
 {
-    auto c = decodeCoords( coords );
-    auto radians = degrees2radians( c );
-    return coords2mercator( radians );
+    return Vector2D!real( c.x * 10_000_000f,  c.y * 10_000_000f );
+}
+
+Vector2D!real radiansCoordsToEncoded( Vector2D!real radians )
+{
+    auto degrees = radians2degrees( radians );
+    return encodeCoords( degrees );
 }
 
 Region getRegion( string filename, bool verbose )
