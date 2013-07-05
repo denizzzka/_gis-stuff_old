@@ -16,7 +16,7 @@ class Window
     
     private
     {
-	Vertex[] vertices;
+	VertexArray vertex_array;
     }
     
     this()
@@ -41,9 +41,8 @@ class Window
 	    if( scene )
 	    {
 		scene.properties.windowPixelSize = window.size;
-		vertices.destroy;
+		vertex_array = new VertexArray( PrimitiveType.Points, 0 );
 		scene.draw( &drawPoint );
-		auto vertex_array = new VertexArray( PrimitiveType.Points, vertices );
 		window.draw( vertex_array );
 	    }
 	    
@@ -62,7 +61,7 @@ class Window
 	
 	debug(sfml) writeln("draw point, window coords=", c, " window size=", window.size);
 	
-	vertices ~= Vertex(c, Color.Yellow);
+	vertex_array.append( Vertex(c, Color.Yellow) );
     }
     
     void drawCenter()
