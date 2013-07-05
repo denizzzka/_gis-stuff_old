@@ -66,8 +66,7 @@ class Window
     
     void drawCenter()
     {
-	Vector2f c; c = scene.properties.windowPixelSize;
-	c /= 2;
+	auto c = getCenter();
 	
 	auto horiz = Vector2f(8, 0);
 	auto vert = Vector2f(0, 8);
@@ -80,6 +79,16 @@ class Window
 	cross.append( Vertex(c+horiz) );
 	
 	window.draw( cross );
+    }
+    
+    Vector2f getCenter() const
+    {
+	Vector2f c;
+	
+	c = scene.properties.windowPixelSize;
+	c /= 2;
+	
+	return c;
     }
     
     private void eventsProcessing()
