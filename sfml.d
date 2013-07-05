@@ -66,7 +66,8 @@ class Window
     
     void drawCenter()
     {
-	auto c = Vector2f(320,240); // c = getCenter();
+	Vector2f c; c = scene.properties.windowPixelSize;
+	c /= 2;
 	
 	auto horiz = Vector2f(8, 0);
 	auto vert = Vector2f(0, 8);
@@ -81,14 +82,6 @@ class Window
 	window.draw( cross );
     }
     
-    Vector2r getCenter()
-    {
-	Vector2r res;
-	res = window.size;
-	res /= 2;
-	return res;
-    }
-    
     private void eventsProcessing()
     {
 	Event event;
@@ -101,13 +94,17 @@ class Window
 		    break;
 		    
 		case Event.Resized:
-		    scene.properties.windowPixelSize = window.size;
+		    scene.properties.windowPixelSize = Vector2s( event.size.width, event.size.height );
+		    
+		    auto visibleArea = FloatRect(0, 0, event.size.width, event.size.height);
+		    auto view = new View( visibleArea );
+		    window.view( view );
 		    
 		    debug(controls)
 		    {
 			scene.calcBoundary();
 			writeln(scene);
-			writeln("window size=", window.size, " window center=", getCenter);
+			writeln("window size=", window.size);
 		    }
 		    break;
 		
