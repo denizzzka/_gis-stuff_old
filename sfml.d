@@ -9,6 +9,25 @@ debug(scene) import std.stdio;
 debug(controls) import std.stdio;
 
 
+struct Vector2f
+{
+    dsfml.graphics.Vector2f vector;
+    
+    this( float X, float Y )
+    {
+	vector = dsfml.graphics.Vector2f( X , Y );
+    }
+    
+    alias vector this;
+    
+    void opAssign(T)( in T v )
+    if( !isScalarType!(T) )
+    {
+	x = v.x;
+	y = v.y;
+    }
+}
+
 class Window
 {
     Scene scene;
@@ -57,7 +76,7 @@ class Window
 	// convert Cartesian to SFML coords
 	coords.y = to!real(window.size.y) - coords.y;
 	
-	auto c = Vector2f( coords.x, coords.y );
+	Vector2f c; c = coords;
 	
 	debug(sfml) writeln("draw point, window coords=", c, " window size=", window.size);
 	
