@@ -3,6 +3,7 @@ module scene;
 import map;
 import math.geometry;
 import osm: Coords, metersToEncoded, encodedToMeters;
+import math.earth: Conv, WGS84, lon2canonical;
 import std.conv;
 import std.string;
 import std.math: fmin, fmax;
@@ -39,8 +40,14 @@ class Scene
     
     void setCenter( in Vector2r new_center )
     {
-        // TODO need boundary checking
-        _center = new_center;
+        alias Conv!WGS84 C;
+        
+        auto radian_lon = C.mercator2lon( new_center.x );
+        radian_lon = lon2canonical( radian_lon );
+        auto mercator_lon = C.lon2mercator( radian_lon );
+        
+        _center.lat = new_center.lat;
+        _center.lon = mercator_lon;
     }
     
     Vector2r getCenter() const
@@ -111,7 +118,7 @@ class Scene
     
 	override string toString()
     {
-        return format("center=%s zoom=%g scene bbox=%s size_len=%g", _center, _zoom, boundary_meters, boundary_meters.getSizeVector.length);	
+        return format("center=%s zoom=%g scene ecenter=%s ebox=%s mbox=%s size_len=%g", _center, _zoom, _center.metersToEncoded, boundary_encoded, boundary_meters, boundary_meters.getSizeVector.length);	
 	}
     
     void zoomToWholeMap()

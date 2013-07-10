@@ -16,6 +16,22 @@ void assertLatitude( T )( in T latitude ) pure
     assert( latitude <= PI_2, "Latitude is too big" );
 }
 
+/// Converts longitudes like -182 degree to +178 degrees
+auto lon2canonical( T )( in T longitude ) pure
+out(r)
+{
+    assertLongitude( r );
+}
+body
+{
+    auto radian_lon = longitude % ( PI*2 );
+    
+    if( abs( radian_lon ) > PI )
+        radian_lon = -sgn(radian_lon) * PI + ( radian_lon % PI );
+        
+    return radian_lon;
+}
+
 struct Conv( Datum )
 {
     static auto lon2mercator( T )( in T longitude ) pure
@@ -46,11 +62,6 @@ struct Conv( Datum )
     }
     
     static auto mercator2lon( T )( in T x ) pure
-    out(r)
-    {
-        assertLongitude( r );
-    }
-    body
     {
         return x / Datum.a;
     }

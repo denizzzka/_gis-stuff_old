@@ -138,9 +138,9 @@ class Window
 		
 		case Event.KeyPressed:
 		    immutable auto zoom_step = 1.05;
+		    auto center = scene.getCenter;
 		    auto zoom = scene.getZoom;
 		    auto dir_step = 10.0 / zoom;
-		    auto center = scene.getCenter;
 		    
 		    switch( event.key.code )
 		    {
