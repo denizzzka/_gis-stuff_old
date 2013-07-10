@@ -21,21 +21,21 @@ class Scene
     
     private
     {
-        Vector2s _window_size; /// in pixels
-        Vector2r _center; /// in meters
-        real _zoom; /// pixels per meter
+        Vector2s window_size; /// in pixels
+        Vector2r center; /// in meters
+        real zoom; /// pixels per meter
         Box!Vector2r boundary_meters; /// coords in meters
         Box!Coords boundary_encoded; /// coords in map encoding
     }
     
     void setWindowSize(T)( T new_size )
     {
-        _window_size = new_size;
+        window_size = new_size;
     }
     
     Vector2s getWindowSize() const
     {
-        return _window_size;
+        return window_size;
     }
     
     void setCenter( in Vector2r new_center )
@@ -46,23 +46,23 @@ class Scene
         radian_lon = lon2canonical( radian_lon );
         auto mercator_lon = C.lon2mercator( radian_lon );
         
-        _center.lat = new_center.lat;
-        _center.lon = mercator_lon;
+        center.lat = new_center.lat;
+        center.lon = mercator_lon;
     }
     
     Vector2r getCenter() const
     {
-        return _center;
+        return center;
     }
     
     void setZoom( in real new_zoom )
     {
-        _zoom = new_zoom;
+        zoom = new_zoom;
     }
     
     real getZoom() const
     {
-        return _zoom;
+        return zoom;
     }
     
     this( in Map m )
@@ -72,10 +72,10 @@ class Scene
     
     void calcBoundary()
     {
-        Vector2r b_size; b_size = _window_size;
-        b_size /= _zoom;
+        Vector2r b_size; b_size = window_size;
+        b_size /= zoom;
         
-        auto leftDownCorner = _center - b_size/2;
+        auto leftDownCorner = center - b_size/2;
         
         boundary_meters = Box!Vector2r( leftDownCorner, b_size );            
         boundary_encoded = getEncodedBox( boundary_meters ).roundCircumscribe;
@@ -94,7 +94,7 @@ class Scene
             
             auto ld = boundary_meters.leftDownCorner;
             auto ld_relative = node - ld;
-            auto window_coords = ld_relative * _zoom;
+            auto window_coords = ld_relative * zoom;
             
             debug(scene) writeln("draw point i=", i, " encoded coords=", nodes[i], " meters=", node, " window_coords=", window_coords);
             
@@ -118,7 +118,7 @@ class Scene
     
 	override string toString()
     {
-        return format("center=%s zoom=%g scene ecenter=%s ebox=%s mbox=%s size_len=%g", _center, _zoom, _center.metersToEncoded, boundary_encoded, boundary_meters, boundary_meters.getSizeVector.length);	
+        return format("center=%s zoom=%g scene ecenter=%s ebox=%s mbox=%s size_len=%g", center, zoom, center.metersToEncoded, boundary_encoded, boundary_meters, boundary_meters.getSizeVector.length);	
 	}
     
     void zoomToWholeMap()
@@ -126,16 +126,16 @@ class Scene
         auto meters_box = getMetersBox( map.boundary );
         auto meters_size = meters_box.getSizeVector;
         
-        _zoom = fmin(
-                _window_size.x / meters_size.x,
-                _window_size.y / meters_size.y
+        zoom = fmin(
+                window_size.x / meters_size.x,
+                window_size.y / meters_size.y
             );
     }
     
     void centerToWholeMap()
     {
         auto map_center = map.boundary.ld + map.boundary.getSizeVector/2;
-        _center = encodedToMeters( map_center );
+        center = encodedToMeters( map_center );
     }
 }
 
