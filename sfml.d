@@ -59,7 +59,7 @@ class Window
 	    
 	    if( scene )
 	    {
-		scene.properties.windowPixelSize = window.size;
+		scene.setWindowSize = window.size;
 		vertex_array = new VertexArray( PrimitiveType.Points, 0 );
 		scene.draw( &drawPoint );
 		window.draw( vertex_array );
@@ -104,7 +104,7 @@ class Window
     {
 	Vector2f c;
 	
-	c = scene.properties.windowPixelSize;
+	c = scene.getWindowSize;
 	c /= 2;
 	
 	return c;
@@ -122,7 +122,7 @@ class Window
 		    break;
 		    
 		case Event.Resized:
-		    scene.properties.windowPixelSize = Vector2s( event.size.width, event.size.height );
+		    scene.setWindowSize = Vector2s( event.size.width, event.size.height );
 		    
 		    auto visibleArea = FloatRect(0, 0, event.size.width, event.size.height);
 		    auto view = new View( visibleArea );
@@ -137,51 +137,53 @@ class Window
 		    break;
 		
 		case Event.KeyPressed:
-		    with(scene.properties)
+		    immutable auto zoom_step = 1.05;
+		    auto zoom = scene.getZoom;
+		    auto dir_step = 10.0 / zoom;
+		    auto center = scene.getCenter;
+		    
+		    switch( event.key.code )
 		    {
-			immutable auto zoom_step = 1.05;
-			auto dir_step = 10.0 / zoom;
+			case Keyboard.Key.Escape:
+			    window.close();
+			    break;
 			
-			switch( event.key.code )
-			{
-			    case Keyboard.Key.Escape:
-				window.close();
-				break;
+			case Keyboard.Key.Equal: // zoom in
+			    zoom *= zoom_step;
+			    debug(controls) writeln(scene);
+			    break;
+			
+			case Keyboard.Key.Dash: // zoom out
+			    zoom /= zoom_step;
+			    debug(controls) writeln(scene);
+			    break;
 			    
-			    case Keyboard.Key.Equal: // zoom in
-				zoom *= zoom_step;
-				debug(controls) writeln(scene);
-				break;
+			case Keyboard.Key.Right:
+			    center.x += dir_step;
+			    debug(controls) writeln(scene);
+			    break;
 			    
-			    case Keyboard.Key.Dash: // zoom out
-				zoom /= zoom_step;
-				debug(controls) writeln(scene);
-				break;
-				
-			    case Keyboard.Key.Right:
-				center.x += dir_step;
-				debug(controls) writeln(scene);
-				break;
-				
-			    case Keyboard.Key.Left:
-				center.x -= dir_step;
-				debug(controls) writeln(scene);
-				break;
-				
-			    case Keyboard.Key.Up:
-				center.y += dir_step;
-				debug(controls) writeln(scene);
-				break;
-				
-			    case Keyboard.Key.Down:
-				center.y -= dir_step;
-				debug(controls) writeln(scene);
-				break;
+			case Keyboard.Key.Left:
+			    center.x -= dir_step;
+			    debug(controls) writeln(scene);
+			    break;
 			    
-			    default:
-				break;
-			}
+			case Keyboard.Key.Up:
+			    center.y += dir_step;
+			    debug(controls) writeln(scene);
+			    break;
+			    
+			case Keyboard.Key.Down:
+			    center.y -= dir_step;
+			    debug(controls) writeln(scene);
+			    break;
+			
+			default:
+			    break;
 		    }
+		    
+		    scene.setZoom( zoom );
+		    scene.setCenter( center );
 		    break;
 		    
 		default:

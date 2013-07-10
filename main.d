@@ -36,11 +36,8 @@ void main( string[] args )
         auto map = getMap( args[1..$], verbose );
     }
     
-    Properties p;
-    p.windowPixelSize = window.window.size;
-    
     window.scene = new Scene( map );
-    window.scene.properties = p;
+    window.scene.setWindowSize = window.window.size;
     
     window.scene.centerToWholeMap;
     window.scene.zoomToWholeMap;

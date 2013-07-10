@@ -13,19 +13,50 @@ alias Vector2D!real Vector2r;
 alias Vector2D!size_t Vector2s;
 alias Vector2D!long Vector2l;
 
-struct Properties
-{
-    Vector2r center; /// in meters
-    real zoom; /// pixels per meter
-    Vector2s windowPixelSize;
-}
 
 class Scene
 {
     const Map map;
-    Properties properties;
-    Box!Vector2r boundary_meters; /// coords in meters
-    Box!Coords boundary_encoded; /// coords in map encoding
+    
+    private
+    {
+        Vector2s _window_size; /// in pixels
+        Vector2r _center; /// in meters
+        real _zoom; /// pixels per meter
+        Box!Vector2r boundary_meters; /// coords in meters
+        Box!Coords boundary_encoded; /// coords in map encoding
+    }
+    
+    void setWindowSize(T)( T new_size )
+    {
+        _window_size = new_size;
+    }
+    
+    Vector2s getWindowSize() const
+    {
+        return _window_size;
+    }
+    
+    void setCenter( in Vector2r new_center )
+    {
+        // TODO need boundary checking
+        _center = new_center;
+    }
+    
+    Vector2r getCenter() const
+    {
+        return _center;
+    }
+    
+    void setZoom( in real new_zoom )
+    {
+        _zoom = new_zoom;
+    }
+    
+    real getZoom() const
+    {
+        return _zoom;
+    }
     
     this( in Map m )
     {
@@ -34,16 +65,13 @@ class Scene
     
     void calcBoundary()
     {
-        with(properties)
-        {
-            Vector2r b_size; b_size = windowPixelSize;
-            b_size /= zoom;
-            
-            auto leftDownCorner = center - b_size/2;
-            
-            boundary_meters = Box!Vector2r( leftDownCorner, b_size );            
-            boundary_encoded = getEncodedBox( boundary_meters ).roundCircumscribe;
-        }
+        Vector2r b_size; b_size = _window_size;
+        b_size /= _zoom;
+        
+        auto leftDownCorner = _center - b_size/2;
+        
+        boundary_meters = Box!Vector2r( leftDownCorner, b_size );            
+        boundary_encoded = getEncodedBox( boundary_meters ).roundCircumscribe;
     }
     
     private
@@ -59,7 +87,7 @@ class Scene
             
             auto ld = boundary_meters.leftDownCorner;
             auto ld_relative = node - ld;
-            auto window_coords = ld_relative * properties.zoom;
+            auto window_coords = ld_relative * _zoom;
             
             debug(scene) writeln("draw point i=", i, " encoded coords=", nodes[i], " meters=", node, " window_coords=", window_coords);
             
@@ -83,8 +111,7 @@ class Scene
     
 	override string toString()
     {
-        with(properties)
-            return format("center=%s zoom=%g scene bbox=%s size_len=%g", center, zoom, boundary_meters, boundary_meters.getSizeVector.length);	
+        return format("center=%s zoom=%g scene bbox=%s size_len=%g", _center, _zoom, boundary_meters, boundary_meters.getSizeVector.length);	
 	}
     
     void zoomToWholeMap()
@@ -92,16 +119,16 @@ class Scene
         auto meters_box = getMetersBox( map.boundary );
         auto meters_size = meters_box.getSizeVector;
         
-        properties.zoom = fmin(
-                properties.windowPixelSize.x / meters_size.x,
-                properties.windowPixelSize.y / meters_size.y
+        _zoom = fmin(
+                _window_size.x / meters_size.x,
+                _window_size.y / meters_size.y
             );
     }
     
     void centerToWholeMap()
     {
         auto map_center = map.boundary.ld + map.boundary.getSizeVector/2;
-        properties.center = encodedToMeters( map_center );
+        _center = encodedToMeters( map_center );
     }
 }
 
