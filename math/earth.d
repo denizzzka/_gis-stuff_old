@@ -31,6 +31,11 @@ body
         
     return radian_lon;
 }
+unittest
+{
+    assert( abs( lon2canonical( 3*PI + 1 ) - (-PI+1) ) < 0.000001 );
+    assert( abs( lon2canonical( -3*PI - 1 ) - (PI-1) ) < 0.000001 );
+}
 
 struct Conv( Datum )
 {
