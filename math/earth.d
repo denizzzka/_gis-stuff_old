@@ -33,8 +33,8 @@ body
 }
 unittest
 {
-    assert( abs( lon2canonical( 3*PI + 1 ) - (-PI+1) ) < 0.000001 );
-    assert( abs( lon2canonical( -3*PI - 1 ) - (PI-1) ) < 0.000001 );
+    assert( abs( lon2canonical( 3*PI + 1 ) - (-PI+1) ) < 0.000_000_000_000_1 );
+    assert( abs( lon2canonical( -3*PI - 1 ) - (PI-1) ) < 0.000_000_000_000_1 );
 }
 
 struct Conv( Datum )
