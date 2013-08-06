@@ -222,12 +222,16 @@ Region getRegion( string filename, bool verbose )
                     
                     nodes_coords[n.id] = Coords( n.lon, n.lat );
                     
-                    POI poi;
-                    poi.coords.lon = n.lon;
-                    poi.coords.lat = n.lat;
-                    
-                    BBox bbox = BBox( poi.coords, poi.size );
-                    res.layer0.POI.addObject( bbox, poi );
+                    // Point with tags?
+                    if( !n.keys.isNull && n.keys.length > 0 )
+                    {
+                        POI poi;
+                        poi.coords.lon = n.lon;
+                        poi.coords.lat = n.lat;
+                        
+                        BBox bbox = BBox( poi.coords, poi.size );
+                        res.layer0.POI.addObject( bbox, poi );
+                    }
                 }
             }
             
