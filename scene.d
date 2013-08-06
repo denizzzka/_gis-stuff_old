@@ -82,7 +82,7 @@ class Scene
     }
     
     private
-    void drawNodes( in Node[] nodes, void delegate(Vector2D!(real) coords) drawPoint )
+    void drawNodes( in Coords[] nodes, void delegate(Vector2D!(real) coords) drawPoint )
     {
         auto len = nodes.length;
         
