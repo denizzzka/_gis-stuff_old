@@ -140,6 +140,12 @@ Coords metersToEncoded( Vector2D!real meters )
     return encoded.round;
 }
 
+struct Tag
+{
+    ubyte[] _key;
+    ubyte[] _value;
+}
+
 Region getRegion( string filename, bool verbose )
 {
     void log(T)( T s )
@@ -153,6 +159,8 @@ Region getRegion( string filename, bool verbose )
     auto h = readOSMHeader( f );
     
     auto res = new Region;
+    Coords[long] nodes_coords;
+    
     
     while(true)
     {
@@ -163,6 +171,8 @@ Region getRegion( string filename, bool verbose )
         debug(osm) writefln("lat_offset=%d lon_offset=%d", prim.lat_offset, prim.lon_offset );
         debug(osm) writeln("granularity=", prim.granularity);
         
+        //prim.stringtable;
+        
         foreach( i, c; prim.primitivegroup )
         {
             void addNodes( Node[] nodes )
@@ -172,6 +182,8 @@ Region getRegion( string filename, bool verbose )
                     debug(osm) writefln( "id=%d coords=%s", n.id, decodeCoords( prim, n ) );
                     
                     auto mn = MapNode( n.lon, n.lat );
+                    nodes_coords[n.id] = mn;
+                    
                     res.layer0.POI.addCoord( mn );
                 }
             }
