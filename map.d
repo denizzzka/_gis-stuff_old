@@ -11,7 +11,7 @@ alias Coords POI;
 alias Vector2D!real Vector2r;
 alias Box!Node BBox;
 
-struct NodeStorage( NodeT )
+struct NodesStorage( NodeT )
 {
     private
     {
@@ -49,7 +49,7 @@ struct NodeStorage( NodeT )
     }
 }
 
-alias NodeStorage!Coords POI_storage;
+alias NodesStorage!Coords POI_storage;
 
 struct Layer
 {
