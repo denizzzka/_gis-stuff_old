@@ -27,9 +27,9 @@ void main( string[] args )
     {
         auto map = new Map;
         map.regions ~= new Region;
-        map.regions[0].addNode( Node(179_0_000_000, 56) );
-        map.regions[0].addNode( Node(179_1_000_000, 56) );
-        map.regions[0].addNode( Node(179_1_000_000, 57) );
+        map.regions[0].layer0.POI.add( Node(179_0_000_000, 56) );
+        map.regions[0].layer0.POI.add( Node(179_1_000_000, 56) );
+        map.regions[0].layer0.POI.add( Node(179_1_000_000, 57) );
     }
     else
     {

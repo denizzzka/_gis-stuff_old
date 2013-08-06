@@ -7,55 +7,68 @@ debug(map) import std.stdio;
 
 
 alias Coords Node;
+alias Coords POI;
 alias Vector2D!real Vector2r;
 alias Box!Node BBox;
 
-class Region
+struct NodeStorage( NodeT )
 {
     private
     {
-        Node[] nodes;
+        NodeT[] nodes;
         
-        alias RTreePtrs!(BBox, size_t) NRT;
-        
-        NRT nodes_rtree;
+        alias Box!NodeT BBox;
+        alias RTreePtrs!(BBox, size_t) TRTree;
+        TRTree rtree = new TRTree;
     }
     
-    this()
+    void add( in NodeT n )
     {
-        nodes_rtree = new NRT;
-    }
-    
-    BBox boundary() const
-    {
-        return nodes_rtree.root.getBoundary;
-    }
-    
-    void addNode( in Node n )
-    {
-        Coords zero_sized;
-        
+        NodeT zero_sized;
         BBox box = BBox( n, zero_sized );
         
-        nodes_rtree.addObject( box, nodes.length );
+        rtree.addObject( box, nodes.length );
         nodes ~= n;
         
         debug(map) writeln("Node added=", n, " boundary=", box);
     }
     
-    Node[] searchNodes( in BBox boundary ) const
+    NodeT[] search( in BBox boundary ) const
     {
-        Node[] res;
-        auto leafs = nodes_rtree.search( boundary );
+        NodeT[] res;
+        auto leafs = rtree.search( boundary );
         foreach( n; leafs )
             res ~= nodes[ n.payload ];
             
         return res;
     }
     
-    // r-tree of ways links to r-tree
+    BBox getBoundary() const
+    {
+        return rtree.root.getBoundary;
+    }
+}
+
+alias NodeStorage!Coords POI_storage;
+
+struct Layer
+{
+    POI_storage POI;
     
-    // kd-tree of POI links to points    
+    BBox boundary() const
+    {
+        return POI.getBoundary;
+    }
+}
+
+class Region
+{
+    Layer layer0;
+    
+    BBox boundary() const
+    {
+        return layer0.boundary;
+    }
 }
 
 class Map

@@ -172,7 +172,7 @@ Region getRegion( string filename, bool verbose )
                     debug(osm) writefln( "id=%d coords=%s", n.id, decodeCoords( prim, n ) );
                     
                     auto mn = MapNode( n.lon, n.lat );
-                    res.addNode( mn );
+                    res.layer0.POI.add( mn );
                 }
             }
             

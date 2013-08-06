@@ -110,7 +110,7 @@ class Scene
         
         foreach( reg; map.regions )
         {
-            auto nodes = reg.searchNodes( boundary_encoded );
+            auto nodes = reg.layer0.POI.search( boundary_encoded );
             debug(scene) writeln("found nodes=", nodes.length);
             drawNodes( nodes, drawPoint );
         }
