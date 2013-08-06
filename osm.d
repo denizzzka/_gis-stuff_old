@@ -12,6 +12,7 @@ import std.exception;
 import std.bitmanip: bigEndianToNative;
 import std.zlib;
 import std.math: round;
+import std.algorithm: canFind;
 
 
 struct PureBlob
@@ -147,6 +148,27 @@ Tags[] decodeDenseTags( int[] denseTags )
     return res;
 }
 
+string getStringByIndex( in StringTable stringtable, in uint index )
+{
+    auto s = cast( char[] ) stringtable.s[index];
+    return to!string( s );
+}
+
+string getTag( in StringTable stringtable, uint key, uint value )
+{
+    return getStringByIndex( stringtable, key ) ~ "=" ~ getStringByIndex( stringtable, value );
+}
+
+bool isBannedKey( in StringTable stringtable, in uint key )
+{
+    string[] banned_tags = [
+            "created_by",
+            "source"
+        ];
+    
+    return canFind( banned_tags, cast(char[]) stringtable.s[key] );
+}
+
 alias Vector2D!long Coords;
 
 private auto decodeGranularCoords( in PrimitiveBlock pb, in Node n )
@@ -206,6 +228,7 @@ Region getRegion( string filename, bool verbose )
         if(d.length == 0 ) break; // eof
         
         auto prim = PrimitiveBlock( d );
+        
         debug(osm) writefln("lat_offset=%d lon_offset=%d", prim.lat_offset, prim.lon_offset );
         debug(osm) writeln("granularity=", prim.granularity);
         
@@ -217,21 +240,29 @@ Region getRegion( string filename, bool verbose )
             {
                 foreach( n; nodes)
                 {
-                    debug(osm) writefln( "id=%d coords=%s", n.id, decodeCoords( prim, n ) );
-                    
                     nodes_coords[n.id] = Coords( n.lon, n.lat );
                     
                     // Point with tags?
                     if( !n.keys.isNull && n.keys.length > 0 )
                     {
                         POI poi;
-                        poi.coords.lon = n.lon;
-                        poi.coords.lat = n.lat;
                         
-                        BBox bbox = BBox( poi.coords, poi.size );
-                        res.layer0.POI.addObject( bbox, poi );
+                        for( auto i = 0; i < n.keys.length; i++ )
+                            if( !prim.stringtable.isBannedKey( n.keys[i] ) )
+                            {
+                                poi.tags ~= prim.stringtable.getTag( n.keys[i], n.vals[i] )~"\n";
+                                debug(osm) writeln( "id=", n.id, " tags:\n", poi.tags );
+                            }
                         
-                        //debug(osm) writefln( "tags: keys=%d values=%d", n.id, decodeCoords( prim, n ) );
+                        // Point contains non-banned tags?
+                        if( poi.tags.length > 0 )
+                        {
+                            poi.coords.lon = n.lon;
+                            poi.coords.lat = n.lat;
+                            
+                            BBox bbox = BBox( poi.coords, poi.size );
+                            res.layer0.POI.addObject( bbox, poi );
+                        }
                     }
                 }
             }
