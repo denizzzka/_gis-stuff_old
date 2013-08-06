@@ -12,6 +12,7 @@ import std.exception;
 import std.bitmanip: bigEndianToNative;
 import std.zlib;
 import std.math: round;
+import std.typecons: Nullable;
 
 
 struct PureBlob
@@ -89,6 +90,11 @@ Node[] decodeDenseNodes(DenseNodesArray)( DenseNodesArray dn )
     curr.lat = 0;
     curr.lon = 0;
     
+    Tags[] tags;
+    
+    if( !dn.keys_vals.isNull )
+        tags = decodeDenseTags( dn.keys_vals );
+    
     foreach( i, c; dn.id )
     {
         // decode delta
@@ -96,7 +102,37 @@ Node[] decodeDenseNodes(DenseNodesArray)( DenseNodesArray dn )
         curr.lat += dn.lat[i];
         curr.lon += dn.lon[i];
         
+        curr.keys = tags[i].keys;
+        curr.vals = tags[i].values;
+        
         res ~= curr;
+    }
+    
+    return res;
+}
+
+struct Tags
+{
+    uint[] keys;
+    uint[] values;
+}
+
+Tags[] decodeDenseTags( int[] denseTags )
+{
+    Tags[] res;
+    
+    auto i = 0;
+    while( i < denseTags.length )
+    {
+        Tags t;
+        
+        do {
+            t.keys ~= denseTags[i];
+            t.values ~= denseTags[++i];
+            ++i;
+        } while( i < denseTags.length && denseTags[i] != 0 );
+        
+        res ~= t;
     }
     
     return res;
@@ -140,12 +176,6 @@ Coords metersToEncoded( Vector2D!real meters )
     return encoded.round;
 }
 
-struct Tag
-{
-    ubyte[] _key;
-    ubyte[] _value;
-}
-
 Region getRegion( string filename, bool verbose )
 {
     void log(T)( T s )
@@ -160,7 +190,7 @@ Region getRegion( string filename, bool verbose )
     
     auto res = new Region;
     Coords[long] nodes_coords;
-    
+    Tag[] tags;
     
     while(true)
     {
@@ -204,6 +234,12 @@ Region getRegion( string filename, bool verbose )
     }
     
     return res;
+}
+
+struct Tag
+{
+    ubyte[] key;
+    ubyte[] value;
 }
 
 Map getMap( string[] filenames, bool verbose )
