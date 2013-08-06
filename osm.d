@@ -4,7 +4,7 @@ import osmpbf.fileformat;
 import osmpbf.osmformat;
 import math.geometry;
 import math.earth;
-import map: Map, Region, MapNode = Node;
+import map: Map, Region, MapNode = Node, add;
 
 import std.stdio;
 import std.string;

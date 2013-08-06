@@ -7,53 +7,27 @@ debug(map) import std.stdio;
 
 
 alias Coords Node;
-alias Coords POI;
 alias Vector2D!real Vector2r;
-alias Box!Node BBox;
 
-struct NodesStorage( NodeT )
+alias Box!Coords BBox;
+
+alias RTreePtrs!(BBox, Coords) CoordsStorage;    
+
+// for zero-sized type Coords
+void add( CoordsStorage rtree, Coords n )
 {
-    private
-    {
-        NodeT[] nodes;
-        
-        alias Box!NodeT BBox;
-        alias RTreePtrs!(BBox, size_t) TRTree;
-        TRTree rtree = new TRTree;
-    }
+    Coords zero_sized;
+    auto box = BBox( n, zero_sized );
     
-    void add( in NodeT n )
-    {
-        NodeT zero_sized;
-        BBox box = BBox( n, zero_sized );
-        
-        rtree.addObject( box, nodes.length );
-        nodes ~= n;
-        
-        debug(map) writeln("Node added=", n, " boundary=", box);
-    }
+    rtree.addObject( box, n );
     
-    NodeT[] search( in BBox boundary ) const
-    {
-        NodeT[] res;
-        auto leafs = rtree.search( boundary );
-        foreach( n; leafs )
-            res ~= nodes[ n.payload ];
-            
-        return res;
-    }
-    
-    BBox getBoundary() const
-    {
-        return rtree.root.getBoundary;
-    }
+    debug(map) writeln("Added Coords=", n, " boundary=", box);
 }
-
-alias NodesStorage!Coords POI_storage;
 
 struct Layer
 {
-    POI_storage POI;
+    
+    CoordsStorage POI = new CoordsStorage;
     
     BBox boundary() const
     {
