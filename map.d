@@ -8,18 +8,19 @@ debug(map) import std.stdio;
 
 alias Box!Coords BBox;
 
-alias RTreePtrs!(BBox, Coords) CoordsStorage;    
-
-// temporary bypass function for geometrically zero-sized type Coords
-void addCoord( CoordsStorage rtree, in Coords n )
+struct POI
 {
-    Coords zero_sized;
-    auto box = BBox( n, zero_sized );
+    Coords coords;
+    string tags;
     
-    rtree.addObject( box, n );
-    
-    debug(map) writeln("Added Coords=", n, " boundary=", box);
+    // temporary bypass function for geometrically zero-sized type Coords
+    Coords size() const
+    {
+        return Coords(0,0);
+    }
 }
+
+alias RTreePtrs!(BBox, POI) POIStorage;    
 
 struct Way
 {
@@ -55,7 +56,7 @@ alias RTreePtrs!(BBox, Way) WaysStorage;
 
 struct Layer
 {
-    CoordsStorage POI = new CoordsStorage;
+    POIStorage POI = new POIStorage;
     WaysStorage ways = new WaysStorage;
     
     BBox boundary() const

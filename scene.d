@@ -82,21 +82,21 @@ class Scene
     }
     
     private
-    void drawNodes( in Coords[] nodes, void delegate(Vector2D!(real) coords) drawPoint )
+    void drawPOI( in POI[] poi, void delegate(Vector2D!(real) coords) drawPoint )
     {
-        auto len = nodes.length;
+        auto len = poi.length;
         
         for(auto i = 0; i < len; i++)
         {
             debug(fast) if( i >= 3000 ) break;
             
-            Vector2r node = encodedToMeters( nodes[i] );
+            Vector2r node = encodedToMeters( poi[i].coords );
             
             auto ld = boundary_meters.leftDownCorner;
             auto ld_relative = node - ld;
             auto window_coords = ld_relative * zoom;
             
-            debug(scene) writeln("draw point i=", i, " encoded coords=", nodes[i], " meters=", node, " window_coords=", window_coords);
+            debug(scene) writeln("draw point i=", i, " encoded coords=", poi[i], " meters=", node, " window_coords=", window_coords);
             
             drawPoint( window_coords );
         }
@@ -110,9 +110,9 @@ class Scene
         
         foreach( reg; map.regions )
         {
-            auto nodes = reg.layer0.POI.search( boundary_encoded );
-            debug(scene) writeln("found nodes=", nodes.length);
-            drawNodes( nodes, drawPoint );
+            auto poi = reg.layer0.POI.search( boundary_encoded );
+            debug(scene) writeln("found POI number=", poi.length);
+            drawPOI( poi, drawPoint );
         }
     }
     

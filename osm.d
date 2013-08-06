@@ -4,7 +4,7 @@ import osmpbf.fileformat;
 import osmpbf.osmformat;
 import math.geometry;
 import math.earth;
-import map: Map, Region, MapNode = Coords, addCoord;
+import map: Map, Region, POI, BBox;
 
 import std.stdio;
 import std.string;
@@ -181,10 +181,14 @@ Region getRegion( string filename, bool verbose )
                 {
                     debug(osm) writefln( "id=%d coords=%s", n.id, decodeCoords( prim, n ) );
                     
-                    auto mn = MapNode( n.lon, n.lat );
-                    nodes_coords[n.id] = mn;
+                    nodes_coords[n.id] = Coords( n.lon, n.lat );
                     
-                    res.layer0.POI.addCoord( mn );
+                    POI poi;
+                    poi.coords.lon = n.lon;
+                    poi.coords.lat = n.lat;
+                    
+                    BBox bbox = BBox( poi.coords, poi.size );
+                    res.layer0.POI.addObject( bbox, poi );
                 }
             }
             
