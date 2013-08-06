@@ -251,7 +251,6 @@ Region getRegion( string filename, bool verbose )
                             if( !prim.stringtable.isBannedKey( n.keys[i] ) )
                             {
                                 poi.tags ~= prim.stringtable.getTag( n.keys[i], n.vals[i] )~"\n";
-                                debug(osm) writeln( "id=", n.id, " tags:\n", poi.tags );
                             }
                         
                         // Point contains non-banned tags?
@@ -262,6 +261,8 @@ Region getRegion( string filename, bool verbose )
                             
                             BBox bbox = BBox( poi.coords, poi.size );
                             res.layer0.POI.addObject( bbox, poi );
+                            
+                            debug(osm) writeln( "point id=", n.id, " tags:\n", poi.tags );
                         }
                     }
                 }
