@@ -199,7 +199,6 @@ Region getRegion( string filename, bool verbose )
     
     auto res = new Region;
     Coords[long] nodes_coords;
-    Tag[] tags;
     
     while(true)
     {
@@ -231,6 +230,8 @@ Region getRegion( string filename, bool verbose )
                         
                         BBox bbox = BBox( poi.coords, poi.size );
                         res.layer0.POI.addObject( bbox, poi );
+                        
+                        //debug(osm) writefln( "tags: keys=%d values=%d", n.id, decodeCoords( prim, n ) );
                     }
                 }
             }
@@ -247,12 +248,6 @@ Region getRegion( string filename, bool verbose )
     }
     
     return res;
-}
-
-struct Tag
-{
-    ubyte[] key;
-    ubyte[] value;
 }
 
 Map getMap( string[] filenames, bool verbose )
