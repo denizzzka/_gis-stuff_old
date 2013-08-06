@@ -12,7 +12,6 @@ import std.exception;
 import std.bitmanip: bigEndianToNative;
 import std.zlib;
 import std.math: round;
-import std.typecons: Nullable;
 
 
 struct PureBlob
@@ -102,8 +101,11 @@ Node[] decodeDenseNodes(DenseNodesArray)( DenseNodesArray dn )
         curr.lat += dn.lat[i];
         curr.lon += dn.lon[i];
         
-        curr.keys = tags[i].keys;
-        curr.vals = tags[i].values;
+        if( !dn.keys_vals.isNull && tags[i].keys.length > 0 )
+        {
+            curr.keys = tags[i].keys;
+            curr.vals = tags[i].values;
+        }
         
         res ~= curr;
     }
@@ -126,12 +128,19 @@ Tags[] decodeDenseTags( int[] denseTags )
     {
         Tags t;
         
-        do {
+        while( denseTags[i] != 0 )
+        {
+            enforce( denseTags[i] != 0 );
+            enforce( denseTags[i+1] != 0 );
+            
             t.keys ~= denseTags[i];
-            t.values ~= denseTags[++i];
-            ++i;
-        } while( i < denseTags.length && denseTags[i] != 0 );
+            t.values ~= denseTags[i+1];
+            
+            i += 2;
+            
+        }
         
+        ++i;
         res ~= t;
     }
     
