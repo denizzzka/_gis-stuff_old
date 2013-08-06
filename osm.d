@@ -4,7 +4,7 @@ import osmpbf.fileformat;
 import osmpbf.osmformat;
 import math.geometry;
 import math.earth;
-import map: Map, Region, MapNode = Node, add;
+import map: Map, Region, MapNode = Node, addCoord;
 
 import std.stdio;
 import std.string;
@@ -172,7 +172,7 @@ Region getRegion( string filename, bool verbose )
                     debug(osm) writefln( "id=%d coords=%s", n.id, decodeCoords( prim, n ) );
                     
                     auto mn = MapNode( n.lon, n.lat );
-                    res.layer0.POI.add( mn );
+                    res.layer0.POI.addCoord( mn );
                 }
             }
             

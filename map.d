@@ -13,8 +13,8 @@ alias Box!Coords BBox;
 
 alias RTreePtrs!(BBox, Coords) CoordsStorage;    
 
-// for zero-sized type Coords
-void add( CoordsStorage rtree, Coords n )
+// temporary bypass function for geometrically zero-sized type Coords
+void addCoord( CoordsStorage rtree, in Coords n )
 {
     Coords zero_sized;
     auto box = BBox( n, zero_sized );
@@ -26,7 +26,6 @@ void add( CoordsStorage rtree, Coords n )
 
 struct Layer
 {
-    
     CoordsStorage POI = new CoordsStorage;
     
     BBox boundary() const
