@@ -4,7 +4,7 @@ import osmpbf.fileformat;
 import osmpbf.osmformat;
 import math.geometry;
 import math.earth;
-import map: Map, Region, POI, BBox;
+import map: Map, Region, POI, BBox, POIStorage;
 
 import std.stdio;
 import std.string;
@@ -207,6 +207,43 @@ Coords metersToEncoded( Vector2D!real meters )
     return encoded.round;
 }
 
+void addNodes(
+        ref POIStorage points,
+        ref PrimitiveBlock prim,
+        ref Coords[long] nodes_coords,
+        Node[] nodes
+    )
+{
+    foreach( n; nodes)
+    {
+        nodes_coords[n.id] = Coords( n.lon, n.lat );
+        
+        // Point with tags?
+        if( !n.keys.isNull && n.keys.length > 0 )
+        {
+            POI poi;
+            
+            for( auto i = 0; i < n.keys.length; i++ )
+                if( !prim.stringtable.isBannedKey( n.keys[i] ) )
+                {
+                    poi.tags ~= prim.stringtable.getTag( n.keys[i], n.vals[i] )~"\n";
+                }
+            
+            // Point contains non-banned tags?
+            if( poi.tags.length > 0 )
+            {
+                poi.coords.lon = n.lon;
+                poi.coords.lat = n.lat;
+                
+                BBox bbox = BBox( poi.coords, poi.size );
+                points.addObject( bbox, poi );
+                
+                debug(osm) writeln( "point id=", n.id, " tags:\n", poi.tags );
+            }
+        }
+    }
+}
+
 Region getRegion( string filename, bool verbose )
 {
     void log(T)( T s )
@@ -236,46 +273,14 @@ Region getRegion( string filename, bool verbose )
         
         foreach( i, c; prim.primitivegroup )
         {
-            void addNodes( Node[] nodes )
-            {
-                foreach( n; nodes)
-                {
-                    nodes_coords[n.id] = Coords( n.lon, n.lat );
-                    
-                    // Point with tags?
-                    if( !n.keys.isNull && n.keys.length > 0 )
-                    {
-                        POI poi;
-                        
-                        for( auto i = 0; i < n.keys.length; i++ )
-                            if( !prim.stringtable.isBannedKey( n.keys[i] ) )
-                            {
-                                poi.tags ~= prim.stringtable.getTag( n.keys[i], n.vals[i] )~"\n";
-                            }
-                        
-                        // Point contains non-banned tags?
-                        if( poi.tags.length > 0 )
-                        {
-                            poi.coords.lon = n.lon;
-                            poi.coords.lat = n.lat;
-                            
-                            BBox bbox = BBox( poi.coords, poi.size );
-                            res.layer0.POI.addObject( bbox, poi );
-                            
-                            debug(osm) writeln( "point id=", n.id, " tags:\n", poi.tags );
-                        }
-                    }
-                }
-            }
-            
             if( !c.dense.isNull )
             {
                 auto nodes = decodeDenseNodes( c.dense );
-                addNodes( nodes );
+                res.layer0.POI.addNodes( prim, nodes_coords, nodes );
             }
             
             if( !c.nodes.isNull )
-                addNodes( c.nodes );
+                res.layer0.POI.addNodes( prim, nodes_coords, c.nodes );
         }
     }
     
