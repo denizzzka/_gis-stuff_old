@@ -85,10 +85,8 @@ ubyte[] readOSMData( ref File f )
 Node[] decodeDenseNodes(DenseNodesArray)( DenseNodesArray dn )
 {
     Node[] res;
-    Node curr;
-    curr.id = 0;
-    curr.lat = 0;
-    curr.lon = 0;
+    long curr_id = 0;
+    Coords curr;
     
     Tags[] tags;
     
@@ -98,23 +96,22 @@ Node[] decodeDenseNodes(DenseNodesArray)( DenseNodesArray dn )
     foreach( i, c; dn.id )
     {
         // decode delta
-        curr.id += dn.id[i];
+        curr_id += dn.id[i];
         curr.lat += dn.lat[i];
         curr.lon += dn.lon[i];
         
-        // set or unset tags
+        Node n;
+        n.id = curr_id;
+        n.lat = curr.lat;
+        n.lon = curr.lon;
+        
         if( tags.length > 0 && tags[i].keys.length > 0 )
         {
-            curr.keys = tags[i].keys;
-            curr.vals = tags[i].values;
-        }
-        else
-        {
-            curr.keys.destroy;
-            curr.vals.destroy;
+            n.keys = tags[i].keys;
+            n.vals = tags[i].values;
         }
         
-        res ~= curr;
+        res ~= n;
     }
     
     return res;
