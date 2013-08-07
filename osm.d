@@ -80,7 +80,7 @@ ubyte[] readOSMData( ref File f )
         enforce( d.type == "OSMData", "\""~d.type~"\" instead of OSMData" );
     
     return d.data;
-}    
+}
 
 Node[] decodeDenseNodes(DenseNodesArray)( DenseNodesArray dn )
 {
@@ -102,10 +102,16 @@ Node[] decodeDenseNodes(DenseNodesArray)( DenseNodesArray dn )
         curr.lat += dn.lat[i];
         curr.lon += dn.lon[i];
         
-        if( !dn.keys_vals.isNull && tags[i].keys.length > 0 )
+        // set or unset tags
+        if( tags.length > 0 && tags[i].keys.length > 0 )
         {
             curr.keys = tags[i].keys;
             curr.vals = tags[i].values;
+        }
+        else
+        {
+            curr.keys.destroy;
+            curr.vals.destroy;
         }
         
         res ~= curr;
