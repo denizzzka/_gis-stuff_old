@@ -227,7 +227,7 @@ Coords metersToEncoded( Vector2D!real meters )
     return encoded.round;
 }
 
-void addNodes(
+void addPoints(
         ref POIStorage points,
         ref PrimitiveBlock prim,
         ref Coords[long] nodes_coords,
@@ -299,11 +299,14 @@ Region getRegion( string filename, bool verbose )
             if( !c.dense.isNull )
             {
                 auto nodes = decodeDenseNodes( c.dense );
-                res.layer0.POI.addNodes( prim, nodes_coords, nodes );
+                res.layer0.POI.addPoints( prim, nodes_coords, nodes );
             }
             
             if( !c.nodes.isNull )
-                res.layer0.POI.addNodes( prim, nodes_coords, c.nodes );
+                res.layer0.POI.addPoints( prim, nodes_coords, c.nodes );
+                
+            if( !c.ways.isNull )
+                writeln( "Way found!" );
         }
     }
     
