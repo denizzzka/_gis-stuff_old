@@ -129,7 +129,7 @@ Tags[] decodeDenseTags( int[] denseTags )
     {
         Tags t;
         
-        while( denseTags[i] != 0 )
+        while( i < denseTags.length && denseTags[i] != 0 )
         {
             enforce( denseTags[i] != 0 );
             enforce( denseTags[i+1] != 0 );
@@ -146,6 +146,20 @@ Tags[] decodeDenseTags( int[] denseTags )
     }
     
     return res;
+}
+unittest
+{
+    int[] t = [ 1, 2, 0, 3, 4, 5, 6 ];
+    Tags[] d = decodeDenseTags( t );
+    
+    assert( d[0].keys[0] == 1 );
+    assert( d[0].values[0] == 2 );
+    
+    assert( d[1].keys[0] == 3 );
+    assert( d[1].values[0] == 4 );
+    
+    assert( d[1].keys[1] == 5 );
+    assert( d[1].values[1] == 6 );
 }
 
 string getStringByIndex( in StringTable stringtable, in uint index )
@@ -217,6 +231,9 @@ void addNodes(
     foreach( n; nodes)
     {
         nodes_coords[n.id] = Coords( n.lon, n.lat );
+        
+        long tmp_id = n.id;
+        n.id = tmp_id;
         
         // Point with tags?
         if( !n.keys.isNull && n.keys.length > 0 )
