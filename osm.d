@@ -241,21 +241,24 @@ void addPoints(
         // Point with tags?
         if( !n.keys.isNull && n.keys.length > 0 )
         {
-            Point point;
+            string tags;
             
             for( auto i = 0; i < n.keys.length; i++ )
                 if( !prim.stringtable.isBannedKey( n.keys[i] ) )
                 {
-                    point.tags ~= prim.stringtable.getTag( n.keys[i], n.vals[i] )~"\n";
+                    tags ~= prim.stringtable.getTag( n.keys[i], n.vals[i] )~"\n";
                 }
             
             // Point contains non-banned tags?
-            if( point.tags.length > 0 )
+            if( tags.length > 0 )
             {
-                point.coords.lon = n.lon;
-                point.coords.lat = n.lat;
+                Coords coords;
+                coords.lon = n.lon;
+                coords.lat = n.lat;
                 
-                BBox bbox = BBox( point.coords, point.size );
+                Point point = Point( coords, tags );
+                BBox bbox = BBox( coords, point.size );
+                
                 points.addObject( bbox, point );
                 
                 debug(osm) writeln( "point id=", n.id, " tags:\n", point.tags );

@@ -10,8 +10,27 @@ alias Box!Coords BBox;
 
 struct Point
 {
-    Coords coords;
-    string tags;
+    private
+    {
+        Coords _coords;
+        string _tags;
+    }
+    
+    this( in Coords coords, in string tags )
+    {
+        _coords = coords;
+        _tags = tags;
+    }
+    
+    Coords coords() const
+    {
+        return _coords;
+    }
+    
+    string tags() const
+    {
+        return _tags;
+    }
     
     // temporary bypass function for geometrically zero-sized type Coords
     Coords size() const
