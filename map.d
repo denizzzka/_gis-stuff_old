@@ -47,10 +47,12 @@ struct Way
 {
     private Coords[] nodes;
     
-    void addNode( in Coords n )
+    this( Coords[] nodes )
     {
-        nodes ~= n;
+        this.nodes = nodes;
     }
+    
+    @disable this();
     
     BBox getBoundary() const
     in
