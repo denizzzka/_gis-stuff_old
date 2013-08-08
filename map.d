@@ -33,15 +33,9 @@ struct Point
     {
         return _tags;
     }
-    
-    // temporary bypass function for geometrically zero-sized type Coords
-    Coords size() const
-    {
-        return Coords(0,0);
-    }
 }
 
-alias RTreePtrs!(BBox, Point) PointsStorage;    
+alias RTreePtrs!(BBox, Point) PointsStorage;
 
 struct Way
 {
@@ -72,7 +66,14 @@ struct Way
     }
 }
 
-alias RTreePtrs!(BBox, Way) WaysStorage;    
+alias RTreePtrs!(BBox, Way) WaysStorage;
+
+void addPoint( PointsStorage storage, Point point )
+{
+    BBox bbox = BBox( point.coords, Coords(0,0) );
+    
+    storage.addObject( bbox, point );
+}
 
 void addWay( WaysStorage storage, Way way )
 {

@@ -4,7 +4,7 @@ import osmpbf.fileformat;
 import osmpbf.osmformat;
 import math.geometry;
 import math.earth;
-import map: Map, Region, BBox, Point, PointsStorage, MapWay = Way, WaysStorage, addWay;
+import map: Map, Region, BBox, Point, PointsStorage, MapWay = Way, WaysStorage, addPoint, addWay;
 
 import std.stdio;
 import std.string;
@@ -222,6 +222,16 @@ bool isBannedKey( in StringTable stringtable, in uint key )
     return canFind( banned_tags, cast(char[]) stringtable.s[key] );
 }
 
+bool isPermittedTag( in StringTable stringtable, in uint key )
+{
+    string[] tags = [
+            "building",
+            "highway"
+        ];
+        
+    return canFind( tags, cast(char[]) stringtable.s[key] );
+}
+
 alias Vector2D!long Coords;
 
 private auto decodeGranularCoords( in PrimitiveBlock pb, in Node n )
@@ -287,9 +297,8 @@ void addPoints(
                 coords.lat = n.lat;
                 
                 Point point = Point( coords, tags );
-                BBox bbox = BBox( coords, point.size );
                 
-                points.addObject( bbox, point );
+                points.addPoint( point );
                 
                 debug(osm) writeln( "point id=", n.id, " tags:\n", point.tags );
             }
