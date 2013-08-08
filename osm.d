@@ -177,7 +177,11 @@ MapWay decodeWay( in PrimitiveBlock prim, in Coords[long] nodes_coords, in Way w
         coords ~= nodes_coords[ curr ];
     }
     
-    string tags = prim.stringtable.getTags( way.keys, way.vals );
+    string tags;
+    
+    if( !way.keys.isNull )
+        tags = prim.stringtable.getTags( way.keys, way.vals );
+        
     auto res = MapWay( coords, tags );
     
     return res;
@@ -185,7 +189,11 @@ MapWay decodeWay( in PrimitiveBlock prim, in Coords[long] nodes_coords, in Way w
 
 string getStringByIndex( in StringTable stringtable, in uint index )
 {
-    auto s = cast( char[] ) stringtable.s[index];
+    char[] s;
+    
+    if( !stringtable.s.isNull )
+        s = cast( char[] ) stringtable.s[index];
+        
     return to!string( s );
 }
 
