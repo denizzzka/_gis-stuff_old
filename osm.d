@@ -4,7 +4,7 @@ import osmpbf.fileformat;
 import osmpbf.osmformat;
 import math.geometry;
 import math.earth;
-import map: Map, Region, Point, BBox, PointsStorage, MapWay = Way;
+import map: Map, Region, BBox, Point, PointsStorage, MapWay = Way, WaysStorage, addWay;
 
 import std.stdio;
 import std.string;
@@ -297,6 +297,22 @@ void addPoints(
     }
 }
 
+void addWay(
+        ref WaysStorage storage,
+        ref PrimitiveBlock prim,
+        ref Coords[long] nodes_coords,
+        Way way
+    )
+{
+    MapWay decoded = decodeWay( prim, nodes_coords, way );
+    
+    // way with tags?
+    if( decoded.tags.length > 0 )
+    {
+        storage.addWay( decoded );
+    }
+}
+
 Region getRegion( string filename, bool verbose )
 {
     void log(T)( T s )
@@ -336,7 +352,8 @@ Region getRegion( string filename, bool verbose )
                 res.layer0.POI.addPoints( prim, nodes_coords, c.nodes );
                 
             if( !c.ways.isNull )
-                writeln( "Way found!" );
+                foreach( w; c.ways )
+                    res.layer0.ways.addWay( prim, nodes_coords, w );
         }
     }
     

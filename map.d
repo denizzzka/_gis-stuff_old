@@ -45,11 +45,8 @@ alias RTreePtrs!(BBox, Point) PointsStorage;
 
 struct Way
 {
-    private
-    {
-        Coords[] nodes;
-        string tags;
-    }
+    Coords[] nodes;
+    string tags;
     
     this( Coords[] nodes, in string tags )
     {
@@ -73,14 +70,14 @@ struct Way
         
         return res;
     }
-    
-    Coords[] getNodes()
-    {
-        return nodes;
-    }
 }
 
 alias RTreePtrs!(BBox, Way) WaysStorage;    
+
+void addWay( WaysStorage storage, Way way )
+{
+    storage.addObject( way.getBoundary, way );
+}
 
 struct Layer
 {
