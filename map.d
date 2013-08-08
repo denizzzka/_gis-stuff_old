@@ -22,6 +22,8 @@ struct Point
         _tags = tags;
     }
     
+    @disable this();
+    
     Coords coords() const
     {
         return _coords;
