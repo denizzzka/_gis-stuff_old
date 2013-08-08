@@ -20,7 +20,7 @@ struct Point
     }
 }
 
-alias RTreePtrs!(BBox, Point) POIStorage;    
+alias RTreePtrs!(BBox, Point) PointsStorage;    
 
 struct Way
 {
@@ -56,7 +56,7 @@ alias RTreePtrs!(BBox, Way) WaysStorage;
 
 struct Layer
 {
-    POIStorage POI = new POIStorage;
+    PointsStorage POI = new PointsStorage;
     WaysStorage ways = new WaysStorage;
     
     BBox boundary() const

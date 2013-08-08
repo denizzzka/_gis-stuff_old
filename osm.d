@@ -4,7 +4,7 @@ import osmpbf.fileformat;
 import osmpbf.osmformat;
 import math.geometry;
 import math.earth;
-import map: Map, Region, Point, BBox, POIStorage;
+import map: Map, Region, Point, BBox, PointsStorage;
 
 import std.stdio;
 import std.string;
@@ -225,7 +225,7 @@ Coords metersToEncoded( Vector2D!real meters )
 }
 
 void addPoints(
-        ref POIStorage points,
+        ref PointsStorage points,
         ref PrimitiveBlock prim,
         ref Coords[long] nodes_coords,
         Node[] nodes
