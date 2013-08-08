@@ -4,7 +4,7 @@ import osmpbf.fileformat;
 import osmpbf.osmformat;
 import math.geometry;
 import math.earth;
-import map: Map, Region, Point, BBox, PointsStorage;
+import map: Map, Region, Point, BBox, PointsStorage, MapWay = Way;
 
 import std.stdio;
 import std.string;
@@ -165,15 +165,51 @@ unittest
     assert( d[1].values[1] == 6 );
 }
 
+MapWay decodeWay( in PrimitiveBlock prim, in Coords[long] nodes_coords, in Way way )
+{
+    Coords[] coords;
+    long curr;
+    
+    // decode delta
+    foreach( i, c; way.refs )
+    {
+        curr += c;
+        coords ~= nodes_coords[ curr ];
+    }
+    
+    string tags = prim.stringtable.getTags( way.keys, way.vals );
+    auto res = MapWay( coords, tags );
+    
+    return res;
+}
+
 string getStringByIndex( in StringTable stringtable, in uint index )
 {
     auto s = cast( char[] ) stringtable.s[index];
     return to!string( s );
 }
 
-string getTag( in StringTable stringtable, uint key, uint value )
+string getTag( in StringTable stringtable, in uint key, in uint value )
 {
     return getStringByIndex( stringtable, key ) ~ "=" ~ getStringByIndex( stringtable, value );
+}
+
+string getTags( in StringTable stringtable, in uint[] keys, in uint[] values )
+in
+{
+    assert( keys.length == values.length );
+}
+body
+{
+    string res;
+    
+    for( auto i = 0; i < keys.length; i++ )
+        if( !stringtable.isBannedKey( keys[i] ) )
+        {
+            res ~= stringtable.getTag( keys[i], values[i] )~"\n";
+        }
+        
+    return res;
 }
 
 bool isBannedKey( in StringTable stringtable, in uint key )
@@ -241,13 +277,7 @@ void addPoints(
         // Point with tags?
         if( !n.keys.isNull && n.keys.length > 0 )
         {
-            string tags;
-            
-            for( auto i = 0; i < n.keys.length; i++ )
-                if( !prim.stringtable.isBannedKey( n.keys[i] ) )
-                {
-                    tags ~= prim.stringtable.getTag( n.keys[i], n.vals[i] )~"\n";
-                }
+            string tags = prim.stringtable.getTags( n.keys, n.vals );
             
             // Point contains non-banned tags?
             if( tags.length > 0 )
