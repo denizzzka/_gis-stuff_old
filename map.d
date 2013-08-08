@@ -8,7 +8,7 @@ debug(map) import std.stdio;
 
 alias Box!Coords BBox;
 
-struct POI
+struct Point
 {
     Coords coords;
     string tags;
@@ -20,7 +20,7 @@ struct POI
     }
 }
 
-alias RTreePtrs!(BBox, POI) POIStorage;    
+alias RTreePtrs!(BBox, Point) POIStorage;    
 
 struct Way
 {

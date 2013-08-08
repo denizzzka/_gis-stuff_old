@@ -82,7 +82,7 @@ class Scene
     }
     
     private
-    void drawPOI( in POI[] poi, void delegate(Vector2D!(real) coords) drawPoint )
+    void drawPOI( in Point[] poi, void delegate(Vector2D!(real) coords) drawPoint )
     {
         auto len = poi.length;
         

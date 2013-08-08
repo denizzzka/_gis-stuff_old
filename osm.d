@@ -4,7 +4,7 @@ import osmpbf.fileformat;
 import osmpbf.osmformat;
 import math.geometry;
 import math.earth;
-import map: Map, Region, POI, BBox, POIStorage;
+import map: Map, Region, Point, BBox, POIStorage;
 
 import std.stdio;
 import std.string;
@@ -241,24 +241,24 @@ void addPoints(
         // Point with tags?
         if( !n.keys.isNull && n.keys.length > 0 )
         {
-            POI poi;
+            Point point;
             
             for( auto i = 0; i < n.keys.length; i++ )
                 if( !prim.stringtable.isBannedKey( n.keys[i] ) )
                 {
-                    poi.tags ~= prim.stringtable.getTag( n.keys[i], n.vals[i] )~"\n";
+                    point.tags ~= prim.stringtable.getTag( n.keys[i], n.vals[i] )~"\n";
                 }
             
             // Point contains non-banned tags?
-            if( poi.tags.length > 0 )
+            if( point.tags.length > 0 )
             {
-                poi.coords.lon = n.lon;
-                poi.coords.lat = n.lat;
+                point.coords.lon = n.lon;
+                point.coords.lat = n.lat;
                 
-                BBox bbox = BBox( poi.coords, poi.size );
-                points.addObject( bbox, poi );
+                BBox bbox = BBox( point.coords, point.size );
+                points.addObject( bbox, point );
                 
-                debug(osm) writeln( "point id=", n.id, " tags:\n", poi.tags );
+                debug(osm) writeln( "point id=", n.id, " tags:\n", point.tags );
             }
         }
     }
