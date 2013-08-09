@@ -101,13 +101,12 @@ class Window
     {
 	auto line = new VertexArray( PrimitiveType.Lines, coords.length );
 	
-	foreach( point; coords )
+	foreach( i, point; coords )
 	{
 	    Vector2f c; c = cartesianToSFML( point );
+	    debug(sfml) writeln("draw point, window coords=", c, " window size=", window.size);
 	    
-	    debug(sfml) writeln("draw line point, window coords=", c, " window size=", window.size);
-	    
-	    line.append( Vertex(c, Color.White) );
+	    line[i] = Vertex(c, Color.White);
 	}
 	
 	window.draw( line );

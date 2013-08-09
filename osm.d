@@ -289,9 +289,6 @@ void addPoints(
     {
         nodes_coords[n.id] = Coords( n.lon, n.lat );
         
-        long tmp_id = n.id;
-        n.id = tmp_id;
-        
         // Point with tags?
         if( !n.keys.isNull && n.keys.length > 0 )
         {
@@ -328,6 +325,8 @@ void addWay(
     {
         storage.addWay( decoded );
     }
+    
+    debug(osm) writeln( "add way id=", way.id, " osm first node coords=", nodes_coords[ way.refs[0] ], "\n" );
 }
 
 Region getRegion( string filename, bool verbose )

@@ -114,11 +114,13 @@ class Scene
         {
             Vector2r[]  converted_line;
             
-            foreach( point; line.nodes )
+            foreach( i, point; line.nodes )
             {
                 Vector2r node = encodedToMeters( point );
                 auto window_coords = metersToScreen( node );
-                converted_line ~= node;
+                converted_line ~= window_coords;
+
+                debug(scene) writeln("draw way point i=", i, " encoded coords=", point, " meters=", node, " window_coords=", window_coords);
             }
             
             drawLine( converted_line );
@@ -130,7 +132,7 @@ class Scene
             void delegate(Vector2r[] coords) drawLine
         )
     {
-        debug(scene) writeln("Drawing, window size=", properties.windowPixelSize);
+        debug(scene) writeln("Drawing, window size=", window_size);
         
         calcBoundary();
         
