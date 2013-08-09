@@ -99,7 +99,7 @@ class Window
     
     void drawLine( Vector2r[] coords )
     {
-	auto line = new VertexArray( PrimitiveType.Lines, coords.length );
+	auto line = new VertexArray( PrimitiveType.LinesStrip, coords.length );
 	
 	foreach( i, point; coords )
 	{
