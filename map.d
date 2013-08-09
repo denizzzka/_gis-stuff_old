@@ -105,11 +105,6 @@ class Map
 {
     Region[] regions;
     
-    Region getScene( in BBox box )
-    {
-        return regions[0];
-    }
-    
     BBox boundary() const // FIXME
     {
         return regions[0].boundary;
