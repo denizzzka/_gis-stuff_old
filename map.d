@@ -6,66 +6,104 @@ import osm: Coords, encodedToMeters;
 debug(map) import std.stdio;
 
 
-alias Coords Node;
-alias Vector2D!real Vector2r;
-alias Box!Node BBox;
+alias Box!Coords BBox;
 
-class Region
+struct Point
 {
     private
     {
-        Node[] nodes;
-        
-        alias RTreePtrs!(BBox, size_t) NRT;
-        
-        NRT nodes_rtree;
+        Coords _coords;
+        string _tags;
     }
     
-    this()
+    this( in Coords coords, in string tags )
     {
-        nodes_rtree = new NRT;
+        _coords = coords;
+        _tags = tags;
     }
+    
+    @disable this();
+    
+    Coords coords() const
+    {
+        return _coords;
+    }
+    
+    string tags() const
+    {
+        return _tags;
+    }
+}
+
+alias RTreePtrs!(BBox, Point) PointsStorage;
+
+struct Way
+{
+    Coords[] nodes;
+    string tags;
+    
+    this( Coords[] nodes, in string tags )
+    {
+        this.nodes = nodes;
+        this.tags = tags;
+    }
+    
+    @disable this();
+    
+    BBox getBoundary() const
+    in
+    {
+        assert( nodes.length > 0 );
+    }
+    body
+    {
+        auto res = BBox( nodes[0], Coords(0,0) );
+        
+        for( auto i = 1; i < nodes.length; i++ )
+            res.addCircumscribe( nodes[i] );
+        
+        return res;
+    }
+}
+
+alias RTreePtrs!(BBox, Way) WaysStorage;
+
+void addPoint( PointsStorage storage, Point point )
+{
+    BBox bbox = BBox( point.coords, Coords(0,0) );
+    
+    storage.addObject( bbox, point );
+}
+
+void addWay( WaysStorage storage, Way way )
+{
+    storage.addObject( way.getBoundary, way );
+}
+
+struct Layer
+{
+    PointsStorage POI = new PointsStorage;
+    WaysStorage ways = new WaysStorage;
     
     BBox boundary() const
     {
-        return nodes_rtree.root.getBoundary;
+        return POI.getBoundary;
     }
+}
+
+class Region
+{
+    Layer layer0;
     
-    void addNode( in Node n )
+    BBox boundary() const
     {
-        Coords zero_sized;
-        
-        BBox box = BBox( n, zero_sized );
-        
-        nodes_rtree.addObject( box, nodes.length );
-        nodes ~= n;
-        
-        debug(map) writeln("Node added=", n, " boundary=", box);
+        return layer0.boundary;
     }
-    
-    Node[] searchNodes( in BBox boundary ) const
-    {
-        Node[] res;
-        auto leafs = nodes_rtree.search( boundary );
-        foreach( n; leafs )
-            res ~= nodes[ n.payload ];
-            
-        return res;
-    }
-    
-    // r-tree of ways links to r-tree
-    
-    // kd-tree of POI links to points    
 }
 
 class Map
 {
     Region[] regions;
-    
-    Region getScene( in BBox box )
-    {
-        return regions[0];
-    }
     
     BBox boundary() const // FIXME
     {

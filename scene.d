@@ -4,6 +4,7 @@ import map;
 import math.geometry;
 import osm: Coords, metersToEncoded, encodedToMeters;
 import math.earth: Conv, WGS84, lon2canonical;
+
 import std.conv;
 import std.string;
 import std.math: fmin, fmax;
@@ -81,38 +82,69 @@ class Scene
         boundary_encoded = getEncodedBox( boundary_meters ).roundCircumscribe;
     }
     
-    private
-    void drawNodes( in Node[] nodes, void delegate(Vector2D!(real) coords) drawPoint )
+    private Vector2r metersToScreen( Vector2r from )
     {
-        auto len = nodes.length;
+        auto ld = boundary_meters.leftDownCorner;
+        auto ld_relative = from - ld;
+        auto window_coords = ld_relative * zoom;
         
-        for(auto i = 0; i < len; i++)
+        return window_coords;
+    }
+    
+    private
+    void drawPOI( in Point[] poi, void delegate(Vector2r coords) drawPoint )
+    {
+        for(auto i = 0; i < poi.length; i++)
         {
             debug(fast) if( i >= 3000 ) break;
             
-            Vector2r node = encodedToMeters( nodes[i] );
+            Vector2r node = encodedToMeters( poi[i].coords );
+            auto window_coords = metersToScreen( node );
             
-            auto ld = boundary_meters.leftDownCorner;
-            auto ld_relative = node - ld;
-            auto window_coords = ld_relative * zoom;
-            
-            debug(scene) writeln("draw point i=", i, " encoded coords=", nodes[i], " meters=", node, " window_coords=", window_coords);
+            debug(scene) writeln("draw point i=", i, " encoded coords=", poi[i], " meters=", node, " window_coords=", window_coords);
             
             drawPoint( window_coords );
         }
     }
     
-    void draw( void delegate(Vector2D!(real) coords) drawPoint )
+    private
+    void drawLines( in Way[] lines, void delegate(Vector2r[] coords) drawLine )
     {
-        debug(scene) writeln("Drawing, window size=", properties.windowPixelSize);
+        foreach( line; lines )
+        {
+            Vector2r[]  converted_line;
+            
+            foreach( i, point; line.nodes )
+            {
+                Vector2r node = encodedToMeters( point );
+                auto window_coords = metersToScreen( node );
+                converted_line ~= window_coords;
+
+                debug(scene) writeln("draw way point i=", i, " encoded coords=", point, " meters=", node, " window_coords=", window_coords);
+            }
+            
+            drawLine( converted_line );
+        }
+    }
+    
+    void draw(
+            void delegate(Vector2r coords) drawPoint,
+            void delegate(Vector2r[] coords) drawLine
+        )
+    {
+        debug(scene) writeln("Drawing, window size=", window_size);
         
         calcBoundary();
         
         foreach( reg; map.regions )
         {
-            auto nodes = reg.searchNodes( boundary_encoded );
-            debug(scene) writeln("found nodes=", nodes.length);
-            drawNodes( nodes, drawPoint );
+            auto lines = reg.layer0.ways.search( boundary_encoded );
+            debug(scene) writeln("found ways number=", lines.length);
+            drawLines( lines, drawLine );
+            
+            auto poi = reg.layer0.POI.search( boundary_encoded );
+            debug(scene) writeln("found POI number=", poi.length);
+            drawPOI( poi, drawPoint );
         }
     }
     

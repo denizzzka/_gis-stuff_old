@@ -14,7 +14,9 @@ make -B ARGS="-d -unittest -g -debug -debug=osmpbf"
 If no options are passed "-release" option will be used.
 
 * * *
-![Image](https://raw.github.com/denizzzka/gis-stuff/master/screenshots/hello_world_malta_mercator.png)
+![Image](screenshots/hello_world_malta_mercator.png)
+![Image](screenshots/malta_lines_1.png)
+![Image](screenshots/malta_lines_2.png)
 * * *
 
 Roadmap:
