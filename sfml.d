@@ -61,7 +61,7 @@ class Window
 	    {
 		scene.setWindowSize = window.size;
 		vertex_array = new VertexArray( PrimitiveType.Points, 0 );
-		scene.draw( &drawPoint );
+		scene.draw( &drawPoint, &drawLine );
 		window.draw( vertex_array );
 	    }
 	    
@@ -73,10 +73,7 @@ class Window
     
     void drawPoint( Vector2r coords )
     {
-	// convert Cartesian to SFML coords
-	coords.y = to!real(window.size.y) - coords.y;
-	
-	Vector2f c; c = coords;
+	Vector2f c; c = cartesianToSFML( coords );
 	
 	debug(sfml) writeln("draw point, window coords=", c, " window size=", window.size);
 	
@@ -100,6 +97,21 @@ class Window
 	window.draw( cross );
     }
     
+    void drawLine( Vector2r[] coords )
+    {
+	auto line = new VertexArray( PrimitiveType.LinesStrip, coords.length );
+	
+	foreach( i, point; coords )
+	{
+	    Vector2f c; c = cartesianToSFML( point );
+	    debug(sfml) writeln("draw point, window coords=", c, " window size=", window.size);
+	    
+	    line[i] = Vertex(c, Color.White);
+	}
+	
+	window.draw( line );
+    }
+    
     Vector2f getCenter() const
     {
 	Vector2f c;
@@ -108,6 +120,13 @@ class Window
 	c /= 2;
 	
 	return c;
+    }
+    
+    T cartesianToSFML( T )( ref T from )
+    {
+	from.y = to!real(window.size.y) - from.y;
+	
+	return from;
     }
     
     private void eventsProcessing()

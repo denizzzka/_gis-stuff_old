@@ -4,7 +4,7 @@ import osmpbf.fileformat;
 import osmpbf.osmformat;
 import math.geometry;
 import math.earth;
-import map: Map, Region, MapNode = Node;
+import map: Map, Region, BBox, Point, PointsStorage, MapWay = Way, WaysStorage, addPoint, addWay;
 
 import std.stdio;
 import std.string;
@@ -12,6 +12,7 @@ import std.exception;
 import std.bitmanip: bigEndianToNative;
 import std.zlib;
 import std.math: round;
+import std.algorithm: canFind;
 
 
 struct PureBlob
@@ -79,27 +80,164 @@ ubyte[] readOSMData( ref File f )
         enforce( d.type == "OSMData", "\""~d.type~"\" instead of OSMData" );
     
     return d.data;
-}    
+}
 
 Node[] decodeDenseNodes(DenseNodesArray)( DenseNodesArray dn )
 {
     Node[] res;
-    Node curr;
-    curr.id = 0;
-    curr.lat = 0;
-    curr.lon = 0;
+    long curr_id = 0;
+    Coords curr;
+    
+    Tags[] tags;
+    
+    if( !dn.keys_vals.isNull )
+        tags = decodeDenseTags( dn.keys_vals );
     
     foreach( i, c; dn.id )
     {
         // decode delta
-        curr.id += dn.id[i];
+        curr_id += dn.id[i];
         curr.lat += dn.lat[i];
         curr.lon += dn.lon[i];
         
-        res ~= curr;
+        Node n;
+        n.id = curr_id;
+        n.lat = curr.lat;
+        n.lon = curr.lon;
+        
+        if( tags.length > 0 && tags[i].keys.length > 0 )
+        {
+            n.keys = tags[i].keys;
+            n.vals = tags[i].values;
+        }
+        
+        res ~= n;
     }
     
     return res;
+}
+
+struct Tags
+{
+    uint[] keys;
+    uint[] values;
+}
+
+Tags[] decodeDenseTags( int[] denseTags )
+{
+    Tags[] res;
+    
+    auto i = 0;
+    while( i < denseTags.length )
+    {
+        Tags t;
+        
+        while( i < denseTags.length && denseTags[i] != 0 )
+        {
+            enforce( denseTags[i] != 0 );
+            enforce( denseTags[i+1] != 0 );
+            
+            t.keys ~= denseTags[i];
+            t.values ~= denseTags[i+1];
+            
+            i += 2;
+            
+        }
+        
+        ++i;
+        res ~= t;
+    }
+    
+    return res;
+}
+unittest
+{
+    int[] t = [ 1, 2, 0, 3, 4, 5, 6 ];
+    Tags[] d = decodeDenseTags( t );
+    
+    assert( d[0].keys[0] == 1 );
+    assert( d[0].values[0] == 2 );
+    
+    assert( d[1].keys[0] == 3 );
+    assert( d[1].values[0] == 4 );
+    
+    assert( d[1].keys[1] == 5 );
+    assert( d[1].values[1] == 6 );
+}
+
+MapWay decodeWay( in PrimitiveBlock prim, in Coords[long] nodes_coords, in Way way )
+{
+    Coords[] coords;
+    long curr;
+    
+    // decode delta
+    foreach( i, c; way.refs )
+    {
+        curr += c;
+        coords ~= nodes_coords[ curr ];
+    }
+    
+    string tags;
+    
+    if( !way.keys.isNull )
+        tags = prim.stringtable.getTags( way.keys, way.vals );
+        
+    auto res = MapWay( coords, tags );
+    
+    return res;
+}
+
+string getStringByIndex( in StringTable stringtable, in uint index )
+{
+    char[] s;
+    
+    if( !stringtable.s.isNull )
+        s = cast( char[] ) stringtable.s[index];
+        
+    return to!string( s );
+}
+
+string getTag( in StringTable stringtable, in uint key, in uint value )
+{
+    return getStringByIndex( stringtable, key ) ~ "=" ~ getStringByIndex( stringtable, value );
+}
+
+string getTags( in StringTable stringtable, in uint[] keys, in uint[] values )
+in
+{
+    assert( keys.length == values.length );
+}
+body
+{
+    string res;
+    
+    for( auto i = 0; i < keys.length; i++ )
+        if( !stringtable.isBannedKey( keys[i] ) )
+        {
+            res ~= stringtable.getTag( keys[i], values[i] )~"\n";
+        }
+        
+    return res;
+}
+
+bool isBannedKey( in StringTable stringtable, in uint key )
+{
+    string[] banned_tags = [
+            "created_by",
+            "source"
+        ];
+    
+    return canFind( banned_tags, cast(char[]) stringtable.s[key] );
+}
+
+bool isPermittedTag( in StringTable stringtable, in uint key )
+{
+    string[] tags = [
+            "building",
+            "highway"
+        ];
+        
+    return canFind( tags, cast(char[]) stringtable.s[key] );
 }
 
 alias Vector2D!long Coords;
@@ -140,6 +278,57 @@ Coords metersToEncoded( Vector2D!real meters )
     return encoded.round;
 }
 
+void addPoints(
+        ref PointsStorage points,
+        ref PrimitiveBlock prim,
+        ref Coords[long] nodes_coords,
+        Node[] nodes
+    )
+{
+    foreach( n; nodes)
+    {
+        nodes_coords[n.id] = Coords( n.lon, n.lat );
+        
+        // Point with tags?
+        if( !n.keys.isNull && n.keys.length > 0 )
+        {
+            string tags = prim.stringtable.getTags( n.keys, n.vals );
+            
+            // Point contains non-banned tags?
+            if( tags.length > 0 )
+            {
+                Coords coords;
+                coords.lon = n.lon;
+                coords.lat = n.lat;
+                
+                Point point = Point( coords, tags );
+                
+                points.addPoint( point );
+                
+                debug(osm) writeln( "point id=", n.id, " tags:\n", point.tags );
+            }
+        }
+    }
+}
+
+void addWay(
+        ref WaysStorage storage,
+        ref PrimitiveBlock prim,
+        ref Coords[long] nodes_coords,
+        Way way
+    )
+{
+    MapWay decoded = decodeWay( prim, nodes_coords, way );
+    
+    // way with tags?
+    if( decoded.tags.length > 0 )
+    {
+        storage.addWay( decoded );
+    }
+    
+    debug(osm) writeln( "add way id=", way.id, " osm first node coords=", nodes_coords[ way.refs[0] ], "\n" );
+}
+
 Region getRegion( string filename, bool verbose )
 {
     void log(T)( T s )
@@ -153,6 +342,7 @@ Region getRegion( string filename, bool verbose )
     auto h = readOSMHeader( f );
     
     auto res = new Region;
+    Coords[long] nodes_coords;
     
     while(true)
     {
@@ -160,30 +350,26 @@ Region getRegion( string filename, bool verbose )
         if(d.length == 0 ) break; // eof
         
         auto prim = PrimitiveBlock( d );
+        
         debug(osm) writefln("lat_offset=%d lon_offset=%d", prim.lat_offset, prim.lon_offset );
         debug(osm) writeln("granularity=", prim.granularity);
         
+        //prim.stringtable;
+        
         foreach( i, c; prim.primitivegroup )
         {
-            void addNodes( Node[] nodes )
-            {
-                foreach( n; nodes)
-                {
-                    debug(osm) writefln( "id=%d coords=%s", n.id, decodeCoords( prim, n ) );
-                    
-                    auto mn = MapNode( n.lon, n.lat );
-                    res.addNode( mn );
-                }
-            }
-            
             if( !c.dense.isNull )
             {
                 auto nodes = decodeDenseNodes( c.dense );
-                addNodes( nodes );
+                res.layer0.POI.addPoints( prim, nodes_coords, nodes );
             }
             
             if( !c.nodes.isNull )
-                addNodes( c.nodes );
+                res.layer0.POI.addPoints( prim, nodes_coords, c.nodes );
+                
+            if( !c.ways.isNull )
+                foreach( w; c.ways )
+                    res.layer0.ways.addWay( prim, nodes_coords, w );
         }
     }
     
