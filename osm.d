@@ -14,7 +14,6 @@ import std.exception;
 import std.bitmanip: bigEndianToNative;
 import std.zlib;
 import std.math: round;
-import std.algorithm: canFind;
 
 
 struct PureBlob
@@ -189,42 +188,6 @@ MapWay decodeWay( in PrimitiveBlock prim, in Coords[long] nodes_coords, in Way w
     return res;
 }
 
-bool isBannedKey( in StringTable stringtable, in uint key )
-{
-    string[] banned_tags = [
-            "created_by",
-            "source"
-        ];
-    
-    return canFind( banned_tags, cast(char[]) stringtable.s[key] );
-}
-
-bool isPermittedTag( in StringTable stringtable, in uint key )
-{
-    string[] tags = [
-            "building",
-            "highway"
-        ];
-        
-    return canFind( tags, cast(char[]) stringtable.s[key] );
-}
-
-categories.Point getPointType( Node node )
-{
-    categories.Point[ string ] types;
-    
-    types["building"] = categories.Point.MARKET;
-    types["highway"] = categories.Point.MARKET;
-    types["boundary"] = categories.Point.MARKET;
-    
-    auto p = ( "highway" in types );
-    
-    if( p !is null )
-        return *p;
-    else
-        return categories.Point.OTHER;
-}
-
 alias Vector2D!long Coords;
 
 private auto decodeGranularCoords( in PrimitiveBlock pb, in Node n )
@@ -274,24 +237,20 @@ void addPoints(
     {
         nodes_coords[n.id] = Coords( n.lon, n.lat );
         
-        // Point with tags?
-        if( !n.keys.isNull && n.keys.length > 0 )
+        string tags = prim.stringtable.getTags( n ).toString;
+        
+        // Point contains tags?
+        if( tags.length > 0 )
         {
-            string tags = prim.stringtable.getTags( n.keys, n.vals ).toString;
+            Coords coords;
+            coords.lon = n.lon;
+            coords.lat = n.lat;
             
-            // Point contains non-banned tags?
-            if( tags.length > 0 )
-            {
-                Coords coords;
-                coords.lon = n.lon;
-                coords.lat = n.lat;
-                
-                Point point = Point( coords, tags );
-                
-                points.addPoint( point );
-                
-                debug(osm) writeln( "point id=", n.id, " tags:\n", point.tags );
-            }
+            Point point = Point( coords, tags );
+            
+            points.addPoint( point );
+            
+            debug(osm) writeln( "point id=", n.id, " tags:\n", point.tags );
         }
     }
 }

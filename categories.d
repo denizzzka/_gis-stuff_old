@@ -3,7 +3,8 @@ enum Point
 {
     OTHER,
     MARKET,
-    POLICE
+    POLICE,
+    UNSUPPORTED
 }
 
 enum Line
@@ -11,5 +12,6 @@ enum Line
     OTHER,
     BUILDING,
     ROAD,
-    BOUNDARY
+    BOUNDARY,
+    UNSUPPORTED
 }

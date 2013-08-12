@@ -1,4 +1,4 @@
-import osmpbf.osmformat: StringTable;
+import osmpbf.osmformat: StringTable, Node;
 import categories;
 
 import std.conv: to;
@@ -56,4 +56,36 @@ body
         res ~= stringtable.getTag( keys[i], values[i] );
             
     return res;
+}
+
+Tag[] getTags( in StringTable stringtable, in Node node )
+{
+    if( !node.keys.isNull && node.keys.length > 0 )
+        return stringtable.getTags( node.keys, node.vals );
+    else
+        return null;
+}
+
+categories.Point getPointType( in StringTable stringtable, in Node node )
+{
+    categories.Point[ string ] types;
+    
+    types["building"] = Point.MARKET;
+    types["highway"] = Point.MARKET;
+    types["boundary"] = Point.MARKET;
+    
+    auto tags = stringtable.getTags( node );
+    /*
+    foreach( c; tags )
+    {
+        auto p = ( "highway" in types );
+        
+        if( p !is null )
+            return *p;
+        else
+            return Point.UNSUPPORTED;
+    }
+    */
+    
+    return Point.UNSUPPORTED;
 }
