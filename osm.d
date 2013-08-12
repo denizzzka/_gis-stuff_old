@@ -6,6 +6,7 @@ import math.geometry;
 import math.earth;
 import map: Map, Region, BBox, Point, PointsStorage, MapWay = Way, WaysStorage, addPoint, addWay;
 import categories;
+import osm_tags_parsing;
 
 import std.stdio;
 import std.string;
@@ -181,43 +182,10 @@ MapWay decodeWay( in PrimitiveBlock prim, in Coords[long] nodes_coords, in Way w
     string tags;
     
     if( !way.keys.isNull )
-        tags = prim.stringtable.getTags( way.keys, way.vals );
-        
+        tags = prim.stringtable.getTags( way.keys, way.vals ).toString();
+    
     auto res = MapWay( coords, tags );
     
-    return res;
-}
-
-string getStringByIndex( in StringTable stringtable, in uint index )
-{
-    char[] s;
-    
-    if( !stringtable.s.isNull )
-        s = cast( char[] ) stringtable.s[index];
-        
-    return to!string( s );
-}
-
-string getTag( in StringTable stringtable, in uint key, in uint value )
-{
-    return getStringByIndex( stringtable, key ) ~ "=" ~ getStringByIndex( stringtable, value );
-}
-
-string getTags( in StringTable stringtable, in uint[] keys, in uint[] values )
-in
-{
-    assert( keys.length == values.length );
-}
-body
-{
-    string res;
-    
-    for( auto i = 0; i < keys.length; i++ )
-        if( !stringtable.isBannedKey( keys[i] ) )
-        {
-            res ~= stringtable.getTag( keys[i], values[i] )~"\n";
-        }
-        
     return res;
 }
 
@@ -309,7 +277,7 @@ void addPoints(
         // Point with tags?
         if( !n.keys.isNull && n.keys.length > 0 )
         {
-            string tags = prim.stringtable.getTags( n.keys, n.vals );
+            string tags = prim.stringtable.getTags( n.keys, n.vals ).toString;
             
             // Point contains non-banned tags?
             if( tags.length > 0 )
