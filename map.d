@@ -4,6 +4,7 @@ import math.geometry;
 import math.rtree2d;
 import osm: Coords, encodedToMeters;
 import cat = categories;
+import sfml: Color; // TODO: temporary, remove it
 
 debug(map) import std.stdio;
 
@@ -69,6 +70,14 @@ struct Way
             res.addCircumscribe( nodes[i] );
         
         return res;
+    }
+    
+    Color color() const
+    {
+        if( type == cat.Line.BUILDING )
+            return Color( 0xf7, 0xc3, 0x94 );
+        else
+            return Color( 0xff, 0xff, 0xff );
     }
 }
 
