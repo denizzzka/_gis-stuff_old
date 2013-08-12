@@ -3,6 +3,8 @@ module map;
 import math.geometry;
 import math.rtree2d;
 import osm: Coords, encodedToMeters;
+import cat = categories;
+
 debug(map) import std.stdio;
 
 
@@ -13,12 +15,14 @@ struct Point
     private
     {
         Coords _coords;
+        cat.Point _type;
         string _tags;
     }
     
-    this( in Coords coords, in string tags )
+    this( in Coords coords, in cat.Point type, in string tags )
     {
         _coords = coords;
+        _type = type;
         _tags = tags;
     }
     

@@ -2,6 +2,7 @@ import osmpbf.osmformat: StringTable, Node;
 import categories;
 
 import std.conv: to;
+import std.algorithm: canFind;
 
 
 string getStringByIndex( in StringTable stringtable, in uint index )
@@ -66,26 +67,55 @@ Tag[] getTags( in StringTable stringtable, in Node node )
         return null;
 }
 
+Tag[] searchTags( in Tag[] tags, in string[] keys )
+{
+    Tag[] res;
+    
+    foreach( t; tags )
+        if( canFind( keys, t.key ) )
+            res ~= t;
+            
+    return res;
+}
+
 categories.Point getPointType( in StringTable stringtable, in Node node )
 {
-    categories.Point[ string ] types;
-    
-    types["building"] = Point.MARKET;
-    types["highway"] = Point.MARKET;
-    types["boundary"] = Point.MARKET;
-    
     auto tags = stringtable.getTags( node );
-    /*
-    foreach( c; tags )
+    
+    categories.Point[] types;
+    
+    foreach( t; tags )
     {
-        auto p = ( "highway" in types );
+        auto tag_type = tags.examPointTag( t );
         
-        if( p !is null )
-            return *p;
-        else
-            return Point.UNSUPPORTED;
+        if( tag_type != Point.UNSUPPORTED )
+            return tag_type;
     }
-    */
     
     return Point.UNSUPPORTED;
+}
+
+categories.Point examPointTag( Tag[] tags, Tag tag )
+{
+    auto t = tag;
+    
+    with( Point )
+    {
+        switch( t.key )
+        {
+            case "amenity":
+                if( t.value == "shop" )
+                    return SHOP;
+                break;
+                
+            case "leisure":
+                return LEISURE;
+                break;
+                
+            default:
+                return UNSUPPORTED;
+        }
+        
+        return Point.UNSUPPORTED;
+    }
 }

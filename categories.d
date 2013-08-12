@@ -2,7 +2,8 @@
 enum Point
 {
     OTHER,
-    MARKET,
+    SHOP,
+    LEISURE,
     POLICE,
     UNSUPPORTED
 }

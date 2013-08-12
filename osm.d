@@ -5,7 +5,7 @@ import osmpbf.osmformat;
 import math.geometry;
 import math.earth;
 import map: Map, Region, BBox, Point, PointsStorage, MapWay = Way, WaysStorage, addPoint, addWay;
-import categories;
+import cat = categories;
 import osm_tags_parsing;
 
 import std.stdio;
@@ -237,16 +237,18 @@ void addPoints(
     {
         nodes_coords[n.id] = Coords( n.lon, n.lat );
         
-        string tags = prim.stringtable.getTags( n ).toString;
-        
         // Point contains tags?
-        if( tags.length > 0 )
+        auto type = prim.stringtable.getPointType( n );
+        
+        if( type != cat.Point.UNSUPPORTED )
         {
             Coords coords;
             coords.lon = n.lon;
             coords.lat = n.lat;
             
-            Point point = Point( coords, tags );
+            string tags = prim.stringtable.getTags( n ).toString;
+            
+            Point point = Point( coords, prim.stringtable.getPointType( n ), tags );
             
             points.addPoint( point );
             
