@@ -44,11 +44,13 @@ alias RTreePtrs!(BBox, Point) PointsStorage;
 struct Way
 {
     Coords[] nodes;
+    cat.Line type;
     string tags;
     
-    this( Coords[] nodes, in string tags )
+    this( Coords[] nodes, in cat.Line type, in string tags )
     {
         this.nodes = nodes;
+        this.type = type;
         this.tags = tags;
     }
     

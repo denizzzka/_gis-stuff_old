@@ -183,7 +183,7 @@ MapWay decodeWay( in PrimitiveBlock prim, in Coords[long] nodes_coords, in Way w
     if( !way.keys.isNull )
         tags = prim.stringtable.getTagsByArray( way.keys, way.vals ).toString();
     
-    auto res = MapWay( coords, tags );
+    auto res = MapWay( coords, prim.stringtable.getLineType( way ), tags );
     
     return res;
 }
@@ -237,9 +237,9 @@ void addPoints(
     {
         nodes_coords[n.id] = Coords( n.lon, n.lat );
         
-        // Point contains tags?
         auto type = prim.stringtable.getPointType( n );
         
+        // Point contains understandable tags?
         if( type != cat.Point.UNSUPPORTED )
         {
             Coords coords;
@@ -263,16 +263,17 @@ void addWay(
         ref Coords[long] nodes_coords,
         Way way
     )
-{
-    MapWay decoded = decodeWay( prim, nodes_coords, way );
+{    
+    auto type = prim.stringtable.getLineType( way );
     
-    // way with tags?
-    if( decoded.tags.length > 0 )
+    // Way contains understandable tags?
+    if( type != cat.Line.UNSUPPORTED )
     {
+        MapWay decoded = decodeWay( prim, nodes_coords, way );
         storage.addWay( decoded );
-    }
-    
-    debug(osm) writeln( "add way id=", way.id, " osm first node coords=", nodes_coords[ way.refs[0] ], "\n" );
+        
+        debug(osm) writeln( "add way id=", way.id, " osm first node coords=", nodes_coords[ way.refs[0] ], "\n" );
+    }    
 }
 
 Region getRegion( string filename, bool verbose )

@@ -68,6 +68,7 @@ if( is( T == Node ) || is( T == Way ) )
         return null;
 }
 
+@disable // unused func
 Tag[] searchTags( in Tag[] tags, in string[] keys )
 {
     Tag[] res;
@@ -119,7 +120,7 @@ Point examNodeTag( Tag[] tags, Tag tag )
     }
 }
 
-Line getWayType( in StringTable stringtable, in Way way )
+Line getLineType( in StringTable stringtable, in Way way )
 {
     auto tags = stringtable.getTags( way );
     
