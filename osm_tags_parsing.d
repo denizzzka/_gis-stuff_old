@@ -1,4 +1,4 @@
-import osmpbf.osmformat: StringTable, Node;
+import osmpbf.osmformat: StringTable, Node, Way;
 import categories;
 
 import std.conv: to;
@@ -44,7 +44,7 @@ string toString( in Tag[] from )
     return res;
 }
 
-Tag[] getTags( in StringTable stringtable, in uint[] keys, in uint[] values )
+Tag[] getTagsByArray( in StringTable stringtable, in uint[] keys, in uint[] values )
 in
 {
     assert( keys.length == values.length );
@@ -59,10 +59,11 @@ body
     return res;
 }
 
-Tag[] getTags( in StringTable stringtable, in Node node )
+Tag[] getTags(T)( in StringTable stringtable, in T obj )
+if( is( T == Node ) || is( T == Way ) )
 {
-    if( !node.keys.isNull && node.keys.length > 0 )
-        return stringtable.getTags( node.keys, node.vals );
+    if( !obj.keys.isNull && obj.keys.length > 0 )
+        return stringtable.getTagsByArray( obj.keys, obj.vals );
     else
         return null;
 }
@@ -78,15 +79,13 @@ Tag[] searchTags( in Tag[] tags, in string[] keys )
     return res;
 }
 
-categories.Point getPointType( in StringTable stringtable, in Node node )
+Point getPointType( in StringTable stringtable, in Node node )
 {
     auto tags = stringtable.getTags( node );
     
-    categories.Point[] types;
-    
     foreach( t; tags )
     {
-        auto tag_type = tags.examPointTag( t );
+        auto tag_type = examNodeTag( tags, t );
         
         if( tag_type != Point.UNSUPPORTED )
             return tag_type;
@@ -95,7 +94,7 @@ categories.Point getPointType( in StringTable stringtable, in Node node )
     return Point.UNSUPPORTED;
 }
 
-categories.Point examPointTag( Tag[] tags, Tag tag )
+Point examNodeTag( Tag[] tags, Tag tag )
 {
     auto t = tag;
     
@@ -116,6 +115,45 @@ categories.Point examPointTag( Tag[] tags, Tag tag )
                 return UNSUPPORTED;
         }
         
-        return Point.UNSUPPORTED;
+        return UNSUPPORTED;
+    }
+}
+
+Line getWayType( in StringTable stringtable, in Way way )
+{
+    auto tags = stringtable.getTags( way );
+    
+    foreach( t; tags )
+    {
+        auto tag_type = examWayTag( tags, t );
+        
+        if( tag_type != Line.UNSUPPORTED )
+            return tag_type;
+    }
+    
+    return Line.UNSUPPORTED;
+}
+
+Line examWayTag( Tag[] tags, Tag tag )
+{
+    auto t = tag;
+    
+    with( Line )
+    {
+        switch( t.key )
+        {
+            case "highway":
+                return ROAD;
+                break;
+                
+            case "building":
+                return BUILDING;
+                break;
+                
+            default:
+                return UNSUPPORTED;
+        }
+        
+        return UNSUPPORTED;
     }
 }

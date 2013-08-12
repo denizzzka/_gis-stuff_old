@@ -181,7 +181,7 @@ MapWay decodeWay( in PrimitiveBlock prim, in Coords[long] nodes_coords, in Way w
     string tags;
     
     if( !way.keys.isNull )
-        tags = prim.stringtable.getTags( way.keys, way.vals ).toString();
+        tags = prim.stringtable.getTagsByArray( way.keys, way.vals ).toString();
     
     auto res = MapWay( coords, tags );
     
