@@ -5,6 +5,7 @@ import osmpbf.osmformat;
 import math.geometry;
 import math.earth;
 import map: Map, Region, BBox, Point, PointsStorage, MapWay = Way, WaysStorage, addPoint, addWay;
+import categories;
 
 import std.stdio;
 import std.string;
@@ -238,6 +239,22 @@ bool isPermittedTag( in StringTable stringtable, in uint key )
         ];
         
     return canFind( tags, cast(char[]) stringtable.s[key] );
+}
+
+categories.Point getPointType( Node node )
+{
+    categories.Point[ string ] types;
+    
+    types["building"] = categories.Point.MARKET;
+    types["highway"] = categories.Point.MARKET;
+    types["boundary"] = categories.Point.MARKET;
+    
+    auto p = ( "highway" in types );
+    
+    if( p !is null )
+        return *p;
+    else
+        return categories.Point.OTHER;
 }
 
 alias Vector2D!long Coords;
