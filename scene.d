@@ -70,13 +70,12 @@ class POV
         auto leftDownCorner = center - b_size/2;
         
         boundary_meters = Box!Vector2r( leftDownCorner, b_size );            
-        auto boundary_encoded = getEncodedBox( boundary_meters ).roundCircumscribe;
+        boundary_encoded = getEncodedBox( boundary_meters ).roundCircumscribe;
         
         return boundary_encoded;
     }
     
-    private
-    Vector2r metersToScreen( Vector2r from )
+    Vector2r metersToScreen( Vector2r from ) const
     {
         auto ld = boundary_meters.leftDownCorner;
         auto ld_relative = from - ld;
@@ -97,7 +96,7 @@ class POV
             
             debug(scene) writeln("draw point i=", i, " encoded coords=", poi[i], " meters=", node, " window_coords=", window_coords);
             
-            window.drawPoint( window_coords );
+            //window.drawPoint( window_coords );
         }
     }
     
@@ -121,6 +120,7 @@ class POV
         }
     }
     
+    //@disable
     void draw(T)( T window )
     {
         debug(scene) writeln("Drawing, window size=", window_size);

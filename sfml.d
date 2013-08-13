@@ -60,7 +60,13 @@ class Window
 	    if( scene )
 	    {
 		vertex_array = new VertexArray( PrimitiveType.Points, 0 );
-		scene.draw( this );
+		
+		//scene.draw( this );
+		
+		scene.calcBoundary( this );
+		auto pois = scene.getPOIs();
+		drawPOIs( pois );
+		
 		window.draw( vertex_array );
 	    }
 	    
@@ -70,13 +76,19 @@ class Window
 	}
     }
     
-    void drawPoint( Vector2r coords )
+    private
+    void drawPOIs( in Point[] poi )
     {
-	Vector2f c; c = cartesianToSFML( coords );
-	
-	debug(sfml) writeln("draw point, window coords=", c, " window size=", window.size);
-	
-	vertex_array.append( Vertex(c, Color.Yellow) );
+        for(auto i = 0; i < poi.length; i++)
+        {
+            Vector2r node = encodedToMeters( poi[i].coords );
+            auto window_coords = scene.metersToScreen( node );
+            
+            debug(sfml) writeln("draw point i=", i, " encoded coords=", poi[i], " meters=", node, " window_coords=", window_coords);
+            
+	    Vector2f c; c = cartesianToSFML(window_coords );
+	    vertex_array.append( Vertex(c, Color.Cyan) );
+        }
     }
     
     void drawCenter()
