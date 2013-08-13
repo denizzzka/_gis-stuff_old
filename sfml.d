@@ -64,8 +64,12 @@ class Window
 		//scene.draw( this );
 		
 		scene.calcBoundary( this );
+		
 		auto pois = scene.getPOIs();
 		drawPOIs( pois );
+		
+		auto lines = scene.getLines();
+		drawLines( lines );
 		
 		window.draw( vertex_array );
 	    }
@@ -91,6 +95,26 @@ class Window
         }
     }
     
+    private
+    void drawLines( in Way[] lines )
+    {
+        foreach( line; lines )
+        {
+            Vector2r[]  line_points;
+            
+            foreach( i, node; line.nodes )
+            {
+                Vector2r point = encodedToMeters( node );
+                auto window_coords = scene.metersToScreen( point );
+                line_points ~= window_coords;
+
+                debug(sfml) writeln("draw line point i=", i, " encoded coords=", point, " meters=", node, " window_coords=", window_coords);
+            }
+            
+            drawLine( line_points, line.color );
+        }
+    }
+    
     void drawCenter()
     {
 	auto c = getCenter();
@@ -108,6 +132,7 @@ class Window
 	window.draw( cross );
     }
     
+    private
     void drawLine( Vector2r[] coords, Color color )
     {
 	debug(sfml) writeln("draw line, nodes num=", coords.length, " color=", color);
