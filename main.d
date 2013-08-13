@@ -36,7 +36,7 @@ void main( string[] args )
         auto map = getMap( args[1..$], verbose );
     }
     
-    window.scene = new Scene( map );
+    window.scene = new POV( map );
     
     window.scene.centerToWholeMap;
     window.scene.zoomToWholeMap( window.window.size );

@@ -30,7 +30,7 @@ struct Vector2f
 
 class Window
 {
-    Scene scene;
+    POV scene;
     RenderWindow window;    
     
     private
