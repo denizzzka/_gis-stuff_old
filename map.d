@@ -107,11 +107,6 @@ void addPoint( PointsStorage storage, Point point )
     storage.addObject( bbox, point );
 }
 
-void addWay( WaysStorage storage, Way way )
-{
-    storage.addObject( way.getBoundary, way );
-}
-
 struct Layer
 {
     PointsStorage POI = new PointsStorage;
@@ -125,11 +120,21 @@ struct Layer
 
 class Region
 {
-    Layer layer0;
+    Layer[3] layers;
     
     BBox boundary() const
     {
-        return layer0.boundary;
+        return layers[0].boundary; // FIXME
+    }
+    
+    void addPoint( Point point )
+    {
+        layers[0].POI.addPoint( point );
+    }
+    
+    void addWay( Way way )
+    {
+        layers[0].ways.addObject( way.getBoundary, way );
     }
 }
 
@@ -137,8 +142,8 @@ class Map
 {
     Region[] regions;
     
-    BBox boundary() const // FIXME
+    BBox boundary() const
     {
-        return regions[0].boundary;
+        return regions[0].boundary; // FIXME
     }
 }

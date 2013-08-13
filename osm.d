@@ -4,7 +4,7 @@ import osmpbf.fileformat;
 import osmpbf.osmformat;
 import math.geometry;
 import math.earth;
-import map: Map, Region, BBox, Point, PointsStorage, MapWay = Way, WaysStorage, addPoint, addWay;
+import map: Map, Region, BBox, Point, PointsStorage, MapWay = Way, WaysStorage, addPoint;
 import cat = categories;
 import osm_tags_parsing;
 
@@ -227,7 +227,7 @@ Coords metersToEncoded( Vector2D!real meters )
 }
 
 void addPoints(
-        ref PointsStorage points,
+        ref Region region,
         ref PrimitiveBlock prim,
         ref Coords[long] nodes_coords,
         Node[] nodes
@@ -250,7 +250,7 @@ void addPoints(
             
             Point point = Point( coords, prim.stringtable.getPointType( n ), tags );
             
-            points.addPoint( point );
+            region.addPoint( point );
             
             debug(osm) writeln( "point id=", n.id, " tags:\n", point.tags );
         }
@@ -258,7 +258,7 @@ void addPoints(
 }
 
 void addWay(
-        ref WaysStorage storage,
+        ref Region region,
         ref PrimitiveBlock prim,
         ref Coords[long] nodes_coords,
         Way way
@@ -270,7 +270,7 @@ void addWay(
     if( type != cat.Line.UNSUPPORTED )
     {
         MapWay decoded = decodeWay( prim, nodes_coords, way );
-        storage.addWay( decoded );
+        region.addWay( decoded );
         
         debug(osm) writeln( "add way id=", way.id, " osm first node coords=", nodes_coords[ way.refs[0] ], "\n" );
     }    
@@ -301,22 +301,20 @@ Region getRegion( string filename, bool verbose )
         debug(osm) writefln("lat_offset=%d lon_offset=%d", prim.lat_offset, prim.lon_offset );
         debug(osm) writeln("granularity=", prim.granularity);
         
-        //prim.stringtable;
-        
         foreach( i, c; prim.primitivegroup )
         {
             if( !c.dense.isNull )
             {
                 auto nodes = decodeDenseNodes( c.dense );
-                res.layer0.POI.addPoints( prim, nodes_coords, nodes );
+                addPoints( res, prim, nodes_coords, nodes );
             }
             
             if( !c.nodes.isNull )
-                res.layer0.POI.addPoints( prim, nodes_coords, c.nodes );
+                addPoints( res, prim, nodes_coords, c.nodes );
                 
             if( !c.ways.isNull )
                 foreach( w; c.ways )
-                    res.layer0.ways.addWay( prim, nodes_coords, w );
+                    addWay( res, prim, nodes_coords, w );
         }
     }
     
