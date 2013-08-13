@@ -92,7 +92,7 @@ class Scene
     }
     
     private
-    void drawPOI( in Point[] poi, void delegate(Vector2r coords) drawPoint )
+    void drawPOI(T)( T window, in Point[] poi )
     {
         for(auto i = 0; i < poi.length; i++)
         {
@@ -103,12 +103,12 @@ class Scene
             
             debug(scene) writeln("draw point i=", i, " encoded coords=", poi[i], " meters=", node, " window_coords=", window_coords);
             
-            drawPoint( window_coords );
+            window.drawPoint( window_coords );
         }
     }
     
     private
-    void drawLines( in Way[] lines, void delegate(Vector2r[] coords) drawLine )
+    void drawLines(T)( T window, in Way[] lines )
     {
         foreach( line; lines )
         {
@@ -123,14 +123,11 @@ class Scene
                 debug(scene) writeln("draw way point i=", i, " encoded coords=", point, " meters=", node, " window_coords=", window_coords);
             }
             
-            drawLine( converted_line );
+            window.drawLine( converted_line );
         }
     }
     
-    void draw(
-            void delegate(Vector2r coords) drawPoint,
-            void delegate(Vector2r[] coords) drawLine
-        )
+    void draw(T)( T window )
     {
         debug(scene) writeln("Drawing, window size=", window_size);
         
@@ -140,11 +137,11 @@ class Scene
         {
             auto lines = reg.layer0.ways.search( boundary_encoded );
             debug(scene) writeln("found ways number=", lines.length);
-            drawLines( lines, drawLine );
+            drawLines( window, lines );
             
             auto poi = reg.layer0.POI.search( boundary_encoded );
             debug(scene) writeln("found POI number=", poi.length);
-            drawPOI( poi, drawPoint );
+            drawPOI( window, poi );
         }
     }
     

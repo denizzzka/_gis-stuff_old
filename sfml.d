@@ -61,7 +61,7 @@ class Window
 	    {
 		scene.setWindowSize = window.size;
 		vertex_array = new VertexArray( PrimitiveType.Points, 0 );
-		scene.draw( &drawPoint, &drawLine );
+		scene.draw( this );
 		window.draw( vertex_array );
 	    }
 	    
