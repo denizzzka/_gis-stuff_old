@@ -96,16 +96,18 @@ class Window
 	window.draw( cross );
     }
     
-    void drawLine( Vector2r[] coords )
+    void drawLine( Vector2r[] coords, Color color )
     {
+	debug(sfml) writeln("draw line, nodes num=", coords.length, " color=", color);
+	
 	auto line = new VertexArray( PrimitiveType.LinesStrip, coords.length );
 	
 	foreach( i, point; coords )
 	{
 	    Vector2f c; c = cartesianToSFML( point );
-	    debug(sfml) writeln("draw point, window coords=", c, " window size=", window.size);
+	    debug(sfml) writeln("draw line node, window coords=", c);
 	    
-	    line[i] = Vertex(c, Color.White);
+	    line[i] = Vertex(c, color);
 	}
 	
 	window.draw( line );

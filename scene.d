@@ -105,18 +105,18 @@ class Scene
     {
         foreach( line; lines )
         {
-            Vector2r[]  converted_line;
+            Vector2r[]  line_points;
             
-            foreach( i, point; line.nodes )
+            foreach( i, node; line.nodes )
             {
-                Vector2r node = encodedToMeters( point );
-                auto window_coords = metersToScreen( node );
-                converted_line ~= window_coords;
+                Vector2r point = encodedToMeters( node );
+                auto window_coords = metersToScreen( point );
+                line_points ~= window_coords;
 
                 debug(scene) writeln("draw way point i=", i, " encoded coords=", point, " meters=", node, " window_coords=", window_coords);
             }
             
-            window.drawLine( converted_line );
+            window.drawLine( line_points, line.color );
         }
     }
     
