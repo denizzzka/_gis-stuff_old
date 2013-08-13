@@ -4,6 +4,7 @@ import map;
 import math.geometry;
 import osm: Coords, metersToEncoded, encodedToMeters;
 import math.earth: Conv, WGS84, lon2canonical;
+import map: Point, Way;
 
 import std.conv;
 import std.string;
@@ -122,8 +123,6 @@ class POV
     
     void draw(T)( T window )
     {
-        //window_size = window.getWindowSize();
-        
         debug(scene) writeln("Drawing, window size=", window_size);
         
         auto boundary_encoded = calcBoundary( window );
@@ -138,6 +137,26 @@ class POV
             debug(scene) writeln("found POI number=", poi.length);
             drawPOI( window, poi );
         }
+    }
+    
+    Scene getScene(T)( T window ) const
+    {
+        Scene res;
+        
+        debug(POV) writeln("Getting Scene");
+        
+        boundary_encoded = calcBoundary( window );
+        
+        foreach( reg; map.regions )
+        {
+            res.lines = reg.layer0.ways.search( boundary_encoded );
+            debug(POV) writeln("found lines number=", lines.length);
+            
+            res.pois = reg.layer0.POI.search( boundary_encoded );
+            debug(POV) writeln("found POI number=", poi.length);
+        }
+        
+        return res;
     }
     
 	override string toString()
@@ -193,4 +212,10 @@ Box!Vector2r getMetersBox( in Box!Coords encoded )
     res.addCircumscribe( rd );
     
     return res;
+}
+
+struct Scene
+{
+    Point[] pois;
+    Way[] lines;
 }
