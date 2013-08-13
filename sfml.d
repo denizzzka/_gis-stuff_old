@@ -59,7 +59,6 @@ class Window
 	    
 	    if( scene )
 	    {
-		scene.setWindowSize = window.size;
 		vertex_array = new VertexArray( PrimitiveType.Points, 0 );
 		scene.draw( this );
 		window.draw( vertex_array );
@@ -111,12 +110,18 @@ class Window
 	
 	window.draw( line );
     }
+        
+    Vector2s getWindowSize()
+    {
+        Vector2s res; res = window.size;
+	return res;
+    }
     
-    Vector2f getCenter() const
+    Vector2f getCenter()
     {
 	Vector2f c;
 	
-	c = scene.getWindowSize;
+	c = window.size;
 	c /= 2;
 	
 	return c;
@@ -141,18 +146,13 @@ class Window
 		    break;
 		    
 		case Event.Resized:
-		    scene.setWindowSize = Vector2s( event.size.width, event.size.height );
-		    
 		    auto visibleArea = FloatRect(0, 0, event.size.width, event.size.height);
 		    auto view = new View( visibleArea );
 		    window.view( view );
 		    
 		    debug(controls)
-		    {
-			scene.calcBoundary();
-			writeln(scene);
 			writeln("window size=", window.size);
-		    }
+			
 		    break;
 		
 		case Event.KeyPressed:

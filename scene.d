@@ -22,21 +22,10 @@ class Scene
     
     private
     {
-        Vector2s window_size; /// in pixels
         Vector2r center; /// in meters
         real zoom; /// pixels per meter
         Box!Vector2r boundary_meters; /// coords in meters
         Box!Coords boundary_encoded; /// coords in map encoding
-    }
-    
-    void setWindowSize(T)( T new_size )
-    {
-        window_size = new_size;
-    }
-    
-    Vector2s getWindowSize() const
-    {
-        return window_size;
     }
     
     void setCenter( in Vector2r new_center )
@@ -71,18 +60,22 @@ class Scene
         map = m;
     }
     
-    void calcBoundary()
+    private
+    auto calcBoundary(T)( T window )
     {
-        Vector2r b_size; b_size = window_size;
+        Vector2r b_size; b_size = window.getWindowSize();
         b_size /= zoom;
         
         auto leftDownCorner = center - b_size/2;
         
         boundary_meters = Box!Vector2r( leftDownCorner, b_size );            
         boundary_encoded = getEncodedBox( boundary_meters ).roundCircumscribe;
+        
+        return boundary_encoded;
     }
     
-    private Vector2r metersToScreen( Vector2r from )
+    private
+    Vector2r metersToScreen( Vector2r from )
     {
         auto ld = boundary_meters.leftDownCorner;
         auto ld_relative = from - ld;
@@ -129,9 +122,11 @@ class Scene
     
     void draw(T)( T window )
     {
+        //window_size = window.getWindowSize();
+        
         debug(scene) writeln("Drawing, window size=", window_size);
         
-        calcBoundary();
+        auto boundary_encoded = calcBoundary( window );
         
         foreach( reg; map.regions )
         {
@@ -150,7 +145,7 @@ class Scene
         return format("center=%s zoom=%g scene ecenter=%s ebox=%s mbox=%s size_len=%g", center, zoom, center.metersToEncoded, boundary_encoded, boundary_meters, boundary_meters.getSizeVector.length);	
 	}
     
-    void zoomToWholeMap()
+    void zoomToWholeMap(T)( T window_size )
     {
         auto meters_box = getMetersBox( map.boundary );
         auto meters_size = meters_box.getSizeVector;

@@ -37,10 +37,9 @@ void main( string[] args )
     }
     
     window.scene = new Scene( map );
-    window.scene.setWindowSize = window.window.size;
     
     window.scene.centerToWholeMap;
-    window.scene.zoomToWholeMap;
+    window.scene.zoomToWholeMap( window.window.size );
     
     writeln( "Map bbox:", map.regions[0].boundary );
     
