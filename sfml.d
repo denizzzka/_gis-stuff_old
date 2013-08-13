@@ -61,8 +61,6 @@ class Window
 	    {
 		vertex_array = new VertexArray( PrimitiveType.Points, 0 );
 		
-		//scene.draw( this );
-		
 		scene.calcBoundary( this );
 		
 		auto pois = scene.getPOIs();

@@ -62,7 +62,7 @@ class POV
     }
     
     private
-    auto calcBoundary(T)( T window )
+    void calcBoundary(T)( T window )
     {
         Vector2r b_size; b_size = window.getWindowSize();
         b_size /= zoom;
@@ -71,8 +71,6 @@ class POV
         
         boundary_meters = Box!Vector2r( leftDownCorner, b_size );            
         boundary_encoded = getEncodedBox( boundary_meters ).roundCircumscribe;
-        
-        return boundary_encoded;
     }
     
     Vector2r metersToScreen( Vector2r from ) const
@@ -82,61 +80,6 @@ class POV
         auto window_coords = ld_relative * zoom;
         
         return window_coords;
-    }
-    
-    private
-    void drawPOI(T)( T window, in Point[] poi )
-    {
-        for(auto i = 0; i < poi.length; i++)
-        {
-            debug(fast) if( i >= 3000 ) break;
-            
-            Vector2r node = encodedToMeters( poi[i].coords );
-            auto window_coords = metersToScreen( node );
-            
-            debug(scene) writeln("draw point i=", i, " encoded coords=", poi[i], " meters=", node, " window_coords=", window_coords);
-            
-            //window.drawPoint( window_coords );
-        }
-    }
-    
-    private
-    void drawLines(T)( T window, in Way[] lines )
-    {
-        foreach( line; lines )
-        {
-            Vector2r[]  line_points;
-            
-            foreach( i, node; line.nodes )
-            {
-                Vector2r point = encodedToMeters( node );
-                auto window_coords = metersToScreen( point );
-                line_points ~= window_coords;
-
-                debug(scene) writeln("draw way point i=", i, " encoded coords=", point, " meters=", node, " window_coords=", window_coords);
-            }
-            
-            window.drawLine( line_points, line.color );
-        }
-    }
-    
-    //@disable
-    void draw(T)( T window )
-    {
-        debug(scene) writeln("Drawing, window size=", window_size);
-        
-        boundary_encoded = calcBoundary( window );
-        
-        foreach( reg; map.regions )
-        {
-            auto lines = reg.layer0.ways.search( boundary_encoded );
-            debug(scene) writeln("found ways number=", lines.length);
-            drawLines( window, lines );
-            
-            auto poi = reg.layer0.POI.search( boundary_encoded );
-            debug(scene) writeln("found POI number=", poi.length);
-            drawPOI( window, poi );
-        }
     }
     
     Point[] getPOIs() const
