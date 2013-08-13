@@ -115,7 +115,7 @@ struct Layer
     void init()
     {
         POI = new PointsStorage;
-        ways = new WaysStorage( 20 );
+        ways = new WaysStorage( 50 );
     }
     
     BBox boundary() const
@@ -152,23 +152,20 @@ class Region
         switch( way.type )
         {
             case BOUNDARY:
+            case ROAD_HIGHWAY:
                 layer_num = 4;
                 break;
                 
-            case ROAD_HIGHWAY:
+            case ROAD_PRIMARY:
                 layer_num = 3;
                 break;
                 
-            case ROAD_PRIMARY:
+            case ROAD_SECONDARY:
                 layer_num = 2;
                 break;
                 
-            case ROAD_SECONDARY:
-                layer_num = 1;
-                break;
-                
             case ROAD_OTHER:
-                layer_num = 0;
+                layer_num = 1;
                 break;
                 
             case BUILDING:
