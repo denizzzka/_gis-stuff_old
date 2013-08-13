@@ -17,6 +17,7 @@ If no options are passed "-release" option will be used.
 ![Image](screenshots/hello_world_malta_mercator.png)
 ![Image](screenshots/malta_lines_1.png)
 ![Image](screenshots/malta_lines_2.png)
+![Image](screenshots/malta_lines_3_colored.png)
 * * *
 
 Roadmap:
