@@ -26,7 +26,7 @@ class POV
         Vector2r center; /// in meters
         real zoom; /// pixels per meter
         Box!Vector2r boundary_meters; /// coords in meters
-        Box!Coords boundary_encoded; /// coords in map encoding
+        //Box!Coords boundary_encoded; /// coords in map encoding
     }
     
     void setCenter( in Vector2r new_center )
@@ -70,7 +70,7 @@ class POV
         auto leftDownCorner = center - b_size/2;
         
         boundary_meters = Box!Vector2r( leftDownCorner, b_size );            
-        boundary_encoded = getEncodedBox( boundary_meters ).roundCircumscribe;
+        auto boundary_encoded = getEncodedBox( boundary_meters ).roundCircumscribe;
         
         return boundary_encoded;
     }
@@ -145,7 +145,7 @@ class POV
         
         debug(POV) writeln("Getting Scene");
         
-        boundary_encoded = calcBoundary( window );
+        auto boundary_encoded = calcBoundary( window );
         
         foreach( reg; map.regions )
         {
@@ -161,7 +161,7 @@ class POV
     
 	override string toString()
     {
-        return format("center=%s zoom=%g scene ecenter=%s ebox=%s mbox=%s size_len=%g", center, zoom, center.metersToEncoded, boundary_encoded, boundary_meters, boundary_meters.getSizeVector.length);	
+        return format("center=%s zoom=%g scene ecenter=%s mbox=%s size_len=%g", center, zoom, center.metersToEncoded, boundary_meters, boundary_meters.getSizeVector.length);	
 	}
     
     void zoomToWholeMap(T)( T window_size )
