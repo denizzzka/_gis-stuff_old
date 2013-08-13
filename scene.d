@@ -139,7 +139,7 @@ class POV
         }
     }
     
-    Point[] getPOIs()
+    Point[] getPOIs() const
     {
         Point[] res;
         
@@ -147,6 +147,17 @@ class POV
             res ~= region.layer0.POI.search( boundary_encoded );
         
         debug(scene) writeln("found POI number=", res.length);
+        return res;
+    }
+    
+    Way[] getLines() const
+    {
+        Way[] res;
+        
+        foreach( region; map.regions )
+            res ~= region.layer0.ways.search( boundary_encoded );
+        
+        debug(scene) writeln("found ways number=", res.length);
         return res;
     }
     
