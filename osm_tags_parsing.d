@@ -68,7 +68,7 @@ if( is( T == Node ) || is( T == Way ) )
         return null;
 }
 
-@disable // unused func
+@disable
 Tag[] searchTags( in Tag[] tags, in string[] keys )
 {
     Tag[] res;
@@ -137,14 +137,21 @@ Line getLineType( in StringTable stringtable, in Way way )
 
 Line examWayTag( Tag[] tags, Tag tag )
 {
-    auto t = tag;
-    
     with( Line )
     {
-        switch( t.key )
+        switch( tag.key )
         {
             case "highway":
-                return ROAD;
+                if( canFind( ["trunk", "motorway"], tag.value ) )
+                    return ROAD_HIGHWAY;
+                
+                if( canFind( ["primary", "tertiary"], tag.value ) )
+                    return ROAD_PRIMARY;
+                
+                if( canFind( ["secondary"], tag.value ) )
+                    return ROAD_SECONDARY;
+                
+                return ROAD_OTHER;
                 break;
                 
             case "building":

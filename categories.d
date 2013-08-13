@@ -12,7 +12,10 @@ enum Line
 {
     OTHER,
     BUILDING,
-    ROAD,
+    ROAD_HIGHWAY,
+    ROAD_PRIMARY,
+    ROAD_SECONDARY,
+    ROAD_OTHER,
     BOUNDARY,
     UNSUPPORTED
 }

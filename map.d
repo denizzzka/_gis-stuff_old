@@ -74,10 +74,27 @@ struct Way
     
     Color color() const
     {
-        if( type == cat.Line.BUILDING )
-            return Color( 0xf7, 0xc3, 0x94 );
-        else
-            return Color( 0xff, 0xff, 0xff );
+        with( cat.Line )
+        switch( type )
+        {
+            case BUILDING:
+                return Color( 0xf7, 0xc3, 0x94 );
+                
+            case ROAD_HIGHWAY:
+                return Color.Green;
+                
+            case ROAD_PRIMARY:
+                return Color.White;
+                
+            case ROAD_SECONDARY:
+                return Color.Yellow;
+                
+            case ROAD_OTHER:
+                return Color( 0xAA, 0xAA, 0xAA );
+                
+            default:
+                return Color.Cyan;
+        }
     }
 }
 

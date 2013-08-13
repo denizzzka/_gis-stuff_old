@@ -110,12 +110,14 @@ class RTreePtrs( _Box, _Payload )
     alias _Box Box;
     alias _Payload Payload;
     
-    immutable ubyte maxChildren = 2;
+    const ubyte maxChildren;
     ubyte depth = 0;
     Node* root;
     
-    this()
+    this( in ubyte maxChildren = 50 )
     {
+        this.maxChildren = maxChildren;
+        
         root = new Node;
     }
     
@@ -447,7 +449,7 @@ unittest
     alias Vector2D!float Vector;
     alias Box!Vector BBox;
     
-    auto rtree = new RTreePtrs!(BBox, DumbPayload);
+    auto rtree = new RTreePtrs!(BBox, DumbPayload)( 2 );
     
     for( float y = 1; y < 4; y++ )
         for( float x = 1; x < 4; x++ )
