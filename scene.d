@@ -26,7 +26,7 @@ class POV
         Vector2r center; /// in meters
         real zoom; /// pixels per meter
         Box!Vector2r boundary_meters; /// coords in meters
-        //Box!Coords boundary_encoded; /// coords in map encoding
+        Box!Coords boundary_encoded; /// coords in map encoding
     }
     
     void setCenter( in Vector2r new_center )
@@ -125,7 +125,7 @@ class POV
     {
         debug(scene) writeln("Drawing, window size=", window_size);
         
-        auto boundary_encoded = calcBoundary( window );
+        boundary_encoded = calcBoundary( window );
         
         foreach( reg; map.regions )
         {
@@ -139,23 +139,14 @@ class POV
         }
     }
     
-    Scene getScene(T)( T window ) const
+    Point[] getPOIs()
     {
-        Scene res;
+        Point[] res;
         
-        debug(POV) writeln("Getting Scene");
+        foreach( region; map.regions )
+            res ~= region.layer0.POI.search( boundary_encoded );
         
-        auto boundary_encoded = calcBoundary( window );
-        
-        foreach( reg; map.regions )
-        {
-            res.lines = reg.layer0.ways.search( boundary_encoded );
-            debug(POV) writeln("found lines number=", lines.length);
-            
-            res.pois = reg.layer0.POI.search( boundary_encoded );
-            debug(POV) writeln("found POI number=", poi.length);
-        }
-        
+        debug(scene) writeln("found POI number=", res.length);
         return res;
     }
     
@@ -212,10 +203,4 @@ Box!Vector2r getMetersBox( in Box!Coords encoded )
     res.addCircumscribe( rd );
     
     return res;
-}
-
-struct Scene
-{
-    Point[] pois;
-    Way[] lines;
 }
