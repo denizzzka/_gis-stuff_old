@@ -109,18 +109,30 @@ void addPoint( PointsStorage storage, Point point )
 
 struct Layer
 {
-    PointsStorage POI = new PointsStorage;
-    WaysStorage ways = new WaysStorage;
+    PointsStorage POI;
+    WaysStorage ways;
+    
+    void init()
+    {
+        POI = new PointsStorage;
+        ways = new WaysStorage( 20 );
+    }
     
     BBox boundary() const
     {
-        return POI.getBoundary;
+        return POI.getBoundary.getCircumscribed( ways.getBoundary );
     }
 }
 
 class Region
 {
-    Layer[3] layers;
+    Layer[5] layers;
+    
+    this()
+    {
+        foreach( ref c; layers )
+            c.init;
+    }
     
     BBox boundary() const
     {
@@ -134,7 +146,41 @@ class Region
     
     void addWay( Way way )
     {
-        layers[0].ways.addObject( way.getBoundary, way );
+        size_t layer_num;
+        
+        with( cat.Line )
+        switch( way.type )
+        {
+            case BOUNDARY:
+                layer_num = 4;
+                break;
+                
+            case ROAD_HIGHWAY:
+                layer_num = 3;
+                break;
+                
+            case ROAD_PRIMARY:
+                layer_num = 2;
+                break;
+                
+            case ROAD_SECONDARY:
+                layer_num = 1;
+                break;
+                
+            case ROAD_OTHER:
+                layer_num = 0;
+                break;
+                
+            case BUILDING:
+                layer_num = 0;
+                break;
+                
+            default:
+                layer_num = layers.length - 1;
+                break;
+        }
+        
+        layers[layer_num].ways.addObject( way.getBoundary, way );
     }
 }
 

@@ -98,7 +98,7 @@ class POV
         Way[] res;
         
         foreach( region; map.regions )
-            res ~= region.layers[0].ways.search( boundary_encoded );
+            res ~= region.layers[3].ways.search( boundary_encoded );
         
         debug(scene) writeln("found ways number=", res.length);
         return res;
