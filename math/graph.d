@@ -4,12 +4,12 @@ import std.algorithm;
 debug(graph) import std.stdio;
 
 
-class Graph( Point, Weight )
+class Graph( NodePayload, Weight )
 {
 private:
     
     Node[] nodes; /// contains nodes with all payload
-    size_t[const Point] points; /// AA used for fast search of stored points
+    size_t[const NodePayload] points; /// AA used for fast search of stored points
     
 public:
     
@@ -26,11 +26,12 @@ public:
 
     struct Node
     {
-        const Point point;
         Edge[] edges;
+        
+        const NodePayload point;
     }
     
-    void addEdge( in Point from, in Point to, in Weight w )
+    void addEdge( in NodePayload from, in NodePayload to, in Weight w )
     {
         size_t f = addPoint( from );
         size_t t = addPoint( to );
@@ -39,7 +40,7 @@ public:
         nodes[f].edges ~= e;
     }
     
-    bool search( in Point point, out size_t index )
+    bool search( in NodePayload point, out size_t index )
     {
         if( point in points )
         {
@@ -139,7 +140,7 @@ private:
         return null;
     }
     
-    size_t addPoint( in Point v )
+    size_t addPoint( in NodePayload v )
     {
         if( v !in points )
         {
@@ -177,27 +178,27 @@ unittest
 {
     import math.geometry;
     
-    struct DumbPoint
+    struct DumbNodePayload
     {
         Vector2D!float coords;
 
-        bool opEquals( in DumbPoint v ) const
+        bool opEquals( in DumbNodePayload v ) const
         {
             return coords == v.coords;
         }
 
-        float distance( in DumbPoint v, in float weight ) const
+        float distance( in DumbNodePayload v, in float weight ) const
         {
             return (coords - v.coords).length * weight;
         }
 
-        float heuristic( in DumbPoint v ) const
+        float heuristic( in DumbNodePayload v ) const
         {
             return (coords - v.coords).length;
         }
     }
     
-    alias DumbPoint DP;
+    alias DumbNodePayload DP;
     alias Graph!( DP, float ) G;
 
     auto g = new G;
