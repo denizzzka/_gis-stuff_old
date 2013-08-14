@@ -4,7 +4,7 @@ import std.algorithm;
 debug(graph) import std.stdio;
 
 
-class Graph( NodePayload, Weight )
+class Graph( NodePayload, EdgePayload, Weight )
 {
 private:
     
@@ -17,7 +17,8 @@ public:
     {
         const Weight weight;
         const size_t node;
-
+        const EdgePayload payload;
+        
         invariant()
         {
             assert( weight >= 0 );
@@ -31,12 +32,12 @@ public:
         const NodePayload point;
     }
     
-    void addEdge( in NodePayload from, in NodePayload to, in Weight w )
+    void addEdge( in NodePayload from, in NodePayload to, in EdgePayload p, in Weight w )
     {
         size_t f = addPoint( from );
         size_t t = addPoint( to );
 
-        Edge e = { node: t, weight: w };
+        Edge e = { node: t, payload: p, weight: w };
         nodes[f].edges ~= e;
     }
     
@@ -178,45 +179,47 @@ unittest
 {
     import math.geometry;
     
-    struct DumbNodePayload
+    // Dumb Node payload
+    struct DNP
     {
         Vector2D!float coords;
 
-        bool opEquals( in DumbNodePayload v ) const
+        bool opEquals( in DNP v ) const
         {
             return coords == v.coords;
         }
 
-        float distance( in DumbNodePayload v, in float weight ) const
+        float distance( in DNP v, in float weight ) const
         {
             return (coords - v.coords).length * weight;
         }
 
-        float heuristic( in DumbNodePayload v ) const
+        float heuristic( in DNP v ) const
         {
             return (coords - v.coords).length;
         }
     }
     
-    alias DumbNodePayload DP;
-    alias Graph!( DP, float ) G;
-
+    alias Graph!( DNP, long, float ) G;
+    
     auto g = new G;
     
     for( auto s = 0; s <= 10; s+=10 )
         for( auto y=0; y<5; y++ )
             for( auto x=0; x<5; x++ )
             {
-                DP from = { coords: Vector2D!float(x+s, y) };
-                DP to_up = { coords: Vector2D!float(x+s, y+1) };
-                DP to_right = { coords: Vector2D!float(x+1+s, y) };
+                DNP from = { coords: Vector2D!float(x+s, y) };
+                DNP to_up = { coords: Vector2D!float(x+s, y+1) };
+                DNP to_right = { coords: Vector2D!float(x+1+s, y) };
                 
-                g.addEdge( from, to_up, 5 );
-                g.addEdge( from, to_right, 4.7 );
+                auto dumb_edge_payload = 666;
+                
+                g.addEdge( from, to_up, dumb_edge_payload, 5 );
+                g.addEdge( from, to_right, dumb_edge_payload, 4.7 );
             }
 
-    DP f_p = { Vector2D!float(2,0) };
-    DP g_p = { Vector2D!float(4,4) };
+    DNP f_p = { Vector2D!float(2,0) };
+    DNP g_p = { Vector2D!float(4,4) };
     
     size_t from, goal;
     assert( g.search( f_p, from ) );
@@ -231,7 +234,7 @@ unittest
         foreach( i, c; s )
             writeln( c, " ", g.nodes[c].point );
             
-    DP g2_p = { Vector2D!float(11,4) };
+    DNP g2_p = { Vector2D!float(11,4) };
     size_t goal2;
     assert( g.search( g2_p, goal2 ) );
     s = g.findPath( from, goal2 );
