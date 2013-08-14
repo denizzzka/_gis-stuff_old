@@ -38,6 +38,11 @@ struct Point
     {
         return _tags;
     }
+    
+    cat.Point type() const
+    {
+        return _type;
+    }
 }
 
 alias RTreePtrs!(BBox, Point) PointsStorage;
@@ -141,7 +146,23 @@ class Region
     
     void addPoint( Point point )
     {
-        layers[0].POI.addPoint( point );
+        size_t layer_num;
+        
+        with( cat.Point )
+        switch( point.type )
+        {
+            case POLICE:
+            case SHOP:
+            case LEISURE:
+                layer_num = 0;
+                break;
+                
+            default:
+                layer_num = layers.length - 1;
+                break;
+        }
+        
+        layers[layer_num].POI.addPoint( point );
     }
     
     void addWay( Way way )
