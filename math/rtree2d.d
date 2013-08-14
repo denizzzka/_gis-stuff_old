@@ -189,7 +189,7 @@ class RTreePtrs( _Box, _Payload )
         return root.getBoundary();
     }
 
-    Payload[] search( in Box boundary ) const
+    Payload*[] search( in Box boundary ) const
     {
         return search( boundary, root );
     }
@@ -229,12 +229,12 @@ class RTreePtrs( _Box, _Payload )
     
 private:
     
-    Payload[] search( in Box boundary, const (Node)* curr, size_t currDepth = 0 ) const
+    Payload*[] search( in Box boundary, const (Node)* curr, size_t currDepth = 0 ) const
     {
-        Payload[] res;
+        Payload*[] res;
         
         if( currDepth > depth )
-            res ~= (cast( Leaf* ) curr).payload;
+            res ~= &(cast( Leaf* ) curr).payload;
         else
             foreach( i, c; curr.children )
                 if( c.boundary.isOverlappedBy( boundary ) )

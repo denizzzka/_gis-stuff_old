@@ -82,9 +82,9 @@ class POV
         return window_coords;
     }
     
-    Point[] getPOIs() const
+    Point*[] getPOIs() const
     {
-        Point[] res;
+        Point*[] res;
         
         foreach( region; map.regions )
         {
@@ -105,9 +105,9 @@ class POV
         return res;
     }
     
-    Way[] getLines() const
+    Way*[] getLines() const
     {
-        Way[] res;
+        Way*[] res;
         
         foreach( region; map.regions )
         {

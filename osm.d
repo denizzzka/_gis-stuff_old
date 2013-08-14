@@ -200,7 +200,7 @@ private auto decodeGranularCoords( in PrimitiveBlock pb, in Node n )
     return r;
 }
 
-Vector2D!real decodeCoords( Coords c ) pure
+Vector2D!real decodeCoords( in Coords c ) pure
 {
     return Vector2D!real( c.x / 10_000_000f,  c.y / 10_000_000f );
 }
@@ -210,7 +210,7 @@ Vector2D!real encodeCoords( Vector2D!real c ) pure
     return Vector2D!real( c.x * 10_000_000f,  c.y * 10_000_000f );
 }
 
-Vector2D!real encodedToMeters( Coords c )
+Vector2D!real encodedToMeters( in Coords c )
 {
     auto decoded = decodeCoords( c );
     auto radians = degrees2radians( decoded );

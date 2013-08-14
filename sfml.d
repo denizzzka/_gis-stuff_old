@@ -79,11 +79,11 @@ class Window
     }
     
     private
-    void drawPOIs( in Point[] poi )
+    void drawPOIs(T)( in T pois )
     {
-        for(auto i = 0; i < poi.length; i++)
+        for(auto i = 0; i < pois.length; i++)
         {
-            Vector2r node = encodedToMeters( poi[i].coords );
+            Vector2r node = encodedToMeters( pois[i].coords );
             auto window_coords = scene.metersToScreen( node );
             
             debug(sfml) writeln("draw point i=", i, " encoded coords=", poi[i], " meters=", node, " window_coords=", window_coords);
@@ -94,7 +94,7 @@ class Window
     }
     
     private
-    void drawLines( in Way[] lines )
+    void drawLines(T)( in T lines )
     {
         foreach( line; lines )
         {
