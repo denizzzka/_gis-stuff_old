@@ -4,12 +4,12 @@ import std.algorithm;
 debug(graph) import std.stdio;
 
 
-class Graph( NodePayload, EdgePayload, Weight )
+class Graph( Point, EdgePayload, Weight )
 {
 private:
     
     Node[] nodes; /// contains nodes with all payload
-    size_t[const NodePayload] points; /// AA used for fast search of stored points
+    size_t[const Point] points; /// AA used for fast search of stored points
     
 public:
     
@@ -29,10 +29,10 @@ public:
     {
         Edge[] edges;
         
-        const NodePayload point;
+        const Point point;
     }
     
-    void addEdge( in NodePayload from, in NodePayload to, in EdgePayload p, in Weight w )
+    void addEdge( in Point from, in Point to, in EdgePayload p, in Weight w )
     {
         size_t f = addPoint( from );
         size_t t = addPoint( to );
@@ -41,7 +41,7 @@ public:
         nodes[f].edges ~= e;
     }
     
-    bool search( in NodePayload point, out size_t index )
+    bool search( in Point point, out size_t index )
     {
         if( point in points )
         {
@@ -141,7 +141,7 @@ private:
         return null;
     }
     
-    size_t addPoint( in NodePayload v )
+    size_t addPoint( in Point v )
     {
         if( v !in points )
         {
