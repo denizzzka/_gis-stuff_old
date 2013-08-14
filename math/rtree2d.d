@@ -115,6 +115,11 @@ class RTreePtrs( _Box, _Payload )
     Node* root;
     
     this( in ubyte maxChildren = 50 )
+    in
+    {
+        assert( maxChildren >= 2 );
+    }
+    body
     {
         this.maxChildren = maxChildren;
         
