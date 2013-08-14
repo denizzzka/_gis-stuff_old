@@ -120,7 +120,7 @@ struct Layer
     void init()
     {
         POI = new PointsStorage;
-        ways = new WaysStorage( 50 );
+        ways = new WaysStorage( 10 );
     }
     
     BBox boundary() const
