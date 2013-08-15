@@ -286,8 +286,27 @@ void addWay( ref WaysStorage storage, ref PrimitiveBlock prim, ref Coords[long] 
         MapWay decoded = decodeWay( prim, nodes_coords, way );
         storage.addWay( decoded );
         
-        debug(osm) writeln( "add way id=", way.id, " osm first node coords=", nodes_coords[ way.refs[0] ], "\n" );
+        debug(osm) writeln( "storage=", storage, " add way id=", way.id, " osm first node coords=", nodes_coords[ way.refs[0] ], "\n" );
     }    
+}
+
+cat.Line sortWay( ref PrimitiveBlock prim, in Way way, out bool isRoad )
+{
+    auto type = prim.stringtable.getLineType( way );
+    
+    with( cat.Line )
+    switch( type )
+    {
+        case ROAD_HIGHWAY:
+        case ROAD_PRIMARY:
+            isRoad = true;
+            break;
+            
+        default:
+            isRoad = false;
+    }
+    
+    return type;
 }
 
 Region getRegion( string filename, bool verbose )
