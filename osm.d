@@ -296,6 +296,7 @@ bool isRoad( cat.Line type )
 /// Cuts roads for creating road graph
 WaysStorage prepareRoadGraph( in WaysStorage roads_rtree )
 {
+    WaysStorage res = new WaysStorage;
     auto all_roads = roads_rtree.search( roads_rtree.getBoundary );
     
     foreach( j, road; all_roads )
@@ -307,15 +308,19 @@ WaysStorage prepareRoadGraph( in WaysStorage roads_rtree )
             
             auto near_roads = roads_rtree.search( point_bbox );
             
-            /*
             foreach( n; near_roads )
-                if( canFind( n.nodes, curr_point )
-                    res ~=
-                    */
+                if( canFind( n.nodes, curr_point ) )
+                {
+                    res.addWayToStorage( road.cutFirstPart( i ) );
+                    i = 0;
+                    break;
+                }
+                
+            res.addWayToStorage( *road );
         }
     }
     
-    return new WaysStorage;
+    return res;
 }
 
 Region getRegion( string filename, bool verbose )
