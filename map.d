@@ -112,7 +112,7 @@ void addPoint( PointsStorage storage, Point point )
     storage.addObject( bbox, point );
 }
 
-void addWay( WaysStorage storage, Way way )
+void addWayToStorage( WaysStorage storage, Way way )
 {
     storage.addObject( way.getBoundary, way );
 }
@@ -203,7 +203,7 @@ class Region
                 break;
         }
         
-        layers[layer_num].ways.addWay( way );
+        layers[layer_num].ways.addWayToStorage( way );
     }
 }
 

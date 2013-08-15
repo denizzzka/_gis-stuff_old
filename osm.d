@@ -4,7 +4,7 @@ import osmpbf.fileformat;
 import osmpbf.osmformat;
 import math.geometry;
 import math.earth;
-import map: Map, Region, BBox, Point, PointsStorage, MapWay = Way, WaysStorage, addPoint, addWay;
+import map: Map, Region, BBox, Point, PointsStorage, MapWay = Way, WaysStorage, addPoint, addWayToStorage;
 import cat = categories;
 import osm_tags_parsing;
 
@@ -276,37 +276,20 @@ void addWay(
     }    
 }
 
-void addWay( ref WaysStorage storage, ref PrimitiveBlock prim, ref Coords[long] nodes_coords, Way way )
+bool isRoad( cat.Line type )
 {
-    auto type = prim.stringtable.getLineType( way );
-    
-    // Way contains understandable tags?
-    if( type != cat.Line.UNSUPPORTED )
-    {
-        MapWay decoded = decodeWay( prim, nodes_coords, way );
-        storage.addWay( decoded );
-        
-        debug(osm) writeln( "storage=", storage, " add way id=", way.id, " osm first node coords=", nodes_coords[ way.refs[0] ], "\n" );
-    }    
-}
-
-cat.Line sortWay( ref PrimitiveBlock prim, in Way way, out bool isRoad )
-{
-    auto type = prim.stringtable.getLineType( way );
-    
     with( cat.Line )
     switch( type )
     {
         case ROAD_HIGHWAY:
         case ROAD_PRIMARY:
-            isRoad = true;
+            return true;
             break;
             
         default:
-            isRoad = false;
+            return false;
+            break;
     }
-    
-    return type;
 }
 
 Region getRegion( string filename, bool verbose )
@@ -348,7 +331,14 @@ Region getRegion( string filename, bool verbose )
                 
             if( !c.ways.isNull )
                 foreach( w; c.ways )
-                    roads.addWay( prim, nodes_coords, w );
+                {
+                    auto decoded = decodeWay( prim, nodes_coords, w );
+                    
+                    if( isRoad( decoded.type ) )
+                        roads.addWayToStorage( decoded );
+                    else
+                        res.addWay( decoded );
+                }
         }
     }
     
