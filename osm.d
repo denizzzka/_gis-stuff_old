@@ -358,7 +358,8 @@ Region getRegion( string filename, bool verbose )
         }
     }
     
-    auto roads_array = roads.search( roads.getBoundary );
+    auto prepared = prepareRoadGraph( roads );
+    auto roads_array = prepared.search( prepared.getBoundary );
     foreach( c; roads_array )
         res.addWay( *c );
     
