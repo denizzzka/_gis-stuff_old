@@ -101,6 +101,24 @@ struct Way
                 return Color.Cyan;
         }
     }
+    
+    Way cutFirstPart( in size_t nodeNumber )
+    in
+    {
+        assert( nodeNumber > 0 );
+        assert( nodeNumber < nodes.length - 1 );
+    }
+    body
+    {
+        Way res = this;
+        
+        res.nodes = nodes[ 0..nodeNumber+1 ];        
+        nodes = nodes[ nodeNumber..$ ];
+        
+        assert( res.nodes.length > 1 );
+        
+        return res;
+    }
 }
 
 alias RTreePtrs!(BBox, Way) WaysStorage;
