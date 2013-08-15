@@ -258,25 +258,6 @@ void addPoints(
     }
 }
 
-void addWay(
-        ref Region region,
-        ref PrimitiveBlock prim,
-        ref Coords[long] nodes_coords,
-        Way way
-    )
-{    
-    auto type = prim.stringtable.getLineType( way );
-    
-    // Way contains understandable tags?
-    if( type != cat.Line.UNSUPPORTED )
-    {
-        MapWay decoded = decodeWay( prim, nodes_coords, way );
-        region.addWay( decoded );
-        
-        debug(osm) writeln( "add way id=", way.id, " osm first node coords=", nodes_coords[ way.refs[0] ], "\n" );
-    }    
-}
-
 bool isRoad( cat.Line type )
 {
     with( cat.Line )
@@ -384,13 +365,18 @@ Region getRegion( string filename, bool verbose )
                 {
                     auto decoded = decodeWay( prim, nodes_coords, w );
                     
-                    if( isRoad( decoded.type ) )
-                        roads.addWayToStorage( decoded );
-                    else
-                        res.addWay( decoded );
+                    if( decoded.type != cat.Line.UNSUPPORTED )
+                        if( isRoad( decoded.type ) )
+                            roads.addWayToStorage( decoded );
+                        else
+                            res.addWay( decoded );
                 }
         }
     }
+    
+    auto roads_array = roads.search( roads.getBoundary );
+    foreach( c; roads_array )
+        res.addWay( *c );
     
     return res;
 }
