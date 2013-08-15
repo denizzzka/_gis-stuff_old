@@ -60,6 +60,11 @@ struct Way
         this.tags = tags;
     }
     
+    this(this)
+    {
+        nodes = nodes.dup;
+    }
+    
     @disable this();
     
     BBox getBoundary() const
@@ -102,6 +107,16 @@ struct Way
         }
     }
     
+    Way opSlice( size_t from, size_t to )
+    {
+        Way res = this;
+        
+        res.nodes = nodes[ from..to ];
+        
+        return res;
+    }
+    
+    @disable
     Way cutFirstPart( in size_t nodeNumber )
     in
     {

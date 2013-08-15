@@ -293,34 +293,53 @@ bool isRoad( cat.Line type )
     }
 }
 
-/// Cuts roads for creating road graph
+/// Cuts roads on crossroads for creating road graph
 WaysStorage prepareRoadGraph( in WaysStorage roads_rtree )
 {
     WaysStorage res = new WaysStorage;
     auto all_roads = roads_rtree.search( roads_rtree.getBoundary );
     
-    foreach( j, road; all_roads )
+    foreach( j, roadptr; all_roads )
     {
-        for( auto i = 1; i < road.nodes.length; i++ )
+        MapWay road = *roadptr;
+        
+        for( auto i = 1; i < road.nodes.length - 1; i++ )
         {
             auto curr_point = road.nodes[i];
             auto point_bbox = BBox( curr_point, Coords(0, 0) );
-            
             auto near_roads = roads_rtree.search( point_bbox );
             
             foreach( n; near_roads )
-                if( canFind( n.nodes, curr_point ) )
+                if( n != roadptr && canFind( n.nodes, curr_point ) )
                 {
-                    res.addWayToStorage( road.cutFirstPart( i ) );
+                    res.addWayToStorage( road[ 0..i+1 ] );
+                    road = road[ i..road.nodes.length ];
                     i = 0;
                     break;
                 }
-                
-            res.addWayToStorage( *road );
         }
+        
+        res.addWayToStorage( road );
     }
     
     return res;
+}
+unittest
+{
+    Coords[] n1 = [ Coords(0,0), Coords(1,1), Coords(2,2), Coords(3,3), Coords(4,4) ];
+    Coords[] n2 = [ Coords(4,0), Coords(3,1), Coords(2,2), Coords(1,3), Coords(2,4), Coords(3,3) ];
+    
+    auto w1 = MapWay( n1, cat.Line.ROAD_HIGHWAY, "" );
+    auto w2 = MapWay( n2, cat.Line.ROAD_PRIMARY, "" );
+    
+    auto roads = new WaysStorage;
+    roads.addWayToStorage( w1 );
+    roads.addWayToStorage( w2 );
+    
+    auto prepared = prepareRoadGraph( roads );
+    auto res = prepared.search( prepared.getBoundary );
+    foreach( i, c; res )
+        writeln( i, "=", *c );
 }
 
 Region getRegion( string filename, bool verbose )
