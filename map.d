@@ -84,7 +84,7 @@ struct Way
     
     Color color() const
     {
-        if( isRoad( type ) )
+        if( isRoad )
             return randomColor;
         
         with( cat.Line )
@@ -107,6 +107,24 @@ struct Way
                 
             default:
                 return Color.Cyan;
+        }
+    }
+    
+    bool isRoad() const
+    {
+        with( cat.Line )
+        switch( type )
+        {
+            case ROAD_HIGHWAY:
+            case ROAD_PRIMARY:
+            case ROAD_SECONDARY:
+            case ROAD_OTHER:
+                return true;
+                break;
+                
+            default:
+                return false;
+                break;
         }
     }
     
@@ -151,24 +169,6 @@ void addPoint( PointsStorage storage, Point point )
 void addWayToStorage( WaysStorage storage, Way way )
 {
     storage.addObject( way.getBoundary, way );
-}
-
-bool isRoad( cat.Line type )
-{
-    with( cat.Line )
-    switch( type )
-    {
-        case ROAD_HIGHWAY:
-        case ROAD_PRIMARY:
-        case ROAD_SECONDARY:
-        case ROAD_OTHER:
-            return true;
-            break;
-            
-        default:
-            return false;
-            break;
-    }
 }
 
 struct Layer

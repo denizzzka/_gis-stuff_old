@@ -4,7 +4,7 @@ import osmpbf.fileformat;
 import osmpbf.osmformat;
 import math.geometry;
 import math.earth;
-import map: Map, Region, BBox, Point, PointsStorage, MapWay = Way, WaysStorage, addPoint, addWayToStorage, isRoad;
+import map: Map, Region, BBox, Point, PointsStorage, MapWay = Way, WaysStorage, addPoint, addWayToStorage;
 import cat = categories;
 import osm_tags_parsing;
 
@@ -350,7 +350,7 @@ Region getRegion( string filename, bool verbose )
                     auto decoded = decodeWay( prim, nodes_coords, w );
                     
                     if( decoded.type != cat.Line.UNSUPPORTED )
-                        if( isRoad( decoded.type ) )
+                        if( decoded.isRoad )
                             roads.addWayToStorage( decoded );
                         else
                             res.addWay( decoded );
