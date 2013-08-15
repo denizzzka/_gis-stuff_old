@@ -338,8 +338,8 @@ unittest
     
     auto prepared = prepareRoadGraph( roads );
     auto res = prepared.search( prepared.getBoundary );
-    foreach( i, c; res )
-        writeln( i, "=", *c );
+    
+    assert( res.length == 5 );
 }
 
 Region getRegion( string filename, bool verbose )
