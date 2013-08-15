@@ -304,6 +304,7 @@ Region getRegion( string filename, bool verbose )
     
     auto res = new Region;
     Coords[long] nodes_coords;
+    WaysStorage roads = new WaysStorage;
     
     while(true)
     {
@@ -328,7 +329,7 @@ Region getRegion( string filename, bool verbose )
                 
             if( !c.ways.isNull )
                 foreach( w; c.ways )
-                    addWay( res, prim, nodes_coords, w );
+                    roads.addWay( prim, nodes_coords, w );
         }
     }
     
