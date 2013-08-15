@@ -14,6 +14,7 @@ import std.exception;
 import std.bitmanip: bigEndianToNative;
 import std.zlib;
 import std.math: round;
+import std.algorithm: canFind;
 
 
 struct PureBlob
@@ -290,6 +291,31 @@ bool isRoad( cat.Line type )
             return false;
             break;
     }
+}
+
+/// Cuts roads for creating road graph
+WaysStorage prepareRoadGraph( in WaysStorage roads_rtree )
+{
+    auto all_roads = roads_rtree.search( roads_rtree.getBoundary );
+    
+    foreach( j, road; all_roads )
+    {
+        for( auto i = 1; i < road.nodes.length; i++ )
+        {
+            auto curr_point = road.nodes[i];
+            auto point_bbox = BBox( curr_point, Coords(0, 0) );
+            
+            auto near_roads = roads_rtree.search( point_bbox );
+            
+            /*
+            foreach( n; near_roads )
+                if( canFind( n.nodes, curr_point )
+                    res ~=
+                    */
+        }
+    }
+    
+    return new WaysStorage;
 }
 
 Region getRegion( string filename, bool verbose )
