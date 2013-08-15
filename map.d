@@ -4,7 +4,7 @@ import math.geometry;
 import math.rtree2d;
 import osm: Coords, encodedToMeters;
 import cat = categories;
-import sfml: Color; // TODO: temporary, remove it
+import sfml: Color, randomColor; // TODO: temporary, remove it
 
 debug(map) import std.stdio;
 
@@ -84,6 +84,9 @@ struct Way
     
     Color color() const
     {
+        if( isRoad( type ) )
+            return randomColor;
+        
         with( cat.Line )
         switch( type )
         {
@@ -148,6 +151,24 @@ void addPoint( PointsStorage storage, Point point )
 void addWayToStorage( WaysStorage storage, Way way )
 {
     storage.addObject( way.getBoundary, way );
+}
+
+bool isRoad( cat.Line type )
+{
+    with( cat.Line )
+    switch( type )
+    {
+        case ROAD_HIGHWAY:
+        case ROAD_PRIMARY:
+        case ROAD_SECONDARY:
+        case ROAD_OTHER:
+            return true;
+            break;
+            
+        default:
+            return false;
+            break;
+    }
 }
 
 struct Layer

@@ -4,7 +4,7 @@ import osmpbf.fileformat;
 import osmpbf.osmformat;
 import math.geometry;
 import math.earth;
-import map: Map, Region, BBox, Point, PointsStorage, MapWay = Way, WaysStorage, addPoint, addWayToStorage;
+import map: Map, Region, BBox, Point, PointsStorage, MapWay = Way, WaysStorage, addPoint, addWayToStorage, isRoad;
 import cat = categories;
 import osm_tags_parsing;
 
@@ -255,22 +255,6 @@ void addPoints(
             
             debug(osm) writeln( "point id=", n.id, " tags:\n", point.tags );
         }
-    }
-}
-
-bool isRoad( cat.Line type )
-{
-    with( cat.Line )
-    switch( type )
-    {
-        case ROAD_HIGHWAY:
-        case ROAD_PRIMARY:
-            return true;
-            break;
-            
-        default:
-            return false;
-            break;
     }
 }
 

@@ -3,7 +3,9 @@ module sfml;
 import dsfml.graphics;
 import scene;
 import math.geometry;
+
 import std.conv: to;
+import std.random;
 debug(sfml) import std.stdio;
 debug(scene) import std.stdio;
 debug(controls) import std.stdio;
@@ -247,4 +249,13 @@ class Window
 	    }
 	}
     }
+}
+
+Color randomColor()
+{
+    return Color(
+	    to!ubyte( uniform(30, 255) ),
+	    to!ubyte( uniform(30, 255) ),
+	    to!ubyte( uniform(30, 255) ),
+	);
 }
