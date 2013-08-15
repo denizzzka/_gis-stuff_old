@@ -112,6 +112,11 @@ void addPoint( PointsStorage storage, Point point )
     storage.addObject( bbox, point );
 }
 
+void addWay( WaysStorage storage, Way way )
+{
+    storage.addObject( way.getBoundary, way );
+}
+
 struct Layer
 {
     PointsStorage POI;
@@ -198,7 +203,7 @@ class Region
                 break;
         }
         
-        layers[layer_num].ways.addObject( way.getBoundary, way );
+        layers[layer_num].ways.addWay( way );
     }
 }
 
