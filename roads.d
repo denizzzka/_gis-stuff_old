@@ -59,10 +59,7 @@ struct TRoad( Coords )
 {
     private
     {
-        size_t start;
-        size_t end;
-        
-        Coords[] points;
+        Coords[] points; /// points between start and end points
     }
     
     cat.Road type = cat.Road.OTHER;
@@ -95,7 +92,7 @@ class RoadGraph( Coords )
     alias TRoad!Coords Road;
     alias RTreePtrs!( BBox, RoadDescription ) DescriptionsTree;
     alias RTreePtrs!( BBox, Road ) RoadsRTree;
-    alias Graph!( Node, long, float ) G;
+    alias Graph!( Node, Road, float ) G;
     
     private
     {
@@ -113,7 +110,7 @@ class RoadGraph( Coords )
         
         graph = new G;
         
-        auto roads = descriptionsToRoads( prepared, nodes, graph );
+        descriptionsToRoads( prepared, nodes, graph );
         
         //graph.add
     }
@@ -187,31 +184,21 @@ unittest
 }
 
 private
-auto descriptionsToRoads(RoadDescription, Coords, Graph)( in RoadDescription[] descriptions, in Coords[long] nodes, ref Graph graph )
+void descriptionsToRoads(RoadDescription, Coords, Graph)( in RoadDescription[] descriptions, in Coords[long] nodes, ref Graph graph )
 {
     alias TRoad!Coords Road;
-    
-    size_t[long] hashes;
-    
-    size_t getNodeIndex( in long node_id )
-    {
-        return graph.addPoint( Node( nodes[ node_id ] ) );
-    }
-    
-    Road[] res;
     
     foreach( road; descriptions )
     {
         Road r;
         
-        r.start = getNodeIndex( road.nodes_ids[0] );
-        r.end = getNodeIndex( road.nodes_ids[ road.nodes_ids.length-1 ] );
-        
         for( auto i = 1; i < road.nodes_ids.length - 1; i++ )
             r.points ~= nodes[ road.nodes_ids[i] ];
-            
-        res ~= r;
+        
+        graph.addEdge(
+                Node( nodes[ road.nodes_ids[0] ] ),
+                Node( nodes[ road.nodes_ids[ road.nodes_ids.length-1 ] ] ),
+                r, 0
+            );
     }
-    
-    return res;
 }
