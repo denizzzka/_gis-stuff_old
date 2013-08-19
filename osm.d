@@ -360,6 +360,7 @@ Region getRegion( string filename, bool verbose )
     
     auto prepared = prepareRoadGraph( roads );
     auto roads_array = prepared.search( prepared.getBoundary );
+    writeln("roads_array.length=", roads_array.length);
     foreach( c; roads_array )
         res.addWay( *c );
     
