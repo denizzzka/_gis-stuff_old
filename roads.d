@@ -1,21 +1,18 @@
 import math.geometry;
 import math.rtree2d;
 import math.graph;
-import osm: Coords;
+static import osm;
 import cat = categories: Road;
 
 import std.algorithm: canFind;
 
 
-alias Box!Coords BBox;
-
-alias RTreePtrs!(BBox, RoadGraph.Road) RoadsRTree;
-
-alias Graph!( DNP, long, float ) G;
-
-class RoadGraph
+class RoadGraph( Coords )
 {
+    alias Box!Coords BBox;
+    alias RTreePtrs!(BBox, RoadGraph.Road) RoadsRTree;
     alias RTreePtrs!(BBox, RoadGraph.RoadDescription) DescriptionsTree;
+    alias Graph!( DNP, long, float ) G;
     
     private
     {
@@ -118,30 +115,35 @@ class RoadGraph
         
         return res;
     }
-    unittest
-    {
-        Coords[] points = [
-                Coords(0,0), Coords(1,1), Coords(2,2), Coords(3,3), Coords(4,4), // first road
-                Coords(4,0), Coords(3,1), Coords(2,2), Coords(1,3), Coords(2,4), Coords(3,3) // second road
-            ];
-        
-        Coords[long] nodes;
-        
-        foreach( i, c; points )
-            nodes[ i * 10 ] = c;
-        
-        size_t[] n1 = [ 0, 1, 2, 3, 4, 5 ];
-        size_t[] n2 = [ 6, 7, 8, 9, 10, 11 ];
-        
-        auto w1 = RoadDescription( n1, cat.Road.HIGHWAY );
-        auto w2 = RoadDescription( n2, cat.Road.PRIMARY );
-        
-        auto roads = new DescriptionsTree;
-        roads.addObject( w1.boundary( nodes ), w1 );
-        roads.addObject( w2.boundary( nodes ), w2 );
-        
-        auto prepared = prepareRoadGraph( roads, nodes );
-        
-        assert( prepared.length == 5 );
-    }
+}
+
+unittest
+{
+    alias osm.Coords Coords;
+    
+    alias RoadGraph!Coords G;
+    
+    Coords[] points = [
+            Coords(0,0), Coords(1,1), Coords(2,2), Coords(3,3), Coords(4,4), // first road
+            Coords(4,0), Coords(3,1), Coords(2,2), Coords(1,3), Coords(2,4), Coords(3,3) // second road
+        ];
+    
+    Coords[long] nodes;
+    
+    foreach( i, c; points )
+        nodes[ i * 10 ] = c;
+    
+    size_t[] n1 = [ 0, 1, 2, 3, 4, 5 ];
+    size_t[] n2 = [ 6, 7, 8, 9, 10, 11 ];
+    
+    auto w1 = G.RoadDescription( n1, cat.Road.HIGHWAY );
+    auto w2 = G.RoadDescription( n2, cat.Road.PRIMARY );
+    
+    auto roads = new G.DescriptionsTree;
+    roads.addObject( w1.boundary( nodes ), w1 );
+    roads.addObject( w2.boundary( nodes ), w2 );
+    
+    auto prepared = G.prepareRoadGraph( roads, nodes );
+    
+    assert( prepared.length == 5 );
 }
