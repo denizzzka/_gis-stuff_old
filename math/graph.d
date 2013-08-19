@@ -6,8 +6,29 @@ debug(graph) import std.stdio;
 import std.algorithm;
 
 
+struct TEdge( Payload, Weight )
+{
+    const Weight weight;
+    const size_t to_node; /// direction
+    const Payload payload;
+    
+    invariant()
+    {
+        assert( weight >= 0 );
+    }
+}
+
+struct TNode( Point, Edge )
+{
+    Edge[] edges;
+    
+    const Point point;
+}
+
 class Graph( Point, EdgePayload, Weight )
 {
+    alias TEdge!( EdgePayload, Weight ) Edge;
+    alias TNode!(Point, Edge) Node;
     
 private:
     
@@ -15,25 +36,6 @@ private:
     size_t[const Point] points; /// AA used for fast search of stored points
     
 public:
-    
-    static struct Edge
-    {
-        const Weight weight;
-        const size_t to_node; /// direction
-        const EdgePayload payload;
-        
-        invariant()
-        {
-            assert( weight >= 0 );
-        }
-    }
-    
-    static struct Node
-    {
-        Edge[] edges;
-        
-        const Point point;
-    }
     
     size_t addPoint( in Point v )
     {
