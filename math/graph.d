@@ -182,7 +182,8 @@ debug
 struct DNP
 {
     Vector2D!float coords;
-
+    
+    @disable
     bool opEquals( in DNP v ) const
     {
         return coords == v.coords;

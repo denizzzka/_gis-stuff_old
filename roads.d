@@ -68,6 +68,26 @@ struct TRoad( Coords )
     cat.Road type = cat.Road.OTHER;
 }
 
+struct Node
+{
+    osm.Coords coords;
+    
+    this( osm.Coords coords )
+    {
+        this.coords = coords;
+    }
+    
+    float distance( in Node v, in float weight ) const
+    {
+        return (coords - v.coords).length * weight;
+    }
+    
+    float heuristic( in Node v ) const
+    {
+        return (coords - v.coords).length;
+    }
+}
+
 class RoadGraph( Coords )
 {
     alias Box!Coords BBox;
@@ -75,11 +95,11 @@ class RoadGraph( Coords )
     alias TRoad!Coords Road;
     alias RTreePtrs!( BBox, RoadDescription ) DescriptionsTree;
     alias RTreePtrs!( BBox, Road ) RoadsRTree;
-    alias Graph!( DNP, long, float ) G;
+    alias Graph!( Node, long, float ) G;
     
     private
     {
-        Coords[] graph_nodes;
+        Node[] graph_nodes;
         G graph;
     }
     
@@ -93,7 +113,9 @@ class RoadGraph( Coords )
         auto prepared = prepareRoads( descriptions_tree, nodes );
         
         auto roads = descriptionsToRoads( prepared, nodes, graph_nodes );
-        //graph = new G;
+        
+        graph = new G;
+        //graph.add
     }
 }
 
@@ -165,7 +187,7 @@ unittest
 }
 
 private
-auto descriptionsToRoads(RoadDescription, Coords)( in RoadDescription[] descriptions, in Coords[long] nodes, out Coords[] result_nodes )
+auto descriptionsToRoads(RoadDescription, Coords)( in RoadDescription[] descriptions, in Coords[long] nodes, out Node[] result_nodes )
 {
     alias TRoad!Coords Road;
     
@@ -180,7 +202,7 @@ auto descriptionsToRoads(RoadDescription, Coords)( in RoadDescription[] descript
         {
             auto res = result_nodes.length;
             hashes[ node_id ] = res;
-            result_nodes ~= nodes[ node_id ];
+            result_nodes ~= Node( nodes[ node_id ] );
             
             return res;
         }
