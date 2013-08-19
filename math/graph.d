@@ -56,8 +56,13 @@ public:
         size_t f = addPoint( from );
         size_t t = addPoint( to );
 
-        Edge e = { to_node: t, payload: p, weight: w };
-        nodes[f].edges ~= e;
+        addEdge( f, t, p, w );
+    }
+    
+    void addEdge( in size_t from_idx, in size_t to_idx, in EdgePayload p, in Weight w )
+    {
+        Edge e = { to_node: to_idx, payload: p, weight: w };
+        nodes[ from_idx ].edges ~= e;
     }
     
     bool search( in Point point, out size_t index )
