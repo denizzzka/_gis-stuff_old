@@ -17,7 +17,7 @@ struct TRoadDescription( Coords )
     
     invariant()
     {
-        assert( nodes_index.length >= 2 );
+        //assert( nodes_index.length >= 2 );
     }
     
     this( size_t[] nodes_index, cat.Road type )
@@ -140,7 +140,7 @@ unittest
     
     Coords[] points = [
             Coords(0,0), Coords(1,1), Coords(2,2), Coords(3,3), Coords(4,4), // first road
-            Coords(4,0), Coords(3,1), Coords(2,2), Coords(1,3), Coords(2,4), Coords(3,3) // second road
+            Coords(4,0), Coords(3,1), Coords(1,3), Coords(2,4) // second road
         ];
     
     Coords[long] nodes;
@@ -150,18 +150,19 @@ unittest
     
     writeln("nodes.length=", nodes.length);
     
-    size_t[] n1 = [ 0, 10, 20, 30, 40, 50 ];
-    size_t[] n2 = [ 60, 70, 80, 90, 100, 110 ];
+    size_t[] n1 = [ 0, 10, 20, 30, 40 ];
+    size_t[] n2 = [ 50, 60, 20, 70, 80, 30 ];
     
     auto w1 = RoadDescription( n1, cat.Road.HIGHWAY );
     auto w2 = RoadDescription( n2, cat.Road.PRIMARY );
     
     auto roads = new G.DescriptionsTree;
-    auto ttt = w1.boundary( nodes );
     roads.addObject( w1.boundary( nodes ), w1 );
     roads.addObject( w2.boundary( nodes ), w2 );
     
     auto prepared = prepareRoadGraph( roads, nodes );
+    
+    writeln( prepared );
     
     assert( prepared.length == 5 );
 }
