@@ -20,6 +20,12 @@ struct TRoadDescription( Coords )
         assert( nodes_index.length >= 2 );
     }
     
+    this( size_t[] nodes_index, cat.Road type )
+    {
+        this.nodes_index = nodes_index;
+        this.type = type;
+    }
+    
     this(this)
     {
         nodes_index = nodes_index.dup;
@@ -29,8 +35,11 @@ struct TRoadDescription( Coords )
     {
         auto res = BBox( nodes[ nodes_index[0] ], Coords(0,0) );
         
-        for( auto i = 1; i < nodes.length; i++ )
+        for( auto i = 1; i < nodes_index.length; i++ )
+        {
+            assert( nodes_index[i] in nodes );
             res.addCircumscribe( nodes[ nodes_index[i] ] );
+        }
         
         return res;
     }
@@ -83,46 +92,50 @@ class RoadGraph( Coords )
         
         cat.Road type = cat.Road.OTHER;
     }
-    
-    /// Cuts roads on crossroads for creating road graph
-    private static
-    RoadDescription[] prepareRoadGraph( in DescriptionsTree roads_rtree, in Coords[long] nodes )
-    {
-        RoadDescription[] res;
-        auto all_roads = roads_rtree.search( roads_rtree.getBoundary );
-        
-        foreach( roadptr; all_roads )
-        {
-            RoadGraph.RoadDescription road = *roadptr;
-            
-            for( auto i = 1; i < road.nodes_index.length - 1; i++ )
-            {
-                auto curr_point = road.nodes_index[i];
-                auto point_bbox = BBox( nodes[ curr_point ], Coords(0, 0) );
-                auto near_roads = roads_rtree.search( point_bbox );
-                
-                foreach( n; near_roads )
-                    if( n != roadptr && canFind( n.nodes_index, curr_point ) )
-                    {
-                        res ~= road[ 0..i+1 ];
-                        
-                        road = road[ i..road.nodes_index.length ];
-                        i = 0;
-                        break;
-                    }
-            }
-            
-            res ~= road;
-        }
-        
-        return res;
-    }
 }
 
+/// Cuts roads on crossroads for creating road graph
+private
+auto prepareRoadGraph(DescriptionsTree, Coords)( in DescriptionsTree roads_rtree, in Coords[long] nodes )
+{
+    alias DescriptionsTree.Payload RoadDescription;
+    alias Box!Coords BBox;
+    
+    RoadDescription[] res;
+    auto all_roads = roads_rtree.search( roads_rtree.getBoundary );
+    
+    foreach( roadptr; all_roads )
+    {
+        RoadDescription road = *roadptr;
+        
+        for( auto i = 1; i < road.nodes_index.length - 1; i++ )
+        {
+            auto curr_point = road.nodes_index[i];
+            auto point_bbox = BBox( nodes[ curr_point ], Coords(0, 0) );
+            auto near_roads = roads_rtree.search( point_bbox );
+            
+            foreach( n; near_roads )
+                if( n != roadptr && canFind( n.nodes_index, curr_point ) )
+                {
+                    res ~= road[ 0..i+1 ];
+                    
+                    road = road[ i..road.nodes_index.length ];
+                    i = 0;
+                    break;
+                }
+        }
+        
+        res ~= road;
+    }
+    
+    return res;
+}
 unittest
 {
-    alias osm.Coords Coords;
+    import std.stdio;
     
+    alias osm.Coords Coords;
+    alias TRoadDescription!Coords RoadDescription;
     alias RoadGraph!Coords G;
     
     Coords[] points = [
@@ -135,17 +148,20 @@ unittest
     foreach( i, c; points )
         nodes[ i * 10 ] = c;
     
-    size_t[] n1 = [ 0, 1, 2, 3, 4, 5 ];
-    size_t[] n2 = [ 6, 7, 8, 9, 10, 11 ];
+    writeln("nodes.length=", nodes.length);
     
-    auto w1 = G.RoadDescription( n1, cat.Road.HIGHWAY );
-    auto w2 = G.RoadDescription( n2, cat.Road.PRIMARY );
+    size_t[] n1 = [ 0, 10, 20, 30, 40, 50 ];
+    size_t[] n2 = [ 60, 70, 80, 90, 100, 110 ];
+    
+    auto w1 = RoadDescription( n1, cat.Road.HIGHWAY );
+    auto w2 = RoadDescription( n2, cat.Road.PRIMARY );
     
     auto roads = new G.DescriptionsTree;
+    auto ttt = w1.boundary( nodes );
     roads.addObject( w1.boundary( nodes ), w1 );
     roads.addObject( w2.boundary( nodes ), w2 );
     
-    auto prepared = G.prepareRoadGraph( roads, nodes );
+    auto prepared = prepareRoadGraph( roads, nodes );
     
     assert( prepared.length == 5 );
 }
