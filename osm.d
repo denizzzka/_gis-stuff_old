@@ -7,6 +7,7 @@ import math.earth;
 import map: Map, Region, BBox, Point, PointsStorage, MapWay = Way, WaysStorage, addPoint, addWayToStorage;
 import cat = categories;
 import osm_tags_parsing;
+static import roads;
 
 import std.stdio;
 import std.string;

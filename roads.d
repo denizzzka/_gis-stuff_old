@@ -1,3 +1,5 @@
+module roads;
+
 import math.geometry;
 import math.rtree2d;
 import math.graph;
@@ -15,11 +17,6 @@ struct TRoadDescription( _Coords )
     size_t nodes_ids[];
     
     cat.Road type = cat.Road.OTHER;
-    
-    invariant()
-    {
-        //assert( nodes_index.length >= 2 );
-    }
     
     this( size_t[] nodes_ids, cat.Road type )
     {
