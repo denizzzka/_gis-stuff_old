@@ -18,7 +18,7 @@ public:
     static struct Edge
     {
         const Weight weight;
-        const size_t node;
+        const size_t to_node; /// direction
         const EdgePayload payload;
         
         invariant()
@@ -56,7 +56,7 @@ public:
         size_t f = addPoint( from );
         size_t t = addPoint( to );
 
-        Edge e = { node: t, payload: p, weight: w };
+        Edge e = { to_node: t, payload: p, weight: w };
         nodes[f].edges ~= e;
     }
     
@@ -128,7 +128,7 @@ private:
             
             foreach( i, e; curr.edges )
             {
-                size_t neighborNode = e.node;
+                size_t neighborNode = e.to_node;
                 Node* neighbor = &nodes[neighborNode];
 
                 if( canFind( closed, neighborNode ) )
