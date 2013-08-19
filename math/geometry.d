@@ -339,3 +339,20 @@ auto radians2degrees(T)( in T from ) pure
     
     return res;
 }
+
+@disable // unused
+auto getCircumscribe(Coords)( in Coords points )
+in
+{
+    assert( points.length > 0 );
+}
+body
+{
+    alias Box!Coords BBox;
+    auto res = BBox( points[0], Coords(0,0) );
+    
+    for( auto i = 1; i < points.length; i++ )
+        res.addCircumscribe( points[i] );
+    
+    return res;
+}

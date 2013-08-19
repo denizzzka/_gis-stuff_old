@@ -8,6 +8,7 @@ import std.algorithm;
 
 class Graph( Point, EdgePayload, Weight )
 {
+    
 private:
     
     Node[] nodes; /// contains nodes with all payload

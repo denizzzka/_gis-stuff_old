@@ -85,6 +85,18 @@ struct Node
     }
 }
 
+auto boundary(T)( ref const T node )
+{
+    alias Box!osm.Coords BBox;
+    
+    auto res = BBox( node.point.coords, Coords(0,0) );
+    
+    for( auto i = 1; i < node.edges.length; i++ )
+        res.addCircumscribe( node.edges[i].to_node.point.coords );
+    
+    return res;
+}
+
 class RoadGraph( Coords )
 {
     alias Box!Coords BBox;
