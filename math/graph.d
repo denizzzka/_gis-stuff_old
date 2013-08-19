@@ -1,7 +1,9 @@
 module math.graph;
 
-import std.algorithm;
+debug import math.geometry;
 debug(graph) import std.stdio;
+
+import std.algorithm;
 
 
 class Graph( Point, EdgePayload, Weight )
@@ -13,7 +15,7 @@ private:
     
 public:
     
-    struct Edge
+    static struct Edge
     {
         const Weight weight;
         const size_t node;
@@ -24,8 +26,8 @@ public:
             assert( weight >= 0 );
         }
     }
-
-    struct Node
+    
+    static struct Node
     {
         Edge[] edges;
         
@@ -167,38 +169,39 @@ private:
         return res;
     }
 
-    struct Score
+    static struct Score
     {
         size_t came_from; /// Navigated node
         float g; /// Cost from start along best known path
         float full; /// f(x), estimated total cost from start to goal through node
     }
 }
+    
+// Dumb Node Payload
+debug
+struct DNP
+{
+    Vector2D!float coords;
+
+    bool opEquals( in DNP v ) const
+    {
+        return coords == v.coords;
+    }
+
+    float distance( in DNP v, in float weight ) const
+    {
+        return (coords - v.coords).length * weight;
+    }
+
+    float heuristic( in DNP v ) const
+    {
+        return (coords - v.coords).length;
+    }
+}
 
 unittest
 {
     import math.geometry;
-    
-    // Dumb Node payload
-    struct DNP
-    {
-        Vector2D!float coords;
-
-        bool opEquals( in DNP v ) const
-        {
-            return coords == v.coords;
-        }
-
-        float distance( in DNP v, in float weight ) const
-        {
-            return (coords - v.coords).length * weight;
-        }
-
-        float heuristic( in DNP v ) const
-        {
-            return (coords - v.coords).length;
-        }
-    }
     
     alias Graph!( DNP, long, float ) G;
     
