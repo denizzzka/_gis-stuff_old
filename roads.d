@@ -188,6 +188,24 @@ void descriptionsToRoads(RoadDescription, Coords, Graph)( in RoadDescription[] d
 {
     alias TRoad!Coords Road;
     
+    size_t[long] already_stored;
+    
+    size_t addNode( long node_id )
+    {
+        auto p = node_id in already_stored;
+        
+        if( p !is null )
+            return *p;
+        else
+        {
+            auto node = Node( nodes[ node_id ] );
+            auto idx = graph.addPoint( node );
+            already_stored[ node_id ] = idx;
+            
+            return idx;
+        }
+    }
+    
     foreach( road; descriptions )
     {
         Road r;
@@ -196,8 +214,8 @@ void descriptionsToRoads(RoadDescription, Coords, Graph)( in RoadDescription[] d
             r.points ~= nodes[ road.nodes_ids[i] ];
         
         graph.addEdge(
-                Node( nodes[ road.nodes_ids[0] ] ),
-                Node( nodes[ road.nodes_ids[ road.nodes_ids.length-1 ] ] ),
+                addNode( road.nodes_ids[0] ),
+                addNode( road.nodes_ids.length-1 ),
                 r, 0
             );
     }

@@ -67,13 +67,15 @@ public:
     
     bool search( in Point point, out size_t index )
     {
-        if( point in points )
+        auto p = point in points;
+        
+        if( p is null )
+            return false;
+        else
         {
-            index = points[point];
+            index = *p;
             return true;
         }
-        else
-            return false;
     }
     
     /// A* algorithm
