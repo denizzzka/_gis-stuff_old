@@ -19,3 +19,12 @@ enum Line
     BOUNDARY,
     UNSUPPORTED
 }
+
+enum Road
+{
+    OTHER,
+    HIGHWAY,
+    PRIMARY,
+    SECONDARY,
+    UNSUPPORTED
+}
