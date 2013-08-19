@@ -34,6 +34,21 @@ public:
         const Point point;
     }
     
+    size_t addPoint( in Point v )
+    {
+        if( v in points )
+            return points[v];
+        else
+        {
+            points[v] = nodes.length;
+            
+            Node n = { point: v };
+            nodes ~= n;
+            
+            return nodes.length-1;
+        }
+    }
+    
     void addEdge( in Point from, in Point to, in EdgePayload p, in Weight w )
     {
         size_t f = addPoint( from );
@@ -143,21 +158,6 @@ private:
         return null;
     }
     
-    size_t addPoint( in Point v )
-    {
-        if( v !in points )
-        {
-            points[v] = nodes.length;
-            
-            Node n = { point: v };
-            nodes ~= n;
-            
-            return nodes.length-1;
-        }
-
-        return points[v];
-    }
-
     auto reconstructPath( in Score[size_t] came_from, size_t curr )
     {
         size_t[] res;
