@@ -176,20 +176,31 @@ TRoad!Coords[] descriptionsToRoads(RoadDescription)( in RoadDescription[] descri
     {
         auto p = ( node_id in hashes );
         
-        if( p is null )
+        if( p !is null )
+            return *p;
         {
-            hashes[ node_id ] = nodes.length;
+            auto res = result_nodes.length;
+            hashes[ node_id ] = res;
             result_nodes ~= nodes[ node_id ];
+            
+            return res;
         }
-        
-        return *p;
     }
     
-    return Road[];
+    Road[] res;
     
-    /*
-    foreach( i, c; descriptions )
+    foreach( road; descriptions )
     {
-        c.nodes_index[0]
-    */
+        Road r;
+        
+        r.start = getNodeIndex( c.nodes_ids[0] );
+        res.end = getNodeIndex( c.nodes_ids[ c.nodes_ids.length-1 ] );
+        
+        for( auto i = 1; i < road.nodes_ids.length - 1; i++ )
+            r.points ~= nodes[ road.nodes_ids[i] ];
+            
+        res ~= r;
+    }
+    
+    return res;
 }
