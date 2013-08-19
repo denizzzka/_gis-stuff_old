@@ -79,20 +79,20 @@ class RoadGraph( Coords )
     
     private
     {
-        //Coords[long] nodes_coords;
+        Coords[] graph_nodes;
         G graph;
     }
     
-    this( in Coords[long] nodes, scope RoadDescription[] roads )
+    this( in Coords[long] nodes, scope RoadDescription[] descriptions )
     {        
         auto descriptions_tree = new DescriptionsTree;
         
-        foreach( i, c; roads )
+        foreach( i, c; descriptions )
             descriptions_tree.addObject( c.boundary( nodes ), c );
         
         auto prepared = prepareRoads( descriptions_tree, nodes );
         
-        
+        auto roads = descriptionsToRoads( prepared, nodes, graph_nodes );
         //graph = new G;
     }
 }
@@ -165,9 +165,8 @@ unittest
 }
 
 private
-TRoad!Coords[] descriptionsToRoads(RoadDescription)( in RoadDescription[] descriptions, in Coords[long] nodes, out Coords[] result_nodes )
+auto descriptionsToRoads(RoadDescription, Coords)( in RoadDescription[] descriptions, in Coords[long] nodes, out Coords[] result_nodes )
 {
-    alias RoadDescription.Coords Coords;
     alias TRoad!Coords Road;
     
     size_t[long] hashes;
@@ -193,8 +192,8 @@ TRoad!Coords[] descriptionsToRoads(RoadDescription)( in RoadDescription[] descri
     {
         Road r;
         
-        r.start = getNodeIndex( c.nodes_ids[0] );
-        res.end = getNodeIndex( c.nodes_ids[ c.nodes_ids.length-1 ] );
+        r.start = getNodeIndex( road.nodes_ids[0] );
+        r.end = getNodeIndex( road.nodes_ids[ road.nodes_ids.length-1 ] );
         
         for( auto i = 1; i < road.nodes_ids.length - 1; i++ )
             r.points ~= nodes[ road.nodes_ids[i] ];
