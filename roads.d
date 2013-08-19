@@ -99,7 +99,6 @@ class RoadGraph( Coords )
     
     private
     {
-        Node[] graph_nodes;
         G graph;
     }
     
@@ -112,9 +111,10 @@ class RoadGraph( Coords )
         
         auto prepared = prepareRoads( descriptions_tree, nodes );
         
-        auto roads = descriptionsToRoads( prepared, nodes, graph_nodes );
-        
         graph = new G;
+        
+        auto roads = descriptionsToRoads( prepared, nodes, graph );
+        
         //graph.add
     }
 }
@@ -187,7 +187,7 @@ unittest
 }
 
 private
-auto descriptionsToRoads(RoadDescription, Coords)( in RoadDescription[] descriptions, in Coords[long] nodes, out Node[] result_nodes )
+auto descriptionsToRoads(RoadDescription, Coords, Graph)( in RoadDescription[] descriptions, in Coords[long] nodes, ref Graph graph )
 {
     alias TRoad!Coords Road;
     
@@ -195,17 +195,7 @@ auto descriptionsToRoads(RoadDescription, Coords)( in RoadDescription[] descript
     
     size_t getNodeIndex( in long node_id )
     {
-        auto p = ( node_id in hashes );
-        
-        if( p !is null )
-            return *p;
-        {
-            auto res = result_nodes.length;
-            hashes[ node_id ] = res;
-            result_nodes ~= Node( nodes[ node_id ] );
-            
-            return res;
-        }
+        return graph.addPoint( Node( nodes[ node_id ] ) );
     }
     
     Road[] res;

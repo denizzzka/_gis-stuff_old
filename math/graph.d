@@ -36,8 +36,10 @@ public:
     
     size_t addPoint( in Point v )
     {
-        if( v in points )
-            return points[v];
+        auto p = ( v in points );
+        
+        if( p !is null )
+            return *p;
         else
         {
             points[v] = nodes.length;
