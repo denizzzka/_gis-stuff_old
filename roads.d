@@ -132,8 +132,6 @@ auto prepareRoadGraph(DescriptionsTree, Coords)( in DescriptionsTree roads_rtree
 }
 unittest
 {
-    import std.stdio;
-    
     alias osm.Coords Coords;
     alias TRoadDescription!Coords RoadDescription;
     alias RoadGraph!Coords G;
@@ -148,8 +146,6 @@ unittest
     foreach( i, c; points )
         nodes[ i * 10 ] = c;
     
-    writeln("nodes.length=", nodes.length);
-    
     size_t[] n1 = [ 0, 10, 20, 30, 40 ];
     size_t[] n2 = [ 50, 60, 20, 70, 80, 30 ];
     
@@ -161,8 +157,6 @@ unittest
     roads.addObject( w2.boundary( nodes ), w2 );
     
     auto prepared = prepareRoadGraph( roads, nodes );
-    
-    writeln( prepared );
     
     assert( prepared.length == 5 );
 }
