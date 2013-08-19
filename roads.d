@@ -6,12 +6,51 @@ import cat = categories: Road;
 
 import std.algorithm: canFind;
 
+    
+struct TRoadDescription( Coords )
+{
+    alias Box!Coords BBox;
+    
+    size_t nodes_index[];
+    
+    cat.Road type = cat.Road.OTHER;
+    
+    invariant()
+    {
+        assert( nodes_index.length >= 2 );
+    }
+    
+    this(this)
+    {
+        nodes_index = nodes_index.dup;
+    }
+    
+    BBox boundary( in Coords[long] nodes ) const
+    {
+        auto res = BBox( nodes[ nodes_index[0] ], Coords(0,0) );
+        
+        for( auto i = 1; i < nodes.length; i++ )
+            res.addCircumscribe( nodes[ nodes_index[i] ] );
+        
+        return res;
+    }
+    
+    TRoadDescription opSlice( size_t from, size_t to )
+    {
+        auto res = this;
+        
+        res.nodes_index = nodes_index[ from..to ];
+        
+        return res;
+    }
+}
 
 class RoadGraph( Coords )
 {
     alias Box!Coords BBox;
     alias RTreePtrs!(BBox, RoadGraph.Road) RoadsRTree;
-    alias RTreePtrs!(BBox, RoadGraph.RoadDescription) DescriptionsTree;
+    alias TRoadDescription!Coords RoadDescription;
+    alias RTreePtrs!( BBox, RoadDescription ) DescriptionsTree;
     alias Graph!( DNP, long, float ) G;
     
     private
@@ -31,43 +70,6 @@ class RoadGraph( Coords )
         
         //graph = new G;
     }
-    
-    static struct RoadDescription
-    {
-        size_t nodes_index[];
-        
-        cat.Road type = cat.Road.OTHER;
-        
-        invariant()
-        {
-            assert( nodes_index.length >= 2 );
-        }
-        
-        this(this)
-        {
-            nodes_index = nodes_index.dup;
-        }
-        
-        BBox boundary( in Coords[long] nodes ) const
-        {
-            auto res = BBox( nodes[ nodes_index[0] ], Coords(0,0) );
-            
-            for( auto i = 1; i < nodes.length; i++ )
-                res.addCircumscribe( nodes[ nodes_index[i] ] );
-            
-            return res;
-        }
-        
-        RoadDescription opSlice( size_t from, size_t to )
-        {
-            auto res = this;
-            
-            res.nodes_index = nodes_index[ from..to ];
-            
-            return res;
-        }
-    }
-        
     
     static struct Road
     {
