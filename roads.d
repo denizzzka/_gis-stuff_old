@@ -7,11 +7,12 @@ import cat = categories: Road;
 import std.algorithm: canFind;
 
     
-struct TRoadDescription( Coords )
+struct TRoadDescription( _Coords )
 {
+    alias _Coords Coords;
     alias Box!Coords BBox;
     
-    size_t nodes_index[];
+    size_t nodes_ids[];
     
     cat.Road type = cat.Road.OTHER;
     
@@ -20,25 +21,25 @@ struct TRoadDescription( Coords )
         //assert( nodes_index.length >= 2 );
     }
     
-    this( size_t[] nodes_index, cat.Road type )
+    this( size_t[] nodes_ids, cat.Road type )
     {
-        this.nodes_index = nodes_index;
+        this.nodes_ids = nodes_ids;
         this.type = type;
     }
     
     this(this)
     {
-        nodes_index = nodes_index.dup;
+        nodes_ids = nodes_ids.dup;
     }
     
     BBox boundary( in Coords[long] nodes ) const
     {
-        auto res = BBox( nodes[ nodes_index[0] ], Coords(0,0) );
+        auto res = BBox( nodes[ nodes_ids[0] ], Coords(0,0) );
         
-        for( auto i = 1; i < nodes_index.length; i++ )
+        for( auto i = 1; i < nodes_ids.length; i++ )
         {
-            assert( nodes_index[i] in nodes );
-            res.addCircumscribe( nodes[ nodes_index[i] ] );
+            assert( nodes_ids[i] in nodes );
+            res.addCircumscribe( nodes[ nodes_ids[i] ] );
         }
         
         return res;
@@ -48,18 +49,32 @@ struct TRoadDescription( Coords )
     {
         auto res = this;
         
-        res.nodes_index = nodes_index[ from..to ];
+        res.nodes_ids = nodes_ids[ from..to ];
         
         return res;
     }
 }
 
+struct TRoad( Coords )
+{
+    private
+    {
+        size_t start;
+        size_t end;
+        
+        Coords[] points;
+    }
+    
+    cat.Road type = cat.Road.OTHER;
+}
+
 class RoadGraph( Coords )
 {
     alias Box!Coords BBox;
-    alias RTreePtrs!(BBox, RoadGraph.Road) RoadsRTree;
     alias TRoadDescription!Coords RoadDescription;
+    alias TRoad!Coords Road;
     alias RTreePtrs!( BBox, RoadDescription ) DescriptionsTree;
+    alias RTreePtrs!( BBox, Road ) RoadsRTree;
     alias Graph!( DNP, long, float ) G;
     
     private
@@ -75,28 +90,16 @@ class RoadGraph( Coords )
         foreach( i, c; roads )
             descriptions_tree.addObject( c.boundary( nodes ), c );
         
+        auto prepared = prepareRoads( descriptions_tree, nodes );
         
         
         //graph = new G;
-    }
-    
-    static struct Road
-    {
-        private
-        {
-            Coords start;
-            Coords end;
-            
-            size_t[] points_index;
-        }
-        
-        cat.Road type = cat.Road.OTHER;
     }
 }
 
 /// Cuts roads on crossroads for creating road graph
 private
-auto prepareRoadGraph(DescriptionsTree, Coords)( in DescriptionsTree roads_rtree, in Coords[long] nodes )
+DescriptionsTree.Payload[] prepareRoads(DescriptionsTree, Coords)( in DescriptionsTree roads_rtree, in Coords[long] nodes )
 {
     alias DescriptionsTree.Payload RoadDescription;
     alias Box!Coords BBox;
@@ -108,18 +111,18 @@ auto prepareRoadGraph(DescriptionsTree, Coords)( in DescriptionsTree roads_rtree
     {
         RoadDescription road = *roadptr;
         
-        for( auto i = 1; i < road.nodes_index.length - 1; i++ )
+        for( auto i = 1; i < road.nodes_ids.length - 1; i++ )
         {
-            auto curr_point = road.nodes_index[i];
+            auto curr_point = road.nodes_ids[i];
             auto point_bbox = BBox( nodes[ curr_point ], Coords(0, 0) );
             auto near_roads = roads_rtree.search( point_bbox );
             
             foreach( n; near_roads )
-                if( n != roadptr && canFind( n.nodes_index, curr_point ) )
+                if( n != roadptr && canFind( n.nodes_ids, curr_point ) )
                 {
                     res ~= road[ 0..i+1 ];
                     
-                    road = road[ i..road.nodes_index.length ];
+                    road = road[ i..road.nodes_ids.length ];
                     i = 0;
                     break;
                 }
@@ -156,7 +159,37 @@ unittest
     roads.addObject( w1.boundary( nodes ), w1 );
     roads.addObject( w2.boundary( nodes ), w2 );
     
-    auto prepared = prepareRoadGraph( roads, nodes );
+    auto prepared = prepareRoads( roads, nodes );
     
     assert( prepared.length == 5 );
+}
+
+private
+TRoad!Coords[] descriptionsToRoads(RoadDescription)( in RoadDescription[] descriptions, in Coords[long] nodes, out Coords[] result_nodes )
+{
+    alias RoadDescription.Coords Coords;
+    alias TRoad!Coords Road;
+    
+    size_t[long] hashes;
+    
+    size_t getNodeIndex( in long node_id )
+    {
+        auto p = ( node_id in hashes );
+        
+        if( p is null )
+        {
+            hashes[ node_id ] = nodes.length;
+            result_nodes ~= nodes[ node_id ];
+        }
+        
+        return *p;
+    }
+    
+    return Road[];
+    
+    /*
+    foreach( i, c; descriptions )
+    {
+        c.nodes_index[0]
+    */
 }
