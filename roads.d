@@ -110,9 +110,7 @@ class RoadGraph( Coords )
         
         graph = new G;
         
-        descriptionsToRoads( prepared, nodes, graph );
-        
-        //graph.add
+        graph.descriptionsToRoadGraph( prepared, nodes );
     }
 }
 
@@ -184,7 +182,7 @@ unittest
 }
 
 private
-void descriptionsToRoads(RoadDescription, Coords, Graph)( in RoadDescription[] descriptions, in Coords[long] nodes, ref Graph graph )
+void descriptionsToRoadGraph( Graph, RoadDescription, Coords )( ref Graph graph, in RoadDescription[] descriptions, in Coords[long] nodes )
 {
     alias TRoad!Coords Road;
     
