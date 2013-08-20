@@ -359,7 +359,7 @@ Region getRegion( string filename, bool verbose )
         }
     }
     
-    auto graph = new RGraph( nodes_coords, roads );
+    res.addRoadGraph = new RGraph( nodes_coords, roads );
     
     return res;
 }

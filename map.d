@@ -138,7 +138,7 @@ struct Line
 
 alias RTreePtrs!(BBox, Point) PointsStorage;
 alias RTreePtrs!(BBox, Line) LinesStorage;
-//alias RTreePtrs!(BBox, RoadDescriptor*) RoadsStorage;
+alias RTreePtrs!(BBox, RGraph.RoadDescriptor) RoadsStorage;
 
 void addPoint( PointsStorage storage, Point point )
 {
@@ -156,6 +156,7 @@ struct Layer
 {
     PointsStorage POI;
     LinesStorage lines;
+    RoadsStorage roads;
     
     void init()
     {
@@ -240,6 +241,37 @@ class Region
         }
         
         layers[layer_num].lines.addLineToStorage( line );
+    }
+    
+    void addRoad( RGraph.RoadDescriptor road )
+    {
+        size_t layer_num;
+        
+        with( cat.Road )
+        switch( road.getType( road_graph ) )
+        {
+            case HIGHWAY:
+                layer_num = 4;
+                break;
+                
+            case PRIMARY:
+                layer_num = 2;
+                break;
+                
+            case SECONDARY:
+                layer_num = 1;
+                break;
+                
+            case OTHER:
+                layer_num = 0;
+                break;
+                
+            default: // unknown roads are always visible
+                layer_num = layers.length - 1;
+                break;
+        }
+        
+        layers[layer_num].roads.addObject( road.getBoundary(road_graph), road );
     }
     
     void addRoadGraph( RGraph newRoadGraph )
