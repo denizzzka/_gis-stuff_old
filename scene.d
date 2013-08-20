@@ -4,7 +4,7 @@ import map;
 import math.geometry;
 import osm: Coords, metersToEncoded, encodedToMeters;
 import math.earth: Conv, WGS84, lon2canonical;
-import map: Point, Way;
+import map: Point, Line;
 
 import std.conv;
 import std.string;
@@ -105,15 +105,15 @@ class POV
         return res;
     }
     
-    Way*[] getLines() const
+    Line*[] getLines() const
     {
-        Way*[] res;
+        Line*[] res;
         
         foreach( region; map.regions )
         {
             void addLayer( size_t num )
             {
-                res ~= region.layers[ num ].ways.search( boundary_encoded );
+                res ~= region.layers[ num ].lines.search( boundary_encoded );
             }
             
             addLayer( 4 );

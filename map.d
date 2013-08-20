@@ -47,7 +47,7 @@ struct Point
 
 alias RTreePtrs!(BBox, Point) PointsStorage;
 
-struct Way
+struct Line
 {
     Coords[] nodes;
     cat.Line type;
@@ -128,9 +128,9 @@ struct Way
         }
     }
     
-    Way opSlice( size_t from, size_t to )
+    Line opSlice( size_t from, size_t to )
     {
-        Way res = this;
+        Line res = this;
         
         res.nodes = nodes[ from..to ];
         
@@ -138,7 +138,7 @@ struct Way
     }
 }
 
-alias RTreePtrs!(BBox, Way) WaysStorage;
+alias RTreePtrs!(BBox, Line) LinesStorage;
 
 void addPoint( PointsStorage storage, Point point )
 {
@@ -147,25 +147,25 @@ void addPoint( PointsStorage storage, Point point )
     storage.addObject( bbox, point );
 }
 
-void addWayToStorage( WaysStorage storage, Way way )
+void addLineToStorage( LinesStorage storage, Line line )
 {
-    storage.addObject( way.getBoundary, way );
+    storage.addObject( line.getBoundary, line );
 }
 
 struct Layer
 {
     PointsStorage POI;
-    WaysStorage ways;
+    LinesStorage lines;
     
     void init()
     {
         POI = new PointsStorage;
-        ways = new WaysStorage( 10 );
+        lines = new LinesStorage( 10 );
     }
     
     BBox boundary() const
     {
-        return POI.getBoundary.getCircumscribed( ways.getBoundary );
+        return POI.getBoundary.getCircumscribed( lines.getBoundary );
     }
 }
 
@@ -205,12 +205,12 @@ class Region
         layers[layer_num].POI.addPoint( point );
     }
     
-    void addWay( Way way )
+    void addLine( Line line )
     {
         size_t layer_num;
         
         with( cat.Line )
-        switch( way.type )
+        switch( line.type )
         {
             case BOUNDARY:
                 layer_num = 4;
@@ -238,7 +238,7 @@ class Region
                 break;
         }
         
-        layers[layer_num].ways.addWayToStorage( way );
+        layers[layer_num].lines.addLineToStorage( line );
     }
 }
 

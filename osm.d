@@ -4,7 +4,7 @@ import osmpbf.fileformat;
 import osmpbf.osmformat;
 import math.geometry;
 import math.earth;
-import map: Map, Region, BBox, Point, PointsStorage, MapWay = Way, WaysStorage, addPoint, addWayToStorage;
+import map: Map, Region, BBox, Point, PointsStorage, MapWay = Line, LinesStorage, addPoint, addLineToStorage;
 import cat = categories;
 import osm_tags_parsing;
 import roads: TRoadGraph;
@@ -296,9 +296,9 @@ void addPoints(
 
 /// Cuts roads on crossroads for creating road graph
 @disable
-WaysStorage prepareRoadGraph( in WaysStorage roads_rtree )
+LinesStorage prepareRoadGraph( in LinesStorage roads_rtree )
 {
-    WaysStorage res = new WaysStorage;
+    LinesStorage res = new LinesStorage;
     auto all_roads = roads_rtree.search( roads_rtree.getBoundary );
     
     foreach( j, roadptr; all_roads )
@@ -314,14 +314,14 @@ WaysStorage prepareRoadGraph( in WaysStorage roads_rtree )
             foreach( n; near_roads )
                 if( n != roadptr && canFind( n.nodes, curr_point ) )
                 {
-                    res.addWayToStorage( road[ 0..i+1 ] );
+                    res.addLineToStorage( road[ 0..i+1 ] );
                     road = road[ i..road.nodes.length ];
                     i = 0;
                     break;
                 }
         }
         
-        res.addWayToStorage( road );
+        res.addLineToStorage( road );
     }
     
     return res;
@@ -334,9 +334,9 @@ unittest
     auto w1 = MapWay( n1, cat.Line.ROAD_HIGHWAY, "" );
     auto w2 = MapWay( n2, cat.Line.ROAD_PRIMARY, "" );
     
-    auto roads = new WaysStorage;
-    roads.addWayToStorage( w1 );
-    roads.addWayToStorage( w2 );
+    auto roads = new LinesStorage;
+    roads.addLineToStorage( w1 );
+    roads.addLineToStorage( w2 );
     
     //auto prepared = prepareRoadGraph( roads );
     //auto res = prepared.search( prepared.getBoundary );
@@ -394,7 +394,7 @@ Region getRegion( string filename, bool verbose )
                         {
                             case BUILDING:
                                 MapWay mw = decoded.createMapWay( prim, nodes_coords );
-                                res.addWay( mw );
+                                res.addLine( mw );
                                 break;
                                 
                             case ROAD:
