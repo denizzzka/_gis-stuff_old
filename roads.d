@@ -82,6 +82,7 @@ struct Node
     }
 }
 
+@disable
 auto boundary(T)( ref const T node )
 {
     alias Box!osm.Coords BBox;
@@ -92,34 +93,6 @@ auto boundary(T)( ref const T node )
         res.addCircumscribe( node.edges[i].to_node.point.coords );
     
     return res;
-}
-
-struct RoadDescriptor
-{
-    size_t node_idx;
-    size_t edge_idx;
-    
-    this( size_t node_idx, size_t edge_idx )
-    {
-        this.node_idx = node_idx;
-        this.edge_idx = edge_idx;
-    }
-    
-    Coords[] getPoints(RoadGraph)( RoadGraph roadGraph ) const
-    {
-        Coords[] res;
-        
-        auto node = &roadGraph.graph.nodes[ node_idx ];
-        
-        res ~= node.point.coords;
-        
-        foreach( c; node.edges[ edge_idx ].payload.points )
-            res ~= c;
-        
-        res ~= node.edges[ edge_idx ].to_node.point.coords;
-        
-        return res;
-    }
 }
 
 class TRoadGraph( Coords )
@@ -159,6 +132,47 @@ class TRoadGraph( Coords )
                 res ~= RoadDescriptor( j, i );
         
         return res;
+    }
+    
+    struct RoadDescriptor
+    {
+        size_t node_idx;
+        size_t edge_idx;
+        
+        this( size_t node_idx, size_t edge_idx )
+        {
+            this.node_idx = node_idx;
+            this.edge_idx = edge_idx;
+        }
+        
+        Coords[] getPoints(RoadGraph)( in RoadGraph roadGraph ) const
+        {
+            Coords[] res;
+            
+            auto node = &roadGraph.graph.nodes[ node_idx ];
+            
+            res ~= node.point.coords;
+            
+            foreach( c; node.edges[ edge_idx ].payload.points )
+                res ~= c;
+            
+            res ~= node.edges[ edge_idx ].to_node.point.coords;
+            
+            return res;
+        }
+        
+        BBox getBoundary(RoadGraph)( in RoadGraph roadGraph ) const
+        {
+            auto points = getPoints( roadGraph );
+            assert( points.length > 0 );
+            
+            auto res = BBox( points[0], Coords(0,0) );
+            
+            for( auto i = 1; i < points.length; i++ )
+                res.addCircumscribe( points[i] );
+            
+            return res;
+        }
     }
 }
 
