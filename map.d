@@ -162,6 +162,7 @@ struct Layer
     {
         POI = new PointsStorage;
         lines = new LinesStorage( 10 );
+        roads = new RoadsStorage;
     }
     
     BBox boundary() const
@@ -272,7 +273,8 @@ class Region
                 break;
         }
         
-        layers[layer_num].roads.addObject( descr.getBoundary(road_graph), descr );
+        auto bbox = descr.getBoundary(road_graph);
+        layers[layer_num].roads.addObject( bbox, descr );
     }
     
     void addRoadGraph( RGraph newRoadGraph )
