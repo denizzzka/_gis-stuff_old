@@ -377,12 +377,20 @@ Region getRegion( string filename, bool verbose )
                 {
                     auto decoded = decodeWay( prim, w );
                     
-                    if( decoded.classification == LineClass.ROAD )
-                        roads ~= RGraph.RoadDescription( decoded.coords_idx, cat.Road.OTHER );
-                    else
+                    with( LineClass )
+                    switch( decoded.classification )
                     {
-                        MapWay mw = decoded.createMapWay( prim, nodes_coords );
-                        res.addWay( mw );
+                        case BUILDING:
+                            MapWay mw = decoded.createMapWay( prim, nodes_coords );
+                            res.addWay( mw );
+                            break;
+                            
+                        case ROAD:
+                            roads ~= RGraph.RoadDescription( decoded.coords_idx, cat.Road.OTHER );
+                            break;
+                            
+                        default:
+                            break;
                     }
                 }
         }

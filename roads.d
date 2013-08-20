@@ -116,7 +116,7 @@ class TRoadGraph( Coords )
         foreach( i, c; descriptions )
             descriptions_tree.addObject( c.getBoundary( nodes ), c );
         
-        auto prepared = prepareRoads( descriptions_tree, nodes );
+        auto prepared = descriptions_tree.prepareRoads( nodes );
         
         graph = new G;
         
@@ -259,9 +259,10 @@ void descriptionsToRoadGraph( Graph, RoadDescription, Coords )( ref Graph graph,
 {
     alias TRoad!Coords Road;
     
-    size_t[long] already_stored;
+    size_t[ulong] already_stored;
     
-    size_t addNode( long node_id )
+    // собственная функция нужна чтобы исключить пересечение между разными точками с одинаковыми координатами
+    size_t addPoint( ulong node_id )
     {
         auto p = node_id in already_stored;
         
@@ -269,6 +270,8 @@ void descriptionsToRoadGraph( Graph, RoadDescription, Coords )( ref Graph graph,
             return *p;
         else
         {
+            assert( node_id in nodes );
+            
             auto node = Node( nodes[ node_id ] );
             auto idx = graph.addPoint( node );
             already_stored[ node_id ] = idx;
@@ -279,14 +282,16 @@ void descriptionsToRoadGraph( Graph, RoadDescription, Coords )( ref Graph graph,
     
     foreach( road; descriptions )
     {
+        assert( road.nodes_ids.length >= 2 );
+        
         Road r;
         
         for( auto i = 1; i < road.nodes_ids.length - 1; i++ )
             r.points ~= nodes[ road.nodes_ids[i] ];
         
         graph.addEdge(
-                addNode( road.nodes_ids[0] ),
-                addNode( road.nodes_ids.length-1 ),
+                addPoint( road.nodes_ids[0] ),
+                addPoint( road.nodes_ids.length-1 ),
                 r, 0
             );
     }
