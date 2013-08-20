@@ -139,7 +139,7 @@ class TRoadGraph( Coords )
         return res;
     }
     
-    struct RoadDescriptor
+    static struct RoadDescriptor
     {
         uint node_idx;
         uint edge_idx;
