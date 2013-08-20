@@ -1,4 +1,5 @@
-import osmpbf.osmformat: StringTable, Node, Way;
+import osmpbf.osmformat: StringTable, Node;
+import osm: DecodedLine;
 import categories;
 
 import std.conv: to;
@@ -127,13 +128,11 @@ Point examNodeTag( Tag[] tags, Tag tag )
     }
 }
 
-Line getLineType( in StringTable stringtable, in Way way )
+Line getLineType( in StringTable stringtable, in DecodedLine line )
 {
-    auto tags = stringtable.getTags( way );
-    
-    foreach( t; tags )
+    foreach( t; line.tags )
     {
-        auto tag_type = examWayTag( tags, t );
+        auto tag_type = examWayTag( line.tags, t );
         
         if( tag_type != Line.UNSUPPORTED )
             return tag_type;
@@ -142,7 +141,7 @@ Line getLineType( in StringTable stringtable, in Way way )
     return Line.UNSUPPORTED;
 }
 
-Line examWayTag( Tag[] tags, Tag tag )
+Line examWayTag( in Tag[] tags, in Tag tag )
 {
     with( Line )
     {

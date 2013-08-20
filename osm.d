@@ -188,36 +188,25 @@ struct DecodedLine
         
         return res;
     }
+    
+    MapWay createMapWay( in PrimitiveBlock prim, in Coords[long] nodes_coords ) const
+    {
+        return MapWay(
+                getCoords( nodes_coords ),
+                prim.stringtable.getLineType( this ),
+                tags.toString()
+            );
+    }
 }
 
 DecodedLine decodeWay( in PrimitiveBlock prim, in Way way )
 {
     DecodedLine res;
     
-    res.tags = prim.stringtable.getTagsByArray( way.keys, way.vals );
-    res.classification = classifyLine( res.tags );
-    
-    return res;
-}
-
-MapWay decodeWay( in PrimitiveBlock prim, in Coords[long] nodes_coords, in Way way )
-{
-    Coords[] coords;
-    long curr;
-    
-    // decode delta
-    foreach( i, c; way.refs )
-    {
-        curr += c;
-        coords ~= nodes_coords[ curr ];
-    }
-    
-    string tags;
-    
     if( !way.keys.isNull )
-        tags = prim.stringtable.getTagsByArray( way.keys, way.vals ).toString();
-    
-    auto res = MapWay( coords, prim.stringtable.getLineType( way ), tags );
+        res.tags = prim.stringtable.getTagsByArray( way.keys, way.vals );
+        
+    res.classification = classifyLine( res.tags );
     
     return res;
 }
@@ -380,13 +369,16 @@ Region getRegion( string filename, bool verbose )
             if( !c.ways.isNull )
                 foreach( w; c.ways )
                 {
-                    auto decoded = decodeWay( prim, nodes_coords, w );
+                    auto decoded = decodeWay( prim, w );
                     
-                    if( decoded.type != cat.Line.UNSUPPORTED )
-                        if( decoded.isRoad )
-                            roads.addWayToStorage( decoded );
-                        else
-                            res.addWay( decoded );
+                    if( decoded.classification == LineClass.ROAD )
+                    {}
+                        //roads.addWayToStorage( decoded );
+                    else
+                    {
+                        MapWay mw = decoded.createMapWay( prim, nodes_coords );
+                        res.addWay( mw );
+                    }
                 }
         }
     }
