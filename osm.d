@@ -170,7 +170,7 @@ unittest
 
 struct DecodedLine
 {
-    long[] coords_idx;
+    ulong[] coords_idx;
     LineClass classification = LineClass.OTHER;
     Tag[] tags;
     
@@ -378,8 +378,7 @@ Region getRegion( string filename, bool verbose )
                     auto decoded = decodeWay( prim, w );
                     
                     if( decoded.classification == LineClass.ROAD )
-                    {}
-                        //roads ~= RGraph.RoadDescription( decoded.coords_idx, cat.Road.OTHER );
+                        roads ~= RGraph.RoadDescription( decoded.coords_idx, cat.Road.OTHER );
                     else
                     {
                         MapWay mw = decoded.createMapWay( prim, nodes_coords );

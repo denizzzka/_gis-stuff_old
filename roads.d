@@ -14,11 +14,11 @@ struct TRoadDescription( _Coords )
     alias _Coords Coords;
     alias Box!Coords BBox;
     
-    size_t nodes_ids[];
+    ulong nodes_ids[];
     
     cat.Road type = cat.Road.OTHER;
     
-    this( size_t[] nodes_ids, cat.Road type )
+    this( ulong[] nodes_ids, cat.Road type )
     {
         this.nodes_ids = nodes_ids;
         this.type = type;
@@ -239,8 +239,8 @@ unittest
     foreach( i, c; points )
         nodes[ i * 10 ] = c;
     
-    size_t[] n1 = [ 0, 10, 20, 30, 40 ];
-    size_t[] n2 = [ 50, 60, 20, 70, 80, 30 ];
+    ulong[] n1 = [ 0, 10, 20, 30, 40 ];
+    ulong[] n2 = [ 50, 60, 20, 70, 80, 30 ];
     
     auto w1 = RoadDescription( n1, cat.Road.HIGHWAY );
     auto w2 = RoadDescription( n2, cat.Road.PRIMARY );
