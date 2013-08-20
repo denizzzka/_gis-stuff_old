@@ -179,13 +179,6 @@ struct DecodedLine
         assert( coords_idx.length >= 2 );
     }
     
-    this( ulong[] coords_idx, LineClass classification, Tag[] tags )
-    {
-        this.coords_idx = coords_idx;
-        this.classification = classification;
-        this.tags = tags;
-    }
-    
     Coords[] getCoords( in Coords[long] nodes_coords ) const
     {
         Coords[] res;
@@ -208,6 +201,11 @@ struct DecodedLine
 }
 
 DecodedLine decodeWay( in PrimitiveBlock prim, in Way way )
+in
+{
+    assert( way.refs.length >= 2 );
+}
+body
 {
     DecodedLine res;
     
@@ -387,25 +385,26 @@ Region getRegion( string filename, bool verbose )
                 
             if( !c.ways.isNull )
                 foreach( w; c.ways )
-                {
-                    auto decoded = decodeWay( prim, w );
-                    
-                    with( LineClass )
-                    switch( decoded.classification )
+                    if( w.refs.length >= 2 )
                     {
-                        case BUILDING:
-                            MapWay mw = decoded.createMapWay( prim, nodes_coords );
-                            res.addWay( mw );
-                            break;
-                            
-                        case ROAD:
-                            roads ~= RGraph.RoadDescription( decoded.coords_idx, cat.Road.OTHER );
-                            break;
-                            
-                        default:
-                            break;
+                        auto decoded = decodeWay( prim, w );
+                        
+                        with( LineClass )
+                        switch( decoded.classification )
+                        {
+                            case BUILDING:
+                                MapWay mw = decoded.createMapWay( prim, nodes_coords );
+                                res.addWay( mw );
+                                break;
+                                
+                            case ROAD:
+                                roads ~= RGraph.RoadDescription( decoded.coords_idx, cat.Road.OTHER );
+                                break;
+                                
+                            default:
+                                break;
+                        }
                     }
-                }
         }
     }
     

@@ -18,11 +18,6 @@ struct TRoadDescription( _Coords )
     
     cat.Road type = cat.Road.OTHER;
     
-    invariant()
-    {
-        assert( nodes_ids.length != 1 );
-    }
-    
     this( ulong[] nodes_ids, cat.Road type )
     {
         this.nodes_ids = nodes_ids;
