@@ -171,7 +171,7 @@ unittest
 struct DecodedLine
 {
     uint[] coords_idx;
-    LineClass classification;
+    LineClass classification = LineClass.OTHER;
     Tag[] tags;
     
     Coords[] getCoords( in Coords[long] nodes_coords ) const
