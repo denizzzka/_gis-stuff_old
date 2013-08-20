@@ -174,6 +174,18 @@ struct DecodedLine
     LineClass classification = LineClass.OTHER;
     Tag[] tags;
     
+    invariant()
+    {
+        assert( coords_idx.length >= 2 );
+    }
+    
+    this( ulong[] coords_idx, LineClass classification, Tag[] tags )
+    {
+        this.coords_idx = coords_idx;
+        this.classification = classification;
+        this.tags = tags;
+    }
+    
     Coords[] getCoords( in Coords[long] nodes_coords ) const
     {
         Coords[] res;
@@ -184,6 +196,7 @@ struct DecodedLine
         return res;
     }
     
+    private
     MapWay createMapWay( in PrimitiveBlock prim, in Coords[long] nodes_coords ) const
     {
         return MapWay(

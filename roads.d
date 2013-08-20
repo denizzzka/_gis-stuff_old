@@ -18,6 +18,11 @@ struct TRoadDescription( _Coords )
     
     cat.Road type = cat.Road.OTHER;
     
+    invariant()
+    {
+        assert( nodes_ids.length != 1 );
+    }
+    
     this( ulong[] nodes_ids, cat.Road type )
     {
         this.nodes_ids = nodes_ids;
@@ -292,8 +297,8 @@ void descriptionsToRoadGraph( Graph, RoadDescription, Coords )( ref Graph graph,
             r.points ~= nodes[ road.nodes_ids[i] ];
         
         graph.addEdge(
-                addPoint( road.nodes_ids[ 0 ] ),
-                addPoint( road.nodes_ids[ road.nodes_ids.length-1 ] ),
+                addPoint( road.nodes_ids[0] ),
+                addPoint( road.nodes_ids[$-1] ),
                 r, 0
             );
     }
