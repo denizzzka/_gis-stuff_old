@@ -2,7 +2,7 @@ module map;
 
 import math.geometry;
 import math.rtree2d;
-import osm: Coords, encodedToMeters;
+import osm: Coords, encodedToMeters, RGraph;
 import cat = categories;
 import sfml: Color, randomColor; // TODO: temporary, remove it
 
@@ -44,8 +44,6 @@ struct Point
         return _type;
     }
 }
-
-alias RTreePtrs!(BBox, Point) PointsStorage;
 
 struct Line
 {
@@ -138,7 +136,9 @@ struct Line
     }
 }
 
+alias RTreePtrs!(BBox, Point) PointsStorage;
 alias RTreePtrs!(BBox, Line) LinesStorage;
+//alias RTreePtrs!(BBox, RoadDescriptor*) RoadsStorage;
 
 void addPoint( PointsStorage storage, Point point )
 {
@@ -172,6 +172,7 @@ struct Layer
 class Region
 {
     Layer[5] layers;
+    RGraph road_graph;
     
     this()
     {
@@ -239,6 +240,11 @@ class Region
         }
         
         layers[layer_num].lines.addLineToStorage( line );
+    }
+    
+    void addRoadGraph( RGraph newRoadGraph )
+    {
+        road_graph = newRoadGraph;
     }
 }
 

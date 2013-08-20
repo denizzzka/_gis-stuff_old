@@ -294,6 +294,8 @@ void addPoints(
     }
 }
 
+alias TRoadGraph!Coords RGraph;
+
 Region getRegion( string filename, bool verbose )
 {
     void log(T)( T s )
@@ -309,7 +311,6 @@ Region getRegion( string filename, bool verbose )
     auto res = new Region;
     Coords[long] nodes_coords;
     
-    alias TRoadGraph!Coords RGraph;
     RGraph.RoadDescription[] roads;
     
     while(true)
