@@ -243,12 +243,13 @@ class Region
         layers[layer_num].lines.addLineToStorage( line );
     }
     
-    void addRoad( RGraph.RoadDescriptor road )
+    private
+    void addRoadDescriptor( RGraph.RoadDescriptor descr )
     {
         size_t layer_num;
         
         with( cat.Road )
-        switch( road.getType( road_graph ) )
+        switch( descr.getType( road_graph ) )
         {
             case HIGHWAY:
                 layer_num = 4;
@@ -271,12 +272,17 @@ class Region
                 break;
         }
         
-        layers[layer_num].roads.addObject( road.getBoundary(road_graph), road );
+        layers[layer_num].roads.addObject( descr.getBoundary(road_graph), descr );
     }
     
     void addRoadGraph( RGraph newRoadGraph )
     {
         road_graph = newRoadGraph;
+        
+        auto descriptors = road_graph.getDescriptors();
+        
+        foreach( c; descriptors )
+            addRoadDescriptor( c );
     }
 }
 
