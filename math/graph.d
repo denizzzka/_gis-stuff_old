@@ -25,9 +25,8 @@ struct TNode( Point, Edge )
     const Point point;
 }
 
-class Graph( Point, EdgePayload, Weight )
+class Graph( Point, EdgePayload, Weight, Edge = TEdge!( EdgePayload, Weight ) )
 {
-    alias TEdge!( EdgePayload, Weight ) Edge;
     alias TNode!(Point, Edge) Node;
     
 private:
