@@ -5,6 +5,13 @@ import std.conv: to;
 import std.algorithm: canFind;
 
 
+enum WayType
+{
+    OTHER,
+    BUILDING,
+    ROAD
+}
+
 string getStringByIndex( in StringTable stringtable, in uint index )
 {
     char[] res;
@@ -163,5 +170,28 @@ Line examWayTag( Tag[] tags, Tag tag )
         }
         
         return UNSUPPORTED;
+    }
+}
+
+WayType getWayType( Tag[] tags )
+{
+    with( WayType )
+    {
+        foreach( t; tags )
+            switch( t.key )
+            {
+                case "highway":
+                    return ROAD;
+                    break;
+                    
+                case "building":
+                    return BUILDING;
+                    break;
+                    
+                default:
+                    continue;
+            }
+        
+        return OTHER;
     }
 }
