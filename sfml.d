@@ -71,6 +71,9 @@ class Window
 		auto lines = scene.getLines();
 		drawLines( lines );
 		
+		auto roads = scene.getRoads();
+		drawRoads( roads );
+		
 		window.draw( vertex_array );
 	    }
 	    
@@ -112,6 +115,47 @@ class Window
             }
             
             drawLine( line_points, line.color );
+        }
+    }
+    
+    private
+    void drawRoad( Vector2r[] coords, Color color )
+    {
+	debug(sfml) writeln("draw road, nodes num=", coords.length, " color=", color);
+	
+	auto line = new VertexArray( PrimitiveType.LinesStrip, coords.length );
+	
+	foreach( i, point; coords )
+	{
+	    Vector2f c; c = cartesianToSFML( point );
+	    debug(sfml) writeln("draw road node, window coords=", c);
+	    
+	    line[i] = Vertex(c, color);
+	}
+	
+	window.draw( line );
+    }
+    
+    private
+    void drawRoads(T)( in T roads_graphs )
+    {
+        foreach( roads; roads_graphs )
+	    foreach( road; roads.descriptors )
+	    {
+		auto encoded_points = road.getPoints( roads.road_graph );
+		
+		Vector2r[] res_points;
+		
+		foreach( i, encoded; encoded_points )
+		{
+		    Vector2r point = encodedToMeters( encoded );
+		    auto window_coords = scene.metersToScreen( point );
+		    res_points ~= window_coords;
+		    
+		    debug(sfml) writeln("draw line point i=", i, " encoded coords=", encoded, " meters=", point, " window_coords=", window_coords);
+		}
+		
+		drawRoad( res_points, randomColor );
         }
     }
     

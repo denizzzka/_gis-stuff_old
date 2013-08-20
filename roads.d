@@ -185,6 +185,18 @@ class TRoadGraph( Coords )
             return edge.payload.type;
         }
     }
+    
+    static struct Roads
+    {
+        RoadDescriptor*[] descriptors;
+        TRoadGraph road_graph;
+        
+        Coords[] getPoints( in size_t descriptor_idx ) const
+        {
+            auto descriptor = descriptors[ descriptor_idx ];
+            return descriptor.getPoints( road_graph );
+        }
+    }
 }
 
 /// Cuts roads on crossroads for creating road graph

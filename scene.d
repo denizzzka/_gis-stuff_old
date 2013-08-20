@@ -4,7 +4,7 @@ import map;
 import math.geometry;
 import osm: Coords, metersToEncoded, encodedToMeters;
 import math.earth: Conv, WGS84, lon2canonical;
-import map: Point, Line;
+import map: Point, Line, RGraph;
 
 import std.conv;
 import std.string;
@@ -125,6 +125,33 @@ class POV
         }
         
         debug(scene) writeln("found ways number=", res.length);
+        return res;
+    }
+    
+    RGraph.Roads[] getRoads() const
+    {
+        RGraph.Roads[] res;
+        
+        foreach( region; map.regions )
+        {
+            RGraph.Roads curr;
+            
+            curr.road_graph = region.road_graph;
+            
+            void addLayer( size_t num )
+            {
+                curr.descriptors ~= region.layers[ num ].roads.search( boundary_encoded );
+            }
+            
+            addLayer( 4 );
+            
+            if( zoom > 0.015 ) addLayer( 3 );
+            if( zoom > 0.03 ) addLayer( 2 );
+            if( zoom > 0.15 )  addLayer( 1 );
+            if( zoom > 0.3 )  addLayer( 0 );
+        }
+        
+        debug(scene) writeln("found roads number=", res.length);
         return res;
     }
     
