@@ -246,8 +246,8 @@ unittest
     auto w2 = RoadDescription( n2, cat.Road.PRIMARY );
     
     auto roads = new G.DescriptionsTree;
-    roads.addObject( w1.boundary( nodes ), w1 );
-    roads.addObject( w2.boundary( nodes ), w2 );
+    roads.addObject( w1.getBoundary( nodes ), w1 );
+    roads.addObject( w2.getBoundary( nodes ), w2 );
     
     auto prepared = prepareRoads( roads, nodes );
     
