@@ -94,6 +94,24 @@ auto boundary(T)( ref const T node )
     return res;
 }
 
+struct RoadDescriptor
+{
+    size_t node;
+    size_t edge;
+    
+    this( size_t node, size_t edge )
+    {
+        this.node = node;
+        this.edge = edge;
+    }
+    
+    /*
+    osm.Way getWay() const
+    {
+    }
+    */
+}
+
 class RoadGraph( Coords )
 {
     alias Box!Coords BBox;
@@ -120,6 +138,17 @@ class RoadGraph( Coords )
         graph = new G;
         
         graph.descriptionsToRoadGraph( prepared, nodes );
+    }
+    
+    RoadDescriptor[] getDescriptors() const
+    {
+        RoadDescriptor[] res;
+        
+        foreach( j, ref const node; graph.nodes )
+            foreach( i, ref const edge; node.edges )
+                res ~= RoadDescriptor( j, i );
+        
+        return res;
     }
 }
 

@@ -32,10 +32,11 @@ class Graph( Point, EdgePayload, Weight )
     
 private:
     
-    Node[] nodes; /// contains nodes with all payload
     size_t[const Point] points; /// AA used for fast search of stored points
     
 public:
+    
+    Node[] nodes; /// contains nodes with all payload    
     
     size_t addPoint( in Point v )
     {
