@@ -134,9 +134,7 @@ class POV
         
         foreach( ref region; map.regions )
         {
-            RGraph.Roads curr;
-            
-            curr.road_graph = region.road_graph;
+            auto curr = RGraph.Roads( region.road_graph );
             
             void addLayer( size_t num )
             {

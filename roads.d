@@ -189,7 +189,12 @@ class TRoadGraph( Coords )
     static struct Roads
     {
         RoadDescriptor*[] descriptors;
-        TRoadGraph road_graph;
+        const TRoadGraph road_graph;
+        
+        this( in TRoadGraph graph )
+        {
+            road_graph = graph;
+        }
         
         Coords[] getPoints( in size_t descriptor_idx ) const
         {
