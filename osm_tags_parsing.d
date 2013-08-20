@@ -76,7 +76,6 @@ if( is( T == Node ) || is( T == Way ) )
         return null;
 }
 
-@disable
 Tag[] searchTags( in Tag[] tags, in string[] keys )
 {
     Tag[] res;
@@ -190,6 +189,26 @@ LineClass classifyLine( Tag[] tags )
                 default:
                     continue;
             }
+        
+        return OTHER;
+    }
+}
+
+Road getRoadType( in Tag[] tags )
+{
+    auto s = searchTags( tags, [ "highway" ] );
+    auto tag = s[0];
+    
+    with( Road )
+    {
+        if( canFind( ["trunk", "motorway"], tag.value ) )
+            return HIGHWAY;
+        
+        if( canFind( ["primary", "tertiary"], tag.value ) )
+            return PRIMARY;
+        
+        if( canFind( ["secondary"], tag.value ) )
+            return SECONDARY;
         
         return OTHER;
     }

@@ -349,7 +349,8 @@ Region getRegion( string filename, bool verbose )
                                 break;
                                 
                             case ROAD:
-                                roads ~= RGraph.RoadDescription( decoded.coords_idx, cat.Road.OTHER );
+                                auto type = getRoadType( decoded.tags );
+                                roads ~= RGraph.RoadDescription( decoded.coords_idx, type );
                                 break;
                                 
                             default:
