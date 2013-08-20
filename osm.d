@@ -170,21 +170,16 @@ unittest
 
 struct DecodedLine
 {
-    uint[] coords_idx;
+    long[] coords_idx;
     LineClass classification = LineClass.OTHER;
     Tag[] tags;
     
     Coords[] getCoords( in Coords[long] nodes_coords ) const
     {
         Coords[] res;
-        long curr;
         
-        // decode delta
         foreach( c; coords_idx )
-        {
-            curr += c;
-            res ~= nodes_coords[ curr ];
-        }
+            res ~= nodes_coords[ c ];
         
         return res;
     }
@@ -202,6 +197,14 @@ struct DecodedLine
 DecodedLine decodeWay( in PrimitiveBlock prim, in Way way )
 {
     DecodedLine res;
+    
+    // decode index delta
+    long curr = 0;
+    foreach( c; way.refs )
+    {
+        curr += c;
+        res.coords_idx ~= curr;
+    }
     
     if( !way.keys.isNull )
         res.tags = prim.stringtable.getTagsByArray( way.keys, way.vals );
@@ -375,7 +378,8 @@ Region getRegion( string filename, bool verbose )
                     auto decoded = decodeWay( prim, w );
                     
                     if( decoded.classification == LineClass.ROAD )
-                        roads ~= RGraph.RoadDescription( decoded.coords_idx, cat.Road.OTHER );
+                    {}
+                        //roads ~= RGraph.RoadDescription( decoded.coords_idx, cat.Road.OTHER );
                     else
                     {
                         MapWay mw = decoded.createMapWay( prim, nodes_coords );
