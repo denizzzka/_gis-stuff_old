@@ -136,10 +136,10 @@ class TRoadGraph( Coords )
     
     struct RoadDescriptor
     {
-        size_t node_idx;
-        size_t edge_idx;
+        long node_idx;
+        long edge_idx;
         
-        this( size_t node_idx, size_t edge_idx )
+        this( long node_idx, long edge_idx )
         {
             this.node_idx = node_idx;
             this.edge_idx = edge_idx;
