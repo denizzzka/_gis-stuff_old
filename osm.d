@@ -343,7 +343,9 @@ Region getRegion( string filename, bool verbose )
     
     auto res = new Region;
     Coords[long] nodes_coords;
-    WaysStorage roads = new WaysStorage;
+    
+    alias roads.TRoadGraph!Coords RGraph;
+    auto roads = new RGraph.DescriptionsTree;
     
     while(true)
     {
@@ -372,8 +374,10 @@ Region getRegion( string filename, bool verbose )
                     auto decoded = decodeWay( prim, w );
                     
                     if( decoded.classification == LineClass.ROAD )
-                    {}
-                        //roads.addWayToStorage( decoded );
+                    {
+                        auto rd = RGraph.RoadDescription( decoded.coords_idx, cat.Road.OTHER );
+                        roads.addObject ( rd.getBoundary( nodes_coords ), rd );
+                    }
                     else
                     {
                         MapWay mw = decoded.createMapWay( prim, nodes_coords );

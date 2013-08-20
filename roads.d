@@ -29,7 +29,7 @@ struct TRoadDescription( _Coords )
         nodes_ids = nodes_ids.dup;
     }
     
-    BBox boundary( in Coords[long] nodes ) const
+    BBox getBoundary( in Coords[long] nodes ) const
     {
         auto res = BBox( nodes[ nodes_ids[0] ], Coords(0,0) );
         
@@ -114,7 +114,7 @@ class TRoadGraph( Coords )
         auto descriptions_tree = new DescriptionsTree;
         
         foreach( i, c; descriptions )
-            descriptions_tree.addObject( c.boundary( nodes ), c );
+            descriptions_tree.addObject( c.getBoundary( nodes ), c );
         
         auto prepared = prepareRoads( descriptions_tree, nodes );
         
