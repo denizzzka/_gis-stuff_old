@@ -136,32 +136,35 @@ class TRoadGraph( Coords )
     
     struct RoadDescriptor
     {
-        long node_idx;
-        long edge_idx;
+        size_t node_idx;
+        size_t edge_idx;
         
-        this( long node_idx, long edge_idx )
+        this( size_t node_idx, size_t edge_idx )
         {
             this.node_idx = node_idx;
             this.edge_idx = edge_idx;
         }
         
-        Coords[] getPoints(RoadGraph)( in RoadGraph roadGraph ) const
+        Coords[] getPoints( in TRoadGraph roadGraph ) const
         {
             Coords[] res;
             
-            auto node = &roadGraph.graph.nodes[ node_idx ];
+            auto start_node = &roadGraph.graph.nodes[ node_idx ];
             
-            res ~= node.point.coords;
+            res ~= start_node.point.coords;
             
-            foreach( c; node.edges[ edge_idx ].payload.points )
+            auto edge = &start_node.edges[ edge_idx ];
+            
+            foreach( c; edge.payload.points )
                 res ~= c;
             
-            res ~= node.edges[ edge_idx ].to_node.point.coords;
+            auto end_node_idx = edge.to_node;
+            res ~= roadGraph.graph.nodes[ end_node_idx ].point.coords;
             
             return res;
         }
         
-        BBox getBoundary(RoadGraph)( in RoadGraph roadGraph ) const
+        BBox getBoundary( in TRoadGraph roadGraph ) const
         {
             auto points = getPoints( roadGraph );
             assert( points.length > 0 );
@@ -172,6 +175,14 @@ class TRoadGraph( Coords )
                 res.addCircumscribe( points[i] );
             
             return res;
+        }
+        
+        cat.Road getType( in TRoadGraph roadGraph ) const
+        {
+            auto node = &roadGraph.graph.nodes[ node_idx ];
+            auto edge = node.edges[ edge_idx ];
+            
+            return edge.payload.type;
         }
     }
 }
