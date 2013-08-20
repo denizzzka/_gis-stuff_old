@@ -96,23 +96,33 @@ auto boundary(T)( ref const T node )
 
 struct RoadDescriptor
 {
-    size_t node;
-    size_t edge;
+    size_t node_idx;
+    size_t edge_idx;
     
-    this( size_t node, size_t edge )
+    this( size_t node_idx, size_t edge_idx )
     {
-        this.node = node;
-        this.edge = edge;
+        this.node_idx = node_idx;
+        this.edge_idx = edge_idx;
     }
     
-    /*
-    osm.Way getWay() const
+    Coords[] getPoints(RoadGraph)( RoadGraph roadGraph ) const
     {
+        Coords[] res;
+        
+        auto node = &roadGraph.graph.nodes[ node_idx ];
+        
+        res ~= node.point.coords;
+        
+        foreach( c; node.edges[ edge_idx ].payload.points )
+            res ~= c;
+        
+        res ~= node.edges[ edge_idx ].to_node.point.coords;
+        
+        return res;
     }
-    */
 }
 
-class RoadGraph( Coords )
+class TRoadGraph( Coords )
 {
     alias Box!Coords BBox;
     alias TRoadDescription!Coords RoadDescription;
@@ -192,7 +202,7 @@ unittest
 {
     alias osm.Coords Coords;
     alias TRoadDescription!Coords RoadDescription;
-    alias RoadGraph!Coords G;
+    alias TRoadGraph!Coords G;
     
     Coords[] points = [
             Coords(0,0), Coords(1,1), Coords(2,2), Coords(3,3), Coords(4,4), // first road
