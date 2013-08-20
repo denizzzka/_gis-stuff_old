@@ -6,8 +6,11 @@ debug(graph) import std.stdio;
 import std.algorithm;
 
 
-struct TEdge( Payload, Weight )
+struct TEdge( _Weight, _Payload )
 {
+    alias _Payload Payload;
+    alias _Weight Weight;
+    
     const Weight weight;
     const size_t to_node; /// direction
     const Payload payload;
@@ -18,26 +21,30 @@ struct TEdge( Payload, Weight )
     }
 }
 
-struct TNode( Point, Edge )
+struct TNode( _Edge, _Payload )
 {
+    alias _Payload Payload;
+    alias _Edge Edge;
+    
     Edge[] edges;
     
-    const Point point;
+    const Payload point;
 }
 
-class Graph( Point, EdgePayload, Weight, Edge = TEdge!( EdgePayload, Weight ) )
+class Graph( Node )
 {
-    alias TNode!(Point, Edge) Node;
+    alias Node.Edge Edge;
+    alias Edge.Weight Weight;
     
 private:
     
-    size_t[const Point] points; /// AA used for fast search of stored points
+    size_t[const Node.Payload] points; /// AA used for fast search of stored points
     
 public:
     
     Node[] nodes; /// contains nodes with all payload    
     
-    size_t addPoint( in Point v )
+    size_t addPoint( in Node.Payload v )
     {
         auto p = ( v in points );
         
@@ -54,7 +61,7 @@ public:
         }
     }
     
-    void addEdge( in Point from, in Point to, in EdgePayload p, in Weight w )
+    void addEdge( in Node.Payload from, in Node.Payload to, in Edge.Payload p, in Weight w )
     {
         size_t f = addPoint( from );
         size_t t = addPoint( to );
@@ -62,13 +69,13 @@ public:
         addEdge( f, t, p, w );
     }
     
-    void addEdge( in size_t from_idx, in size_t to_idx, in EdgePayload p, in Weight w )
+    void addEdge( in size_t from_idx, in size_t to_idx, in Edge.Payload p, in Weight w )
     {
         Edge e = { to_node: to_idx, payload: p, weight: w };
         nodes[ from_idx ].edges ~= e;
     }
     
-    bool search( in Point point, out size_t index )
+    bool search( in Node.Payload point, out size_t index )
     {
         auto p = point in points;
         
@@ -216,7 +223,9 @@ unittest
 {
     import math.geometry;
     
-    alias Graph!( DNP, long, float ) G;
+    alias TEdge!( float, string ) Edge;
+    alias TNode!( Edge, DNP ) Node;
+    alias Graph!( Node ) G;
     
     auto g = new G;
     
@@ -228,7 +237,7 @@ unittest
                 DNP to_up = { coords: Vector2D!float(x+s, y+1) };
                 DNP to_right = { coords: Vector2D!float(x+1+s, y) };
                 
-                auto dumb_edge_payload = 666;
+                auto dumb_edge_payload = "666";
                 
                 g.addEdge( from, to_up, dumb_edge_payload, 5 );
                 g.addEdge( from, to_right, dumb_edge_payload, 4.7 );

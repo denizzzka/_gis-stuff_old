@@ -72,7 +72,22 @@ struct TRoad( Coords )
     @disable this();
 }
 
-struct Node
+struct TEdge( _Weight, _Payload )
+{
+    alias _Payload Payload;
+    alias _Weight Weight;
+    
+    const Weight weight;
+    const size_t to_node; /// direction
+    const Payload payload;
+    
+    invariant()
+    {
+        assert( weight >= 0 );
+    }
+}
+
+struct Point
 {
     osm.Coords coords;
     
@@ -81,12 +96,12 @@ struct Node
         this.coords = coords;
     }
     
-    float distance( in Node v, in float weight ) const
+    float distance( in Point v, in float weight ) const
     {
         return (coords - v.coords).length * weight;
     }
     
-    float heuristic( in Node v ) const
+    float heuristic( in Point v ) const
     {
         return (coords - v.coords).length;
     }
@@ -108,11 +123,14 @@ auto boundary(T)( ref const T node )
 class TRoadGraph( Coords )
 {
     alias Box!Coords BBox;
-    alias TRoadDescription!Coords RoadDescription;
     alias TRoad!Coords Road;
-    alias RTreePtrs!( BBox, RoadDescription ) DescriptionsTree;
+    alias TRoadDescription!Coords RoadDescription;
     alias RTreePtrs!( BBox, Road ) RoadsRTree;
-    alias Graph!( Node, Road, float ) G;
+    alias RTreePtrs!( BBox, RoadDescription ) DescriptionsTree;
+    
+    alias TEdge!( float, Road ) Edge;
+    alias TNode!( Edge, Point ) Node;
+    alias Graph!Node G;
     
     private
     {
@@ -301,8 +319,8 @@ void descriptionsToRoadGraph( Graph, RoadDescription, Coords )( ref Graph graph,
             
             assert( coord != null );
             
-            auto node = Node( *coord );
-            auto idx = graph.addPoint( node );
+            auto point = Point( *coord );
+            auto idx = graph.addPoint( point );
             already_stored[ node_id ] = idx;
             
             return idx;
