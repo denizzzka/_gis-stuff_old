@@ -7,7 +7,7 @@ import math.earth;
 import map: Map, Region, BBox, Point, PointsStorage, MapWay = Way, WaysStorage, addPoint, addWayToStorage;
 import cat = categories;
 import osm_tags_parsing;
-static import roads;
+import roads: TRoadGraph;
 
 import std.stdio;
 import std.string;
@@ -281,6 +281,7 @@ void addPoints(
 }
 
 /// Cuts roads on crossroads for creating road graph
+@disable
 WaysStorage prepareRoadGraph( in WaysStorage roads_rtree )
 {
     WaysStorage res = new WaysStorage;
@@ -323,10 +324,10 @@ unittest
     roads.addWayToStorage( w1 );
     roads.addWayToStorage( w2 );
     
-    auto prepared = prepareRoadGraph( roads );
-    auto res = prepared.search( prepared.getBoundary );
+    //auto prepared = prepareRoadGraph( roads );
+    //auto res = prepared.search( prepared.getBoundary );
     
-    assert( res.length == 5 );
+    //assert( res.length == 5 );
 }
 
 Region getRegion( string filename, bool verbose )
@@ -344,8 +345,8 @@ Region getRegion( string filename, bool verbose )
     auto res = new Region;
     Coords[long] nodes_coords;
     
-    alias roads.TRoadGraph!Coords RGraph;
-    auto roads = new RGraph.DescriptionsTree;
+    alias TRoadGraph!Coords RGraph;
+    RGraph.RoadDescription[] roads;
     
     while(true)
     {
@@ -374,10 +375,7 @@ Region getRegion( string filename, bool verbose )
                     auto decoded = decodeWay( prim, w );
                     
                     if( decoded.classification == LineClass.ROAD )
-                    {
-                        auto rd = RGraph.RoadDescription( decoded.coords_idx, cat.Road.OTHER );
-                        roads.addObject ( rd.getBoundary( nodes_coords ), rd );
-                    }
+                        roads ~= RGraph.RoadDescription( decoded.coords_idx, cat.Road.OTHER );
                     else
                     {
                         MapWay mw = decoded.createMapWay( prim, nodes_coords );
@@ -387,11 +385,7 @@ Region getRegion( string filename, bool verbose )
         }
     }
     
-    auto prepared = prepareRoadGraph( roads );
-    auto roads_array = prepared.search( prepared.getBoundary );
-    writeln("roads_array.length=", roads_array.length);
-    foreach( c; roads_array )
-        res.addWay( *c );
+    auto graph = new RGraph( nodes_coords, roads );
     
     return res;
 }
