@@ -308,6 +308,8 @@ void descriptionsToRoadGraph( Graph, RoadDescription, Coords )( ref Graph graph,
         for( auto i = 1; i < road.nodes_ids.length - 1; i++ )
             r.points ~= nodes[ road.nodes_ids[i] ];
         
+        r.type = road.type;
+        
         graph.addEdge(
                 addPoint( road.nodes_ids[0] ),
                 addPoint( road.nodes_ids[$-1] ),
