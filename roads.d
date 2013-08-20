@@ -270,9 +270,11 @@ void descriptionsToRoadGraph( Graph, RoadDescription, Coords )( ref Graph graph,
             return *p;
         else
         {
-            assert( node_id in nodes );
+            auto coord = node_id in nodes;
             
-            auto node = Node( nodes[ node_id ] );
+            assert( coord != null );
+            
+            auto node = Node( *coord );
             auto idx = graph.addPoint( node );
             already_stored[ node_id ] = idx;
             
@@ -290,8 +292,8 @@ void descriptionsToRoadGraph( Graph, RoadDescription, Coords )( ref Graph graph,
             r.points ~= nodes[ road.nodes_ids[i] ];
         
         graph.addEdge(
-                addPoint( road.nodes_ids[0] ),
-                addPoint( road.nodes_ids.length-1 ),
+                addPoint( road.nodes_ids[ 0 ] ),
+                addPoint( road.nodes_ids[ road.nodes_ids.length-1 ] ),
                 r, 0
             );
     }
