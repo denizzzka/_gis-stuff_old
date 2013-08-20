@@ -5,7 +5,7 @@ import std.conv: to;
 import std.algorithm: canFind;
 
 
-enum WayType
+enum LineClass
 {
     OTHER,
     BUILDING,
@@ -173,9 +173,9 @@ Line examWayTag( Tag[] tags, Tag tag )
     }
 }
 
-WayType getWayType( Tag[] tags )
+LineClass classifyLine( Tag[] tags )
 {
-    with( WayType )
+    with( LineClass )
     {
         foreach( t; tags )
             switch( t.key )

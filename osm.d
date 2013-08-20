@@ -168,6 +168,38 @@ unittest
     assert( d[1].values[1] == 6 );
 }
 
+struct DecodedLine
+{
+    uint[] coords_idx;
+    LineClass classification;
+    Tag[] tags;
+    
+    Coords[] getCoords( in Coords[long] nodes_coords ) const
+    {
+        Coords[] res;
+        long curr;
+        
+        // decode delta
+        foreach( c; coords_idx )
+        {
+            curr += c;
+            res ~= nodes_coords[ curr ];
+        }
+        
+        return res;
+    }
+}
+
+DecodedLine decodeWay( in PrimitiveBlock prim, in Way way )
+{
+    DecodedLine res;
+    
+    res.tags = prim.stringtable.getTagsByArray( way.keys, way.vals );
+    res.classification = classifyLine( res.tags );
+    
+    return res;
+}
+
 MapWay decodeWay( in PrimitiveBlock prim, in Coords[long] nodes_coords, in Way way )
 {
     Coords[] coords;
