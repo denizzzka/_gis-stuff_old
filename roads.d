@@ -24,6 +24,8 @@ struct TRoadDescription( _Coords )
         this.type = type;
     }
     
+    @disable this();
+    
     this(this)
     {
         nodes_ids = nodes_ids.dup;
@@ -60,6 +62,14 @@ struct TRoad( Coords )
     }
     
     cat.Road type = cat.Road.OTHER;
+    
+    this( Coords[] points, cat.Road type )
+    {
+        this.points = points;
+        this.type = type;
+    }
+    
+    @disable this();
 }
 
 struct Node
@@ -303,12 +313,12 @@ void descriptionsToRoadGraph( Graph, RoadDescription, Coords )( ref Graph graph,
     {
         assert( road.nodes_ids.length >= 2 );
         
-        Road r;
+        Coords points[];
         
         for( auto i = 1; i < road.nodes_ids.length - 1; i++ )
-            r.points ~= nodes[ road.nodes_ids[i] ];
+            points ~= nodes[ road.nodes_ids[i] ];
         
-        r.type = road.type;
+        auto r = Road( points, road.type );
         
         graph.addEdge(
                 addPoint( road.nodes_ids[0] ),
