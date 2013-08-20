@@ -149,6 +149,8 @@ class RTreePtrs( _Box, _Payload )
             
             Box getBoundary() const
             {
+                assert( !boundary.isNull );
+                
                 return boundary;
             }
     }
@@ -184,14 +186,25 @@ class RTreePtrs( _Box, _Payload )
         return &l.payload;
     }
     
-    Box getBoundary() const
+    Nullable!Box getBoundary() const
     {
-        return root.getBoundary();
+        return root.boundary;
     }
 
     Payload*[] search( in Box boundary ) const
     {
         return search( boundary, root );
+    }
+    
+    Payload*[] search( in Nullable!Box boundary ) const
+    {
+        if( !boundary.isNull )
+            return search( boundary, root );
+        else
+        {
+            Payload*[] res;
+            return res;
+        }
     }
     
     void statistic(
