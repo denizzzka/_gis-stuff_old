@@ -132,7 +132,7 @@ class POV
     {
         RGraph.Roads[] res;
         
-        foreach( region; map.regions )
+        foreach( ref region; map.regions )
         {
             RGraph.Roads curr;
             
@@ -149,6 +149,8 @@ class POV
             if( zoom > 0.03 ) addLayer( 2 );
             if( zoom > 0.15 )  addLayer( 1 );
             if( zoom > 0.3 )  addLayer( 0 );
+            
+            res ~= curr;
         }
         
         debug(scene) writeln("found roads number=", res.length);
