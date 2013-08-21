@@ -137,6 +137,7 @@ struct TNode( _Edge, _Payload )
             return opIndex( edge_idx );
         }
         
+        // TODO: dangerous ability, need to remove
         Edge opIndex( size_t idx )
         {
             Edge res = Edge.edges[ node.edges_idxs[ idx ] ];

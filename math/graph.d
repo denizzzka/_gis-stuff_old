@@ -173,8 +173,11 @@ private:
             open = open[0..key] ~ open[key+1..$];
             closed ~= currNode;
             
+            size_t edge_idx = -1;
             foreach( e; curr.edges( currNode ) )
             {
+                edge_idx++;
+                
                 size_t neighborNode = e.to_node;
                 const Node* neighbor = &nodes[neighborNode];
 
@@ -194,6 +197,7 @@ private:
 
                 // Updating neighbor score
                 score[neighborNode].came_from = currNode;
+                score[neighborNode].came_through_edge = edge_idx;
                 score[neighborNode].g = tentative;
                 score[neighborNode].full = tentative +
                     neighbor.point.heuristic( goal.point );
@@ -221,6 +225,7 @@ private:
     static struct Score
     {
         size_t came_from; /// Navigated node
+        size_t came_through_edge;
         float g; /// Cost from start along best known path
         float full; /// f(x), estimated total cost from start to goal through node
     }
