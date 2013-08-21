@@ -7,6 +7,7 @@ static import osm;
 import cat = categories: Road;
 
 import std.algorithm: canFind;
+import std.random: uniform;
 
 
 struct TRoadDescription( _Coords )
@@ -318,10 +319,15 @@ class TRoadGraph( Coords )
         Coords[] res;
         
         if( path != null )
-            foreach( c; path )
-                res ~= graph.nodes[ c ].point.coords;
+            foreach( n; path )
+                res ~= graph.nodes[ n ].point.coords;
             
         return res;
+    }
+    
+    size_t getRandomNodeIdx() const
+    {
+        return uniform( 0, graph.nodes.length );
     }
 }
 

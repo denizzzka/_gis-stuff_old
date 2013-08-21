@@ -21,12 +21,23 @@ class POV
 {
     const Map map;
     
+    Coords[] found_path;
+    
     private
     {
         Vector2r center; /// in meters
         real zoom; /// pixels per meter
         Box!Vector2r boundary_meters; /// coords in meters
         Box!Coords boundary_encoded; /// coords in map encoding
+    }
+    
+    void updatePath()
+    {
+        auto g = &map.regions[0].road_graph;
+        
+        auto found_path = g.findPath( g.getRandomNodeIdx, g.getRandomNodeIdx );
+        
+        debug(scene) writeln( "New path: ", found_path );
     }
     
     void setCenter( in Vector2r new_center )
