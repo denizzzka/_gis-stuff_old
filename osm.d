@@ -362,6 +362,11 @@ Region getRegion( string filename, bool verbose )
     
     res.addRoadGraph = new RGraph( nodes_coords, roads );
     
+    //res.road_graph
+    
+    import std.stdio;
+    //writeln( "path: ", path );
+    
     return res;
 }
 

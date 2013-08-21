@@ -119,7 +119,7 @@ public:
     }
     
     /// A* algorithm
-    size_t[] findPath( in size_t startNode, in size_t goalNode )
+    size_t[] findPath( in size_t startNode, in size_t goalNode ) const
     {
         auto r = findPathScore( startNode, goalNode );
         return (r is null) ? null : reconstructPath( r, goalNode );
@@ -128,7 +128,7 @@ public:
 private:
     
     /// A* algorithm
-    Score[size_t] findPathScore( in size_t startNode, in size_t goalNode )
+    Score[size_t] findPathScore( in size_t startNode, in size_t goalNode ) const
     in
     {
         assert( startNode < nodes.length );
@@ -167,7 +167,7 @@ private:
             if( currNode == goalNode )
                 return score;
             
-            Node* curr = &nodes[currNode];
+            const Node* curr = &nodes[currNode];
             debug(graph) writefln("Curr %s %s lowest full=%s", currNode, curr.point, key_score);
             
             open = open[0..key] ~ open[key+1..$];
@@ -176,7 +176,7 @@ private:
             foreach( e; curr.edges( currNode ) )
             {
                 size_t neighborNode = e.to_node;
-                Node* neighbor = &nodes[neighborNode];
+                const Node* neighbor = &nodes[neighborNode];
 
                 if( canFind( closed, neighborNode ) )
                     continue;
@@ -207,7 +207,7 @@ private:
         return null;
     }
     
-    auto reconstructPath( in Score[size_t] came_from, size_t curr )
+    auto reconstructPath( in Score[size_t] came_from, size_t curr ) const
     {
         size_t[] res;
 

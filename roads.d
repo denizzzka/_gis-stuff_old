@@ -310,6 +310,19 @@ class TRoadGraph( Coords )
             return descriptor.getPoints( road_graph );
         }
     }
+    
+    Coords[] findPath( size_t from_node_idx, size_t to_node_idx ) const
+    {
+        auto path = graph.findPath( from_node_idx, to_node_idx );
+        
+        Coords[] res;
+        
+        if( path != null )
+            foreach( c; path )
+                res ~= graph.nodes[ c ].point.coords;
+            
+        return res;
+    }
 }
 
 /// Cuts roads on crossroads for creating road graph
