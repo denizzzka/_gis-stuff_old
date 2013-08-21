@@ -29,6 +29,23 @@ struct TNode( _Edge, _Payload )
     Edge[] edges;
     
     const Payload point;
+    
+    /*
+    struct EdgesRange
+    {
+        TNode* node;
+        private size_t edge_idx;
+        
+        ref Edge front(){ return node._edges[ edge_idx ]; }
+        void popFront(){ ++edge_idx; }
+        bool empty(){ return edge_idx >= node._edges.length; }
+    }
+    
+    EdgesRange edges()
+    {
+        return EdgesRange( &this, 0 );
+    }
+    */
 }
 
 class Graph( Node )
