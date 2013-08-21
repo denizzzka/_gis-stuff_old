@@ -46,6 +46,11 @@ struct TNode( _Edge, _Payload )
         return EdgesRange( &this, 0 );
     }
     */
+    
+    void addEdge( Edge edge )
+    {
+        edges ~= edge;
+    }
 }
 
 class Graph( Node )
@@ -90,6 +95,11 @@ public:
     {
         Edge e = { to_node: to_idx, payload: p, weight: w };
         nodes[ from_idx ].edges ~= e;
+    }
+    
+    void addEdge( in size_t from_idx, Edge edge )
+    {
+        nodes[ from_idx ].addEdge( edge );
     }
     
     bool search( in Node.Payload point, out size_t index )
