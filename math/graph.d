@@ -230,7 +230,7 @@ private:
                     came_through_edge_idx: p.came_through_edge
                 };
                 
-            res ~= e;
+            res = e ~ res;
             
             curr = p.came_from;
         }
@@ -314,7 +314,7 @@ unittest
     
     debug(graph)
         foreach( i, c; s )
-            writeln( c, " ", g.nodes[c].point );
+            writeln( c, " ", g.nodes[ c.node_idx ].point );
             
     DNP g2_p = { Vector2D!float(11,4) };
     size_t goal2;
