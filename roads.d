@@ -140,7 +140,8 @@ struct TNode( _Edge, _Payload )
         // TODO: dangerous ability, need to remove
         Edge opIndex( size_t idx )
         {
-            Edge res = Edge.edges[ node.edges_idxs[ idx ] ];
+            auto global_idx = node.edges_idxs[ idx ];
+            Edge res = Edge.edges[ global_idx ];
             
             // need swap?
             if( res.forward.to_node == from_node_idx )
@@ -320,8 +321,8 @@ class TRoadGraph( Coords )
         RoadDescriptor[] res;
         
         if( path != null )
-            for( auto i = 0; i < path.length-1; i++ )
-                res ~= RoadDescriptor( path[i].node_idx, 0 ); //path[i+1].came_through_edge_idx );
+            for( auto i = 1; i < path.length; i++ )
+                res ~= RoadDescriptor( path[i-1].node_idx, path[i].edge_idx );
         
         return res;
     }

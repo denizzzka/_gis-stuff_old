@@ -170,6 +170,8 @@ class POV
     {
         Coords[] points;
         
+        debug(scene) writeln("path=", found_path);
+        
         foreach( c; found_path )
             points ~= c.getPoints( map.regions[0].road_graph );
             

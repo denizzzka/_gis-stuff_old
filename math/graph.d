@@ -121,7 +121,7 @@ public:
     struct PathElement
     {
         size_t node_idx;
-        size_t came_through_edge_idx;
+        size_t edge_idx;
     }
     
     /// A* algorithm
@@ -149,7 +149,7 @@ private:
         const Node* start = &nodes[startNode];
         const Node* goal = &nodes[goalNode];
         
-        score[startNode] = Score( 0, 0, 0, start.point.heuristic( goal.point ) );
+        score[startNode] = Score( 0, 666, 0, start.point.heuristic( goal.point ) );
         open ~= startNode;
         
         debug(graph) writefln("Path goal point: %s", goal.point );
@@ -210,8 +210,8 @@ private:
                     neighbor.point.heuristic( goal.point );
                 
                 debug(graph)
-                    writefln("Upd neighbor %s %s tentative=%s full=%s",
-                        neighborNode, neighbor.point, tentative, score[neighborNode].full);                
+                    writefln("Upd neighbor=%s edge=%s %s tentative=%s full=%s",
+                        neighborNode, edge_idx, neighbor.point, tentative, score[neighborNode].full);                
             }
         }
 
@@ -221,50 +221,26 @@ private:
     PathElement[] reconstructPath( Score[size_t] scores, size_t curr ) const
     {
         PathElement[] res;
-
-        do
-        {
-            PathElement e;
-            e.node_idx = curr;
-            e.came_through_edge_idx = curr in scores ? scores[curr].came_through_edge : 0;
-            
-            res ~= e;
-        }
-        while( curr in scores, curr = scores[curr].came_from );
-
-        return res;
         
-        
-        /*
-        PathElement[] res;
         Score* p;
         
         do
         {
             PathElement e;
             e.node_idx = curr;
-            e.came_through_edge_idx = 666;
             
             p = curr in scores;
             
-            if( p != null )
-            {
-                e.came_through_edge_idx = p.came_through_edge;
-                
-                curr = p.came_from;
-                
-                writeln( *p );
-            }
+            if( p )
+                e.edge_idx = p.came_through_edge;
             
             res ~= e;
-            
         }
-        while( p != null );
-        
-        return res;
-        */
-    }
+        while( curr in scores, curr = scores[curr].came_from );
 
+        return res;
+    }
+    
     static struct Score
     {
         size_t came_from; /// Navigated node
@@ -337,17 +313,13 @@ unittest
     auto s = g.findPath( from, goal );
     
     assert( s !is null );
-    writeln( s );
-    
-    debug(graph)
-        foreach( i, c; s )
-            writeln( c, " ", g.nodes[ c.node_idx ].point );
     assert( s.length == 7 );
     
     debug(graph)
         foreach( i, c; s )
             writeln( c, " ", g.nodes[ c.node_idx ].point );
             
+    assert(false);
     DNP g2_p = { Vector2D!float(11,4) };
     size_t goal2;
     assert( g.search( g2_p, goal2 ) );
