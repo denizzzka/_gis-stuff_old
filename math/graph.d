@@ -102,6 +102,13 @@ public:
         nodes[ from_idx ].addEdge( edge );
     }
     
+    void addEdge( in Node.Payload from, Edge edge )
+    {
+        size_t from_idx = addPoint( from );
+        
+        addEdge( from_idx, edge );
+    }
+    
     bool search( in Node.Payload point, out size_t index )
     {
         auto p = point in points;
@@ -264,10 +271,16 @@ unittest
                 DNP to_up = { coords: Vector2D!float(x+s, y+1) };
                 DNP to_right = { coords: Vector2D!float(x+1+s, y) };
                 
-                auto dumb_edge_payload = "666";
+                size_t to_up_idx = g.addPoint( to_up );
+                size_t to_right_idx = g.addPoint( to_right );
                 
-                g.addEdge( from, to_up, dumb_edge_payload, 5 );
-                g.addEdge( from, to_right, dumb_edge_payload, 4.7 );
+                auto payload = "666";
+                
+                Edge edge1 = { weight: 5, to_node: to_up_idx, payload: payload };
+                Edge edge2 = { weight: 4.7, to_node: to_right_idx, payload: payload };
+                
+                g.addEdge( from, edge1 );
+                g.addEdge( from, edge2 );
             }
 
     DNP f_p = { Vector2D!float(2,0) };
