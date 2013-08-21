@@ -118,8 +118,14 @@ public:
         }
     }
     
+    struct PathElement
+    {
+        size_t node_idx;
+        size_t came_through_edge_idx;
+    }
+    
     /// A* algorithm
-    size_t[] findPath( in size_t startNode, in size_t goalNode ) const
+    PathElement[] findPath( in size_t startNode, in size_t goalNode ) const
     {
         auto r = findPathScore( startNode, goalNode );
         return (r is null) ? null : reconstructPath( r, goalNode );
@@ -143,7 +149,7 @@ private:
         const Node* start = &nodes[startNode];
         const Node* goal = &nodes[goalNode];
         
-        score[startNode] = Score( 0, 0, start.point.heuristic( goal.point ) );
+        score[startNode] = Score( 0, 0, 0, start.point.heuristic( goal.point ) );
         open ~= startNode;
         
         debug(graph) writefln("Path goal point: %s", goal.point );
@@ -194,8 +200,9 @@ private:
                 else
                     if( tentative >= score[neighborNode].g )
                         continue;
-
+                
                 // Updating neighbor score
+                // TODO: increase speed of accessing to AA here:
                 score[neighborNode].came_from = currNode;
                 score[neighborNode].came_through_edge = edge_idx;
                 score[neighborNode].g = tentative;
@@ -211,14 +218,23 @@ private:
         return null;
     }
     
-    auto reconstructPath( in Score[size_t] came_from, size_t curr ) const
+    PathElement[] reconstructPath( Score[size_t] scores, size_t curr ) const
     {
-        size_t[] res;
-
-        do
-            res ~= curr;
-        while( curr in came_from, curr = came_from[curr].came_from );
-
+        PathElement[] res;
+        Score* p;
+        
+        while( p = curr in scores, p != null )
+        {
+            PathElement e = {
+                    node_idx: curr,
+                    came_through_edge_idx: p.came_through_edge
+                };
+                
+            res ~= e;
+            
+            curr = p.came_from;
+        }
+        
         return res;
     }
 

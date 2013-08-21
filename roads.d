@@ -321,7 +321,7 @@ class TRoadGraph( Coords )
         
         if( path != null )
             foreach( n; path )
-                res ~= graph.nodes[ n ].point.coords;
+                res ~= graph.nodes[ n.node_idx ].point.coords;
             
         return res;
     }
