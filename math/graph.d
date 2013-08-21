@@ -63,6 +63,7 @@ class Graph( Node )
     
 private:
     
+    // TODO: remove it
     size_t[const Node.Payload] points; /// AA used for fast search of stored points
     
     invariant()
@@ -89,20 +90,6 @@ public:
             
             return nodes.length-1;
         }
-    }
-    
-    void addEdge( in Node.Payload from, in Node.Payload to, in Edge.Payload p, in Weight w )
-    {
-        size_t f = addPoint( from );
-        size_t t = addPoint( to );
-
-        addEdge( f, t, p, w );
-    }
-    
-    void addEdge( in size_t from_idx, in size_t to_idx, in Edge.Payload p, in Weight w )
-    {
-        Edge e = { to_node: to_idx, payload: p, weight: w };
-        nodes[ from_idx ].edges_storage ~= e;
     }
     
     void addEdge( in size_t from_idx, Edge edge )

@@ -338,10 +338,11 @@ void descriptionsToRoadGraph( Graph, RoadDescription, Coords )( ref Graph graph,
         
         auto r = Road( points, road.type );
         
-        graph.addEdge(
-                addPoint( road.nodes_ids[0] ),
-                addPoint( road.nodes_ids[$-1] ),
-                r, 0
-            );
+        auto from_node_idx = addPoint( road.nodes_ids[0] );
+        auto to_node_idx = addPoint( road.nodes_ids[$-1] );
+        
+        Graph.Edge edge = { weight: 0, to_node: to_node_idx , payload: r };
+        
+        graph.addEdge( from_node_idx, edge );
     }
 }
