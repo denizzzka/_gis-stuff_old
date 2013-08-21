@@ -4,6 +4,7 @@ debug import math.geometry;
 debug(graph) import std.stdio;
 
 import std.algorithm;
+import std.range: isInputRange;
 
 
 struct TEdge( _Weight, _Payload )
@@ -26,30 +27,32 @@ struct TNode( _Edge, _Payload )
     alias _Payload Payload;
     alias _Edge Edge;
     
-    Edge[] edges;
+    Edge[] edges_storage;
     
     const Payload point;
     
-    /*
     struct EdgesRange
     {
-        TNode* node;
-        private size_t edge_idx;
+        private
+        {
+            const TNode* node;
+            size_t edge_idx;
+        }
         
-        ref Edge front(){ return node._edges[ edge_idx ]; }
-        void popFront(){ ++edge_idx; }
-        bool empty(){ return edge_idx >= node._edges.length; }
+        Edge front() const { return cast(Edge) node.edges_storage[ edge_idx ]; }
+        void popFront() { ++edge_idx; }
+        bool empty() const { return edge_idx >= length; }
+        size_t length() const { return node.edges_storage.length; }
     }
     
-    EdgesRange edges()
+    EdgesRange edges() const
     {
         return EdgesRange( &this, 0 );
     }
-    */
     
     void addEdge( Edge edge )
     {
-        edges ~= edge;
+        edges_storage ~= edge;
     }
 }
 
@@ -61,6 +64,11 @@ class Graph( Node )
 private:
     
     size_t[const Node.Payload] points; /// AA used for fast search of stored points
+    
+    invariant()
+    {
+        //assert( isInputRange( typeof( Node.edges ) ) );
+    }
     
 public:
     
@@ -94,7 +102,7 @@ public:
     void addEdge( in size_t from_idx, in size_t to_idx, in Edge.Payload p, in Weight w )
     {
         Edge e = { to_node: to_idx, payload: p, weight: w };
-        nodes[ from_idx ].edges ~= e;
+        nodes[ from_idx ].edges_storage ~= e;
     }
     
     void addEdge( in size_t from_idx, Edge edge )
@@ -171,13 +179,13 @@ private:
             if( currNode == goalNode )
                 return score;
             
-            const Node* curr = &nodes[currNode];
+            Node* curr = &nodes[currNode];
             debug(graph) writefln("Curr %s %s lowest full=%s", currNode, curr.point, key_score);
             
             open = open[0..key] ~ open[key+1..$];
             closed ~= currNode;
             
-            foreach( i, e; curr.edges )
+            foreach( e; curr.edges )
             {
                 size_t neighborNode = e.to_node;
                 Node* neighbor = &nodes[neighborNode];

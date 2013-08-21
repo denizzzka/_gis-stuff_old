@@ -156,7 +156,7 @@ class TRoadGraph( Coords )
         RoadDescriptor[] res;
         
         foreach( j, ref const node; graph.nodes )
-            foreach( i, ref const edge; node.edges )
+            for( auto i = 0; i < node.edges.length; i++ )
                 res ~= RoadDescriptor( j, i );
         
         return res;
@@ -181,7 +181,7 @@ class TRoadGraph( Coords )
             
             res ~= start_node.point.coords;
             
-            auto edge = &start_node.edges[ edge_idx ];
+            auto edge = &start_node.edges_storage[ edge_idx ];
             
             foreach( c; edge.payload.points )
                 res ~= c;
@@ -208,7 +208,7 @@ class TRoadGraph( Coords )
         cat.Road getType( in TRoadGraph roadGraph ) const
         {
             auto node = &roadGraph.graph.nodes[ node_idx ];
-            auto edge = node.edges[ edge_idx ];
+            auto edge = node.edges_storage[ edge_idx ];
             
             return edge.payload.type;
         }
