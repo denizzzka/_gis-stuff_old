@@ -8,7 +8,7 @@ import cat = categories: Road;
 
 import std.algorithm: canFind;
 
-    
+
 struct TRoadDescription( _Coords )
 {
     alias _Coords Coords;
@@ -79,19 +79,34 @@ struct TEdge( _Weight, _Payload )
     
     static TEdge[] edges;
     
-    const Weight weight;
-    const size_t to_node; /// direction
+    const Direction forward;
+    const Direction backward;
+    
     const Payload payload;
     
-    invariant()
+    struct Direction
     {
-        assert( weight >= 0 );
+        size_t to_node; /// direction
+        Weight weight;
+        
+        invariant()
+        {
+            assert( weight >= 0 );
+        }
     }
     
-    static size_t addToEdges( size_t to_node, Weight w, Payload p )
+    size_t to_node() const
     {
-        TEdge edge = { to_node: to_node , weight: w, payload: p };
-        
+        return forward.to_node;
+    }
+    
+    float weight() const
+    {
+        return forward.weight;
+    }
+    
+    static size_t addToEdges( TEdge edge )
+    {
         edges ~= edge;
         
         return edges.length - 1;
@@ -112,6 +127,7 @@ struct TNode( _Edge, _Payload )
         private
         {
             const TNode* node;
+            const size_t from_node_idx;
             size_t edge_idx;
         }
         
@@ -130,9 +146,9 @@ struct TNode( _Edge, _Payload )
         size_t length() const { return node.edges_idxs.length; }
     }
     
-    EdgesRange edges() const
+    EdgesRange edges( size_t from_node_idx ) const
     {
-        return EdgesRange( &this, 0 );
+        return EdgesRange( &this, from_node_idx );
     }
     
     void addEdge( size_t edge_idx )
@@ -210,7 +226,7 @@ class TRoadGraph( Coords )
         RoadDescriptor[] res;
         
         foreach( j, ref const node; graph.nodes )
-            for( auto i = 0; i < node.edges.length; i++ )
+            for( auto i = 0; i < node.edges( j ).length; i++ )
                 res ~= RoadDescriptor( j, i );
         
         return res;
@@ -235,7 +251,7 @@ class TRoadGraph( Coords )
             
             res ~= start_node.point.coords;
             
-            auto edge = &start_node.edges[ edge_idx ];
+            auto edge = &start_node.edges( node_idx )[ edge_idx ];
             
             foreach( c; edge.payload.points )
                 res ~= c;
@@ -262,7 +278,7 @@ class TRoadGraph( Coords )
         cat.Road getType( in TRoadGraph roadGraph ) const
         {
             auto node = &roadGraph.graph.nodes[ node_idx ];
-            auto edge = node.edges[ edge_idx ];
+            auto edge = node.edges( node_idx )[ edge_idx ];
             
             return edge.payload.type;
         }
@@ -396,7 +412,12 @@ void descriptionsToRoadGraph( Graph, RoadDescription, Coords )( ref Graph graph,
         auto from_node_idx = addPoint( road.nodes_ids[0] );
         auto to_node_idx = addPoint( road.nodes_ids[$-1] );
         
-        size_t edge_idx = Graph.Edge.addToEdges( to_node_idx, 0 , r );
+        Graph.Edge.Direction forward = { to_node: to_node_idx, weight: 0 };
+        Graph.Edge.Direction backward = { to_node: from_node_idx, weight: 0 };
+        
+        Graph.Edge edge = { forward: forward, backward: backward, payload: r };
+        
+        size_t edge_idx = Graph.Edge.addToEdges( edge );
         
         graph.addEdge( from_node_idx, edge_idx );
     }

@@ -45,7 +45,7 @@ struct TNode( _Edge, _Payload )
         size_t length() const { return node.edges_storage.length; }
     }
     
-    EdgesRange edges() const
+    EdgesRange edges( size_t unused ) const
     {
         return EdgesRange( &this, 0 );
     }
@@ -173,7 +173,7 @@ private:
             open = open[0..key] ~ open[key+1..$];
             closed ~= currNode;
             
-            foreach( e; curr.edges )
+            foreach( e; curr.edges( currNode ) )
             {
                 size_t neighborNode = e.to_node;
                 Node* neighbor = &nodes[neighborNode];
