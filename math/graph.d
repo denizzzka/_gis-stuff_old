@@ -125,6 +125,8 @@ public:
     }
     
     /// A* algorithm
+    ///
+    /// Returns: elements in the reverse order
     PathElement[] findPath( in size_t startNode, in size_t goalNode ) const
     {
         auto r = findPathScore( startNode, goalNode );
