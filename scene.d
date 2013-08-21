@@ -21,7 +21,7 @@ class POV
 {
     const Map map;
     
-    Coords[] found_path;
+    RGraph.RoadDescriptor[] found_path;
     
     private
     {
@@ -168,7 +168,12 @@ class POV
     
     Line getPathLine()
     {
-        return Line( found_path, cat.Line.PATH, "" );
+        Coords[] points;
+        
+        foreach( c; found_path )
+            points ~= c.getPoints( map.regions[0].road_graph );
+            
+        return Line( points, cat.Line.PATH, "" );
     }
     
 	override string toString()

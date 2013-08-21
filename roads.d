@@ -313,16 +313,16 @@ class TRoadGraph( Coords )
         }
     }
     
-    Coords[] findPath( size_t from_node_idx, size_t to_node_idx ) const
+    RoadDescriptor[] findPath( size_t from_node_idx, size_t to_node_idx ) const
     {
         auto path = graph.findPath( from_node_idx, to_node_idx );
         
-        Coords[] res;
+        RoadDescriptor[] res;
         
         if( path != null )
-            foreach( n; path )
-                res ~= graph.nodes[ n.node_idx ].point.coords;
-            
+            for( auto i = 0; i < path.length-1; i++ )
+                res ~= RoadDescriptor( path[i].node_idx, 0 ); //path[i+1].came_through_edge_idx );
+        
         return res;
     }
     

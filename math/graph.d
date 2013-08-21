@@ -223,17 +223,27 @@ private:
         PathElement[] res;
         Score* p;
         
-        while( p = curr in scores, p != null )
+        do
         {
-            PathElement e = {
-                    node_idx: curr,
-                    came_through_edge_idx: p.came_through_edge
-                };
-                
-            res = e ~ res;
+            PathElement e;
+            e.node_idx = curr;
+            e.came_through_edge_idx = 666;
             
-            curr = p.came_from;
+            p = curr in scores;
+            
+            if( p != null )
+            {
+                e.came_through_edge_idx = p.came_through_edge;
+                
+                curr = p.came_from;
+                
+                writeln( *p );
+            }
+            
+            res ~= e;
+            
         }
+        while( p != null );
         
         return res;
     }
@@ -310,6 +320,11 @@ unittest
     auto s = g.findPath( from, goal );
     
     assert( s !is null );
+    writeln( s );
+    
+    debug(graph)
+        foreach( i, c; s )
+            writeln( c, " ", g.nodes[ c.node_idx ].point );
     assert( s.length == 7 );
     
     debug(graph)
