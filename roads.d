@@ -2,7 +2,7 @@ module roads;
 
 import math.geometry;
 import math.rtree2d;
-import math.graph;
+import math.graph: Graph;
 static import osm;
 import cat = categories: Road;
 
@@ -77,6 +77,8 @@ struct TEdge( _Weight, _Payload )
     alias _Payload Payload;
     alias _Weight Weight;
     
+    static TEdge[] edges;
+    
     const Weight weight;
     const size_t to_node; /// direction
     const Payload payload;
@@ -84,6 +86,58 @@ struct TEdge( _Weight, _Payload )
     invariant()
     {
         assert( weight >= 0 );
+    }
+    
+    static size_t addToEdges( size_t to_node, Weight w, Payload p )
+    {
+        TEdge edge = { to_node: to_node , weight: w, payload: p };
+        
+        edges ~= edge;
+        
+        return edges.length - 1;
+    }
+}
+
+struct TNode( _Edge, _Payload )
+{
+    alias _Payload Payload;
+    alias _Edge Edge;
+    
+    private size_t[] edges_idxs;
+    
+    const Payload point;
+    
+    struct EdgesRange
+    {
+        private
+        {
+            const TNode* node;
+            size_t edge_idx;
+        }
+        
+        ref Edge front()
+        {
+            return opIndex( edge_idx );
+        }
+        
+        ref Edge opIndex( size_t idx )
+        {
+            return Edge.edges[ node.edges_idxs[ idx ] ];
+        }
+        
+        void popFront() { ++edge_idx; }
+        bool empty() const { return edge_idx >= length; }
+        size_t length() const { return node.edges_idxs.length; }
+    }
+    
+    EdgesRange edges() const
+    {
+        return EdgesRange( &this, 0 );
+    }
+    
+    void addEdge( size_t edge_idx )
+    {
+        edges_idxs ~= edge_idx;
     }
 }
 
@@ -181,7 +235,7 @@ class TRoadGraph( Coords )
             
             res ~= start_node.point.coords;
             
-            auto edge = &start_node.edges_storage[ edge_idx ];
+            auto edge = &start_node.edges[ edge_idx ];
             
             foreach( c; edge.payload.points )
                 res ~= c;
@@ -208,7 +262,7 @@ class TRoadGraph( Coords )
         cat.Road getType( in TRoadGraph roadGraph ) const
         {
             auto node = &roadGraph.graph.nodes[ node_idx ];
-            auto edge = node.edges_storage[ edge_idx ];
+            auto edge = node.edges[ edge_idx ];
             
             return edge.payload.type;
         }
@@ -307,6 +361,7 @@ void descriptionsToRoadGraph( Graph, RoadDescription, Coords )( ref Graph graph,
     size_t[ulong] already_stored;
     
     // собственная функция нужна чтобы исключить пересечение между разными точками с одинаковыми координатами
+    // TODO: наверное, с переходом на ranges эта функция останется, а в graph.d аналогичная будет удалена
     size_t addPoint( ulong node_id )
     {
         auto p = node_id in already_stored;
@@ -341,8 +396,8 @@ void descriptionsToRoadGraph( Graph, RoadDescription, Coords )( ref Graph graph,
         auto from_node_idx = addPoint( road.nodes_ids[0] );
         auto to_node_idx = addPoint( road.nodes_ids[$-1] );
         
-        Graph.Edge edge = { weight: 0, to_node: to_node_idx , payload: r };
+        size_t edge_idx = Graph.Edge.addToEdges( to_node_idx, 0 , r );
         
-        graph.addEdge( from_node_idx, edge );
+        graph.addEdge( from_node_idx, edge_idx );
     }
 }

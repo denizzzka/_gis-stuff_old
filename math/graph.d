@@ -92,12 +92,13 @@ public:
         }
     }
     
-    void addEdge( in size_t from_idx, Edge edge )
+    void addEdge(T)( in size_t from_idx, T edge )
     {
         nodes[ from_idx ].addEdge( edge );
     }
     
-    void addEdge( in Node.Payload from, Edge edge )
+    // TODO: remove it?
+    void addEdgeToPayload(T)( in Node.Payload from, T edge )
     {
         size_t from_idx = addPoint( from );
         
@@ -274,8 +275,8 @@ unittest
                 Edge edge1 = { weight: 5, to_node: to_up_idx, payload: payload };
                 Edge edge2 = { weight: 4.7, to_node: to_right_idx, payload: payload };
                 
-                g.addEdge( from, edge1 );
-                g.addEdge( from, edge2 );
+                g.addEdgeToPayload( from, edge1 );
+                g.addEdgeToPayload( from, edge2 );
             }
 
     DNP f_p = { Vector2D!float(2,0) };
