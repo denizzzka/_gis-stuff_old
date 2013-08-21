@@ -322,7 +322,7 @@ class TRoadGraph( Coords )
         
         if( path != null )
             for( auto i = 1; i < path.length; i++ )
-                res ~= RoadDescriptor( path[i-1].node_idx, path[i].edge_idx );
+                res ~= RoadDescriptor( path[i].node_idx, path[i-1].came_through_edge_idx );
         
         return res;
     }

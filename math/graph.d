@@ -121,7 +121,7 @@ public:
     struct PathElement
     {
         size_t node_idx;
-        size_t edge_idx;
+        size_t came_through_edge_idx;
     }
     
     /// A* algorithm
@@ -223,20 +223,16 @@ private:
         PathElement[] res;
         
         Score* p;
-        
-        do
+        while( p = curr in scores, p )
         {
             PathElement e;
             e.node_idx = curr;
-            
-            p = curr in scores;
-            
-            if( p )
-                e.edge_idx = p.came_through_edge;
+            e.came_through_edge_idx = p.came_through_edge;
             
             res ~= e;
+            
+            curr = p.came_from;
         }
-        while( curr in scores, curr = scores[curr].came_from );
 
         return res;
     }
@@ -294,7 +290,7 @@ unittest
                 size_t to_up_idx = g.addPoint( to_up );
                 size_t to_right_idx = g.addPoint( to_right );
                 
-                auto payload = "666";
+                auto payload = "payload_string";
                 
                 Edge edge1 = { weight: 5, to_node: to_up_idx, payload: payload };
                 Edge edge2 = { weight: 4.7, to_node: to_right_idx, payload: payload };
@@ -319,7 +315,7 @@ unittest
         foreach( i, c; s )
             writeln( c, " ", g.nodes[ c.node_idx ].point );
             
-    assert(false);
+    //assert(false);
     DNP g2_p = { Vector2D!float(11,4) };
     size_t goal2;
     assert( g.search( g2_p, goal2 ) );
