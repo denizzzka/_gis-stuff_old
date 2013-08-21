@@ -39,7 +39,7 @@ struct TNode( _Edge, _Payload )
             size_t edge_idx;
         }
         
-        Edge front() const { return cast(Edge) node.edges_storage[ edge_idx ]; }
+        Edge* front() { return cast(Edge*) &node.edges_storage[ edge_idx ]; }
         void popFront() { ++edge_idx; }
         bool empty() const { return edge_idx >= length; }
         size_t length() const { return node.edges_storage.length; }
