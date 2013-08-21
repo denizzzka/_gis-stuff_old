@@ -79,8 +79,8 @@ struct TEdge( _Weight, _Payload )
     
     static TEdge[] edges;
     
-    const Direction forward;
-    const Direction backward;
+    Direction forward;
+    Direction backward;
     
     const Payload payload;
     
@@ -131,14 +131,24 @@ struct TNode( _Edge, _Payload )
             size_t edge_idx;
         }
         
-        ref Edge front()
+        Edge front()
         {
             return opIndex( edge_idx );
         }
         
-        ref Edge opIndex( size_t idx )
+        Edge opIndex( size_t idx )
         {
-            return Edge.edges[ node.edges_idxs[ idx ] ];
+            Edge res = Edge.edges[ node.edges_idxs[ idx ] ];
+            
+            // need swap?
+            if( res.forward.to_node == from_node_idx )
+            {
+                auto tmp = res.forward;
+                res.forward = res.backward;
+                res.backward = tmp;
+            }
+            
+            return res;
         }
         
         void popFront() { ++edge_idx; }
@@ -251,7 +261,7 @@ class TRoadGraph( Coords )
             
             res ~= start_node.point.coords;
             
-            auto edge = &start_node.edges( node_idx )[ edge_idx ];
+            auto edge = start_node.edges( node_idx )[ edge_idx ];
             
             foreach( c; edge.payload.points )
                 res ~= c;
