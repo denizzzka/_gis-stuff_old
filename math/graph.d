@@ -221,6 +221,22 @@ private:
     PathElement[] reconstructPath( Score[size_t] scores, size_t curr ) const
     {
         PathElement[] res;
+
+        do
+        {
+            PathElement e;
+            e.node_idx = curr;
+            e.came_through_edge_idx = curr in scores ? scores[curr].came_through_edge : 0;
+            
+            res ~= e;
+        }
+        while( curr in scores, curr = scores[curr].came_from );
+
+        return res;
+        
+        
+        /*
+        PathElement[] res;
         Score* p;
         
         do
@@ -246,6 +262,7 @@ private:
         while( p != null );
         
         return res;
+        */
     }
 
     static struct Score
