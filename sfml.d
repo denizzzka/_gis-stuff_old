@@ -61,12 +61,12 @@ class Window
 	    
 	    if( scene )
 	    {
-		vertex_array = new VertexArray( PrimitiveType.Points, 0 );
-		
 		scene.calcBoundary( this );
 		
+		vertex_array = new VertexArray( PrimitiveType.Points, 0 );
 		auto pois = scene.getPOIs();
 		drawPOIs( pois );
+		window.draw( vertex_array );
 		
 		auto lines = scene.getLines();
 		drawLines( lines );
@@ -77,8 +77,6 @@ class Window
 		auto path = scene.getPathLine();
 		auto path_lines = [ path ];
 		drawLines( path_lines );
-		
-		window.draw( vertex_array );
 	    }
 	    
 	    drawCenter;
@@ -95,7 +93,7 @@ class Window
             Vector2r node = encodedToMeters( pois[i].coords );
             auto window_coords = scene.metersToScreen( node );
             
-            debug(sfml) writeln("draw point i=", i, " encoded coords=", poi[i], " meters=", node, " window_coords=", window_coords);
+            debug(sfml) writeln("draw point i=", i, " encoded coords=", pois[i], " meters=", node, " window_coords=", window_coords);
             
 	    Vector2f c; c = cartesianToSFML(window_coords );
 	    vertex_array.append( Vertex(c, Color.Cyan) );
@@ -159,7 +157,7 @@ class Window
 		    debug(sfml) writeln("draw line point i=", i, " encoded coords=", encoded, " meters=", point, " window_coords=", window_coords);
 		}
 		
-		drawRoad( res_points, randomColor );
+		drawRoad( res_points, Color(40,40,40) );
         }
     }
     
