@@ -166,16 +166,19 @@ class POV
         return res;
     }
     
-    Line getPathLine()
+    Line[] getPathLines()
     {
-        Coords[] points;
+        Line[] res;
         
         debug(scene) writeln("path=", found_path);
         
-        foreach( c; found_path )
-            points ~= c.getPoints( map.regions[0].road_graph );
+        foreach( descriptor; found_path )
+            res ~= Line(
+                    descriptor.getPoints( map.regions[0].road_graph ),
+                    cat.Line.PATH, ""
+                );
             
-        return Line( points, cat.Line.PATH, "" );
+        return res;
     }
     
 	override string toString()

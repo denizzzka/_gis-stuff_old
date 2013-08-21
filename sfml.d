@@ -74,9 +74,8 @@ class Window
 		auto roads = scene.getRoads();
 		drawRoads( roads );
 		
-		auto path = scene.getPathLine();
-		auto path_lines = [ path ];
-		drawLines( path_lines );
+		auto path = scene.getPathLines();
+		drawLines( path );
 	    }
 	    
 	    drawCenter;

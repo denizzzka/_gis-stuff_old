@@ -315,7 +315,6 @@ unittest
         foreach( i, c; s )
             writeln( c, " ", g.nodes[ c.node_idx ].point );
             
-    //assert(false);
     DNP g2_p = { Vector2D!float(11,4) };
     size_t goal2;
     assert( g.search( g2_p, goal2 ) );

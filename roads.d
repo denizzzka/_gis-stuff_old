@@ -443,8 +443,8 @@ void descriptionsToRoadGraph( Graph, RoadDescription, Coords )( ref Graph graph,
         auto from_node_idx = addPoint( road.nodes_ids[0] );
         auto to_node_idx = addPoint( road.nodes_ids[$-1] );
         
-        Graph.Edge.Direction forward = { to_node: to_node_idx, weight: 0 };
-        Graph.Edge.Direction backward = { to_node: from_node_idx, weight: 0 };
+        Graph.Edge.Direction forward = { to_node: to_node_idx, weight: 1 };
+        Graph.Edge.Direction backward = { to_node: from_node_idx, weight: 1 };
         
         Graph.Edge edge = { forward: forward, backward: backward, payload: r };
         
