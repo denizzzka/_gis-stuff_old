@@ -17,6 +17,7 @@ enum Line
     ROAD_SECONDARY,
     ROAD_OTHER,
     BOUNDARY,
+    PATH,
     UNSUPPORTED
 }
 

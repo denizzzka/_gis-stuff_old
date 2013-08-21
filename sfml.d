@@ -74,6 +74,10 @@ class Window
 		auto roads = scene.getRoads();
 		drawRoads( roads );
 		
+		auto path = scene.getPathLine();
+		auto path_lines = [ path ];
+		drawLines( path_lines );
+		
 		window.draw( vertex_array );
 	    }
 	    
@@ -278,6 +282,11 @@ class Window
 			case Keyboard.Key.Down:
 			    center.y -= dir_step;
 			    debug(controls) writeln(scene);
+			    break;
+			
+			case Keyboard.Key.F:
+			    debug(controls) writeln("Find path...");
+			    scene.updatePath();
 			    break;
 			
 			default:

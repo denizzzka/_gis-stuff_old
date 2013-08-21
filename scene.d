@@ -166,6 +166,11 @@ class POV
         return res;
     }
     
+    Line getPathLine()
+    {
+        return Line( found_path, cat.Line.PATH, "" );
+    }
+    
 	override string toString()
     {
         return format("center=%s zoom=%g scene ecenter=%s mbox=%s size_len=%g", center, zoom, center.metersToEncoded, boundary_meters, boundary_meters.getSizeVector.length);	

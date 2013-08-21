@@ -98,6 +98,7 @@ struct Line
                 return Color.White;
                 
             case ROAD_SECONDARY:
+            case PATH:
                 return Color.Yellow;
                 
             case ROAD_OTHER:
