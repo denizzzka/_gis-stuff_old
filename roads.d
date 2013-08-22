@@ -8,6 +8,7 @@ import cat = categories: Road;
 
 import std.algorithm: canFind;
 import std.random: uniform;
+debug import std.stdio;
 
 
 struct TRoadDescription( _Coords )
@@ -344,6 +345,8 @@ class TRoadGraph( Coords )
     RoadDescriptor[] findPath( size_t from_node_idx, size_t to_node_idx ) const
     {
         auto path = graph.findPath( from_node_idx, to_node_idx );
+        
+        debug(path) writeln("path from=", from_node_idx, " to=", to_node_idx);
         
         RoadDescriptor[] res;
         
