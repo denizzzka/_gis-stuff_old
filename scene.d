@@ -35,7 +35,9 @@ class POV
     {
         auto g = &map.regions[0].road_graph;
         
-        found_path = g.findPath( g.getRandomNodeIdx, g.getRandomNodeIdx );
+        do
+            found_path = g.findPath( g.getRandomNodeIdx, g.getRandomNodeIdx );
+        while( found_path.length == 0 );
         
         debug(scene) writeln( "New path: ", found_path );
     }

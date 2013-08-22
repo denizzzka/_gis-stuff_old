@@ -153,7 +153,7 @@ private:
         
         Score startScore = {
                 came_from: typeof(Score.came_from).max, // magic for correct path reconstruct
-                came_through_edge: 666, // no magic, just for ease of debugging
+                came_through_edge: 666, // not magic, just for ease of debugging
                 g: 0,
                 full: start.point.heuristic( goal.point )
             };
@@ -174,13 +174,11 @@ private:
             size_t key;
             float key_score = float.max;
             foreach( i, n; open )
-            {
                 if( score[n].full < key_score )
                 {
                     key = i;
                     key_score = score[n].full;
                 }
-            }
             
             const size_t currNode = open[key];
             
@@ -197,7 +195,6 @@ private:
             foreach( e; curr.edges( currNode ) )
             {
                 edge_idx++;
-                debug(graph) writeln("edge_idx=", edge_idx);
                 
                 size_t neighborNode = e.to_node;
                 const Node* neighbor = &nodes[neighborNode];
@@ -237,9 +234,6 @@ private:
     
     PathElement[] reconstructPath( Score[size_t] scores, size_t curr ) const
     {
-        import std.stdio;
-        size_t i;
-        
         PathElement[] res;
         
         Score* p;
@@ -251,12 +245,7 @@ private:
             
             res ~= e;
             
-            writeln("reconstruct: curr =", curr, " came_from=", p.came_from, " e=", e);
-            
             curr = p.came_from;
-            
-            i++;
-            if( i > 10000 ) break;
         }
 
         return res;
