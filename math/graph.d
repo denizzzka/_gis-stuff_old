@@ -159,6 +159,8 @@ private:
         while( open.length > 0 )
         {
             debug(graph) writeln("Open: ", open);
+            debug(graph) writeln("open.length=", open.length);
+            debug(graph) writeln("score.length=", score.length);
             
             // Search for open node having the lowest heuristic value
             size_t key;
@@ -204,12 +206,14 @@ private:
                         continue;
                 
                 // Updating neighbor score
-                // TODO: increase speed of accessing to AA here:
-                score[neighborNode].came_from = currNode;
-                score[neighborNode].came_through_edge = edge_idx;
-                score[neighborNode].g = tentative;
-                score[neighborNode].full = tentative +
-                    neighbor.point.heuristic( goal.point );
+                Score neighborScore = {
+                        came_from: currNode,
+                        came_through_edge: edge_idx,
+                        g: tentative,
+                        full: tentative + neighbor.point.heuristic( goal.point )
+                    };
+                    
+                score[neighborNode] = neighborScore;
                 
                 debug(graph)
                     writefln("Upd neighbor=%s edge=%s %s tentative=%s full=%s",
