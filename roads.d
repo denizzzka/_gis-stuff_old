@@ -98,19 +98,19 @@ struct TEdge( _Weight, _Payload )
     
     struct DirectedEdge
     {
-        private size_t edge_idx; // global edge index
+        private size_t global_edge_idx;
         
         bool forward_direction;
         
         this( size_t edge_idx, bool forward_direction )
         {
-            this.edge_idx = edge_idx;
+            this.global_edge_idx = edge_idx;
             this.forward_direction = forward_direction;
         }
         
         auto payload()
         {
-            return getEdge( edge_idx ).payload;
+            return getEdge().payload;
         }
         
         size_t to_node() const
@@ -126,14 +126,14 @@ struct TEdge( _Weight, _Payload )
         private ref Direction getTargetNode() const
         {
             if( forward_direction )
-                return getEdge( edge_idx ).forward;
+                return getEdge().forward;
             else
-                return getEdge( edge_idx ).backward;
+                return getEdge().backward;
         }
         
-        private ref getEdge( size_t edge_idx ) const
+        private ref getEdge() const
         {
-            return TEdge.edges[ edge_idx ];
+            return TEdge.edges[ global_edge_idx ];
         }
     }
     
