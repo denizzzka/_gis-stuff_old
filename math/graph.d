@@ -160,18 +160,21 @@ private:
         {
             debug(graph) writeln("Open: ", open);
             debug(graph) writeln("open.length=", open.length);
+            debug(graph) writeln("closed.length=", closed.length);
             debug(graph) writeln("score.length=", score.length);
             
             // Search for open node having the lowest heuristic value
             size_t key;
             float key_score = float.max;
             foreach( i, n; open )
+            {
                 if( score[n].full < key_score )
                 {
                     key = i;
                     key_score = score[n].full;
                 }
-
+            }
+            
             const size_t currNode = open[key];
             
             if( currNode == goalNode )
@@ -187,6 +190,7 @@ private:
             foreach( e; curr.edges( currNode ) )
             {
                 edge_idx++;
+                debug(graph) writeln("edge_idx=", edge_idx);
                 
                 size_t neighborNode = e.to_node;
                 const Node* neighbor = &nodes[neighborNode];
@@ -226,11 +230,17 @@ private:
     
     PathElement[] reconstructPath( Score[size_t] scores, size_t curr ) const
     {
+        import std.stdio;
+        size_t i;
+        
         PathElement[] res;
         
         Score* p;
         while( p = curr in scores, p )
         {
+            //writeln("reconstruct cycle, i=", i);
+            i++;
+            
             PathElement e;
             e.node_idx = curr;
             e.came_through_edge_idx = p.came_through_edge;
@@ -238,6 +248,8 @@ private:
             res ~= e;
             
             curr = p.came_from;
+            
+            if( i > 10000 ) break;
         }
 
         return res;

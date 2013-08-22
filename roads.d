@@ -343,6 +343,14 @@ class TRoadGraph( Coords )
     
     RoadDescriptor[] findPath( size_t from_node_idx, size_t to_node_idx ) const
     {
+        // bug with this args: from node=4337 to node=17611
+        
+        from_node_idx = 4337;
+        to_node_idx = 17611;
+        
+        import std.stdio;
+        writeln("Find path from node=", from_node_idx, " to node=", to_node_idx );
+        
         auto path = graph.findPath( from_node_idx, to_node_idx );
         
         RoadDescriptor[] res;
