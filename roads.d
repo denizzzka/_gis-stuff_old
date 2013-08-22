@@ -98,9 +98,9 @@ struct TEdge( _Weight, _Payload )
     
     struct DirectedEdge
     {
-        private size_t edge_idx; // global
+        private size_t edge_idx; // global edge index
         
-        bool forward_direction = true;
+        bool forward_direction;
         
         this( size_t edge_idx, bool forward_direction )
         {
