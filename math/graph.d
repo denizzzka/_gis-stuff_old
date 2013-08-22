@@ -151,7 +151,14 @@ private:
         const Node* start = &nodes[startNode];
         const Node* goal = &nodes[goalNode];
         
-        score[startNode] = Score( 0, 666, 0, start.point.heuristic( goal.point ) );
+        Score startScore = {
+                came_from: typeof(Score.came_from).max, // magic for correct path reconstruct
+                came_through_edge: 666, // no magic, just for ease of debugging
+                g: 0,
+                full: start.point.heuristic( goal.point )
+            };
+        
+        score[startNode] = startScore;
         open ~= startNode;
         
         debug(graph) writefln("Path goal point: %s", goal.point );
@@ -238,17 +245,17 @@ private:
         Score* p;
         while( p = curr in scores, p )
         {
-            //writeln("reconstruct cycle, i=", i);
-            i++;
-            
             PathElement e;
             e.node_idx = curr;
             e.came_through_edge_idx = p.came_through_edge;
             
             res ~= e;
             
+            writeln("reconstruct: curr =", curr, " came_from=", p.came_from, " e=", e);
+            
             curr = p.came_from;
             
+            i++;
             if( i > 10000 ) break;
         }
 
