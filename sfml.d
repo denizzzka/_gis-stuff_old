@@ -282,7 +282,7 @@ class Window
 			    break;
 			
 			case Keyboard.Key.F:
-			    debug(controls) write("Find path..."); stdout.flush();
+			    debug(controls) write("Find path..."), stdout.flush();
 			    scene.updatePath();
 			    debug(controls) writeln("done");
 			    break;
