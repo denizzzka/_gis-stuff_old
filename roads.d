@@ -146,14 +146,14 @@ struct TEdge( _Weight, _Payload )
     }
 }
 
-struct TNode( _Edge, _Payload )
+struct TNode( _Edge, _Point )
 {
-    alias _Payload Payload;
+    alias _Point Point;
     alias _Edge Edge;
     
     private size_t[] edges_idxs;
     
-    const Payload point;
+    const Point point;
     
     struct EdgesRange
     {

@@ -22,14 +22,14 @@ struct TEdge( _Weight, _Payload )
     }
 }
 
-struct TNode( _Edge, _Payload )
+struct TNode( _Edge, _Point )
 {
-    alias _Payload Payload;
+    alias _Point Point;
     alias _Edge Edge;
     
     Edge[] edges_storage;
     
-    const Payload point;
+    const Point point;
     
     struct EdgesRange
     {
@@ -64,7 +64,7 @@ class Graph( Node )
 private:
     
     // TODO: remove it
-    size_t[const Node.Payload] points; /// AA used for fast search of stored points
+    size_t[const Node.Point] points; /// AA used for fast search of stored points
     
     invariant()
     {
@@ -75,7 +75,7 @@ public:
     
     Node[] nodes; /// contains nodes with all payload    
     
-    size_t addPoint( in Node.Payload v )
+    size_t addPoint( in Node.Point v )
     {
         auto p = ( v in points );
         
@@ -98,14 +98,14 @@ public:
     }
     
     // TODO: remove it?
-    void addEdgeToPayload(T)( in Node.Payload from, T edge )
+    void addEdgeToPayload(T)( in Node.Point from, T edge )
     {
         size_t from_idx = addPoint( from );
         
         addEdge( from_idx, edge );
     }
     
-    bool search( in Node.Payload point, out size_t index )
+    bool search( in Node.Point point, out size_t index )
     {
         auto p = point in points;
         
