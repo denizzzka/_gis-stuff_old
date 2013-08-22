@@ -96,14 +96,45 @@ struct TEdge( _Weight, _Payload )
         }
     }
     
-    size_t to_node() const
+    struct DirectedEdge
     {
-        return forward.to_node;
-    }
-    
-    float weight() const
-    {
-        return forward.weight;
+        private size_t edge_idx; // global
+        
+        bool forward_direction = true;
+        
+        this( size_t edge_idx, bool forward_direction )
+        {
+            this.edge_idx = edge_idx;
+            this.forward_direction = forward_direction;
+        }
+        
+        auto payload()
+        {
+            return getEdge( edge_idx ).payload;
+        }
+        
+        size_t to_node() const
+        {
+            return getTargetNode.to_node;
+        }
+        
+        float weight() const
+        {
+            return getTargetNode.weight;
+        }
+        
+        private ref Direction getTargetNode() const
+        {
+            if( forward_direction )
+                return getEdge( edge_idx ).forward;
+            else
+                return getEdge( edge_idx ).backward;
+        }
+        
+        private ref getEdge( size_t edge_idx ) const
+        {
+            return TEdge.edges[ edge_idx ];
+        }
     }
     
     static size_t addToEdges( TEdge edge )
@@ -132,24 +163,20 @@ struct TNode( _Edge, _Payload )
             size_t edge_idx;
         }
         
-        Edge front()
+        Edge.DirectedEdge front()
         {
             return opIndex( edge_idx );
         }
         
         // TODO: dangerous ability, need to remove
-        Edge opIndex( size_t idx )
+        Edge.DirectedEdge opIndex( size_t idx )
         {
-            auto global_idx = node.edges_idxs[ idx ];
-            Edge res = Edge.edges[ global_idx ];
+            size_t global_idx = node.edges_idxs[ idx ];
+            Edge* edge = &Edge.edges[ global_idx ];
             
-            // need swap?
-            if( res.forward.to_node == from_node_idx )
-            {
-                auto tmp = res.forward;
-                res.forward = res.backward;
-                res.backward = tmp;
-            }
+            bool forward_direction = edge.forward.to_node != from_node_idx;
+            
+            auto res = Edge.DirectedEdge( global_idx, forward_direction );
             
             return res;
         }
