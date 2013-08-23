@@ -1,6 +1,6 @@
 module config.map;
 
-import sfml: Color;
+import dsfml.graphics: Color;
 
 
 struct RoadProperties
@@ -49,4 +49,3 @@ struct Roads
     }
 };
 
-//Roads roads;

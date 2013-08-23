@@ -5,6 +5,7 @@ import math.rtree2d;
 import math.graph: Graph;
 static import osm;
 import cat = categories: Road;
+static import config.map;
 
 import std.algorithm: canFind;
 import std.random: uniform;

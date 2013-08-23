@@ -5,7 +5,6 @@ import math.rtree2d;
 import osm: Coords, encodedToMeters, RGraph;
 import cat = categories;
 import sfml: Color, randomColor; // TODO: temporary, remove it
-static import config.map;
 
 debug(map) import std.stdio;
 
@@ -249,8 +248,7 @@ class Region
     private
     void addRoadDescriptor( RGraph.RoadDescriptor descr )
     {
-        auto road_type = descr.getType( road_graph );
-        auto to_layers = config.map.Roads.roads_properties[ road_type ].layers;
+        size_t[] to_layers = [1]; // = descr.getProperties.layers;
         auto bbox = descr.getBoundary(road_graph);
         
         foreach( n; to_layers )
