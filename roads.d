@@ -73,6 +73,11 @@ struct TRoad( Coords )
     }
     
     @disable this();
+    
+    config.map.RoadProperties getProperties() const
+    {
+        return config.map.Roads.roads_properties[ type ];
+    }
 }
 
 struct TEdge( _Weight, _Payload )
@@ -110,22 +115,23 @@ struct TEdge( _Weight, _Payload )
             this.forward_direction = forward_direction;
         }
         
-        auto payload()
+        ref const (Payload) payload() const
         {
             return getEdge().payload;
         }
         
         size_t to_node() const
         {
-            return getTargetNode.to_node;
+            return getDirection.to_node;
         }
         
         float weight() const
         {
-            return getTargetNode.weight;
+            return getDirection.weight;
         }
         
-        private ref Direction getTargetNode() const
+        private
+        ref Direction getDirection() const
         {
             if( forward_direction )
                 return getEdge().forward;
@@ -133,7 +139,8 @@ struct TEdge( _Weight, _Payload )
                 return getEdge().backward;
         }
         
-        private ref getEdge() const
+        private
+        ref const TEdge getEdge() const
         {
             return TEdge.edges[ global_edge_idx ];
         }
@@ -317,12 +324,17 @@ class TRoadGraph( Coords )
             return res;
         }
         
-        cat.Road getType( in TRoadGraph roadGraph ) const
+        ref const (Road) getRoad( in TRoadGraph roadGraph ) const
         {
-            auto node = &roadGraph.graph.nodes[ node_idx ];
-            auto edge = node.edges( node_idx )[ edge_idx ];
+            return getEdge( roadGraph ).payload;
+        }
+        
+        private
+        Edge.DirectedEdge getEdge( in TRoadGraph roadGraph ) const
+        {
+            auto node = roadGraph.graph.nodes[ node_idx ];
             
-            return edge.payload.type;
+            return node.edges( node_idx )[ edge_idx ];
         }
     }
     
