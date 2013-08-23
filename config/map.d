@@ -16,7 +16,12 @@ class Roads
 {
     immutable string[] members = [ __traits( allMembers, categories.Road ) ];
     
-    static RoadProperties[ members.length ] roads_properties;
+    private static RoadProperties[ members.length ] roads_properties;
+    
+    ref RoadProperties getProperty( in categories.Road enum_type ) const
+    {
+        return roads_properties[ enum_type ];
+    }
     
     static this()
     {
