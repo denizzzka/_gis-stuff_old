@@ -5,6 +5,7 @@ import math.rtree2d;
 import osm: Coords, encodedToMeters, RGraph;
 import cat = categories;
 import sfml: Color, randomColor; // TODO: temporary, remove it
+static import config.map;
 
 debug(map) import std.stdio;
 
@@ -248,34 +249,12 @@ class Region
     private
     void addRoadDescriptor( RGraph.RoadDescriptor descr )
     {
-        size_t layer_num;
-        
-        with( cat.Road )
-        switch( descr.getType( road_graph ) )
-        {
-            case HIGHWAY:
-                layer_num = 4;
-                break;
-                
-            case PRIMARY:
-                layer_num = 2;
-                break;
-                
-            case SECONDARY:
-                layer_num = 1;
-                break;
-                
-            case OTHER:
-                layer_num = 0;
-                break;
-                
-            default: // unknown roads are always visible
-                layer_num = layers.length - 1;
-                break;
-        }
-        
+        auto type = descr.getType( road_graph );
+        auto layers_to_place = config.map.roads.roads_properties[ type ].layers;
         auto bbox = descr.getBoundary(road_graph);
-        layers[layer_num].roads.addObject( bbox, descr );
+        
+        foreach( n; layers_to_place )
+            layers[ n ].roads.addObject( bbox, descr );
     }
     
     void addRoadGraph( RGraph newRoadGraph )

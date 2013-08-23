@@ -23,9 +23,9 @@ enum Line
 
 enum Road
 {
-    OTHER,
     HIGHWAY,
     PRIMARY,
     SECONDARY,
+    OTHER,
     UNSUPPORTED
 }
