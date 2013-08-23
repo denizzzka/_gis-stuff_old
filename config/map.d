@@ -10,7 +10,7 @@ struct RoadProperties
     size_t[] layers;
 }
 
-static struct Roads
+class Roads
 {
     static RoadProperties[] roads_properties;
     
@@ -54,6 +54,10 @@ static struct Roads
             );
         roads_properties ~= rp;
     }
+    
+    this( string filename )
+    {
+    }
 };
 
-Roads roads;
+static const Roads roads = new Roads("asd");
