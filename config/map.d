@@ -1,7 +1,7 @@
 module config.map;
 
 import dsfml.graphics: Color;
-import cat = categories;
+import categories;
 
 
 struct RoadProperties
@@ -14,12 +14,13 @@ static struct Roads
 {
     static RoadProperties[] roads_properties;
     
-    static string[] members = [ __traits( allMembers, typeof( this ) ) ];
+    immutable string[] members = [ __traits( allMembers, categories.Road ) ];
     
     static this()
     {
         import std.stdio;
         writeln( members );
+        writeln( typeid( members ) );
         
         RoadProperties rp;
         
