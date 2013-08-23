@@ -74,7 +74,7 @@ struct TRoad( Coords )
     
     @disable this();
     
-    config.map.RoadProperties getProperties() const
+    ref config.map.RoadProperties properties() const
     {
         return config.map.Roads.roads_properties[ type ];
     }
