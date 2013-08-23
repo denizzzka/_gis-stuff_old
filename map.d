@@ -249,11 +249,11 @@ class Region
     private
     void addRoadDescriptor( RGraph.RoadDescriptor descr )
     {
-        auto type = descr.getType( road_graph );
-        auto layers_to_place = config.map.roads.roads_properties[ type ].layers;
+        auto road_type = descr.getType( road_graph );
+        auto to_layers = config.map.roads.roads_properties[ road_type ].layers;
         auto bbox = descr.getBoundary(road_graph);
         
-        foreach( n; layers_to_place )
+        foreach( n; to_layers )
             layers[ n ].roads.addObject( bbox, descr );
     }
     
