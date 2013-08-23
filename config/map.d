@@ -1,7 +1,9 @@
 module config.map;
 
 import dsfml.graphics: Color;
-import categories;
+static import categories;
+
+import std.json;
 
 
 struct RoadProperties
