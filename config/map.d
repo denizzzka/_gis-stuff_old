@@ -10,7 +10,7 @@ struct RoadProperties
     size_t[] layers;
 }
 
-struct Roads
+static struct Roads
 {
     static RoadProperties[] roads_properties;
     
@@ -55,3 +55,4 @@ struct Roads
     }
 };
 
+Roads roads;
