@@ -138,12 +138,12 @@ class Window
     }
     
     private
-    void drawRoads(T)( in T roads_graphs )
+    void drawRoads( in RGraph.Roads[] allGraphsRoads )
     {
-        foreach( roads; roads_graphs )
-	    foreach( road; roads.descriptors )
+        foreach( roads; allGraphsRoads )
+	    foreach( road_dscr; roads.descriptors )
 	    {
-		auto encoded_points = road.getPoints( roads.road_graph );
+		auto encoded_points = road_dscr.getPoints( roads.road_graph );
 		
 		Vector2r[] res_points;
 		
@@ -156,7 +156,8 @@ class Window
 		    debug(sfml) writeln("draw line point i=", i, " encoded coords=", encoded, " meters=", point, " window_coords=", window_coords);
 		}
 		
-		drawRoad( res_points, Color(40,40,40) );
+		auto color = road_dscr.getRoad( roads.road_graph ).properties.color;
+		drawRoad( res_points, color );
         }
     }
     
