@@ -5,6 +5,7 @@ import math.rtree2d;
 import math.graph: Graph;
 static import osm;
 import cat = categories: Road;
+static import config.map;
 
 import std.algorithm: canFind;
 import std.random: uniform;
@@ -69,6 +70,11 @@ struct TRoad( Coords )
     {
         this.points = points;
         this.type = type;
+    }
+    
+    ref RoadProperties getProperties()
+    {
+        return config.map.roads.roads_properties[ road_type ];
     }
     
     @disable this();
