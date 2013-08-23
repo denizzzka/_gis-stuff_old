@@ -12,9 +12,9 @@ struct RoadProperties
 
 class Roads
 {
-    static RoadProperties[] roads_properties;
-    
     immutable string[] members = [ __traits( allMembers, categories.Road ) ];
+    
+    static RoadProperties[ members.length ] roads_properties;
     
     static this()
     {
@@ -28,31 +28,31 @@ class Roads
                 Color.Green,
                 [ 4 ]
             );
-        roads_properties ~= rp;
+        roads_properties[0] = rp;
         
         rp = RoadProperties(
                 Color.White,
                 [ 2 ]
             );
-        roads_properties ~= rp;
+        roads_properties[1] = rp;
         
         rp = RoadProperties(
                 Color.Yellow,
                 [ 1 ]
             );
-        roads_properties ~= rp;
+        roads_properties[2] = rp;
         
         rp = RoadProperties(
                 Color( 0xAA, 0xAA, 0xAA ),
                 [ 0 ]
             );
-        roads_properties ~= rp;
+        roads_properties[3] = rp;
         
         rp = RoadProperties(
                 Color.Magenta,
                 [ 0, 1, 2, 3, 4 ]
             );
-        roads_properties ~= rp;
+        roads_properties[4] = rp;
     }
     
     this( string filename )
