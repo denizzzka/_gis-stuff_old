@@ -10,7 +10,7 @@ static import config.map;
 import std.algorithm: canFind;
 import std.random: uniform;
 import std.exception: enforce;
-debug import std.stdio;
+import std.stdio;
 
 
 struct TRoadDescription( _Coords )
