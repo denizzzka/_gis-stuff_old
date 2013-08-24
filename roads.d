@@ -40,8 +40,10 @@ struct TRoadDescription( _Coords )
         
         for( auto i = 1; i < nodes_ids.length; i++ )
         {
-            assert( nodes_ids[i] in nodes );
-            res.addCircumscribe( nodes[ nodes_ids[i] ] );
+            auto node_id = nodes_ids[i];
+            auto p = node_id in nodes;
+            assert( p, "node id=" ~ to!string( node_id ) ~ " is not found" );
+            res.addCircumscribe( *p );
         }
         
         return res;
