@@ -11,7 +11,7 @@ import roads: TRoadGraph;
 
 import std.stdio;
 import std.string;
-import std.exception;
+import std.exception: enforce;
 import std.bitmanip: bigEndianToNative;
 import std.zlib;
 import std.math: round;
@@ -217,6 +217,8 @@ body
         res.coords_idx ~= curr;
     }
     
+    enforce( res.coords_idx.length >= 2, "way id="~to!string(way.id)~" - too short way" );
+    
     if( !way.keys.isNull )
         res.tags = prim.stringtable.getTagsByArray( way.keys, way.vals );
         
@@ -350,7 +352,7 @@ Region getRegion( string filename, bool verbose )
                                 
                             case ROAD:
                                 auto type = getRoadType( decoded.tags );
-                                roads ~= RGraph.RoadDescription( decoded.coords_idx, type );
+                                roads ~= RGraph.RoadDescription( decoded.coords_idx, type, w.id );
                                 break;
                                 
                             default:

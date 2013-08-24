@@ -9,6 +9,7 @@ static import config.map;
 
 import std.algorithm: canFind;
 import std.random: uniform;
+import std.exception: enforce;
 debug import std.stdio;
 
 
@@ -18,13 +19,19 @@ struct TRoadDescription( _Coords )
     alias Box!Coords BBox;
     
     ulong nodes_ids[];
+    cat.Road type;
+    ulong way_id;
     
-    cat.Road type = cat.Road.OTHER;
-    
-    this( ulong[] nodes_ids, cat.Road type )
+    this( ulong[] nodes_ids, cat.Road type, ulong way_id )
+    in
+    {
+        assert( nodes_ids.length >= 2 );
+    }
+    body
     {
         this.nodes_ids = nodes_ids;
         this.type = type;
+        this.way_id = way_id;
     }
     
     @disable this();
@@ -34,16 +41,36 @@ struct TRoadDescription( _Coords )
         nodes_ids = nodes_ids.dup;
     }
     
-    BBox getBoundary( in Coords[long] nodes ) const
+    private
+    Coords getNode( in Coords[long] nodes, in size_t node_idx ) const
+    in
     {
-        auto res = BBox( nodes[ nodes_ids[0] ], Coords(0,0) );
+        assert( node_idx < nodes_ids.length );
+    }
+    body
+    {
+        auto node_id = nodes_ids[ node_idx ];
+        
+        auto node_ptr = node_id in nodes;
+        enforce( node_ptr, "node id="~to!string( node_id )~" is not found" );
+        
+        return *node_ptr;
+    }
+    
+    BBox getBoundary( in Coords[long] nodes ) const
+    in
+    {
+        assert( nodes_ids.length >= 2 );
+    }
+    body
+    {
+        auto start_node = getNode( nodes, 0 );
+        auto res = BBox( start_node, Coords(0,0) );
         
         for( auto i = 1; i < nodes_ids.length; i++ )
         {
-            auto node_id = nodes_ids[i];
-            auto p = node_id in nodes;
-            assert( p, "node id=" ~ to!string( node_id ) ~ " is not found" );
-            res.addCircumscribe( *p );
+            auto curr_node = getNode( nodes, i );
+            res.addCircumscribe( curr_node );
         }
         
         return res;
@@ -263,7 +290,19 @@ class TRoadGraph( Coords )
         auto descriptions_tree = new DescriptionsTree;
         
         foreach( i, c; descriptions )
-            descriptions_tree.addObject( c.getBoundary( nodes ), c );
+        {
+            BBox boundary;
+            
+            try
+                boundary = c.getBoundary( nodes );
+            catch( Exception e )
+            {
+                writeln("Way id=", c.way_id, " excluded: ", e.msg );
+                continue;
+            }
+            
+            descriptions_tree.addObject( boundary, c );
+        }
         
         auto prepared = descriptions_tree.prepareRoads( nodes );
         
@@ -433,8 +472,8 @@ unittest
     ulong[] n1 = [ 0, 10, 20, 30, 40 ];
     ulong[] n2 = [ 50, 60, 20, 70, 80, 30 ];
     
-    auto w1 = RoadDescription( n1, cat.Road.HIGHWAY );
-    auto w2 = RoadDescription( n2, cat.Road.PRIMARY );
+    auto w1 = RoadDescription( n1, cat.Road.HIGHWAY, 111 );
+    auto w2 = RoadDescription( n2, cat.Road.PRIMARY, 222 );
     
     auto roads = new G.DescriptionsTree;
     roads.addObject( w1.getBoundary( nodes ), w1 );
