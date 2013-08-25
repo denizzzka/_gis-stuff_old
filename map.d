@@ -2,13 +2,14 @@ module map;
 
 import math.geometry;
 import math.rtree2d;
-import osm: Coords, encodedToMeters, RGraph;
+import osm: encodedToMeters, RGraph;
 import cat = categories;
 import sfml: Color, randomColor; // TODO: temporary, remove it
 
 debug(map) import std.stdio;
 
 
+alias Vector2D!double Coords;
 alias Box!Coords BBox;
 
 struct Point
