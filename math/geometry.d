@@ -16,10 +16,18 @@ struct Vector2D( _T )
     alias x lon;
     alias y lat;
     
-    this( T x, T y )
+    this( T1, T2 )( in T1 x, in T2 y )
+    //if( isScalarType!(T1) && isScalarType!(T2) ) // FIXME
     {
         this.x = x;
         this.y = y;
+    }
+    
+    this( V )( in V v )
+    if( !isScalarType!(V) )
+    {
+        this.x = v.x;
+        this.y = v.y;
     }
     
     auto length()
@@ -117,6 +125,11 @@ struct Vector2D( _T )
     string toString() const
     {
         return "("~to!string(x)~";"~to!string(y)~")";
+    }
+    
+    Vector2D!real toReal() const
+    {
+        return Vector2D!real( x, y );
     }
 }
 
