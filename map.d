@@ -2,15 +2,16 @@ module map;
 
 import math.geometry;
 import math.rtree2d;
-import osm: encodedToMeters, RGraph;
 import cat = categories;
 import sfml: Color, randomColor; // TODO: temporary, remove it
+import roads: TRoadGraph;
 
 debug(map) import std.stdio;
 
 
 alias Box!Coords BBox;
 alias Vector2D!double Coords;
+alias TRoadGraph!Coords RGraph;
 
 struct Point
 {

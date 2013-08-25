@@ -4,7 +4,7 @@ import osmpbf.fileformat;
 import osmpbf.osmformat;
 import math.geometry;
 import math.earth;
-import map: Map, Region, BBox, Point, PointsStorage, Line, LinesStorage, addPoint, addLineToStorage, MapCoords = Coords;
+import map: Map, Region, BBox, Point, PointsStorage, Line, LinesStorage, addPoint, addLineToStorage, MapCoords = Coords, RGraph;
 import cat = categories;
 import osm_tags_parsing;
 import roads: TRoadDescription, TRoadGraph;
@@ -304,9 +304,6 @@ void addPoints(
         }
     }
 }
-
-// alias TRoadGraph!MapCoords RGraph; // FIXME: wtf??
-alias TRoadGraph!(Vector2D!double) RGraph;
 
 Region getRegion( string filename, bool verbose )
 {
