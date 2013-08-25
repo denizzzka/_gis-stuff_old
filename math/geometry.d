@@ -131,6 +131,11 @@ struct Vector2D( _T )
     {
         return Vector2D!real( x, y );
     }
+    
+    Vector2D!double roundToDouble() const
+    {
+        return Vector2D!double( to!double( x ), to!double( y ) );
+    }
 }
 
 unittest
