@@ -84,9 +84,6 @@ struct Line
     
     Color color() const
     {
-        if( isRoad )
-            return randomColor;
-        
         with( cat.Line )
         switch( type )
         {
@@ -108,24 +105,6 @@ struct Line
                 
             default:
                 return Color.Cyan;
-        }
-    }
-    
-    bool isRoad() const
-    {
-        with( cat.Line )
-        switch( type )
-        {
-            case ROAD_HIGHWAY:
-            case ROAD_PRIMARY:
-            case ROAD_SECONDARY:
-            case ROAD_OTHER:
-                return true;
-                break;
-                
-            default:
-                return false;
-                break;
         }
     }
     
