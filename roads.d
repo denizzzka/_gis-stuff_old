@@ -3,9 +3,10 @@ module roads;
 import math.geometry;
 import math.rtree2d;
 import math.graph: Graph;
-static import osm;
 import cat = categories: Road;
 static import config.map;
+//import map: Coords;
+static import osm; // TODO: need to remove it
 
 import std.algorithm: canFind;
 import std.random: uniform;
@@ -235,41 +236,30 @@ struct TNode( _Edge, _Point )
     }
 }
 
-struct Point
+struct TPoint( Coords )
 {
-    osm.Coords coords;
+    Coords coords;
     
-    this( osm.Coords coords )
+    this( in Coords coords )
     {
         this.coords = coords;
     }
     
-    float distance( in Point v, in float weight ) const
+    float distance( in TPoint v, in float weight ) const
     {
         return (coords - v.coords).length * weight;
     }
     
-    float heuristic( in Point v ) const
+    float heuristic( in TPoint v ) const
     {
         return (coords - v.coords).length;
     }
 }
 
-@disable
-auto boundary(T)( ref const T node )
+class TRoadGraph( _Coords )
 {
-    alias Box!osm.Coords BBox;
+    alias _Coords Coords;
     
-    auto res = BBox( node.point.coords, Coords(0,0) );
-    
-    for( auto i = 1; i < node.edges.length; i++ )
-        res.addCircumscribe( node.edges[i].to_node.point.coords );
-    
-    return res;
-}
-
-class TRoadGraph( Coords )
-{
     alias Box!Coords BBox;
     alias TRoad!Coords Road;
     alias TRoadDescription!Coords RoadDescription;
@@ -277,6 +267,7 @@ class TRoadGraph( Coords )
     alias RTreePtrs!( BBox, RoadDescription ) DescriptionsTree;
     
     alias TEdge!( float, Road ) Edge;
+    alias TPoint!Coords Point;
     alias TNode!( Edge, Point ) Node;
     alias Graph!Node G;
     
@@ -485,9 +476,10 @@ unittest
 }
 
 private
-void descriptionsToRoadGraph( Graph, RoadDescription, Coords )( ref Graph graph, in RoadDescription[] descriptions, in Coords[long] nodes )
+void descriptionsToRoadGraph( Graph, RoadDescription, ForeignCoords )( ref Graph graph, in RoadDescription[] descriptions, in ForeignCoords[long] nodes )
 {
-    alias TRoad!Coords Road;
+    alias RoadDescription.Coords Coords;
+    alias TPoint!Coords Point;
     
     size_t[ulong] already_stored;
     
@@ -505,7 +497,7 @@ void descriptionsToRoadGraph( Graph, RoadDescription, Coords )( ref Graph graph,
             
             assert( coord != null );
             
-            auto point = Point( *coord );
+            auto point = Point( osm.encodedToMapCoords( *coord ) );
             auto idx = graph.addPoint( point );
             already_stored[ node_id ] = idx;
             
@@ -520,7 +512,7 @@ void descriptionsToRoadGraph( Graph, RoadDescription, Coords )( ref Graph graph,
         Coords points[];
         
         for( auto i = 1; i < road.nodes_ids.length - 1; i++ )
-            points ~= nodes[ road.nodes_ids[i] ];
+            points ~= osm.encodedToMapCoords( nodes[ road.nodes_ids[i] ] );
         
         auto r = Road( points, road.type );
         

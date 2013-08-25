@@ -250,7 +250,7 @@ class Region
     void addRoadDescriptor( RGraph.RoadDescriptor descr )
     {
         auto to_layers = descr.getRoad( road_graph ).properties.layers;
-        auto bbox = descr.getBoundary( road_graph );
+        BBox bbox = descr.getBoundary( road_graph );
         
         foreach( n; to_layers )
             layers[ n ].roads.addObject( bbox, descr );

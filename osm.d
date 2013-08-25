@@ -305,7 +305,7 @@ void addPoints(
     }
 }
 
-alias TRoadGraph!Coords RGraph;
+alias TRoadGraph!MapCoords RGraph;
 
 Region getRegion( string filename, bool verbose )
 {

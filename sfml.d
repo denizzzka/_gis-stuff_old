@@ -89,7 +89,7 @@ class Window
     {
         for(auto i = 0; i < pois.length; i++)
         {
-            Vector2r node = encodedToMeters( pois[i].coords );
+            Vector2r node = Vector2r( pois[i].coords );
             auto window_coords = scene.metersToScreen( node );
             
             debug(sfml) writeln("draw point i=", i, " encoded coords=", pois[i], " meters=", node, " window_coords=", window_coords);
@@ -108,7 +108,7 @@ class Window
             
             foreach( i, node; line.nodes )
             {
-                Vector2r point = encodedToMeters( node );
+                Vector2r point = Vector2r( node );
                 auto window_coords = scene.metersToScreen( point );
                 line_points ~= window_coords;
 
