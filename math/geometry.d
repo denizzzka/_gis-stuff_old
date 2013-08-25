@@ -30,7 +30,7 @@ struct Vector2D( _T )
         this.y = v.y;
     }
     
-    auto length()
+    auto length() const
     {
         return hypot( x, y );
     }
