@@ -4,10 +4,10 @@ import osmpbf.fileformat;
 import osmpbf.osmformat;
 import math.geometry;
 import math.earth;
-import map: Map, Region, BBox, Point, PointsStorage, Line, LinesStorage, addPoint, addLineToStorage;
+import map: Map, Region, BBox, Point, PointsStorage, Line, LinesStorage, addPoint, addLineToStorage, MapCoords = Coords;
 import cat = categories;
 import osm_tags_parsing;
-import roads: TRoadGraph;
+import roads: TRoadDescription, TRoadGraph;
 
 import std.stdio;
 import std.string;
@@ -313,7 +313,8 @@ Region getRegion( string filename, bool verbose )
     auto res = new Region;
     Coords[long] nodes_coords;
     
-    RGraph.RoadDescription[] roads;
+    alias TRoadDescription!( MapCoords, Coords ) RoadDescription;
+    RoadDescription[] roads;
     
     while(true)
     {
@@ -352,7 +353,7 @@ Region getRegion( string filename, bool verbose )
                                 
                             case ROAD:
                                 auto type = getRoadType( decoded.tags );
-                                roads ~= RGraph.RoadDescription( decoded.coords_idx, type, w.id );
+                                roads ~= RoadDescription( decoded.coords_idx, type, w.id );
                                 break;
                                 
                             default:

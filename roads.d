@@ -13,9 +13,10 @@ import std.exception: enforce;
 import std.stdio;
 
 
-struct TRoadDescription( _Coords )
+struct TRoadDescription( _Coords, _ForeignCoords )
 {
     alias _Coords Coords;
+    alias _ForeignCoords ForeignCoords;
     alias Box!Coords BBox;
     
     ulong nodes_ids[];
@@ -272,9 +273,7 @@ class TRoadGraph( Coords )
 {
     alias Box!Coords BBox;
     alias TRoad!Coords Road;
-    alias TRoadDescription!Coords RoadDescription;
     alias RTreePtrs!( BBox, Road ) RoadsRTree;
-    alias RTreePtrs!( BBox, RoadDescription ) DescriptionsTree;
     
     alias TEdge!( float, Road ) Edge;
     alias TNode!( Edge, Point ) Node;
@@ -285,8 +284,10 @@ class TRoadGraph( Coords )
         G graph;
     }
     
-    this( in Coords[long] nodes, scope RoadDescription[] descriptions )
+    this( RoadDescription )( in Coords[long] nodes, scope RoadDescription[] descriptions )
     {        
+        alias RTreePtrs!( BBox, RoadDescription ) DescriptionsTree;
+        
         auto descriptions_tree = new DescriptionsTree;
         
         foreach( i, c; descriptions )
@@ -456,7 +457,9 @@ DescriptionsTree.Payload[] prepareRoads(DescriptionsTree, Coords)( in Descriptio
 unittest
 {
     alias osm.Coords Coords;
-    alias TRoadDescription!Coords RoadDescription;
+    alias TRoadDescription!(Coords, Coords) RoadDescription;
+    alias Box!Coords BBox;
+    alias RTreePtrs!( BBox, RoadDescription ) DescriptionsTree;
     alias TRoadGraph!Coords G;
     
     Coords[] points = [
@@ -475,7 +478,7 @@ unittest
     auto w1 = RoadDescription( n1, cat.Road.HIGHWAY, 111 );
     auto w2 = RoadDescription( n2, cat.Road.PRIMARY, 222 );
     
-    auto roads = new G.DescriptionsTree;
+    auto roads = new DescriptionsTree;
     roads.addObject( w1.getBoundary( nodes ), w1 );
     roads.addObject( w2.getBoundary( nodes ), w2 );
     
