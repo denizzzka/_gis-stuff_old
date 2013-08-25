@@ -2,7 +2,7 @@ module map;
 
 import math.geometry;
 import math.rtree2d;
-import osm: Coords, encodedToMeters, RGraph;
+import osm: encodedToMeters, RGraph;
 import cat = categories;
 import sfml: Color, randomColor; // TODO: temporary, remove it
 
@@ -10,6 +10,7 @@ debug(map) import std.stdio;
 
 
 alias Box!Coords BBox;
+alias Vector2D!double Coords;
 
 struct Point
 {

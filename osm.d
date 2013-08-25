@@ -179,12 +179,12 @@ struct DecodedLine
         assert( coords_idx.length >= 2 );
     }
     
-    Coords[] getCoords( in Coords[long] nodes_coords ) const
+    MapCoords[] getCoords( in Coords[long] nodes_coords ) const
     {
-        Coords[] res;
+        MapCoords[] res;
         
         foreach( c; coords_idx )
-            res ~= nodes_coords[ c ];
+            res ~= encodedToMapCoords( nodes_coords[ c ] );
         
         return res;
     }
@@ -265,6 +265,13 @@ Coords metersToEncoded( Vector2D!real meters )
     return encoded.round;
 }
 
+MapCoords encodedToMapCoords( in Coords c )
+{
+    auto m = encodedToMeters( c );
+    
+    return MapCoords( to!double( m.x ), to!double( m.y ) );
+}
+
 void addPoints(
         ref Region region,
         ref PrimitiveBlock prim,
@@ -281,13 +288,15 @@ void addPoints(
         // Point contains understandable tags?
         if( type != cat.Point.UNSUPPORTED )
         {
-            Coords coords;
-            coords.lon = n.lon;
-            coords.lat = n.lat;
+            Coords coords = Coords( n.lon, n.lat );
             
             string tags = prim.stringtable.getTags( n ).toString;
             
-            Point point = Point( coords, prim.stringtable.getPointType( n ), tags );
+            Point point = Point(
+                    encodedToMapCoords( coords ),
+                    prim.stringtable.getPointType( n ),
+                    tags
+                );
             
             region.addPoint( point );
             

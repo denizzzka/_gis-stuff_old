@@ -3,7 +3,7 @@ module roads;
 import math.geometry;
 import math.rtree2d;
 import math.graph: Graph;
-static import osm;
+import osm: OsmCoords = Coords, encodedToMapCoords;
 import cat = categories: Road;
 static import config.map;
 
@@ -43,7 +43,7 @@ struct TRoadDescription( _Coords, _ForeignCoords )
     }
     
     private
-    Coords getNode( in Coords[long] nodes, in size_t node_idx ) const
+    Coords getNode( in ForeignCoords[long] nodes, in size_t node_idx ) const
     in
     {
         assert( node_idx < nodes_ids.length );
@@ -55,10 +55,10 @@ struct TRoadDescription( _Coords, _ForeignCoords )
         auto node_ptr = node_id in nodes;
         enforce( node_ptr, "node id="~to!string( node_id )~" is not found" );
         
-        return *node_ptr;
+        return encodedToMapCoords( *node_ptr );
     }
     
-    BBox getBoundary( in Coords[long] nodes ) const
+    BBox getBoundary( in ForeignCoords[long] nodes ) const
     in
     {
         assert( nodes_ids.length >= 2 );
@@ -238,9 +238,9 @@ struct TNode( _Edge, _Point )
 
 struct Point
 {
-    osm.Coords coords;
+    OsmCoords coords;
     
-    this( osm.Coords coords )
+    this( OsmCoords coords )
     {
         this.coords = coords;
     }
