@@ -136,6 +136,17 @@ struct Vector2D( _T )
     {
         return Vector2D!double( to!double( x ), to!double( y ) );
     }
+    
+    /// Angle between OX and vector
+    real angleOX() const
+    {
+        return atan2( to!real( x ), to!real( y ) );
+    }
+    
+    real angleBetweenVector( V )( in V v ) const
+    {
+        return angleOX() - v.angleOX();
+    }
 }
 
 unittest
