@@ -4,6 +4,7 @@ import math.geometry;
 import math.rtree2d;
 import math.graph: Graph;
 import osm: OsmCoords = Coords, encodedToMapCoords;
+import map: MapCoords = Coords;
 import cat = categories: Road;
 static import config.map;
 
@@ -238,9 +239,9 @@ struct TNode( _Edge, _Point )
 
 struct Point
 {
-    OsmCoords coords;
+    MapCoords coords;
     
-    this( OsmCoords coords )
+    this( MapCoords coords )
     {
         this.coords = coords;
     }
@@ -284,7 +285,12 @@ class TRoadGraph( Coords )
         G graph;
     }
     
-    this( RoadDescription )( in Coords[long] nodes, scope RoadDescription[] descriptions )
+    this( ForeignCoords, RoadDescription )( in ForeignCoords[long] nodes, scope RoadDescription[] descriptions )
+    in
+    {
+        static assert( is( ForeignCoords == RoadDescription.ForeignCoords ) );
+    }
+    body
     {
         alias RTreePtrs!( BBox, RoadDescription ) DescriptionsTree;
         
@@ -420,10 +426,11 @@ class TRoadGraph( Coords )
 
 /// Cuts roads on crossroads for creating road graph
 private
-DescriptionsTree.Payload[] prepareRoads(DescriptionsTree, Coords)( in DescriptionsTree roads_rtree, in Coords[long] nodes )
+DescriptionsTree.Payload[] prepareRoads(DescriptionsTree, ForeignCoords)( in DescriptionsTree roads_rtree, in ForeignCoords[long] nodes )
 {
     alias DescriptionsTree.Payload RoadDescription;
-    alias Box!Coords BBox;
+    alias DescriptionsTree.Box BBox;
+    alias BBox.Vector Coords;
     
     RoadDescription[] res;
     auto all_roads = roads_rtree.search( roads_rtree.getBoundary );
@@ -435,7 +442,10 @@ DescriptionsTree.Payload[] prepareRoads(DescriptionsTree, Coords)( in Descriptio
         for( auto i = 1; i < road.nodes_ids.length - 1; i++ )
         {
             auto curr_point = road.nodes_ids[i];
-            auto point_bbox = BBox( nodes[ curr_point ], Coords(0, 0) );
+            auto point_bbox = BBox(
+                    encodedToMapCoords( nodes[ curr_point ] ),
+                    Coords(0, 0)
+                );
             auto near_roads = roads_rtree.search( point_bbox );
             
             foreach( n; near_roads )
@@ -456,18 +466,19 @@ DescriptionsTree.Payload[] prepareRoads(DescriptionsTree, Coords)( in Descriptio
 }
 unittest
 {
-    alias osm.Coords Coords;
-    alias TRoadDescription!(Coords, Coords) RoadDescription;
+    alias MapCoords Coords;
+    alias OsmCoords FC; // foreign coords
+    alias TRoadDescription!(Coords, FC) RoadDescription;
     alias Box!Coords BBox;
     alias RTreePtrs!( BBox, RoadDescription ) DescriptionsTree;
     alias TRoadGraph!Coords G;
     
-    Coords[] points = [
-            Coords(0,0), Coords(1,1), Coords(2,2), Coords(3,3), Coords(4,4), // first road
-            Coords(4,0), Coords(3,1), Coords(1,3), Coords(2,4) // second road
+    FC[] points = [
+            FC(0,0), FC(1,1), FC(2,2), FC(3,3), FC(4,4), // first road
+            FC(4,0), FC(3,1), FC(1,3), FC(2,4) // second road
         ];
     
-    Coords[long] nodes;
+    FC[long] nodes;
     
     foreach( i, c; points )
         nodes[ i * 10 ] = c;
@@ -488,8 +499,14 @@ unittest
 }
 
 private
-void descriptionsToRoadGraph( Graph, RoadDescription, Coords )( ref Graph graph, in RoadDescription[] descriptions, in Coords[long] nodes )
+void descriptionsToRoadGraph( Graph, RoadDescription, ForeignCoords )( ref Graph graph, in RoadDescription[] descriptions, in ForeignCoords[long] nodes )
+in
 {
+    static assert( is( ForeignCoords == RoadDescription.ForeignCoords ) );
+}
+body
+{
+    alias RoadDescription.Coords Coords;
     alias TRoad!Coords Road;
     
     size_t[ulong] already_stored;
@@ -508,7 +525,7 @@ void descriptionsToRoadGraph( Graph, RoadDescription, Coords )( ref Graph graph,
             
             assert( coord != null );
             
-            auto point = Point( *coord );
+            auto point = Point( encodedToMapCoords( *coord ) );
             auto idx = graph.addPoint( point );
             already_stored[ node_id ] = idx;
             
@@ -523,7 +540,7 @@ void descriptionsToRoadGraph( Graph, RoadDescription, Coords )( ref Graph graph,
         Coords points[];
         
         for( auto i = 1; i < road.nodes_ids.length - 1; i++ )
-            points ~= nodes[ road.nodes_ids[i] ];
+            points ~= encodedToMapCoords( nodes[ road.nodes_ids[i] ] );
         
         auto r = Road( points, road.type );
         

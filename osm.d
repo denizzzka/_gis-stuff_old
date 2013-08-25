@@ -305,7 +305,8 @@ void addPoints(
     }
 }
 
-alias TRoadGraph!MapCoords RGraph;
+// alias TRoadGraph!MapCoords RGraph; // FIXME: wtf??
+alias TRoadGraph!(Vector2D!double) RGraph;
 
 Region getRegion( string filename, bool verbose )
 {
