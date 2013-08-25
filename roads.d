@@ -5,8 +5,7 @@ import math.rtree2d;
 import math.graph: Graph;
 import cat = categories: Road;
 static import config.map;
-//import map: Coords;
-static import osm; // TODO: need to remove it
+static import osm; // TODO: need to remove it in the future
 
 import std.algorithm: canFind;
 import std.random: uniform;
@@ -262,9 +261,7 @@ class TRoadGraph( _Coords )
     
     alias Box!Coords BBox;
     alias TRoad!Coords Road;
-    alias TRoadDescription!Coords RoadDescription;
     alias RTreePtrs!( BBox, Road ) RoadsRTree;
-    alias RTreePtrs!( BBox, RoadDescription ) DescriptionsTree;
     
     alias TEdge!( float, Road ) Edge;
     alias TPoint!Coords Point;
@@ -276,8 +273,10 @@ class TRoadGraph( _Coords )
         G graph;
     }
     
-    this( in Coords[long] nodes, scope RoadDescription[] descriptions )
-    {        
+    this( ForeignCoords, RoadDescription )( in ForeignCoords[long] nodes, scope RoadDescription[] descriptions )
+    {
+        alias RTreePtrs!( BBox, RoadDescription ) DescriptionsTree;
+        
         auto descriptions_tree = new DescriptionsTree;
         
         foreach( i, c; descriptions )
