@@ -9,8 +9,8 @@ import roads: TRoadGraph;
 debug(map) import std.stdio;
 
 
-alias Box!Coords BBox;
 alias Vector2D!double Coords;
+alias Box!Coords BBox;
 alias TRoadGraph!Coords RGraph;
 
 struct Point
