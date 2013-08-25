@@ -285,7 +285,7 @@ class TRoadGraph( Coords )
     }
     
     this( RoadDescription )( in Coords[long] nodes, scope RoadDescription[] descriptions )
-    {        
+    {
         alias RTreePtrs!( BBox, RoadDescription ) DescriptionsTree;
         
         auto descriptions_tree = new DescriptionsTree;
