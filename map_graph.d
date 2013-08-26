@@ -273,8 +273,8 @@ auto boundary(T)( ref const T node )
 class TMapGraph( Coords, Node )
 {
     alias Box!Coords BBox;
-    alias TPolyline!Coords Road;
-    alias RTreePtrs!( BBox, Road ) RoadsRTree;
+    alias TPolyline!Coords Polyline;
+    alias RTreePtrs!( BBox, Polyline ) PolylinesRTree;
     
     alias Node.Edge Edge;
     
@@ -285,14 +285,17 @@ class TMapGraph( Coords, Node )
         G graph;
     }
     
-    this( ForeignCoords, RoadDescription )( in ForeignCoords[long] nodes, scope RoadDescription[] descriptions )
+    this( ForeignCoords, PolylineDescription )(
+            in ForeignCoords[long] nodes,
+            scope PolylineDescription[] descriptions
+        )
     in
     {
-        static assert( is( ForeignCoords == RoadDescription.ForeignCoords ) );
+        static assert( is( ForeignCoords == PolylineDescription.ForeignCoords ) );
     }
     body
     {
-        alias RTreePtrs!( BBox, RoadDescription ) DescriptionsTree;
+        alias RTreePtrs!( BBox, PolylineDescription ) DescriptionsTree;
         
         auto descriptions_tree = new DescriptionsTree;
         
@@ -372,7 +375,7 @@ class TMapGraph( Coords, Node )
             return res;
         }
         
-        ref const (Road) getRoad( in TMapGraph roadGraph ) const
+        ref const (Polyline) getRoad( in TMapGraph roadGraph ) const
         {
             return getEdge( roadGraph ).payload;
         }
