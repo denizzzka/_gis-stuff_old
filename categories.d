@@ -22,14 +22,15 @@ enum Line
     HIGHWAY,
     PRIMARY,
     SECONDARY,
+    ROAD_OTHER,
     
     UNSUPPORTED // unsupported type of line
 }
 
 /// lines known as roads
 immutable Line[] roads = [
-        Line.OTHER,
         Line.HIGHWAY,
         Line.PRIMARY,
-        Line.SECONDARY
+        Line.SECONDARY,
+        Line.ROAD_OTHER
     ];

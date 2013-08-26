@@ -148,13 +148,13 @@ Line examWayTag( in Tag[] tags, in Tag tag )
         {
             case "highway":
                 if( canFind( ["trunk", "motorway"], tag.value ) )
-                    return ROAD_HIGHWAY;
+                    return HIGHWAY;
                 
                 if( canFind( ["primary", "tertiary"], tag.value ) )
-                    return ROAD_PRIMARY;
+                    return PRIMARY;
                 
                 if( canFind( ["secondary"], tag.value ) )
-                    return ROAD_SECONDARY;
+                    return SECONDARY;
                 
                 return ROAD_OTHER;
                 break;
@@ -184,7 +184,7 @@ body
             if( t.key == "highway" )
                 return ROAD;
         
-        if( coords_idx[0] == coords_idx[$-1] )
+        if( line.coords_idx[0] == line.coords_idx[$-1] )
             return AREA;
         else
             return POLYLINE;
@@ -194,7 +194,7 @@ body
 Line getRoadType( in Tag[] tags )
 out( res )
 {
-    assert( canFind( roads, res ) );
+    assert( canFind( categories.roads, res ) );
 }
 body
 {

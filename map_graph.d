@@ -491,8 +491,8 @@ unittest
     ulong[] n1 = [ 0, 10, 20, 30, 40 ];
     ulong[] n2 = [ 50, 60, 20, 70, 80, 30 ];
     
-    auto w1 = RoadDescription( n1, cat.Road.HIGHWAY, 111 );
-    auto w2 = RoadDescription( n2, cat.Road.PRIMARY, 222 );
+    auto w1 = RoadDescription( n1, cat.Line.HIGHWAY, 111 );
+    auto w2 = RoadDescription( n2, cat.Line.PRIMARY, 222 );
     
     auto roads = new DescriptionsTree;
     roads.addObject( w1.getBoundary( nodes ), w1 );
