@@ -471,7 +471,12 @@ unittest
     alias TRoadDescription!(Coords, FC) RoadDescription;
     alias Box!Coords BBox;
     alias RTreePtrs!( BBox, RoadDescription ) DescriptionsTree;
-    alias TRoadGraph!Coords G;
+    
+    alias TRoad!Coords Road;
+    alias TEdge!( float, Road ) Edge;
+    alias TNode!( Edge, Point ) Node;
+    
+    alias TRoadGraph!( Coords, Node ) G;
     
     FC[] points = [
             FC(0,0), FC(1,1), FC(2,2), FC(3,3), FC(4,4), // first road
