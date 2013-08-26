@@ -184,6 +184,7 @@ body
             if( t.key == "highway" )
                 return ROAD;
         
+        // TODO: need more checks here:
         if( line.coords_idx[0] == line.coords_idx[$-1] )
             return AREA;
         else
