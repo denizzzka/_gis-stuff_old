@@ -180,12 +180,19 @@ struct DecodedLine
         assert( coords_idx.length >= 2 );
     }
     
+    private
     MapCoords[] getCoords( in Coords[long] nodes_coords ) const
     {
         MapCoords[] res;
         
         foreach( c; coords_idx )
+        {
+            auto p = c in nodes_coords;
+            
+            enforce( p, "node "~to!string( c )~" is not found" );
+            
             res ~= encodedToMapCoords( nodes_coords[ c ] );
+        }
         
         return res;
     }
@@ -202,12 +209,9 @@ struct DecodedLine
 }
 
 DecodedLine decodeWay( in PrimitiveBlock prim, in Way way )
-in
 {
-    assert( way.refs.length >= 2 );
-}
-body
-{
+    enforce( way.refs.length >= 2, "too short way (nodes number: "~to!string( way.refs.length )~")" );
+    
     DecodedLine res;
     
     // decode index delta
@@ -217,8 +221,6 @@ body
         curr += c;
         res.coords_idx ~= curr;
     }
-    
-    enforce( res.coords_idx.length >= 2, "way id="~to!string(way.id)~" - too short way" );
     
     if( !way.keys.isNull )
         res.tags = prim.stringtable.getTagsByArray( way.keys, way.vals );
@@ -347,7 +349,7 @@ Region getRegion( string filename, bool verbose )
                 
             if( !c.ways.isNull )
                 foreach( w; c.ways )
-                    if( w.refs.length >= 2 )
+                    try
                     {
                         auto decoded = decodeWay( prim, w );
                         
@@ -362,9 +364,14 @@ Region getRegion( string filename, bool verbose )
                                 
                             case ROAD:
                                 auto type = getLineType( prim.stringtable, decoded );
-                                roads ~= RoadDescription( decoded.coords_idx, type, w.id );
+                                roads ~= RoadDescription( decoded.coords_idx, type );
                                 break;
                         }
+                    }
+                    catch( Exception e )
+                    {
+                        writeln("Way ", w.id, " excluded: ", e.msg );
+                        break;
                     }
         }
     }
