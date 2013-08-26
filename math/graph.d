@@ -69,7 +69,7 @@ class Graph( Node )
 private:
     
     // TODO: remove it
-    size_t[const Node.Point] points; /// AA used for fast search of stored points
+    size_t[ Node.Point ] points; /// AA used for fast search of stored points
     
     invariant()
     {
