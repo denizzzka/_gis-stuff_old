@@ -439,33 +439,33 @@ DescriptionsTree.Payload[] preparePolylines(DescriptionsTree, ForeignCoords)(
     alias BBox.Vector Coords;
     
     RoadDescription[] res;
-    auto all_roads = lines_rtree.search( lines_rtree.getBoundary );
+    auto all_lines = lines_rtree.search( lines_rtree.getBoundary );
     
-    foreach( roadptr; all_roads )
+    foreach( lineptr; all_lines )
     {
-        RoadDescription road = *roadptr;
+        RoadDescription line = *lineptr;
         
-        for( auto i = 1; i < road.nodes_ids.length - 1; i++ )
+        for( auto i = 1; i < line.nodes_ids.length - 1; i++ )
         {
-            auto curr_point = road.nodes_ids[i];
+            auto curr_point = line.nodes_ids[i];
             auto point_bbox = BBox(
                     encodedToMapCoords( nodes[ curr_point ] ),
                     Coords(0, 0)
                 );
-            auto near_roads = lines_rtree.search( point_bbox );
+            auto near_lines = lines_rtree.search( point_bbox );
             
-            foreach( n; near_roads )
-                if( n != roadptr && canFind( n.nodes_ids, curr_point ) )
+            foreach( n; near_lines )
+                if( n != lineptr && canFind( n.nodes_ids, curr_point ) )
                 {
-                    res ~= road[ 0..i+1 ];
+                    res ~= line[ 0..i+1 ];
                     
-                    road = road[ i..road.nodes_ids.length ];
+                    line = line[ i..line.nodes_ids.length ];
                     i = 0;
                     break;
                 }
         }
         
-        res ~= road;
+        res ~= line;
     }
     
     return res;
@@ -548,19 +548,19 @@ body
         }
     }
     
-    foreach( road; descriptions )
+    foreach( line; descriptions )
     {
-        assert( road.nodes_ids.length >= 2 );
+        assert( line.nodes_ids.length >= 2 );
         
         Coords points[];
         
-        for( auto i = 1; i < road.nodes_ids.length - 1; i++ )
-            points ~= encodedToMapCoords( nodes[ road.nodes_ids[i] ] );
+        for( auto i = 1; i < line.nodes_ids.length - 1; i++ )
+            points ~= encodedToMapCoords( nodes[ line.nodes_ids[i] ] );
         
-        auto r = Polyline( points, road.type );
+        auto r = Polyline( points, line.type );
         
-        auto from_node_idx = addPoint( road.nodes_ids[0] );
-        auto to_node_idx = addPoint( road.nodes_ids[$-1] );
+        auto from_node_idx = addPoint( line.nodes_ids[0] );
+        auto to_node_idx = addPoint( line.nodes_ids[$-1] );
         
         Graph.Edge.Direction forward = { to_node: to_node_idx, weight: 1.0 };
         Graph.Edge.Direction backward = { to_node: from_node_idx, weight: 1.0 };
