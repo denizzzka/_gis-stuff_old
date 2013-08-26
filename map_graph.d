@@ -24,7 +24,7 @@ struct TPolylineDescription( _Coords, _ForeignCoords )
     cat.Line type;
     ulong way_id;
     
-    this( ulong[] nodes_ids, cat.Line type )
+    this( ulong[] nodes_ids, cat.Line type, in ForeignCoords[long] nodes = null )
     in
     {
         assert( nodes_ids.length >= 2 );
@@ -33,6 +33,11 @@ struct TPolylineDescription( _Coords, _ForeignCoords )
     {
         this.nodes_ids = nodes_ids;
         this.type = type;
+        
+        // checking
+        if( nodes )
+            for( size_t i = 0; i < nodes_ids.length; i++ )
+                getNodeForeignCoords( nodes, i );
     }
     
     @disable this();
@@ -43,7 +48,10 @@ struct TPolylineDescription( _Coords, _ForeignCoords )
     }
     
     private
-    Coords getNode( in ForeignCoords[long] nodes, in size_t node_idx ) const
+    const (ForeignCoords*) getNodeForeignCoords(
+            in ForeignCoords[long] nodes,
+            in size_t node_idx
+        ) const
     in
     {
         assert( node_idx < nodes_ids.length );
@@ -55,7 +63,13 @@ struct TPolylineDescription( _Coords, _ForeignCoords )
         auto node_ptr = node_id in nodes;
         enforce( node_ptr, "node id="~to!string( node_id )~" is not found" );
         
-        return encodedToMapCoords( *node_ptr );
+        return node_ptr;
+    }        
+    
+    private
+    Coords getNode( in ForeignCoords[long] nodes, in size_t node_idx ) const
+    {
+        return encodedToMapCoords( *getNodeForeignCoords( nodes, node_idx ) );
     }
     
     BBox getBoundary( in ForeignCoords[long] nodes ) const
@@ -223,15 +237,7 @@ class TMapGraph( _Coords, Node )
         
         foreach( i, c; descriptions )
         {
-            BBox boundary;
-            
-            try
-                boundary = c.getBoundary( nodes );
-            catch( Exception e )
-            {
-                writeln("Way id=", c.way_id, " excluded: ", e.msg );
-                continue;
-            }
+            BBox boundary = c.getBoundary( nodes );
             
             descriptions_tree.addObject( boundary, c );
         }
