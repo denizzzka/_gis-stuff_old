@@ -1,5 +1,5 @@
 import osmpbf.osmformat: StringTable, Node;
-import osm: DecodedLine, Coords;
+import osm: DecodedLine;
 import categories;
 
 import std.conv: to;
@@ -10,8 +10,7 @@ enum LineClass
 {
     AREA,
     POLYLINE,
-    ROAD,
-    UNKNOWN
+    ROAD
 }
 
 string getStringByIndex( in StringTable stringtable, in uint index )
@@ -172,20 +171,20 @@ Line examWayTag( in Tag[] tags, in Tag tag )
     }
 }
 
-LineClass classifyLine( in Coords[] coords, in Tag[] tags )
+LineClass classifyLine( in DecodedLine line )
 in
 {
-    assert( coords.length >= 2 );
+    assert( line.coords_idx.length >= 2 );
 }
 body
 {
     with( LineClass )
     {
-        foreach( t; tags )
+        foreach( t; line.tags )
             if( t.key == "highway" )
                 return ROAD;
         
-        if( coords[0] == coords[$-1] )
+        if( coords_idx[0] == coords_idx[$-1] )
             return AREA;
         else
             return POLYLINE;

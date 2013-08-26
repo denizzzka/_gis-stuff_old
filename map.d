@@ -90,17 +90,17 @@ struct Line
             case BUILDING:
                 return Color( 0xf7, 0xc3, 0x94 );
                 
-            case ROAD_HIGHWAY:
+            case HIGHWAY:
                 return Color.Green;
                 
-            case ROAD_PRIMARY:
+            case PRIMARY:
                 return Color.White;
                 
-            case ROAD_SECONDARY:
+            case SECONDARY:
             case PATH:
                 return Color.Yellow;
                 
-            case ROAD_OTHER:
+            case OTHER:
                 return Color( 0xAA, 0xAA, 0xAA );
                 
             default:
@@ -201,19 +201,19 @@ class Region
                 layer_num = 4;
                 break;
                 
-            case ROAD_HIGHWAY:
+            case HIGHWAY:
                 layer_num = 3;
                 break;
                 
-            case ROAD_PRIMARY:
+            case PRIMARY:
                 layer_num = 2;
                 break;
                 
-            case ROAD_SECONDARY:
+            case SECONDARY:
                 layer_num = 1;
                 break;
                 
-            case ROAD_OTHER:
+            case OTHER:
             case BUILDING:
                 layer_num = 0;
                 break;

@@ -172,7 +172,7 @@ unittest
 struct DecodedLine
 {
     ulong[] coords_idx;
-    LineClass classification = LineClass.UNKNOWN;
+    LineClass classification;
     Tag[] tags;
     
     invariant()
@@ -223,7 +223,7 @@ body
     if( !way.keys.isNull )
         res.tags = prim.stringtable.getTagsByArray( way.keys, way.vals );
         
-    res.classification = classifyLine( res.tags );
+    res.classification = classifyLine( res );
     
     return res;
 }
@@ -352,9 +352,10 @@ Region getRegion( string filename, bool verbose )
                         auto decoded = decodeWay( prim, w );
                         
                         with( LineClass )
-                        switch( decoded.classification )
+                        final switch( decoded.classification )
                         {
-                            case BUILDING:
+                            case AREA:
+                            case POLYLINE:
                                 Line line = decoded.createLine( prim, nodes_coords );
                                 res.addLine( line );
                                 break;
@@ -362,9 +363,6 @@ Region getRegion( string filename, bool verbose )
                             case ROAD:
                                 auto type = getRoadType( decoded.tags );
                                 roads ~= RoadDescription( decoded.coords_idx, type, w.id );
-                                break;
-                                
-                            default:
                                 break;
                         }
                     }

@@ -21,10 +21,10 @@ struct TPolylineDescription( _Coords, _ForeignCoords )
     alias Box!Coords BBox;
     
     ulong nodes_ids[];
-    cat.Road type;
+    cat.Line type;
     ulong way_id;
     
-    this( ulong[] nodes_ids, cat.Road type, ulong way_id )
+    this( ulong[] nodes_ids, cat.Line type, ulong way_id )
     in
     {
         assert( nodes_ids.length >= 2 );
