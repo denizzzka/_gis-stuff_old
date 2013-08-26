@@ -371,7 +371,7 @@ Region getRegion( string filename, bool verbose )
                     catch( Exception e )
                     {
                         writeln("Way ", w.id, " excluded: ", e.msg );
-                        break;
+                        continue;
                     }
         }
     }
