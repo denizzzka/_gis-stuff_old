@@ -519,7 +519,7 @@ in
 body
 {
     alias PolylineDescription.Coords Coords;
-    alias TPolyline!Coords Road;
+    alias TPolyline!Coords Polyline;
     
     size_t[ulong] already_stored;
     
@@ -554,7 +554,7 @@ body
         for( auto i = 1; i < road.nodes_ids.length - 1; i++ )
             points ~= encodedToMapCoords( nodes[ road.nodes_ids[i] ] );
         
-        auto r = Road( points, road.type );
+        auto r = Polyline( points, road.type );
         
         auto from_node_idx = addPoint( road.nodes_ids[0] );
         auto to_node_idx = addPoint( road.nodes_ids[$-1] );
