@@ -209,12 +209,9 @@ struct DecodedLine
 }
 
 DecodedLine decodeWay( in PrimitiveBlock prim, in Way way )
-in
 {
-    assert( way.refs.length >= 2 );
-}
-body
-{
+    enforce( way.refs.length >= 2, "too short way (nodes number: "~to!string( way.refs.length )~")" );
+    
     DecodedLine res;
     
     // decode index delta
@@ -224,8 +221,6 @@ body
         curr += c;
         res.coords_idx ~= curr;
     }
-    
-    enforce( res.coords_idx.length >= 2, "way id="~to!string(way.id)~" - too short way" );
     
     if( !way.keys.isNull )
         res.tags = prim.stringtable.getTagsByArray( way.keys, way.vals );
