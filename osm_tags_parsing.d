@@ -8,8 +8,8 @@ import std.algorithm: canFind;
 
 enum LineClass
 {
-    OTHER,
-    BUILDING,
+    AREA,
+    POLYLINE,
     ROAD
 }
 
@@ -171,26 +171,23 @@ Line examWayTag( in Tag[] tags, in Tag tag )
     }
 }
 
-LineClass classifyLine( Tag[] tags )
+LineClass classifyLine( in Coords[] coords, in Tag[] tags )
+in
+{
+    assert( coords.length >= 2 );
+}
+body
 {
     with( LineClass )
     {
         foreach( t; tags )
-            switch( t.key )
-            {
-                case "highway":
-                    return ROAD;
-                    break;
-                    
-                case "building":
-                    return BUILDING;
-                    break;
-                    
-                default:
-                    continue;
-            }
+            if( t.key == "highway" )
+                return ROAD;
         
-        return OTHER;
+        if( coords[0] == coords[$-1] )
+            return AREA;
+        else
+            return POLYLINE;
     }
 }
 

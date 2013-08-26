@@ -10,22 +10,27 @@ enum Point
 
 enum Line
 {
-    OTHER,
+    OTHER, // just line
+    
+    // other
     BUILDING,
-    ROAD_HIGHWAY,
-    ROAD_PRIMARY,
-    ROAD_SECONDARY,
-    ROAD_OTHER,
     BOUNDARY,
-    PATH,
-    UNSUPPORTED
-}
-
-enum Road
-{
+    
+    PATH, // path found
+    
+    // roads
     HIGHWAY,
     PRIMARY,
     SECONDARY,
-    OTHER,
-    UNSUPPORTED
+    
+    UNSUPPORTED // unsupported type of line
 }
+
+/// lines known as roads
+immutable Line[] Road = [
+        Line.OTHER,
+        Line.HIGHWAY,
+        Line.PRIMARY,
+        Line.SECONDARY,
+        Line.UNSUPPORTED
+    ];
