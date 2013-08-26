@@ -14,11 +14,11 @@ struct RoadProperties
 
 class Roads
 {
-    immutable string[] members = [ __traits( allMembers, categories.Road ) ];
+    immutable string[] members = [ __traits( allMembers, categories.Line ) ];
     
     private static RoadProperties[ members.length ] roads_properties;
     
-    ref RoadProperties getProperty( in categories.Road enum_type ) const
+    ref RoadProperties getProperty( in categories.Line enum_type ) const
     {
         return roads_properties[ enum_type ];
     }

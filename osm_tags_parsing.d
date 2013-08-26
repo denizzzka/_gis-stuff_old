@@ -1,5 +1,5 @@
 import osmpbf.osmformat: StringTable, Node;
-import osm: DecodedLine;
+import osm: DecodedLine, Coords;
 import categories;
 
 import std.conv: to;
@@ -10,7 +10,8 @@ enum LineClass
 {
     AREA,
     POLYLINE,
-    ROAD
+    ROAD,
+    UNKNOWN
 }
 
 string getStringByIndex( in StringTable stringtable, in uint index )
@@ -191,12 +192,17 @@ body
     }
 }
 
-Road getRoadType( in Tag[] tags )
+Line getRoadType( in Tag[] tags )
+out( res )
+{
+    assert( canFind( roads, res ) );
+}
+body
 {
     auto s = searchTags( tags, [ "highway" ] );
     auto tag = s[0];
     
-    with( Road )
+    with( Line )
     {
         if( canFind( ["trunk", "motorway"], tag.value ) )
             return HIGHWAY;

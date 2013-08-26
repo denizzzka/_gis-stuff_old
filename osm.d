@@ -172,7 +172,7 @@ unittest
 struct DecodedLine
 {
     ulong[] coords_idx;
-    LineClass classification = LineClass.OTHER;
+    LineClass classification = LineClass.UNKNOWN;
     Tag[] tags;
     
     invariant()

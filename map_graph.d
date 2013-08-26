@@ -5,7 +5,7 @@ import math.rtree2d;
 import math.graph: Graph;
 import osm: OsmCoords = Coords, encodedToMapCoords;
 import map: MapCoords = Coords;
-import cat = categories: Road;
+import cat = categories: Line;
 static import config.map;
 
 import std.algorithm: canFind;
@@ -95,9 +95,9 @@ struct TPolyline( Coords )
         Coords[] points; /// points between start and end points
     }
     
-    cat.Road type = cat.Road.OTHER;
+    cat.Line type = cat.Line.OTHER;
     
-    this( Coords[] points, cat.Road type )
+    this( Coords[] points, cat.Line type )
     {
         this.points = points;
         this.type = type;

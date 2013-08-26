@@ -27,10 +27,9 @@ enum Line
 }
 
 /// lines known as roads
-immutable Line[] Road = [
+immutable Line[] roads = [
         Line.OTHER,
         Line.HIGHWAY,
         Line.PRIMARY,
-        Line.SECONDARY,
-        Line.UNSUPPORTED
+        Line.SECONDARY
     ];
