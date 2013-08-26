@@ -321,18 +321,18 @@ class TMapGraph( Coords, Node )
         graph.descriptionsToPolylineGraph( prepared, nodes );
     }
     
-    RoadDescriptor[] getDescriptors() const
+    PolylineDescriptor[] getDescriptors() const
     {
-        RoadDescriptor[] res;
+        PolylineDescriptor[] res;
         
         foreach( j, ref const node; graph.nodes )
             for( auto i = 0; i < node.edges( j ).length; i++ )
-                res ~= RoadDescriptor( j, i );
+                res ~= PolylineDescriptor( j, i );
         
         return res;
     }
     
-    static struct RoadDescriptor
+    static struct PolylineDescriptor
     {
         uint node_idx;
         uint edge_idx;
@@ -391,7 +391,7 @@ class TMapGraph( Coords, Node )
     
     static struct Roads
     {
-        RoadDescriptor*[] descriptors;
+        PolylineDescriptor*[] descriptors;
         const TMapGraph road_graph;
         
         this( in TMapGraph graph )
@@ -406,17 +406,17 @@ class TMapGraph( Coords, Node )
         }
     }
     
-    RoadDescriptor[] findPath( size_t from_node_idx, size_t to_node_idx ) const
+    PolylineDescriptor[] findPath( size_t from_node_idx, size_t to_node_idx ) const
     {
         auto path = graph.findPath( from_node_idx, to_node_idx );
         
         debug(path) writeln("path from=", from_node_idx, " to=", to_node_idx);
         
-        RoadDescriptor[] res;
+        PolylineDescriptor[] res;
         
         if( path != null )
             for( auto i = 1; i < path.length; i++ )
-                res ~= RoadDescriptor( path[i].node_idx, path[i-1].came_through_edge_idx );
+                res ~= PolylineDescriptor( path[i].node_idx, path[i-1].came_through_edge_idx );
         
         return res;
     }

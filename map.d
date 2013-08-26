@@ -99,7 +99,7 @@ struct Line
 
 alias RTreePtrs!(BBox, Point) PointsStorage;
 alias RTreePtrs!(BBox, Line) LinesStorage;
-alias RTreePtrs!(BBox, RGraph.RoadDescriptor) RoadsStorage;
+alias RTreePtrs!(BBox, RGraph.PolylineDescriptor) RoadsStorage;
 
 void addPoint( PointsStorage storage, Point point )
 {
@@ -178,7 +178,7 @@ class Region
     }
     
     private
-    void addRoadDescriptor( RGraph.RoadDescriptor descr )
+    void addRoadDescriptor( RGraph.PolylineDescriptor descr )
     {
         auto to_layers = descr.getRoad( road_graph ).properties.layers;
         auto bbox = descr.getBoundary( road_graph );

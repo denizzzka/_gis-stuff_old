@@ -22,7 +22,7 @@ class POV
 {
     const Map map;
     
-    RGraph.RoadDescriptor[] found_path;
+    RGraph.PolylineDescriptor[] found_path;
     
     private
     {
