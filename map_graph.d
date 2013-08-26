@@ -427,16 +427,19 @@ class TMapGraph( Coords, Node )
     }
 }
 
-/// Cuts roads on crossroads for creating road graph
+/// Cuts lines on crossroads
 private
-DescriptionsTree.Payload[] preparePolylines(DescriptionsTree, ForeignCoords)( in DescriptionsTree roads_rtree, in ForeignCoords[long] nodes )
+DescriptionsTree.Payload[] preparePolylines(DescriptionsTree, ForeignCoords)(
+        in DescriptionsTree lines_rtree,
+        in ForeignCoords[long] nodes
+    )
 {
     alias DescriptionsTree.Payload RoadDescription;
     alias DescriptionsTree.Box BBox;
     alias BBox.Vector Coords;
     
     RoadDescription[] res;
-    auto all_roads = roads_rtree.search( roads_rtree.getBoundary );
+    auto all_roads = lines_rtree.search( lines_rtree.getBoundary );
     
     foreach( roadptr; all_roads )
     {
@@ -449,7 +452,7 @@ DescriptionsTree.Payload[] preparePolylines(DescriptionsTree, ForeignCoords)( in
                     encodedToMapCoords( nodes[ curr_point ] ),
                     Coords(0, 0)
                 );
-            auto near_roads = roads_rtree.search( point_bbox );
+            auto near_roads = lines_rtree.search( point_bbox );
             
             foreach( n; near_roads )
                 if( n != roadptr && canFind( n.nodes_ids, curr_point ) )
