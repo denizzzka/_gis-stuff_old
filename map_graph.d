@@ -270,7 +270,7 @@ auto boundary(T)( ref const T node )
     return res;
 }
 
-class TRoadGraph( Coords, Node )
+class TMapGraph( Coords, Node )
 {
     alias Box!Coords BBox;
     alias TPolyline!Coords Road;
@@ -340,7 +340,7 @@ class TRoadGraph( Coords, Node )
             this.edge_idx = edge_idx;
         }
         
-        Coords[] getPoints( in TRoadGraph roadGraph ) const
+        Coords[] getPoints( in TMapGraph roadGraph ) const
         {
             Coords[] res;
             
@@ -359,7 +359,7 @@ class TRoadGraph( Coords, Node )
             return res;
         }
         
-        BBox getBoundary( in TRoadGraph roadGraph ) const
+        BBox getBoundary( in TMapGraph roadGraph ) const
         {
             auto points = getPoints( roadGraph );
             assert( points.length > 0 );
@@ -372,13 +372,13 @@ class TRoadGraph( Coords, Node )
             return res;
         }
         
-        ref const (Road) getRoad( in TRoadGraph roadGraph ) const
+        ref const (Road) getRoad( in TMapGraph roadGraph ) const
         {
             return getEdge( roadGraph ).payload;
         }
         
         private
-        Edge.DirectedEdge getEdge( in TRoadGraph roadGraph ) const
+        Edge.DirectedEdge getEdge( in TMapGraph roadGraph ) const
         {
             auto node = roadGraph.graph.nodes[ node_idx ];
             
@@ -389,9 +389,9 @@ class TRoadGraph( Coords, Node )
     static struct Roads
     {
         RoadDescriptor*[] descriptors;
-        const TRoadGraph road_graph;
+        const TMapGraph road_graph;
         
-        this( in TRoadGraph graph )
+        this( in TMapGraph graph )
         {
             road_graph = graph;
         }
@@ -476,7 +476,7 @@ unittest
     alias TEdge!( float, Road ) Edge;
     alias TNode!( Edge, Point ) Node;
     
-    alias TRoadGraph!( Coords, Node ) G;
+    alias TMapGraph!( Coords, Node ) G;
     
     FC[] points = [
             FC(0,0), FC(1,1), FC(2,2), FC(3,3), FC(4,4), // first road

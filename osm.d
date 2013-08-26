@@ -8,7 +8,7 @@ import map: Map, Region, BBox, Point, PointsStorage, Line, LinesStorage, addPoin
 import cat = categories;
 import osm_tags_parsing;
 import map_graph: TPolylineDescription;
-import roads: TRoadGraph;
+import roads: RoadGraph;
 
 import std.stdio;
 import std.string;

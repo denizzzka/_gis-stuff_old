@@ -1,7 +1,7 @@
 module roads;
 
 // TODO: road -> multiline:
-import map_graph: MapCoords, Point, TRoadGraph, TPolyline;
+import map_graph: MapCoords, Point, TMapGraph, TPolyline;
 
 
 struct TEdge( _Weight, _Payload )
@@ -134,4 +134,4 @@ alias TPolyline!MapCoords Road;
 alias TEdge!( float, Road ) Edge;
 alias TNode!( Edge, Point ) Node;
 
-alias TRoadGraph!( MapCoords, Node ) RoadGraph;
+alias TMapGraph!( MapCoords, Node ) RoadGraph;
