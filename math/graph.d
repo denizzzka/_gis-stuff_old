@@ -12,9 +12,9 @@ struct TEdge( _Weight, _Payload )
     alias _Payload Payload;
     alias _Weight Weight;
     
-    const Weight weight;
     const size_t to_node; /// direction
-    const Payload payload;
+    Weight weight;
+    Payload payload;
     
     invariant()
     {
@@ -29,7 +29,7 @@ struct TNode( _Edge, _Point )
     
     Edge[] edges_storage;
     
-    const Point point;
+    Point point;
     
     struct EdgesRange
     {
