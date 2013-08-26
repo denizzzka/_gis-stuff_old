@@ -361,7 +361,7 @@ Region getRegion( string filename, bool verbose )
                                 break;
                                 
                             case ROAD:
-                                auto type = getRoadType( decoded.tags );
+                                auto type = getLineType( prim.stringtable, decoded );
                                 roads ~= RoadDescription( decoded.coords_idx, type, w.id );
                                 break;
                         }

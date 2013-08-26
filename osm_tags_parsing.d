@@ -76,13 +76,17 @@ if( is( T == Node ) || is( T == Way ) )
         return null;
 }
 
-Tag[] searchTags( in Tag[] tags, in string[] keys )
+Tag[] searchTags( in Tag[] tags, in string[] keys, in string[] values = null )
 {
     Tag[] res;
     
     foreach( t; tags )
         if( canFind( keys, t.key ) )
-            res ~= t;
+            if( values is null )
+                res ~= t;
+            else
+                if( canFind( values, t.value ) )
+                    res ~= t;
             
     return res;
 }
@@ -163,6 +167,13 @@ Line examWayTag( in Tag[] tags, in Tag tag )
                 return BUILDING;
                 break;
                 
+            case "boundary":
+            {
+                auto found = searchTags( tags, ["admin_level"], ["1", "2", "3", "4"] );
+                if( found.length > 0 )
+                    return BOUNDARY;
+            }
+            
             default:
                 return UNSUPPORTED;
         }
@@ -189,30 +200,5 @@ body
             return AREA;
         else
             return POLYLINE;
-    }
-}
-
-Line getRoadType( in Tag[] tags )
-out( res )
-{
-    assert( canFind( categories.roads, res ) );
-}
-body
-{
-    auto s = searchTags( tags, [ "highway" ] );
-    auto tag = s[0];
-    
-    with( Line )
-    {
-        if( canFind( ["trunk", "motorway"], tag.value ) )
-            return HIGHWAY;
-        
-        if( canFind( ["primary", "tertiary"], tag.value ) )
-            return PRIMARY;
-        
-        if( canFind( ["secondary"], tag.value ) )
-            return SECONDARY;
-        
-        return ROAD_OTHER;
     }
 }

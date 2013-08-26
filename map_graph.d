@@ -343,11 +343,11 @@ class TMapGraph( Coords, Node )
             this.edge_idx = edge_idx;
         }
         
-        Coords[] getPoints( in TMapGraph roadGraph ) const
+        Coords[] getPoints( in TMapGraph mapGraph ) const
         {
             Coords[] res;
             
-            auto start_node = &roadGraph.graph.nodes[ node_idx ];
+            auto start_node = &mapGraph.graph.nodes[ node_idx ];
             
             res ~= start_node.point.coords;
             
@@ -357,14 +357,14 @@ class TMapGraph( Coords, Node )
                 res ~= c;
             
             auto end_node_idx = edge.to_node;
-            res ~= roadGraph.graph.nodes[ end_node_idx ].point.coords;
+            res ~= mapGraph.graph.nodes[ end_node_idx ].point.coords;
             
             return res;
         }
         
-        BBox getBoundary( in TMapGraph roadGraph ) const
+        BBox getBoundary( in TMapGraph mapGraph ) const
         {
-            auto points = getPoints( roadGraph );
+            auto points = getPoints( mapGraph );
             assert( points.length > 0 );
             
             auto res = BBox( points[0], Coords(0,0) );
