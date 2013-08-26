@@ -8,8 +8,8 @@ import std.algorithm: canFind;
 
 enum LineClass
 {
-    OTHER,
-    BUILDING,
+    AREA,
+    POLYLINE,
     ROAD
 }
 
@@ -76,13 +76,17 @@ if( is( T == Node ) || is( T == Way ) )
         return null;
 }
 
-Tag[] searchTags( in Tag[] tags, in string[] keys )
+Tag[] searchTags( in Tag[] tags, in string[] keys, in string[] values = null )
 {
     Tag[] res;
     
     foreach( t; tags )
         if( canFind( keys, t.key ) )
-            res ~= t;
+            if( values is null )
+                res ~= t;
+            else
+                if( canFind( values, t.value ) )
+                    res ~= t;
             
     return res;
 }
@@ -148,13 +152,13 @@ Line examWayTag( in Tag[] tags, in Tag tag )
         {
             case "highway":
                 if( canFind( ["trunk", "motorway"], tag.value ) )
-                    return ROAD_HIGHWAY;
+                    return HIGHWAY;
                 
                 if( canFind( ["primary", "tertiary"], tag.value ) )
-                    return ROAD_PRIMARY;
+                    return PRIMARY;
                 
                 if( canFind( ["secondary"], tag.value ) )
-                    return ROAD_SECONDARY;
+                    return SECONDARY;
                 
                 return ROAD_OTHER;
                 break;
@@ -163,6 +167,13 @@ Line examWayTag( in Tag[] tags, in Tag tag )
                 return BUILDING;
                 break;
                 
+            case "boundary":
+            {
+                auto found = searchTags( tags, ["admin_level"], ["1", "2", "3", "4"] );
+                if( found.length > 0 )
+                    return BOUNDARY;
+            }
+            
             default:
                 return UNSUPPORTED;
         }
@@ -171,45 +182,23 @@ Line examWayTag( in Tag[] tags, in Tag tag )
     }
 }
 
-LineClass classifyLine( Tag[] tags )
+LineClass classifyLine( in DecodedLine line )
+in
+{
+    assert( line.coords_idx.length >= 2 );
+}
+body
 {
     with( LineClass )
     {
-        foreach( t; tags )
-            switch( t.key )
-            {
-                case "highway":
-                    return ROAD;
-                    break;
-                    
-                case "building":
-                    return BUILDING;
-                    break;
-                    
-                default:
-                    continue;
-            }
+        foreach( t; line.tags )
+            if( t.key == "highway" )
+                return ROAD;
         
-        return OTHER;
-    }
-}
-
-Road getRoadType( in Tag[] tags )
-{
-    auto s = searchTags( tags, [ "highway" ] );
-    auto tag = s[0];
-    
-    with( Road )
-    {
-        if( canFind( ["trunk", "motorway"], tag.value ) )
-            return HIGHWAY;
-        
-        if( canFind( ["primary", "tertiary"], tag.value ) )
-            return PRIMARY;
-        
-        if( canFind( ["secondary"], tag.value ) )
-            return SECONDARY;
-        
-        return OTHER;
+        // TODO: need more checks here:
+        if( line.coords_idx[0] == line.coords_idx[$-1] )
+            return AREA;
+        else
+            return POLYLINE;
     }
 }

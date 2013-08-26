@@ -16,13 +16,21 @@ struct Vector2D( _T )
     alias x lon;
     alias y lat;
     
-    this( T x, T y )
+    this( T1, T2 )( in T1 x, in T2 y )
+    //if( isScalarType!(T1) && isScalarType!(T2) ) // FIXME
     {
         this.x = x;
         this.y = y;
     }
     
-    auto length()
+    this( V )( in V v )
+    if( !isScalarType!(V) )
+    {
+        this.x = v.x;
+        this.y = v.y;
+    }
+    
+    auto length() const
     {
         return hypot( x, y );
     }
@@ -117,6 +125,27 @@ struct Vector2D( _T )
     string toString() const
     {
         return "("~to!string(x)~";"~to!string(y)~")";
+    }
+    
+    Vector2D!real toReal() const
+    {
+        return Vector2D!real( x, y );
+    }
+    
+    Vector2D!double roundToDouble() const
+    {
+        return Vector2D!double( to!double( x ), to!double( y ) );
+    }
+    
+    /// Angle between OX and vector
+    real angleOX() const
+    {
+        return atan2( to!real( x ), to!real( y ) );
+    }
+    
+    real angleBetweenVector( V )( in V v ) const
+    {
+        return angleOX() - v.angleOX();
     }
 }
 

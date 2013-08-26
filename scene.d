@@ -13,6 +13,7 @@ debug(scene) import std.stdio;
 
 
 alias Vector2D!real Vector2r;
+alias Vector2D!double Vector2d;
 alias Vector2D!size_t Vector2s;
 alias Vector2D!long Vector2l;
 
@@ -21,14 +22,15 @@ class POV
 {
     const Map map;
     
-    RGraph.RoadDescriptor[] found_path;
+    RGraph.PolylineDescriptor[] found_path;
     
     private
     {
         Vector2r center; /// in meters
         real zoom; /// pixels per meter
-        Box!Vector2r boundary_meters; /// coords in meters
-        Box!Coords boundary_encoded; /// coords in map encoding
+        Box!(Vector2d) boundary_meters; /// coords in meters
+        
+        immutable double layers_zoom[] = [ 0.6, 0.35, 0.06, 0.02 ];
     }
     
     void updatePath()
@@ -82,8 +84,7 @@ class POV
         
         auto leftDownCorner = center - b_size/2;
         
-        boundary_meters = Box!Vector2r( leftDownCorner, b_size );            
-        boundary_encoded = getEncodedBox( boundary_meters ).roundCircumscribe;
+        boundary_meters = Box!Vector2d( leftDownCorner.roundToDouble, b_size.roundToDouble );            
     }
     
     Vector2r metersToScreen( Vector2r from ) const
@@ -95,23 +96,30 @@ class POV
         return window_coords;
     }
     
+    private
+    size_t getCurrentLayerNum() const
+    {
+        size_t layer_num = layers_zoom.length;
+        
+        foreach( i, curr_zoom; layers_zoom )
+            if( zoom > curr_zoom )
+            {
+                layer_num = i;
+                break;
+            }
+        
+        return layer_num;
+    }
+    
     Point*[] getPOIs() const
     {
         Point*[] res;
         
         foreach( region; map.regions )
         {
-            void addLayer( size_t num )
-            {
-                res ~= region.layers[ num ].POI.search( boundary_encoded );
-            }
+            auto num = getCurrentLayerNum();
             
-            addLayer( 4 );
-            
-            if( zoom > 0.015 ) addLayer( 3 );
-            if( zoom > 0.03 ) addLayer( 2 );
-            if( zoom > 0.15 )  addLayer( 1 );
-            if( zoom > 0.3 )  addLayer( 0 );
+            res ~= region.layers[ num ].POI.search( boundary_meters );
         }
         
         debug(scene) writeln("found POI number=", res.length);
@@ -122,45 +130,28 @@ class POV
     {
         Line*[] res;
         
-        foreach( region; map.regions )
+        foreach( ref region; map.regions )
         {
-            void addLayer( size_t num )
-            {
-                res ~= region.layers[ num ].lines.search( boundary_encoded );
-            }
+            auto num = getCurrentLayerNum();
             
-            addLayer( 4 );
-            
-            if( zoom > 0.015 ) addLayer( 3 );
-            if( zoom > 0.03 ) addLayer( 2 );
-            if( zoom > 0.15 )  addLayer( 1 );
-            if( zoom > 0.3 )  addLayer( 0 );
+            res ~= region.layers[ num ].lines.search( boundary_meters );
         }
         
         debug(scene) writeln("found ways number=", res.length);
         return res;
     }
     
-    RGraph.Roads[] getRoads() const
+    RGraph.Polylines[] getRoads() const
     {
-        RGraph.Roads[] res;
+        RGraph.Polylines[] res;
         
         foreach( ref region; map.regions )
         {
-            auto curr = RGraph.Roads( region.road_graph );
+            auto curr = RGraph.Polylines( region.road_graph );
             
-            void addLayer( size_t num )
-            {
-                curr.descriptors ~= region.layers[ num ].roads.search( boundary_encoded );
-            }
+            auto num = getCurrentLayerNum();
             
-            addLayer( 4 );
-            
-            if( zoom > 0.015 ) addLayer( 3 );
-            if( zoom > 0.03 ) addLayer( 2 );
-            if( zoom > 0.15 )  addLayer( 1 );
-            if( zoom > 0.3 )  addLayer( 0 );
-            
+            curr.descriptors ~= region.layers[ num ].roads.search( boundary_meters );
             res ~= curr;
         }
         
@@ -190,8 +181,7 @@ class POV
     
     void zoomToWholeMap(T)( T window_size )
     {
-        auto meters_box = getMetersBox( map.boundary );
-        auto meters_size = meters_box.getSizeVector;
+        auto meters_size = map.boundary.getSizeVector;
         
         zoom = fmin(
                 window_size.x / meters_size.x,
@@ -201,39 +191,6 @@ class POV
     
     void centerToWholeMap()
     {
-        auto map_center = map.boundary.ld + map.boundary.getSizeVector/2;
-        center = encodedToMeters( map_center );
+        center = map.boundary.ld + map.boundary.getSizeVector/2;
     }
-}
-
-/// calculates encoded circumscribe box for mercator meters box
-Box!Coords getEncodedBox( in Box!Vector2r meters )
-{
-    Box!Coords res;
-    
-    res.ld = metersToEncoded( meters.ld );
-    res.ru = metersToEncoded( meters.ru );
-    auto lu = metersToEncoded( meters.lu );
-    auto rd = metersToEncoded( meters.rd );
-    
-    res.addCircumscribe( lu );
-    res.addCircumscribe( rd );
-    
-    return res;
-}
-
-/// calculates mercator meters circumscribe box for encoded box
-Box!Vector2r getMetersBox( in Box!Coords encoded )
-{
-    Box!Vector2r res;
-    
-    res.ld = encodedToMeters( encoded.ld );
-    res.ru = encodedToMeters( encoded.ru );
-    auto lu = encodedToMeters( encoded.lu );
-    auto rd = encodedToMeters( encoded.rd );
-    
-    res.addCircumscribe( lu );
-    res.addCircumscribe( rd );
-    
-    return res;
 }
