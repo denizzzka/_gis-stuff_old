@@ -138,7 +138,7 @@ class Window
     }
     
     private
-    void drawRoads( in RGraph.Roads[] allGraphsRoads )
+    void drawRoads( in RGraph.Polylines[] allGraphsRoads )
     {
         foreach( roads; allGraphsRoads )
 	    foreach( road_dscr; roads.descriptors )
@@ -156,7 +156,7 @@ class Window
 		    debug(sfml) writeln("draw line point i=", i, " encoded coords=", encoded, " meters=", point, " window_coords=", window_coords);
 		}
 		
-		auto color = road_dscr.getRoad( roads.road_graph ).properties.color;
+		auto color = road_dscr.getPolyline( roads.road_graph ).properties.color;
 		drawRoad( res_points, color );
         }
     }

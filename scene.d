@@ -142,13 +142,13 @@ class POV
         return res;
     }
     
-    RGraph.Roads[] getRoads() const
+    RGraph.Polylines[] getRoads() const
     {
-        RGraph.Roads[] res;
+        RGraph.Polylines[] res;
         
         foreach( ref region; map.regions )
         {
-            auto curr = RGraph.Roads( region.road_graph );
+            auto curr = RGraph.Polylines( region.road_graph );
             
             void addLayer( size_t num )
             {

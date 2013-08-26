@@ -180,7 +180,7 @@ class Region
     private
     void addRoadDescriptor( RGraph.PolylineDescriptor descr )
     {
-        auto to_layers = descr.getRoad( road_graph ).properties.layers;
+        auto to_layers = descr.getPolyline( road_graph ).properties.layers;
         auto bbox = descr.getBoundary( road_graph );
         
         foreach( n; to_layers )

@@ -375,7 +375,7 @@ class TMapGraph( Coords, Node )
             return res;
         }
         
-        ref const (Polyline) getRoad( in TMapGraph roadGraph ) const
+        ref const (Polyline) getPolyline( in TMapGraph roadGraph ) const
         {
             return getEdge( roadGraph ).payload;
         }
@@ -389,7 +389,7 @@ class TMapGraph( Coords, Node )
         }
     }
     
-    static struct Roads
+    static struct Polylines
     {
         PolylineDescriptor*[] descriptors;
         const TMapGraph road_graph;
@@ -434,16 +434,16 @@ DescriptionsTree.Payload[] preparePolylines(DescriptionsTree, ForeignCoords)(
         in ForeignCoords[long] nodes
     )
 {
-    alias DescriptionsTree.Payload RoadDescription;
+    alias DescriptionsTree.Payload PolylineDescription;
     alias DescriptionsTree.Box BBox;
     alias BBox.Vector Coords;
     
-    RoadDescription[] res;
+    PolylineDescription[] res;
     auto all_lines = lines_rtree.search( lines_rtree.getBoundary );
     
     foreach( lineptr; all_lines )
     {
-        RoadDescription line = *lineptr;
+        PolylineDescription line = *lineptr;
         
         for( auto i = 1; i < line.nodes_ids.length - 1; i++ )
         {
