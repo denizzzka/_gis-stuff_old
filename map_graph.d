@@ -2,7 +2,7 @@ module map_graph;
 
 import math.geometry;
 import math.rtree2d;
-import math.graph: Graph;
+import math.graph: Graph, TEdge, TNode;
 import osm: OsmCoords = Coords, encodedToMapCoords;
 import map: MapCoords = Coords;
 import cat = categories: Line;
@@ -111,132 +111,6 @@ struct TPolyline( Coords )
     }
 }
 
-struct TEdge( _Weight, _Payload )
-{
-    alias _Payload Payload;
-    alias _Weight Weight;
-    
-    static TEdge[] edges;
-    
-    Direction forward;
-    Direction backward;
-    
-    const Payload payload;
-    
-    struct Direction
-    {
-        size_t to_node; /// direction
-        Weight weight;
-        
-        invariant()
-        {
-            assert( weight >= 0 );
-        }
-    }
-    
-    struct DirectedEdge
-    {
-        private size_t global_edge_idx;
-        
-        bool forward_direction;
-        
-        this( size_t edge_idx, bool forward_direction )
-        {
-            this.global_edge_idx = edge_idx;
-            this.forward_direction = forward_direction;
-        }
-        
-        ref const (Payload) payload() const
-        {
-            return getEdge().payload;
-        }
-        
-        size_t to_node() const
-        {
-            return getDirection.to_node;
-        }
-        
-        float weight() const
-        {
-            return getDirection.weight;
-        }
-        
-        private
-        ref Direction getDirection() const
-        {
-            if( forward_direction )
-                return getEdge().forward;
-            else
-                return getEdge().backward;
-        }
-        
-        private
-        ref const TEdge getEdge() const
-        {
-            return TEdge.edges[ global_edge_idx ];
-        }
-    }
-    
-    static size_t addToEdges( TEdge edge )
-    {
-        edges ~= edge;
-        
-        return edges.length - 1;
-    }
-}
-
-struct TNode( _Edge, _Point )
-{
-    alias _Point Point;
-    alias _Edge Edge;
-    
-    private size_t[] edges_idxs;
-    
-    const Point point;
-    
-    struct EdgesRange
-    {
-        private
-        {
-            const TNode* node;
-            const size_t from_node_idx;
-            size_t edge_idx;
-        }
-        
-        Edge.DirectedEdge front()
-        {
-            return opIndex( edge_idx );
-        }
-        
-        // TODO: dangerous ability, need to remove
-        Edge.DirectedEdge opIndex( size_t idx )
-        {
-            size_t global_idx = node.edges_idxs[ idx ];
-            Edge* edge = &Edge.edges[ global_idx ];
-            
-            bool forward_direction = edge.forward.to_node != from_node_idx;
-            
-            auto res = Edge.DirectedEdge( global_idx, forward_direction );
-            
-            return res;
-        }
-        
-        void popFront() { ++edge_idx; }
-        bool empty() const { return edge_idx >= length; }
-        size_t length() const { return node.edges_idxs.length; }
-    }
-    
-    EdgesRange edges( size_t from_node_idx ) const
-    {
-        return EdgesRange( &this, from_node_idx );
-    }
-    
-    void addEdge( size_t edge_idx )
-    {
-        edges_idxs ~= edge_idx;
-    }
-}
-
 struct Point
 {
     MapCoords coords;
@@ -257,26 +131,75 @@ struct Point
     }
 }
 
-@disable
-auto boundary(T)( ref const T node )
+struct TPolylineDescriptor( MapGraph )
 {
-    alias Box!osm.Coords BBox;
+    alias MapGraph.Coords Coords;
+    alias MapGraph.BBox BBox;
+    alias TPolyline!Coords Polyline;
     
-    auto res = BBox( node.point.coords, Coords(0,0) );
+    uint node_idx;
+    uint edge_idx;
     
-    for( auto i = 1; i < node.edges.length; i++ )
-        res.addCircumscribe( node.edges[i].to_node.point.coords );
+    this( uint node_idx, uint edge_idx )
+    {
+        this.node_idx = node_idx;
+        this.edge_idx = edge_idx;
+    }
     
-    return res;
+    Coords[] getPoints( in MapGraph mapGraph ) const
+    {
+        Coords[] res;
+        
+        auto start_node = &mapGraph.graph.nodes[ node_idx ];
+        
+        res ~= start_node.point.coords;
+        
+        auto edge = start_node.edges( node_idx )[ edge_idx ];
+        
+        foreach( c; edge.payload.points )
+            res ~= c;
+        
+        auto end_node_idx = edge.to_node;
+        res ~= mapGraph.graph.nodes[ end_node_idx ].point.coords;
+        
+        return res;
+    }
+    
+    BBox getBoundary( in MapGraph mapGraph ) const
+    {
+        auto points = getPoints( mapGraph );
+        assert( points.length > 0 );
+        
+        auto res = BBox( points[0], Coords(0,0) );
+        
+        for( auto i = 1; i < points.length; i++ )
+            res.addCircumscribe( points[i] );
+        
+        return res;
+    }
+    
+    ref const (Polyline) getPolyline( in MapGraph mapGraph ) const
+    {
+        return getEdge( mapGraph ).payload;
+    }
+    
+    private
+    auto getEdge( in MapGraph mapGraph ) const
+    {
+        auto node = mapGraph.graph.nodes[ node_idx ];
+        
+        return node.edges( node_idx )[ edge_idx ];
+    }
 }
 
-class TMapGraph( Coords, Node )
+class TMapGraph( _Coords, Node )
 {
+    alias _Coords Coords;
     alias Box!Coords BBox;
     alias TPolyline!Coords Polyline;
     alias RTreePtrs!( BBox, Polyline ) PolylinesRTree;
-    
     alias Node.Edge Edge;
+    alias TPolylineDescriptor!TMapGraph PolylineDescriptor;
     
     alias Graph!Node G;
     
@@ -331,64 +254,7 @@ class TMapGraph( Coords, Node )
         
         return res;
     }
-    
-    static struct PolylineDescriptor
-    {
-        uint node_idx;
-        uint edge_idx;
         
-        this( uint node_idx, uint edge_idx )
-        {
-            this.node_idx = node_idx;
-            this.edge_idx = edge_idx;
-        }
-        
-        Coords[] getPoints( in TMapGraph mapGraph ) const
-        {
-            Coords[] res;
-            
-            auto start_node = &mapGraph.graph.nodes[ node_idx ];
-            
-            res ~= start_node.point.coords;
-            
-            auto edge = start_node.edges( node_idx )[ edge_idx ];
-            
-            foreach( c; edge.payload.points )
-                res ~= c;
-            
-            auto end_node_idx = edge.to_node;
-            res ~= mapGraph.graph.nodes[ end_node_idx ].point.coords;
-            
-            return res;
-        }
-        
-        BBox getBoundary( in TMapGraph mapGraph ) const
-        {
-            auto points = getPoints( mapGraph );
-            assert( points.length > 0 );
-            
-            auto res = BBox( points[0], Coords(0,0) );
-            
-            for( auto i = 1; i < points.length; i++ )
-                res.addCircumscribe( points[i] );
-            
-            return res;
-        }
-        
-        ref const (Polyline) getPolyline( in TMapGraph mapGraph ) const
-        {
-            return getEdge( mapGraph ).payload;
-        }
-        
-        private
-        Edge.DirectedEdge getEdge( in TMapGraph mapGraph ) const
-        {
-            auto node = mapGraph.graph.nodes[ node_idx ];
-            
-            return node.edges( node_idx )[ edge_idx ];
-        }
-    }
-    
     static struct Polylines
     {
         PolylineDescriptor*[] descriptors;
