@@ -375,15 +375,15 @@ class TMapGraph( Coords, Node )
             return res;
         }
         
-        ref const (Polyline) getPolyline( in TMapGraph roadGraph ) const
+        ref const (Polyline) getPolyline( in TMapGraph mapGraph ) const
         {
-            return getEdge( roadGraph ).payload;
+            return getEdge( mapGraph ).payload;
         }
         
         private
-        Edge.DirectedEdge getEdge( in TMapGraph roadGraph ) const
+        Edge.DirectedEdge getEdge( in TMapGraph mapGraph ) const
         {
-            auto node = roadGraph.graph.nodes[ node_idx ];
+            auto node = mapGraph.graph.nodes[ node_idx ];
             
             return node.edges( node_idx )[ edge_idx ];
         }
@@ -392,17 +392,17 @@ class TMapGraph( Coords, Node )
     static struct Polylines
     {
         PolylineDescriptor*[] descriptors;
-        const TMapGraph road_graph;
+        const TMapGraph map_graph;
         
         this( in TMapGraph graph )
         {
-            road_graph = graph;
+            map_graph = graph;
         }
         
         Coords[] getPoints( in size_t descriptor_idx ) const
         {
             auto descriptor = descriptors[ descriptor_idx ];
-            return descriptor.getPoints( road_graph );
+            return descriptor.getPoints( map_graph );
         }
     }
     
