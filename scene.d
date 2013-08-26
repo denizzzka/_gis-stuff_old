@@ -123,17 +123,19 @@ class POV
         
         foreach( region; map.regions )
         {
-            void addLayer( size_t num )
-            {
-                res ~= region.layers[ num ].lines.search( boundary_meters );
-            }
+            immutable double layers_zoom[] = [ 0.3, 0.17, 0.06, 0.02 ];
+            assert( region.layers.length == layers_zoom.length +1 );
             
-            addLayer( 4 );
+            size_t layer_num = layers_zoom.length;
             
-            if( zoom > 0.015 ) addLayer( 3 );
-            if( zoom > 0.03 ) addLayer( 2 );
-            if( zoom > 0.15 )  addLayer( 1 );
-            if( zoom > 0.3 )  addLayer( 0 );
+            foreach( i, curr_zoom; layers_zoom )
+                if( zoom > curr_zoom )
+                {
+                    layer_num = i;
+                    break;
+                }
+                
+            res ~= region.layers[ layer_num ].lines.search( boundary_meters );
         }
         
         debug(scene) writeln("found ways number=", res.length);
