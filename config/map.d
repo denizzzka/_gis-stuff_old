@@ -6,21 +6,21 @@ static import categories;
 import std.json;
 
 
-struct RoadProperties
+struct PolylineProperties
 {
     Color color;
     size_t[] layers;
 }
 
-class Roads
+class Polylines
 {
     immutable string[] members = [ __traits( allMembers, categories.Line ) ];
     
-    private static RoadProperties[ members.length ] roads_properties;
+    private static PolylineProperties[ members.length ] properties;
     
-    ref RoadProperties getProperty( in categories.Line enum_type ) const
+    ref PolylineProperties getProperty( in categories.Line enum_type ) const
     {
-        return roads_properties[ enum_type ];
+        return properties[ enum_type ];
     }
     
     static this()
@@ -29,70 +29,70 @@ class Roads
         writeln( members );
         writeln( typeid( members ) );
         
-        RoadProperties rp;
+        PolylineProperties rp;
         
         // OTHER
-        rp = RoadProperties(
+        rp = PolylineProperties(
                 Color( 0x00, 0xAA, 0xAA ),
                 [ 0 ]
             );
-        roads_properties[0] = rp;
+        properties[0] = rp;
         
         // BUILDING
-        rp = RoadProperties(
+        rp = PolylineProperties(
                 Color( 0xf7, 0xc3, 0x94 ),
                 [ 0 ]
             );
-        roads_properties[1] = rp;
+        properties[1] = rp;
         
         // BOUNDARY
-        rp = RoadProperties(
+        rp = PolylineProperties(
                 Color( 0xAA, 0xAA, 0x00 ),
                 [ 0, 1, 2, 3, 4 ]
             );
-        roads_properties[2] = rp;
+        properties[2] = rp;
         
         // PATH
-        rp = RoadProperties(
+        rp = PolylineProperties(
                 Color.Yellow,
                 [ 0, 1, 2, 3, 4 ]
             );
-        roads_properties[3] = rp;
+        properties[3] = rp;
         
         // HIGHWAY
-        rp = RoadProperties(
+        rp = PolylineProperties(
                 Color.Green,
                 [ 0, 1, 2, 3, 4 ]
             );
-        roads_properties[4] = rp;
+        properties[4] = rp;
         
         // PRIMARY
-        rp = RoadProperties(
+        rp = PolylineProperties(
                 Color.White,
                 [ 0, 1, 2, 3 ]
             );
-        roads_properties[5] = rp;
+        properties[5] = rp;
         
         // SECONDARY
-        rp = RoadProperties(
+        rp = PolylineProperties(
                 Color.Yellow,
                 [ 0, 1, 2 ]
             );
-        roads_properties[6] = rp;
+        properties[6] = rp;
         
         // ROAD_OTHER
-        rp = RoadProperties(
+        rp = PolylineProperties(
                 Color( 0xAA, 0xAA, 0xAA ),
                 [ 0, 1 ]
             );
-        roads_properties[7] = rp;
+        properties[7] = rp;
         
         // UNSUPPORTED
-        rp = RoadProperties(
+        rp = PolylineProperties(
                 Color.Green,
                 [ 0, 1, 2, 3, 4 ]
             );
-        roads_properties[8] = rp;
+        properties[8] = rp;
     }
     
     this( string filename )
@@ -100,4 +100,4 @@ class Roads
     }
 };
 
-static const Roads roads = new Roads("asd");
+static const Polylines polylines = new Polylines("asd");

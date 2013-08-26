@@ -105,9 +105,9 @@ struct TPolyline( Coords )
     
     @disable this();
     
-    ref config.map.RoadProperties properties() const
+    ref config.map.PolylineProperties properties() const
     {
-        return config.map.roads.getProperty( type );
+        return config.map.polylines.getProperty( type );
     }
 }
 
