@@ -212,6 +212,6 @@ body
         if( canFind( ["secondary"], tag.value ) )
             return SECONDARY;
         
-        return OTHER;
+        return ROAD_OTHER;
     }
 }
