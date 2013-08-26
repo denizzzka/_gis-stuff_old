@@ -180,12 +180,19 @@ struct DecodedLine
         assert( coords_idx.length >= 2 );
     }
     
+    private
     MapCoords[] getCoords( in Coords[long] nodes_coords ) const
     {
         MapCoords[] res;
         
         foreach( c; coords_idx )
+        {
+            auto p = c in nodes_coords;
+            
+            enforce( p, "node "~to!string( c )~" is not found" );
+            
             res ~= encodedToMapCoords( nodes_coords[ c ] );
+        }
         
         return res;
     }
@@ -347,7 +354,7 @@ Region getRegion( string filename, bool verbose )
                 
             if( !c.ways.isNull )
                 foreach( w; c.ways )
-                    if( w.refs.length >= 2 )
+                    try
                     {
                         auto decoded = decodeWay( prim, w );
                         
@@ -365,6 +372,11 @@ Region getRegion( string filename, bool verbose )
                                 roads ~= RoadDescription( decoded.coords_idx, type, w.id );
                                 break;
                         }
+                    }
+                    catch( Exception e )
+                    {
+                        writeln("Way id=", w.id, " excluded: ", e.msg );
+                        break;
                     }
         }
     }
