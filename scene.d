@@ -29,6 +29,8 @@ class POV
         Vector2r center; /// in meters
         real zoom; /// pixels per meter
         Box!(Vector2d) boundary_meters; /// coords in meters
+        
+        immutable double layers_zoom[] = [ 0.6, 0.35, 0.06, 0.02 ];
     }
     
     void updatePath()
@@ -94,23 +96,30 @@ class POV
         return window_coords;
     }
     
+    private
+    size_t getCurrentLayerNum() const
+    {
+        size_t layer_num = layers_zoom.length;
+        
+        foreach( i, curr_zoom; layers_zoom )
+            if( zoom > curr_zoom )
+            {
+                layer_num = i;
+                break;
+            }
+        
+        return layer_num;
+    }
+    
     Point*[] getPOIs() const
     {
         Point*[] res;
         
         foreach( region; map.regions )
         {
-            void addLayer( size_t num )
-            {
-                res ~= region.layers[ num ].POI.search( boundary_meters );
-            }
+            auto num = getCurrentLayerNum();
             
-            addLayer( 4 );
-            
-            if( zoom > 0.015 ) addLayer( 3 );
-            if( zoom > 0.03 ) addLayer( 2 );
-            if( zoom > 0.15 )  addLayer( 1 );
-            if( zoom > 0.3 )  addLayer( 0 );
+            res ~= region.layers[ num ].POI.search( boundary_meters );
         }
         
         debug(scene) writeln("found POI number=", res.length);
@@ -121,21 +130,11 @@ class POV
     {
         Line*[] res;
         
-        foreach( region; map.regions )
+        foreach( ref region; map.regions )
         {
-            immutable double layers_zoom[] = [ 0.3, 0.17, 0.06, 0.02 ];
-            assert( region.layers.length == layers_zoom.length +1 );
+            auto num = getCurrentLayerNum();
             
-            size_t layer_num = layers_zoom.length;
-            
-            foreach( i, curr_zoom; layers_zoom )
-                if( zoom > curr_zoom )
-                {
-                    layer_num = i;
-                    break;
-                }
-                
-            res ~= region.layers[ layer_num ].lines.search( boundary_meters );
+            res ~= region.layers[ num ].lines.search( boundary_meters );
         }
         
         debug(scene) writeln("found ways number=", res.length);
@@ -150,18 +149,9 @@ class POV
         {
             auto curr = RGraph.Polylines( region.road_graph );
             
-            void addLayer( size_t num )
-            {
-                curr.descriptors ~= region.layers[ num ].roads.search( boundary_meters );
-            }
+            auto num = getCurrentLayerNum();
             
-            addLayer( 4 );
-            
-            if( zoom > 0.015 ) addLayer( 3 );
-            if( zoom > 0.03 ) addLayer( 2 );
-            if( zoom > 0.15 )  addLayer( 1 );
-            if( zoom > 0.3 )  addLayer( 0 );
-            
+            curr.descriptors ~= region.layers[ num ].roads.search( boundary_meters );
             res ~= curr;
         }
         
