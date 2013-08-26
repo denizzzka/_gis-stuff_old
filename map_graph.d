@@ -494,11 +494,11 @@ unittest
     auto w1 = PolylineDescription( n1, cat.Line.HIGHWAY, 111 );
     auto w2 = PolylineDescription( n2, cat.Line.PRIMARY, 222 );
     
-    auto roads = new DescriptionsTree;
-    roads.addObject( w1.getBoundary( nodes ), w1 );
-    roads.addObject( w2.getBoundary( nodes ), w2 );
+    auto lines = new DescriptionsTree;
+    lines.addObject( w1.getBoundary( nodes ), w1 );
+    lines.addObject( w2.getBoundary( nodes ), w2 );
     
-    auto prepared = prepareRoads( roads, nodes );
+    auto prepared = prepareRoads( lines, nodes );
     
     assert( prepared.length == 5 );
 }
