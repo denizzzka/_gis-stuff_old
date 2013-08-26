@@ -24,7 +24,7 @@ struct TPolylineDescription( _Coords, _ForeignCoords )
     cat.Line type;
     ulong way_id;
     
-    this( ulong[] nodes_ids, cat.Line type, ulong way_id )
+    this( ulong[] nodes_ids, cat.Line type )
     in
     {
         assert( nodes_ids.length >= 2 );
@@ -33,7 +33,6 @@ struct TPolylineDescription( _Coords, _ForeignCoords )
     {
         this.nodes_ids = nodes_ids;
         this.type = type;
-        this.way_id = way_id;
     }
     
     @disable this();
@@ -363,8 +362,8 @@ unittest
     ulong[] n1 = [ 0, 10, 20, 30, 40 ];
     ulong[] n2 = [ 50, 60, 20, 70, 80, 30 ];
     
-    auto w1 = PolylineDescription( n1, cat.Line.HIGHWAY, 111 );
-    auto w2 = PolylineDescription( n2, cat.Line.PRIMARY, 222 );
+    auto w1 = PolylineDescription( n1, cat.Line.HIGHWAY );
+    auto w2 = PolylineDescription( n2, cat.Line.PRIMARY );
     
     auto lines = new DescriptionsTree;
     lines.addObject( w1.getBoundary( nodes ), w1 );

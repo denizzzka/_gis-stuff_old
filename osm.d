@@ -369,13 +369,13 @@ Region getRegion( string filename, bool verbose )
                                 
                             case ROAD:
                                 auto type = getLineType( prim.stringtable, decoded );
-                                roads ~= RoadDescription( decoded.coords_idx, type, w.id );
+                                roads ~= RoadDescription( decoded.coords_idx, type );
                                 break;
                         }
                     }
                     catch( Exception e )
                     {
-                        writeln("Way id=", w.id, " excluded: ", e.msg );
+                        writeln("Way ", w.id, " excluded: ", e.msg );
                         break;
                     }
         }
