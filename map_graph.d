@@ -14,7 +14,7 @@ import std.exception: enforce;
 import std.stdio;
 
 
-struct TRoadDescription( _Coords, _ForeignCoords )
+struct TPolylineDescription( _Coords, _ForeignCoords )
 {
     alias _Coords Coords;
     alias _ForeignCoords ForeignCoords;
@@ -78,7 +78,7 @@ struct TRoadDescription( _Coords, _ForeignCoords )
         return res;
     }
     
-    TRoadDescription opSlice( size_t from, size_t to )
+    TPolylineDescription opSlice( size_t from, size_t to )
     {
         auto res = this;
         
@@ -88,7 +88,7 @@ struct TRoadDescription( _Coords, _ForeignCoords )
     }
 }
 
-struct TRoad( Coords )
+struct TPolyline( Coords )
 {
     private
     {
@@ -273,7 +273,7 @@ auto boundary(T)( ref const T node )
 class TRoadGraph( Coords, Node )
 {
     alias Box!Coords BBox;
-    alias TRoad!Coords Road;
+    alias TPolyline!Coords Road;
     alias RTreePtrs!( BBox, Road ) RoadsRTree;
     
     alias Node.Edge Edge;
@@ -468,11 +468,11 @@ unittest
 {
     alias MapCoords Coords;
     alias OsmCoords FC; // foreign coords
-    alias TRoadDescription!(Coords, FC) RoadDescription;
+    alias TPolylineDescription!(Coords, FC) RoadDescription;
     alias Box!Coords BBox;
     alias RTreePtrs!( BBox, RoadDescription ) DescriptionsTree;
     
-    alias TRoad!Coords Road;
+    alias TPolyline!Coords Road;
     alias TEdge!( float, Road ) Edge;
     alias TNode!( Edge, Point ) Node;
     
@@ -512,7 +512,7 @@ in
 body
 {
     alias RoadDescription.Coords Coords;
-    alias TRoad!Coords Road;
+    alias TPolyline!Coords Road;
     
     size_t[ulong] already_stored;
     

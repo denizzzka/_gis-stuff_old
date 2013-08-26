@@ -7,7 +7,8 @@ import math.earth;
 import map: Map, Region, BBox, Point, PointsStorage, Line, LinesStorage, addPoint, addLineToStorage, MapCoords = Coords, RGraph;
 import cat = categories;
 import osm_tags_parsing;
-import roads: TRoadDescription, TRoadGraph;
+import map_graph: TPolylineDescription;
+import roads: TRoadGraph;
 
 import std.stdio;
 import std.string;
@@ -320,7 +321,7 @@ Region getRegion( string filename, bool verbose )
     auto res = new Region;
     Coords[long] nodes_coords;
     
-    alias TRoadDescription!( MapCoords, Coords ) RoadDescription;
+    alias TPolylineDescription!( MapCoords, Coords ) RoadDescription;
     RoadDescription[] roads;
     
     while(true)
