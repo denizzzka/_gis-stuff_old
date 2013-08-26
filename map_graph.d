@@ -314,7 +314,7 @@ class TMapGraph( Coords, Node )
             descriptions_tree.addObject( boundary, c );
         }
         
-        auto prepared = descriptions_tree.prepareRoads( nodes );
+        auto prepared = descriptions_tree.preparePolylines( nodes );
         
         graph = new G;
         
@@ -429,7 +429,7 @@ class TMapGraph( Coords, Node )
 
 /// Cuts roads on crossroads for creating road graph
 private
-DescriptionsTree.Payload[] prepareRoads(DescriptionsTree, ForeignCoords)( in DescriptionsTree roads_rtree, in ForeignCoords[long] nodes )
+DescriptionsTree.Payload[] preparePolylines(DescriptionsTree, ForeignCoords)( in DescriptionsTree roads_rtree, in ForeignCoords[long] nodes )
 {
     alias DescriptionsTree.Payload RoadDescription;
     alias DescriptionsTree.Box BBox;
@@ -501,7 +501,7 @@ unittest
     lines.addObject( w1.getBoundary( nodes ), w1 );
     lines.addObject( w2.getBoundary( nodes ), w2 );
     
-    auto prepared = prepareRoads( lines, nodes );
+    auto prepared = preparePolylines( lines, nodes );
     
     assert( prepared.length == 5 );
 }
