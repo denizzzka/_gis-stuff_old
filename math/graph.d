@@ -12,9 +12,9 @@ struct TEdge( _Weight, _Payload )
     alias _Payload Payload;
     alias _Weight Weight;
     
-    const Weight weight;
     const size_t to_node; /// direction
-    const Payload payload;
+    Weight weight;
+    Payload payload;
     
     invariant()
     {
@@ -29,7 +29,7 @@ struct TNode( _Edge, _Point )
     
     Edge[] edges_storage;
     
-    const Point point;
+    Point point;
     
     struct EdgesRange
     {
@@ -39,7 +39,12 @@ struct TNode( _Edge, _Point )
             size_t edge_idx;
         }
         
-        Edge* front() { return cast(Edge*) &node.edges_storage[ edge_idx ]; }
+        ref const (Edge) opIndex( size_t idx ) const
+        {
+            return node.edges_storage[ edge_idx ];
+        }
+        
+        ref const (Edge) front() { return opIndex( edge_idx ); }
         void popFront() { ++edge_idx; }
         bool empty() const { return edge_idx >= length; }
         size_t length() const { return node.edges_storage.length; }
@@ -64,7 +69,7 @@ class Graph( Node )
 private:
     
     // TODO: remove it
-    size_t[const Node.Point] points; /// AA used for fast search of stored points
+    size_t[ Node.Point ] points; /// AA used for fast search of stored points
     
     invariant()
     {

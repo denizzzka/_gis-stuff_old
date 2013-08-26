@@ -2,14 +2,16 @@ module map;
 
 import math.geometry;
 import math.rtree2d;
-import osm: Coords, encodedToMeters, RGraph;
 import cat = categories;
-import sfml: Color, randomColor; // TODO: temporary, remove it
+import roads: RoadGraph;
+static import config.map;
 
 debug(map) import std.stdio;
 
 
+alias Vector2D!double Coords;
 alias Box!Coords BBox;
+alias RoadGraph RGraph;
 
 struct Point
 {
@@ -80,51 +82,9 @@ struct Line
         return res;
     }
     
-    Color color() const
+    auto color() const
     {
-        if( isRoad )
-            return randomColor;
-        
-        with( cat.Line )
-        switch( type )
-        {
-            case BUILDING:
-                return Color( 0xf7, 0xc3, 0x94 );
-                
-            case ROAD_HIGHWAY:
-                return Color.Green;
-                
-            case ROAD_PRIMARY:
-                return Color.White;
-                
-            case ROAD_SECONDARY:
-            case PATH:
-                return Color.Yellow;
-                
-            case ROAD_OTHER:
-                return Color( 0xAA, 0xAA, 0xAA );
-                
-            default:
-                return Color.Cyan;
-        }
-    }
-    
-    bool isRoad() const
-    {
-        with( cat.Line )
-        switch( type )
-        {
-            case ROAD_HIGHWAY:
-            case ROAD_PRIMARY:
-            case ROAD_SECONDARY:
-            case ROAD_OTHER:
-                return true;
-                break;
-                
-            default:
-                return false;
-                break;
-        }
+        return config.map.polylines.getProperty( type ).color;
     }
     
     Line opSlice( size_t from, size_t to )
@@ -139,7 +99,7 @@ struct Line
 
 alias RTreePtrs!(BBox, Point) PointsStorage;
 alias RTreePtrs!(BBox, Line) LinesStorage;
-alias RTreePtrs!(BBox, RGraph.RoadDescriptor) RoadsStorage;
+alias RTreePtrs!(BBox, RGraph.PolylineDescriptor) RoadsStorage;
 
 void addPoint( PointsStorage storage, Point point )
 {
@@ -211,71 +171,20 @@ class Region
     
     void addLine( Line line )
     {
-        size_t layer_num;
+        auto to_layers = config.map.polylines.getProperty( line.type ).layers;
         
-        with( cat.Line )
-        switch( line.type )
-        {
-            case BOUNDARY:
-                layer_num = 4;
-                break;
-                
-            case ROAD_HIGHWAY:
-                layer_num = 3;
-                break;
-                
-            case ROAD_PRIMARY:
-                layer_num = 2;
-                break;
-                
-            case ROAD_SECONDARY:
-                layer_num = 1;
-                break;
-                
-            case ROAD_OTHER:
-            case BUILDING:
-                layer_num = 0;
-                break;
-                
-            default:
-                layer_num = layers.length - 1;
-                break;
-        }
-        
-        layers[layer_num].lines.addLineToStorage( line );
+        foreach( idx; to_layers )
+            layers[ idx ].lines.addLineToStorage( line );
     }
     
     private
-    void addRoadDescriptor( RGraph.RoadDescriptor descr )
+    void addRoadDescriptor( RGraph.PolylineDescriptor descr )
     {
-        size_t layer_num;
+        auto to_layers = descr.getPolyline( road_graph ).properties.layers;
+        auto bbox = descr.getBoundary( road_graph );
         
-        with( cat.Road )
-        switch( descr.getType( road_graph ) )
-        {
-            case HIGHWAY:
-                layer_num = 4;
-                break;
-                
-            case PRIMARY:
-                layer_num = 2;
-                break;
-                
-            case SECONDARY:
-                layer_num = 1;
-                break;
-                
-            case OTHER:
-                layer_num = 0;
-                break;
-                
-            default: // unknown roads are always visible
-                layer_num = layers.length - 1;
-                break;
-        }
-        
-        auto bbox = descr.getBoundary(road_graph);
-        layers[layer_num].roads.addObject( bbox, descr );
+        foreach( n; to_layers )
+            layers[ n ].roads.addObject( bbox, descr );
     }
     
     void addRoadGraph( RGraph newRoadGraph )

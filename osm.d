@@ -4,14 +4,15 @@ import osmpbf.fileformat;
 import osmpbf.osmformat;
 import math.geometry;
 import math.earth;
-import map: Map, Region, BBox, Point, PointsStorage, Line, LinesStorage, addPoint, addLineToStorage;
+import map: Map, Region, BBox, Point, PointsStorage, Line, LinesStorage, addPoint, addLineToStorage, MapCoords = Coords, RGraph;
 import cat = categories;
 import osm_tags_parsing;
-import roads: TRoadGraph;
+import map_graph: TPolylineDescription;
+import roads: RoadGraph;
 
 import std.stdio;
 import std.string;
-import std.exception;
+import std.exception: enforce;
 import std.bitmanip: bigEndianToNative;
 import std.zlib;
 import std.math: round;
@@ -171,7 +172,7 @@ unittest
 struct DecodedLine
 {
     ulong[] coords_idx;
-    LineClass classification = LineClass.OTHER;
+    LineClass classification;
     Tag[] tags;
     
     invariant()
@@ -179,12 +180,12 @@ struct DecodedLine
         assert( coords_idx.length >= 2 );
     }
     
-    Coords[] getCoords( in Coords[long] nodes_coords ) const
+    MapCoords[] getCoords( in Coords[long] nodes_coords ) const
     {
-        Coords[] res;
+        MapCoords[] res;
         
         foreach( c; coords_idx )
-            res ~= nodes_coords[ c ];
+            res ~= encodedToMapCoords( nodes_coords[ c ] );
         
         return res;
     }
@@ -217,10 +218,12 @@ body
         res.coords_idx ~= curr;
     }
     
+    enforce( res.coords_idx.length >= 2, "way id="~to!string(way.id)~" - too short way" );
+    
     if( !way.keys.isNull )
         res.tags = prim.stringtable.getTagsByArray( way.keys, way.vals );
         
-    res.classification = classifyLine( res.tags );
+    res.classification = classifyLine( res );
     
     return res;
 }
@@ -263,6 +266,13 @@ Coords metersToEncoded( Vector2D!real meters )
     return encoded.round;
 }
 
+MapCoords encodedToMapCoords( in Coords c )
+{
+    auto m = encodedToMeters( c );
+    
+    return MapCoords( to!double( m.x ), to!double( m.y ) );
+}
+
 void addPoints(
         ref Region region,
         ref PrimitiveBlock prim,
@@ -279,13 +289,15 @@ void addPoints(
         // Point contains understandable tags?
         if( type != cat.Point.UNSUPPORTED )
         {
-            Coords coords;
-            coords.lon = n.lon;
-            coords.lat = n.lat;
+            Coords coords = Coords( n.lon, n.lat );
             
             string tags = prim.stringtable.getTags( n ).toString;
             
-            Point point = Point( coords, prim.stringtable.getPointType( n ), tags );
+            Point point = Point(
+                    encodedToMapCoords( coords ),
+                    prim.stringtable.getPointType( n ),
+                    tags
+                );
             
             region.addPoint( point );
             
@@ -293,8 +305,6 @@ void addPoints(
         }
     }
 }
-
-alias TRoadGraph!Coords RGraph;
 
 Region getRegion( string filename, bool verbose )
 {
@@ -311,7 +321,8 @@ Region getRegion( string filename, bool verbose )
     auto res = new Region;
     Coords[long] nodes_coords;
     
-    RGraph.RoadDescription[] roads;
+    alias TPolylineDescription!( MapCoords, Coords ) RoadDescription;
+    RoadDescription[] roads;
     
     while(true)
     {
@@ -341,19 +352,17 @@ Region getRegion( string filename, bool verbose )
                         auto decoded = decodeWay( prim, w );
                         
                         with( LineClass )
-                        switch( decoded.classification )
+                        final switch( decoded.classification )
                         {
-                            case BUILDING:
+                            case AREA:
+                            case POLYLINE:
                                 Line line = decoded.createLine( prim, nodes_coords );
                                 res.addLine( line );
                                 break;
                                 
                             case ROAD:
-                                auto type = getRoadType( decoded.tags );
-                                roads ~= RGraph.RoadDescription( decoded.coords_idx, type );
-                                break;
-                                
-                            default:
+                                auto type = getLineType( prim.stringtable, decoded );
+                                roads ~= RoadDescription( decoded.coords_idx, type, w.id );
                                 break;
                         }
                     }

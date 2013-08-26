@@ -241,7 +241,7 @@ unittest
     assert( t < 0.015 );
     
     // Through North Pole
-    auto from = Vector( 0, PI_2 - 0.00001 );
+    auto from = Vector( 0f, PI_2 - 0.00001 );
     auto to = Vector( PI, PI_2 - 0.00001 );
     auto pole_dist = from.getSphericalDistance( to );
     assert( pole_dist > 127 );

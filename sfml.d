@@ -89,7 +89,7 @@ class Window
     {
         for(auto i = 0; i < pois.length; i++)
         {
-            Vector2r node = encodedToMeters( pois[i].coords );
+            Vector2r node = pois[i].coords;
             auto window_coords = scene.metersToScreen( node );
             
             debug(sfml) writeln("draw point i=", i, " encoded coords=", pois[i], " meters=", node, " window_coords=", window_coords);
@@ -108,7 +108,7 @@ class Window
             
             foreach( i, node; line.nodes )
             {
-                Vector2r point = encodedToMeters( node );
+                Vector2r point = node;
                 auto window_coords = scene.metersToScreen( point );
                 line_points ~= window_coords;
 
@@ -138,25 +138,26 @@ class Window
     }
     
     private
-    void drawRoads(T)( in T roads_graphs )
+    void drawRoads( in RGraph.Polylines[] allGraphsRoads )
     {
-        foreach( roads; roads_graphs )
-	    foreach( road; roads.descriptors )
+        foreach( roads; allGraphsRoads )
+	    foreach( road_dscr; roads.descriptors )
 	    {
-		auto encoded_points = road.getPoints( roads.road_graph );
+		auto encoded_points = road_dscr.getPoints( roads.map_graph );
 		
 		Vector2r[] res_points;
 		
 		foreach( i, encoded; encoded_points )
 		{
-		    Vector2r point = encodedToMeters( encoded );
+		    Vector2r point = encoded;
 		    auto window_coords = scene.metersToScreen( point );
 		    res_points ~= window_coords;
 		    
 		    debug(sfml) writeln("draw line point i=", i, " encoded coords=", encoded, " meters=", point, " window_coords=", window_coords);
 		}
 		
-		drawRoad( res_points, Color(40,40,40) );
+		auto color = road_dscr.getPolyline( roads.map_graph ).properties.color;
+		drawRoad( res_points, color );
         }
     }
     
