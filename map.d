@@ -171,38 +171,10 @@ class Region
     
     void addLine( Line line )
     {
-        size_t layer_num;
+        auto to_layers = config.map.polylines.getProperty( line.type ).layers;
         
-        with( cat.Line )
-        switch( line.type )
-        {
-            case BOUNDARY:
-                layer_num = 4;
-                break;
-                
-            case HIGHWAY:
-                layer_num = 3;
-                break;
-                
-            case PRIMARY:
-                layer_num = 2;
-                break;
-                
-            case SECONDARY:
-                layer_num = 1;
-                break;
-                
-            case OTHER:
-            case BUILDING:
-                layer_num = 0;
-                break;
-                
-            default:
-                layer_num = layers.length - 1;
-                break;
-        }
-        
-        layers[layer_num].lines.addLineToStorage( line );
+        foreach( idx; to_layers )
+            layers[ idx ].lines.addLineToStorage( line );
     }
     
     private
