@@ -318,7 +318,7 @@ class TMapGraph( Coords, Node )
         
         graph = new G;
         
-        graph.descriptionsToRoadGraph( prepared, nodes );
+        graph.descriptionsToPolylineGraph( prepared, nodes );
     }
     
     RoadDescriptor[] getDescriptors() const
@@ -507,14 +507,18 @@ unittest
 }
 
 private
-void descriptionsToRoadGraph( Graph, RoadDescription, ForeignCoords )( ref Graph graph, in RoadDescription[] descriptions, in ForeignCoords[long] nodes )
+void descriptionsToPolylineGraph( Graph, PolylineDescription, ForeignCoords )(
+        ref Graph graph,
+        in PolylineDescription[] descriptions,
+        in ForeignCoords[long] nodes
+    )
 in
 {
-    static assert( is( ForeignCoords == RoadDescription.ForeignCoords ) );
+    static assert( is( ForeignCoords == PolylineDescription.ForeignCoords ) );
 }
 body
 {
-    alias RoadDescription.Coords Coords;
+    alias PolylineDescription.Coords Coords;
     alias TPolyline!Coords Road;
     
     size_t[ulong] already_stored;
