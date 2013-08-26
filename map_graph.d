@@ -270,14 +270,14 @@ auto boundary(T)( ref const T node )
     return res;
 }
 
-class TRoadGraph( Coords )
+class TRoadGraph( Coords, Node )
 {
     alias Box!Coords BBox;
     alias TRoad!Coords Road;
     alias RTreePtrs!( BBox, Road ) RoadsRTree;
     
-    alias TEdge!( float, Road ) Edge;
-    alias TNode!( Edge, Point ) Node;
+    alias Node.Edge Edge;
+    
     alias Graph!Node G;
     
     private

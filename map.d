@@ -4,14 +4,14 @@ import math.geometry;
 import math.rtree2d;
 import cat = categories;
 import sfml: Color, randomColor; // TODO: temporary, remove it
-import roads: TRoadGraph;
+import roads: RoadGraph;
 
 debug(map) import std.stdio;
 
 
 alias Vector2D!double Coords;
 alias Box!Coords BBox;
-alias TRoadGraph!Coords RGraph;
+alias RoadGraph RGraph;
 
 struct Point
 {
