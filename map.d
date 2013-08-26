@@ -3,8 +3,8 @@ module map;
 import math.geometry;
 import math.rtree2d;
 import cat = categories;
-import sfml: Color, randomColor; // TODO: temporary, remove it
 import roads: RoadGraph;
+static import config.map;
 
 debug(map) import std.stdio;
 
@@ -82,30 +82,9 @@ struct Line
         return res;
     }
     
-    Color color() const
+    auto color() const
     {
-        with( cat.Line )
-        switch( type )
-        {
-            case BUILDING:
-                return Color( 0xf7, 0xc3, 0x94 );
-                
-            case HIGHWAY:
-                return Color.Green;
-                
-            case PRIMARY:
-                return Color.White;
-                
-            case SECONDARY:
-            case PATH:
-                return Color.Yellow;
-                
-            case OTHER:
-                return Color( 0xAA, 0xAA, 0xAA );
-                
-            default:
-                return Color.Cyan;
-        }
+        return config.map.polylines.getProperty( type ).color;
     }
     
     Line opSlice( size_t from, size_t to )

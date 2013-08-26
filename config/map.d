@@ -89,8 +89,8 @@ class Polylines
         
         // UNSUPPORTED
         rp = PolylineProperties(
-                Color.Green,
-                [ 0, 1, 2, 3, 4 ]
+                Color.Cyan,
+                [ 0, 1 ]
             );
         properties[8] = rp;
     }
