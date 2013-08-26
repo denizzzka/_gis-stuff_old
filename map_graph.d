@@ -7,6 +7,7 @@ import osm: OsmCoords = Coords, encodedToMapCoords;
 import map: MapCoords = Coords;
 import cat = categories: Line;
 static import config.map;
+import math.earth: mercator2coords, getSphericalDistance;
 
 import std.algorithm: canFind;
 import std.random: uniform;
@@ -135,12 +136,17 @@ struct Point
     
     float distance( in Point v, in float weight ) const
     {
-        return (coords - v.coords).length * weight;
+        return heuristic( v ) * weight;
     }
     
     float heuristic( in Point v ) const
     {
-        return (coords - v.coords).length;
+        return getSphericalDistance( getRadiansCoords, v.getRadiansCoords );
+    }
+    
+    auto getRadiansCoords() const
+    {
+        return mercator2coords( coords );
     }
 }
 

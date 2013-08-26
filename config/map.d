@@ -54,7 +54,7 @@ class Polylines
         
         // PATH
         rp = PolylineProperties(
-                Color.Yellow,
+                Color.Magenta,
                 [ 0, 1, 2, 3, 4 ]
             );
         properties[3] = rp;
