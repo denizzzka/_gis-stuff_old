@@ -468,19 +468,19 @@ unittest
 {
     alias MapCoords Coords;
     alias OsmCoords FC; // foreign coords
-    alias TPolylineDescription!(Coords, FC) RoadDescription;
+    alias TPolylineDescription!(Coords, FC) PolylineDescription;
     alias Box!Coords BBox;
-    alias RTreePtrs!( BBox, RoadDescription ) DescriptionsTree;
+    alias RTreePtrs!( BBox, PolylineDescription ) DescriptionsTree;
     
-    alias TPolyline!Coords Road;
-    alias TEdge!( float, Road ) Edge;
+    alias TPolyline!Coords Polyline;
+    alias TEdge!( float, Polyline ) Edge;
     alias TNode!( Edge, Point ) Node;
     
     alias TMapGraph!( Coords, Node ) G;
     
     FC[] points = [
-            FC(0,0), FC(1,1), FC(2,2), FC(3,3), FC(4,4), // first road
-            FC(4,0), FC(3,1), FC(1,3), FC(2,4) // second road
+            FC(0,0), FC(1,1), FC(2,2), FC(3,3), FC(4,4), // first line
+            FC(4,0), FC(3,1), FC(1,3), FC(2,4) // second line
         ];
     
     FC[long] nodes;
@@ -491,8 +491,8 @@ unittest
     ulong[] n1 = [ 0, 10, 20, 30, 40 ];
     ulong[] n2 = [ 50, 60, 20, 70, 80, 30 ];
     
-    auto w1 = RoadDescription( n1, cat.Line.HIGHWAY, 111 );
-    auto w2 = RoadDescription( n2, cat.Line.PRIMARY, 222 );
+    auto w1 = PolylineDescription( n1, cat.Line.HIGHWAY, 111 );
+    auto w2 = PolylineDescription( n2, cat.Line.PRIMARY, 222 );
     
     auto roads = new DescriptionsTree;
     roads.addObject( w1.getBoundary( nodes ), w1 );
