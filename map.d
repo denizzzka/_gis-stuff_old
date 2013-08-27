@@ -213,9 +213,9 @@ class TPrepareRoads( Descr, AACoords, IDstruct )
         foreach( n; to_layers )
         {
             if( n != 0 )
-                roads_to_store[n] ~= generalize( road_descr, nodes_coords, 10 );
-            
-            roads_to_store[n] ~= road_descr;
+                roads_to_store[n] ~= generalize( road_descr, nodes_coords, n * 100 );
+            else
+                roads_to_store[n] ~= road_descr;
         }
     }
     

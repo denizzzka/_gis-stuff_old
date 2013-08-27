@@ -44,8 +44,17 @@ body
     
     for( size_t i = 1; i < points.length - 1; i++ )
     {
-        auto vector = points[$-1] - points[0];
-        auto point = points[i] - points[0];
+        // TODO: remove this
+        static if( __traits( compiles, points[0].getMapCoords ) )
+        {
+            auto vector = points[$-1].getMapCoords - points[0].getMapCoords;
+            auto point = points[i].getMapCoords - points[0].getMapCoords;
+        }
+        else
+        {
+            auto vector = points[$-1] - points[0];
+            auto point = points[i] - points[0];
+        }
         
         auto length = normalLength( vector, point );
         

@@ -27,7 +27,7 @@ struct OSMCoords_id
     const Coords[ OSM_id ] aa;
     OSM_id id;
     
-    Coords getCoords()
+    Coords getOsmCoords()
     {
         auto p = id in aa;
         
@@ -39,7 +39,7 @@ struct OSMCoords_id
     
     MapCoords getMapCoords()
     {
-        return encodedToMapCoords( getCoords() );
+        return encodedToMapCoords( getOsmCoords() );
     }
     
     alias getMapCoords this;
