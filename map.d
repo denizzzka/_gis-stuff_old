@@ -201,16 +201,20 @@ class Region
         foreach( c; descriptors )
             addRoadDescriptor( c );
     }
+}
+
+class PrepareRoads( Descr )
+{
+    Descr[][ Region.layers.length ] roads_to_store;
     
-    void addRoad(Descr)( Descr road_descr )
+    void addRoad( AACoords )( Descr road_descr, in AACoords nodes_coords )
     {
-        static Descr[ layers.length ][] roads_to_store;
-        
         auto to_layers = config.map.polylines.getProperty( road_descr.type ).layers;
         
         foreach( n; to_layers )
         {
-            
+            //if( n == 0 )
+                roads_to_store[n] ~= road_descr;
         }
     }
 }

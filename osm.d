@@ -4,7 +4,7 @@ import osmpbf.fileformat;
 import osmpbf.osmformat;
 import math.geometry;
 import math.earth;
-import map: Map, Region, BBox, Point, PointsStorage, Line, LinesStorage, addPoint, addLineToStorage, MapCoords = Coords, RGraph;
+import map: Map, Region, BBox, Point, PointsStorage, Line, LinesStorage, addPoint, addLineToStorage, MapCoords = Coords, RGraph, PrepareRoads;
 import cat = categories;
 import osm_tags_parsing;
 import map_graph: TPolylineDescription;
@@ -328,6 +328,7 @@ Region getRegion( string filename, bool verbose )
     Coords[OSM_id] nodes_coords;
     
     alias TPolylineDescription!( MapCoords, Coords ) RoadDescription;
+    auto roads = new PrepareRoads!RoadDescription;
     
     while(true)
     {
@@ -368,7 +369,7 @@ Region getRegion( string filename, bool verbose )
                             case ROAD:
                                 auto type = getLineType( prim.stringtable, decoded );
                                 auto road = RoadDescription( decoded.coords_idx, type, nodes_coords );
-                                res.addRoad( road );
+                                roads.addRoad( road, nodes_coords );
                                 break;
                         }
                     }
