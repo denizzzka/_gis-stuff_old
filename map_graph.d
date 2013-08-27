@@ -63,7 +63,7 @@ struct TPolylineDescription( _Coords, _ForeignCoords )
         auto node_ptr = node_id in nodes;
         
         if( !node_ptr )
-            throw new ReadPrimitiveException( "polyline node id "~to!string( node_id )~" is not found" );
+            throw new ReadPrimitiveException( "polyline node "~to!string( node_id )~" is not found" );
         
         return node_ptr;
     }        
