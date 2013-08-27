@@ -25,7 +25,10 @@ struct Blob {
 	/// PROPOSED feature for LZMA compressed data. SUPPORT IS NOT REQUIRED.
 	Nullable!(ubyte[]) lzma_data;
 	/// Formerly used for bzip2 compressed data. Depreciated in 2010.
-	deprecated Nullable!(ubyte[]) OBSOLETE_bzip2_data;
+	deprecated ref Nullable!(ubyte[]) OBSOLETE_bzip2_data() {
+		return OBSOLETE_bzip2_data_dep;
+	}
+	private Nullable!(ubyte[])	 OBSOLETE_bzip2_data_dep;
 
 	ubyte[] Serialize(int field = -1) {
 		ubyte[] ret;
@@ -38,11 +41,11 @@ struct Blob {
 		// Serialize member 4 Field Name lzma_data
 		if (!lzma_data.isNull) ret ~= toByteString(lzma_data.get(),4);
 		// Serialize member 5 Field Name OBSOLETE_bzip2_data
-		if (!OBSOLETE_bzip2_data.isNull) ret ~= toByteString(OBSOLETE_bzip2_data.get(),5);
+		if (!OBSOLETE_bzip2_data_dep.isNull) ret ~= toByteString(OBSOLETE_bzip2_data_dep.get(),5);
 		ret ~= ufields;
 		// take care of header and length generation if necessary
 		if (field != -1) {
-			ret = genHeader(field,2)~toVarint(ret.length,field)[1..$]~ret;
+			ret = genHeader(field,WireType.lenDelimited)~toVarint(ret.length,field)[1..$]~ret;
 		}
 		return ret;
 	}
@@ -103,13 +106,13 @@ struct Blob {
 					   to!(string)(wireType) ~
 					   " for variable type bytes");
 
-				OBSOLETE_bzip2_data =
+				OBSOLETE_bzip2_data_dep =
 				   fromByteString!(ubyte[])(input);
 			break;
 			default:
 				// rip off unknown fields
 			if(input.length)
-				ufields ~= _toVarint(header)~
+				ufields ~= toVarint(header)~
 				   ripUField(input,getWireType(header));
 			break;
 			}
@@ -121,7 +124,7 @@ struct Blob {
 		if (!merger.raw_size.isNull) raw_size = merger.raw_size;
 		if (!merger.zlib_data.isNull) zlib_data = merger.zlib_data;
 		if (!merger.lzma_data.isNull) lzma_data = merger.lzma_data;
-		if (!merger.OBSOLETE_bzip2_data.isNull) OBSOLETE_bzip2_data = merger.OBSOLETE_bzip2_data;
+		if (!merger.OBSOLETE_bzip2_data_dep.isNull) OBSOLETE_bzip2_data_dep = merger.OBSOLETE_bzip2_data_dep;
 	}
 
 	static Blob opCall(ref ubyte[]input) {
@@ -149,7 +152,7 @@ struct BlobHeader {
 		ret ~= ufields;
 		// take care of header and length generation if necessary
 		if (field != -1) {
-			ret = genHeader(field,2)~toVarint(ret.length,field)[1..$]~ret;
+			ret = genHeader(field,WireType.lenDelimited)~toVarint(ret.length,field)[1..$]~ret;
 		}
 		return ret;
 	}
@@ -198,7 +201,7 @@ struct BlobHeader {
 			default:
 				// rip off unknown fields
 			if(input.length)
-				ufields ~= _toVarint(header)~
+				ufields ~= toVarint(header)~
 				   ripUField(input,getWireType(header));
 			break;
 			}

@@ -62,7 +62,7 @@ struct HeaderBlock {
 		ret ~= ufields;
 		// take care of header and length generation if necessary
 		if (field != -1) {
-			ret = genHeader(field,2)~toVarint(ret.length,field)[1..$]~ret;
+			ret = genHeader(field,WireType.lenDelimited)~toVarint(ret.length,field)[1..$]~ret;
 		}
 		return ret;
 	}
@@ -169,7 +169,7 @@ struct HeaderBlock {
 			default:
 				// rip off unknown fields
 			if(input.length)
-				ufields ~= _toVarint(header)~
+				ufields ~= toVarint(header)~
 				   ripUField(input,getWireType(header));
 			break;
 			}
@@ -216,7 +216,7 @@ struct HeaderBBox {
 		ret ~= ufields;
 		// take care of header and length generation if necessary
 		if (field != -1) {
-			ret = genHeader(field,2)~toVarint(ret.length,field)[1..$]~ret;
+			ret = genHeader(field,WireType.lenDelimited)~toVarint(ret.length,field)[1..$]~ret;
 		}
 		return ret;
 	}
@@ -271,7 +271,7 @@ struct HeaderBBox {
 			default:
 				// rip off unknown fields
 			if(input.length)
-				ufields ~= _toVarint(header)~
+				ufields ~= toVarint(header)~
 				   ripUField(input,getWireType(header));
 			break;
 			}
@@ -339,7 +339,7 @@ struct PrimitiveBlock {
 		ret ~= ufields;
 		// take care of header and length generation if necessary
 		if (field != -1) {
-			ret = genHeader(field,2)~toVarint(ret.length,field)[1..$]~ret;
+			ret = genHeader(field,WireType.lenDelimited)~toVarint(ret.length,field)[1..$]~ret;
 		}
 		return ret;
 	}
@@ -442,7 +442,7 @@ struct PrimitiveBlock {
 			default:
 				// rip off unknown fields
 			if(input.length)
-				ufields ~= _toVarint(header)~
+				ufields ~= toVarint(header)~
 				   ripUField(input,getWireType(header));
 			break;
 			}
@@ -536,7 +536,7 @@ struct PrimitiveGroup {
 		ret ~= ufields;
 		// take care of header and length generation if necessary
 		if (field != -1) {
-			ret = genHeader(field,2)~toVarint(ret.length,field)[1..$]~ret;
+			ret = genHeader(field,WireType.lenDelimited)~toVarint(ret.length,field)[1..$]~ret;
 		}
 		return ret;
 	}
@@ -688,7 +688,7 @@ struct PrimitiveGroup {
 			default:
 				// rip off unknown fields
 			if(input.length)
-				ufields ~= _toVarint(header)~
+				ufields ~= toVarint(header)~
 				   ripUField(input,getWireType(header));
 			break;
 			}
@@ -723,7 +723,7 @@ struct StringTable {
 		ret ~= ufields;
 		// take care of header and length generation if necessary
 		if (field != -1) {
-			ret = genHeader(field,2)~toVarint(ret.length,field)[1..$]~ret;
+			ret = genHeader(field,WireType.lenDelimited)~toVarint(ret.length,field)[1..$]~ret;
 		}
 		return ret;
 	}
@@ -756,7 +756,7 @@ struct StringTable {
 			default:
 				// rip off unknown fields
 			if(input.length)
-				ufields ~= _toVarint(header)~
+				ufields ~= toVarint(header)~
 				   ripUField(input,getWireType(header));
 			break;
 			}
@@ -813,7 +813,7 @@ struct Info {
 		ret ~= ufields;
 		// take care of header and length generation if necessary
 		if (field != -1) {
-			ret = genHeader(field,2)~toVarint(ret.length,field)[1..$]~ret;
+			ret = genHeader(field,WireType.lenDelimited)~toVarint(ret.length,field)[1..$]~ret;
 		}
 		return ret;
 	}
@@ -884,7 +884,7 @@ struct Info {
 			default:
 				// rip off unknown fields
 			if(input.length)
-				ufields ~= _toVarint(header)~
+				ufields ~= toVarint(header)~
 				   ripUField(input,getWireType(header));
 			break;
 			}
@@ -952,7 +952,7 @@ struct DenseInfo {
 		ret ~= ufields;
 		// take care of header and length generation if necessary
 		if (field != -1) {
-			ret = genHeader(field,2)~toVarint(ret.length,field)[1..$]~ret;
+			ret = genHeader(field,WireType.lenDelimited)~toVarint(ret.length,field)[1..$]~ret;
 		}
 		return ret;
 	}
@@ -1077,7 +1077,7 @@ struct DenseInfo {
 			default:
 				// rip off unknown fields
 			if(input.length)
-				ufields ~= _toVarint(header)~
+				ufields ~= toVarint(header)~
 				   ripUField(input,getWireType(header));
 			break;
 			}
@@ -1112,7 +1112,7 @@ struct ChangeSet {
 		ret ~= ufields;
 		// take care of header and length generation if necessary
 		if (field != -1) {
-			ret = genHeader(field,2)~toVarint(ret.length,field)[1..$]~ret;
+			ret = genHeader(field,WireType.lenDelimited)~toVarint(ret.length,field)[1..$]~ret;
 		}
 		return ret;
 	}
@@ -1143,7 +1143,7 @@ struct ChangeSet {
 			default:
 				// rip off unknown fields
 			if(input.length)
-				ufields ~= _toVarint(header)~
+				ufields ~= toVarint(header)~
 				   ripUField(input,getWireType(header));
 			break;
 			}
@@ -1199,7 +1199,7 @@ struct Node {
 		ret ~= ufields;
 		// take care of header and length generation if necessary
 		if (field != -1) {
-			ret = genHeader(field,2)~toVarint(ret.length,field)[1..$]~ret;
+			ret = genHeader(field,WireType.lenDelimited)~toVarint(ret.length,field)[1..$]~ret;
 		}
 		return ret;
 	}
@@ -1301,7 +1301,7 @@ struct Node {
 			default:
 				// rip off unknown fields
 			if(input.length)
-				ufields ~= _toVarint(header)~
+				ufields ~= toVarint(header)~
 				   ripUField(input,getWireType(header));
 			break;
 			}
@@ -1366,7 +1366,7 @@ struct DenseNodes {
 		ret ~= ufields;
 		// take care of header and length generation if necessary
 		if (field != -1) {
-			ret = genHeader(field,2)~toVarint(ret.length,field)[1..$]~ret;
+			ret = genHeader(field,WireType.lenDelimited)~toVarint(ret.length,field)[1..$]~ret;
 		}
 		return ret;
 	}
@@ -1478,7 +1478,7 @@ struct DenseNodes {
 			default:
 				// rip off unknown fields
 			if(input.length)
-				ufields ~= _toVarint(header)~
+				ufields ~= toVarint(header)~
 				   ripUField(input,getWireType(header));
 			break;
 			}
@@ -1534,7 +1534,7 @@ struct Way {
 		ret ~= ufields;
 		// take care of header and length generation if necessary
 		if (field != -1) {
-			ret = genHeader(field,2)~toVarint(ret.length,field)[1..$]~ret;
+			ret = genHeader(field,WireType.lenDelimited)~toVarint(ret.length,field)[1..$]~ret;
 		}
 		return ret;
 	}
@@ -1637,7 +1637,7 @@ struct Way {
 			default:
 				// rip off unknown fields
 			if(input.length)
-				ufields ~= _toVarint(header)~
+				ufields ~= toVarint(header)~
 				   ripUField(input,getWireType(header));
 			break;
 			}
@@ -1718,7 +1718,7 @@ struct Relation {
 		ret ~= ufields;
 		// take care of header and length generation if necessary
 		if (field != -1) {
-			ret = genHeader(field,2)~toVarint(ret.length,field)[1..$]~ret;
+			ret = genHeader(field,WireType.lenDelimited)~toVarint(ret.length,field)[1..$]~ret;
 		}
 		return ret;
 	}
@@ -1865,7 +1865,7 @@ struct Relation {
 			default:
 				// rip off unknown fields
 			if(input.length)
-				ufields ~= _toVarint(header)~
+				ufields ~= toVarint(header)~
 				   ripUField(input,getWireType(header));
 			break;
 			}
