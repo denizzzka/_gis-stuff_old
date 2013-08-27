@@ -3,7 +3,7 @@ module map_graph;
 import math.geometry;
 import math.rtree2d;
 import math.graph: Graph, TEdge, TNode;
-import osm: OsmCoords = Coords, encodedToMapCoords;
+import osm: OsmCoords = Coords, encodedToMapCoords, ReadPrimitiveException;
 import map: MapCoords = Coords;
 import cat = categories: Line;
 static import config.map;
@@ -11,7 +11,6 @@ import math.earth: mercator2coords, getSphericalDistance;
 
 import std.algorithm: canFind;
 import std.random: uniform;
-import std.exception: enforce;
 import std.stdio;
 
 
@@ -62,7 +61,9 @@ struct TPolylineDescription( _Coords, _ForeignCoords )
         auto node_id = nodes_ids[ node_idx ];
         
         auto node_ptr = node_id in nodes;
-        enforce( node_ptr, "node id="~to!string( node_id )~" is not found" );
+        
+        if( !node_ptr )
+            throw new ReadPrimitiveException( "polyline node id "~to!string( node_id )~" is not found" );
         
         return node_ptr;
     }        

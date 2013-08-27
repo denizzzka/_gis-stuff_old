@@ -12,7 +12,7 @@ import roads: RoadGraph;
 
 import std.stdio;
 import std.string;
-import std.exception: enforce;
+import std.exception: enforce, Exception;
 import std.bitmanip: bigEndianToNative;
 import std.zlib;
 import std.math: round;
@@ -191,7 +191,8 @@ struct DecodedLine
         {
             auto p = c in nodes_coords;
             
-            enforce( p, "node "~to!string( c )~" is not found" );
+            if( !p )
+                throw new ReadPrimitiveException( "node "~to!string( c )~" is not found" );
             
             res ~= encodedToMapCoords( nodes_coords[ c ] );
         }
@@ -212,7 +213,8 @@ struct DecodedLine
 
 DecodedLine decodeWay( in PrimitiveBlock prim, in Way way )
 {
-    enforce( way.refs.length >= 2, "too short way (nodes number: "~to!string( way.refs.length )~")" );
+    if( way.refs.length < 2 )
+        throw new ReadPrimitiveException( "too short way (nodes number: "~to!string( way.refs.length )~")" );
     
     DecodedLine res;
     
@@ -370,7 +372,7 @@ Region getRegion( string filename, bool verbose )
                                 break;
                         }
                     }
-                    catch( Exception e )
+                    catch( ReadPrimitiveException e )
                     {
                         writeln("Way ", w.id, " excluded: ", e.msg );
                         continue;
@@ -391,4 +393,13 @@ Map getMap( string[] filenames, bool verbose )
         res.regions ~= getRegion( s, verbose );
     
     return res;
+}
+
+private
+class ReadPrimitiveException : Exception
+{
+    this( in string msg )
+    {
+        super( msg );
+    }
 }
