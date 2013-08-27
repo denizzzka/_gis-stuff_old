@@ -5,6 +5,7 @@ import math.rtree2d;
 import cat = categories;
 import roads: RoadGraph;
 static import config.map;
+static import config.converter;
 static import math.reduce_points;
 
 debug(map) import std.stdio;
@@ -211,13 +212,14 @@ class TPrepareRoads( Descr, AACoords, IDstruct )
         auto to_layers = config.map.polylines.getProperty( road_descr.type ).layers;
         
         foreach( n; to_layers )
-            if( !n )
-                roads_to_store[n] ~= road_descr;
-            else
-            {
-                generalize( road_descr, nodes_coords, n * n * 2  );
-                roads_to_store[n] ~= road_descr;
-            }
+        {
+            auto epsilon = config.converter.layersGeneralization[n];
+            
+            if( epsilon )
+                generalize( road_descr, nodes_coords, epsilon );
+                
+            roads_to_store[n] ~= road_descr;
+        }
     }
     
     private
