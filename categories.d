@@ -1,5 +1,5 @@
 
-enum Point
+enum Point : ubyte
 {
     OTHER,
     SHOP,
@@ -8,7 +8,7 @@ enum Point
     UNSUPPORTED
 }
 
-enum Line
+enum Line : ubyte
 {
     OTHER, // just line
     
