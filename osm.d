@@ -381,8 +381,7 @@ Region getRegion( string filename, bool verbose )
         }
     }
     
-    // тут надо инитить графы дорог!
-    //res.addRoad( nodes_coords, roads );
+    res.fillRoads( nodes_coords, roads );
     
     return res;
 }

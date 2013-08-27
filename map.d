@@ -132,6 +132,19 @@ struct Layer
     {
         return POI.getBoundary.getCircumscribed( lines.getBoundary );
     }
+    
+    private
+    void fillRoadsRTree()
+    {
+        auto descriptors = road_graph.getDescriptors();
+        
+        foreach( descr; descriptors )
+        {
+            auto bbox = descr.getBoundary( road_graph );
+            
+            roads.addObject( bbox, descr );
+        }
+    }
 }
 
 class Region
@@ -203,10 +216,13 @@ class Region
     }
     */
     
-    void fillRoads( AACoords )( in AACoords nodes_coords, PrepareRoads prepared )
+    void fillRoads( AACoords, PrepareRoads )( in AACoords nodes_coords, PrepareRoads prepared )
     {
-        foreach( i, c; layers )
+        foreach( i, ref c; layers )
+        {
             c.road_graph = new RGraph( nodes_coords, prepared.roads_to_store[i] );
+            c.fillRoadsRTree();
+        }
     }
 }
 

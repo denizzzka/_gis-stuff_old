@@ -147,9 +147,9 @@ class POV
         
         foreach( ref region; map.regions )
         {
-            auto curr = RGraph.Polylines( region.layers[0].road_graph );
-            
             auto num = getCurrentLayerNum();
+            
+            auto curr = RGraph.Polylines( region.layers[ num ].road_graph );
             
             curr.descriptors ~= region.layers[ num ].roads.search( boundary_meters );
             res ~= curr;
