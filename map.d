@@ -191,31 +191,6 @@ class Region
             layers[ idx ].lines.addLineToStorage( line );
     }
     
-    /*
-    @disable
-    private
-    void addRoadDescriptor( RGraph.PolylineDescriptor descr )
-    {
-        auto to_layers = descr.getPolyline( road_graph ).properties.layers;
-        auto bbox = descr.getBoundary( road_graph );
-        
-        foreach( n; to_layers )
-            layers[ n ].roads.addObject( bbox, descr );
-    }
-    
-    @disable
-    private
-    void addRoadGraph( RGraph newRoadGraph )
-    {
-        road_graph = newRoadGraph;
-        
-        auto descriptors = road_graph.getDescriptors();
-        
-        foreach( c; descriptors )
-            addRoadDescriptor( c );
-    }
-    */
-    
     void fillRoads( AACoords, PrepareRoads )( in AACoords nodes_coords, PrepareRoads prepared )
     {
         foreach( i, ref c; layers )
