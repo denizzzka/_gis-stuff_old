@@ -211,10 +211,18 @@ class TPrepareRoads( Descr )
         
         foreach( n; to_layers )
         {
-            //if( n == 0 )
-                roads_to_store[n] ~= road_descr;
+            //if( n != 0 )
+            
+            roads_to_store[n] ~= road_descr;
         }
     }
+    
+    /*
+    private
+    static Descr generalize( in Descr orig )
+    {
+    }
+    */
 }
 
 class Map

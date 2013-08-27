@@ -19,7 +19,27 @@ import std.math: round;
 import std.algorithm: canFind;
 
 
+alias Vector2D!long Coords;
 alias ulong OSM_id;
+
+@disable
+struct OSMCoords_id
+{
+    Coords[ OSM_id ] aa;
+    OSM_id id;
+    
+    Coords coords()
+    {
+        auto p = id in aa;
+        
+        if( !p )
+            throw new ReadPrimitiveException( "node "~to!string( id )~" is not found" );
+                
+        return aa[ id ];
+    }
+    
+    alias coords this;
+}
 
 struct PureBlob
 {
@@ -233,8 +253,6 @@ DecodedLine decodeWay( in PrimitiveBlock prim, in Way way )
     
     return res;
 }
-
-alias Vector2D!long Coords;
 
 private auto decodeGranularCoords( in PrimitiveBlock pb, in Node n )
 {
