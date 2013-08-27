@@ -211,30 +211,29 @@ class TPrepareRoads( Descr, AACoords, IDstruct )
         auto to_layers = config.map.polylines.getProperty( road_descr.type ).layers;
         
         foreach( n; to_layers )
-        {
-            if( n != 0 )
-                roads_to_store[n] ~= generalize( road_descr, nodes_coords, n * 100 );
-            else
+            if( !n )
                 roads_to_store[n] ~= road_descr;
-        }
+            else
+            {
+                generalize( road_descr, nodes_coords, n * n * 2  );
+                roads_to_store[n] ~= road_descr;
+            }
     }
     
     private
-    static Descr generalize( Descr descr, in AACoords nodes_coords, in real epsilon )
+    static void generalize( ref Descr descr, in AACoords nodes_coords, in real epsilon )
     {
         IDstruct[] points;
         
         foreach( c; descr.nodes_ids )
             points ~= IDstruct( nodes_coords, c );
             
-        auto reduced = math.reduce_points.reduce( points, epsilon );
-        
         descr.nodes_ids.destroy;
         
-        foreach( c; points )
+        auto reduced = math.reduce_points.reduce( points, epsilon );
+        
+        foreach( c; reduced )
             descr.nodes_ids ~= c.id;
-            
-        return descr;
     }
 }
 
