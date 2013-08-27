@@ -22,13 +22,12 @@ import std.algorithm: canFind;
 alias Vector2D!long Coords;
 alias ulong OSM_id;
 
-@disable
 struct OSMCoords_id
 {
-    Coords[ OSM_id ] aa;
+    const Coords[ OSM_id ] aa;
     OSM_id id;
     
-    Coords coords()
+    Coords getCoords()
     {
         auto p = id in aa;
         
@@ -38,7 +37,12 @@ struct OSMCoords_id
         return aa[ id ];
     }
     
-    alias coords this;
+    MapCoords getMapCoords()
+    {
+        return encodedToMapCoords( getCoords() );
+    }
+    
+    alias getMapCoords this;
 }
 
 struct PureBlob
@@ -346,7 +350,7 @@ Region getRegion( string filename, bool verbose )
     Coords[OSM_id] nodes_coords;
     
     alias TPolylineDescription!( MapCoords, Coords ) RoadDescription;
-    auto roads = new TPrepareRoads!RoadDescription;
+    auto roads = new TPrepareRoads!( RoadDescription, Coords[OSM_id], OSMCoords_id );
     
     while(true)
     {

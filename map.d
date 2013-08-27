@@ -5,6 +5,7 @@ import math.rtree2d;
 import cat = categories;
 import roads: RoadGraph;
 static import config.map;
+static import math.reduce_points;
 
 debug(map) import std.stdio;
 
@@ -201,28 +202,40 @@ class Region
     }
 }
 
-class TPrepareRoads( Descr )
+class TPrepareRoads( Descr, AACoords, IDstruct )
 {
     private Descr[][ Region.layers.length ] roads_to_store;
     
-    void addRoad( AACoords )( Descr road_descr, in AACoords nodes_coords )
+    void addRoad( Descr road_descr, in AACoords nodes_coords )
     {
         auto to_layers = config.map.polylines.getProperty( road_descr.type ).layers;
         
         foreach( n; to_layers )
         {
-            //if( n != 0 )
+            if( n != 0 )
+                roads_to_store[n] ~= generalize( road_descr, nodes_coords, 10 );
             
             roads_to_store[n] ~= road_descr;
         }
     }
     
-    /*
     private
-    static Descr generalize( in Descr orig )
+    static Descr generalize( Descr descr, in AACoords nodes_coords, in real epsilon )
     {
+        IDstruct[] points;
+        
+        foreach( c; descr.nodes_ids )
+            points ~= IDstruct( nodes_coords, c );
+            
+        auto reduced = math.reduce_points.reduce( points, epsilon );
+        
+        descr.nodes_ids.destroy;
+        
+        foreach( c; points )
+            descr.nodes_ids ~= c.id;
+            
+        return descr;
     }
-    */
 }
 
 class Map
