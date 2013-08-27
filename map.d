@@ -119,6 +119,8 @@ struct Layer
     LinesStorage lines;
     RoadsStorage roads;
     
+    RGraph road_graph;
+    
     void init()
     {
         POI = new PointsStorage;
@@ -177,6 +179,7 @@ class Region
             layers[ idx ].lines.addLineToStorage( line );
     }
     
+    @disable
     private
     void addRoadDescriptor( RGraph.PolylineDescriptor descr )
     {
@@ -187,6 +190,8 @@ class Region
             layers[ n ].roads.addObject( bbox, descr );
     }
     
+    @disable
+    private
     void addRoadGraph( RGraph newRoadGraph )
     {
         road_graph = newRoadGraph;
@@ -195,6 +200,18 @@ class Region
         
         foreach( c; descriptors )
             addRoadDescriptor( c );
+    }
+    
+    void addRoad(Descr)( Descr road_descr )
+    {
+        static Descr[ layers.length ][] roads_to_store;
+        
+        auto to_layers = config.map.polylines.getProperty( road_descr.type ).layers;
+        
+        foreach( n; to_layers )
+        {
+            
+        }
     }
 }
 

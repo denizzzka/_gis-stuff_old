@@ -328,7 +328,6 @@ Region getRegion( string filename, bool verbose )
     Coords[OSM_id] nodes_coords;
     
     alias TPolylineDescription!( MapCoords, Coords ) RoadDescription;
-    RoadDescription[] roads;
     
     while(true)
     {
@@ -368,7 +367,8 @@ Region getRegion( string filename, bool verbose )
                                 
                             case ROAD:
                                 auto type = getLineType( prim.stringtable, decoded );
-                                roads ~= RoadDescription( decoded.coords_idx, type, nodes_coords );
+                                auto road = RoadDescription( decoded.coords_idx, type, nodes_coords );
+                                res.addRoad( road );
                                 break;
                         }
                     }
@@ -380,7 +380,8 @@ Region getRegion( string filename, bool verbose )
         }
     }
     
-    res.addRoadGraph = new RGraph( nodes_coords, roads );
+    // тут надо инитить графы дорог!
+    //res.addRoad( nodes_coords, roads );
     
     return res;
 }
