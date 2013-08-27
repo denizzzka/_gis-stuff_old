@@ -25,7 +25,7 @@ struct TPolylineDescription( _Coords, _ForeignCoords )
     cat.Line type;
     ulong way_id;
     
-    this( ulong[] nodes_ids, cat.Line type, in ForeignCoords[long] nodes = null )
+    this( ulong[] nodes_ids, cat.Line type, in ForeignCoords[ulong] nodes = null )
     in
     {
         assert( nodes_ids.length >= 2 );
@@ -50,7 +50,7 @@ struct TPolylineDescription( _Coords, _ForeignCoords )
     
     private
     const (ForeignCoords*) getNodeForeignCoords(
-            in ForeignCoords[long] nodes,
+            in ForeignCoords[ulong] nodes,
             in size_t node_idx
         ) const
     in
@@ -68,12 +68,12 @@ struct TPolylineDescription( _Coords, _ForeignCoords )
     }        
     
     private
-    Coords getNode( in ForeignCoords[long] nodes, in size_t node_idx ) const
+    Coords getNode( in ForeignCoords[ulong] nodes, in size_t node_idx ) const
     {
         return encodedToMapCoords( *getNodeForeignCoords( nodes, node_idx ) );
     }
     
-    BBox getBoundary( in ForeignCoords[long] nodes ) const
+    BBox getBoundary( in ForeignCoords[ulong] nodes ) const
     in
     {
         assert( nodes_ids.length >= 2 );
@@ -228,7 +228,7 @@ class TMapGraph( _Coords, Node )
     }
     
     this( ForeignCoords, PolylineDescription )(
-            in ForeignCoords[long] nodes,
+            in ForeignCoords[ulong] nodes,
             scope PolylineDescription[] descriptions
         )
     in
@@ -308,7 +308,7 @@ class TMapGraph( _Coords, Node )
 private
 DescriptionsTree.Payload[] preparePolylines(DescriptionsTree, ForeignCoords)(
         in DescriptionsTree lines_rtree,
-        in ForeignCoords[long] nodes
+        in ForeignCoords[ulong] nodes
     )
 {
     alias DescriptionsTree.Payload PolylineDescription;
@@ -366,7 +366,7 @@ unittest
             FC(4,0), FC(3,1), FC(1,3), FC(2,4) // second line
         ];
     
-    FC[long] nodes;
+    FC[ulong] nodes;
     
     foreach( i, c; points )
         nodes[ i * 10 ] = c;
@@ -390,7 +390,7 @@ private
 void descriptionsToPolylineGraph( Graph, PolylineDescription, ForeignCoords )(
         ref Graph graph,
         in PolylineDescription[] descriptions,
-        in ForeignCoords[long] nodes
+        in ForeignCoords[ulong] nodes
     )
 in
 {

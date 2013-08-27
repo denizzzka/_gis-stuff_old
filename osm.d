@@ -19,6 +19,8 @@ import std.math: round;
 import std.algorithm: canFind;
 
 
+alias ulong OSM_id;
+
 struct PureBlob
 {
     string type;
@@ -89,7 +91,7 @@ ubyte[] readOSMData( ref File f )
 Node[] decodeDenseNodes(DenseNodesArray)( DenseNodesArray dn )
 {
     Node[] res;
-    long curr_id = 0;
+    OSM_id curr_id = 0;
     Coords curr;
     
     Tags[] tags;
@@ -171,7 +173,7 @@ unittest
 
 struct DecodedLine
 {
-    ulong[] coords_idx;
+    OSM_id[] coords_idx;
     LineClass classification;
     Tag[] tags;
     
@@ -181,7 +183,7 @@ struct DecodedLine
     }
     
     private
-    MapCoords[] getCoords( in Coords[long] nodes_coords ) const
+    MapCoords[] getCoords( in Coords[ OSM_id ] nodes_coords ) const
     {
         MapCoords[] res;
         
@@ -198,7 +200,7 @@ struct DecodedLine
     }
     
     private
-    Line createLine( in PrimitiveBlock prim, in Coords[long] nodes_coords ) const
+    Line createLine( in PrimitiveBlock prim, in Coords[ OSM_id ] nodes_coords ) const
     {
         return Line(
                 getCoords( nodes_coords ),
@@ -215,7 +217,7 @@ DecodedLine decodeWay( in PrimitiveBlock prim, in Way way )
     DecodedLine res;
     
     // decode index delta
-    long curr = 0;
+    OSM_id curr = 0;
     foreach( c; way.refs )
     {
         curr += c;
@@ -278,7 +280,7 @@ MapCoords encodedToMapCoords( in Coords c )
 void addPoints(
         ref Region region,
         ref PrimitiveBlock prim,
-        ref Coords[long] nodes_coords,
+        ref Coords[OSM_id] nodes_coords,
         Node[] nodes
     )
 {
@@ -321,7 +323,7 @@ Region getRegion( string filename, bool verbose )
     auto h = readOSMHeader( f );
     
     auto res = new Region;
-    Coords[long] nodes_coords;
+    Coords[OSM_id] nodes_coords;
     
     alias TPolylineDescription!( MapCoords, Coords ) RoadDescription;
     RoadDescription[] roads;
