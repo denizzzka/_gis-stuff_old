@@ -137,7 +137,6 @@ struct Layer
 class Region
 {
     Layer[5] layers;
-    RGraph road_graph;
     
     this()
     {
@@ -179,6 +178,7 @@ class Region
             layers[ idx ].lines.addLineToStorage( line );
     }
     
+    /*
     @disable
     private
     void addRoadDescriptor( RGraph.PolylineDescriptor descr )
@@ -201,11 +201,18 @@ class Region
         foreach( c; descriptors )
             addRoadDescriptor( c );
     }
+    */
+    
+    void fillRoads( AACoords )( in AACoords nodes_coords, PrepareRoads prepared )
+    {
+        foreach( i, c; layers )
+            c.road_graph = new RGraph( nodes_coords, prepared.roads_to_store[i] );
+    }
 }
 
-class PrepareRoads( Descr )
+class TPrepareRoads( Descr )
 {
-    Descr[][ Region.layers.length ] roads_to_store;
+    private Descr[][ Region.layers.length ] roads_to_store;
     
     void addRoad( AACoords )( Descr road_descr, in AACoords nodes_coords )
     {

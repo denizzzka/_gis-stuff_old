@@ -4,7 +4,7 @@ import osmpbf.fileformat;
 import osmpbf.osmformat;
 import math.geometry;
 import math.earth;
-import map: Map, Region, BBox, Point, PointsStorage, Line, LinesStorage, addPoint, addLineToStorage, MapCoords = Coords, RGraph, PrepareRoads;
+import map: Map, Region, BBox, Point, PointsStorage, Line, LinesStorage, addPoint, addLineToStorage, MapCoords = Coords, RGraph, TPrepareRoads;
 import cat = categories;
 import osm_tags_parsing;
 import map_graph: TPolylineDescription;
@@ -328,7 +328,7 @@ Region getRegion( string filename, bool verbose )
     Coords[OSM_id] nodes_coords;
     
     alias TPolylineDescription!( MapCoords, Coords ) RoadDescription;
-    auto roads = new PrepareRoads!RoadDescription;
+    auto roads = new TPrepareRoads!RoadDescription;
     
     while(true)
     {

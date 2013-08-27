@@ -35,7 +35,7 @@ class POV
     
     void updatePath()
     {
-        auto g = &map.regions[0].road_graph;
+        auto g = &map.regions[0].layers[0].road_graph;
         
         do
             found_path = g.findPath( g.getRandomNodeIdx, g.getRandomNodeIdx );
@@ -147,7 +147,7 @@ class POV
         
         foreach( ref region; map.regions )
         {
-            auto curr = RGraph.Polylines( region.road_graph );
+            auto curr = RGraph.Polylines( region.layers[0].road_graph );
             
             auto num = getCurrentLayerNum();
             
@@ -167,7 +167,7 @@ class POV
         
         foreach( descriptor; found_path )
             res ~= Line(
-                    descriptor.getPoints( map.regions[0].road_graph ),
+                    descriptor.getPoints( map.regions[0].layers[0].road_graph ),
                     cat.Line.PATH, ""
                 );
             
