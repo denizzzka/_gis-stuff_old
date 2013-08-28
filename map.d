@@ -3,6 +3,7 @@ module map;
 import math.geometry;
 import math.rtree2d;
 import cat = categories;
+import map_graph: LineGraph;
 import roads: RoadGraph;
 static import config.map;
 static import config.converter;
