@@ -214,7 +214,7 @@ struct TPolylineDescriptor( MapGraph )
     }
 }
 
-class TMapGraph( _Node )
+class TMapGraph( _Node, alias CREATE_EDGE )
 {
     alias _Node Node;
     alias Node.Point.Coords Coords;
@@ -254,7 +254,7 @@ class TMapGraph( _Node )
         
         graph = new G;
         
-        graph.descriptionsToPolylineGraph( prepared, nodes );
+        graph.descriptionsToPolylineGraph!CREATE_EDGE( prepared, nodes );
     }
     
     PolylineDescriptor[] getDescriptors() const
@@ -346,7 +346,7 @@ unittest
     alias TEdge!( Polyline ) Edge;
     alias TNode!( Edge, Point ) Node;
     
-    alias TMapGraph!( Node ) G;
+    alias TMapGraph!( Node, createEdge ) G;
     
     FC[] points = [
             FC(0,0), FC(1,1), FC(2,2), FC(3,3), FC(4,4), // first line
@@ -374,7 +374,7 @@ unittest
 }
 
 private
-void descriptionsToPolylineGraph( Graph, PolylineDescription, ForeignCoords )(
+void descriptionsToPolylineGraph( alias CREATE_EDGE, Graph, PolylineDescription, ForeignCoords )(
         ref Graph graph,
         in PolylineDescription[] descriptions,
         in ForeignCoords[ulong] nodes
@@ -419,16 +419,23 @@ body
         for( auto i = 1; i < line.nodes_ids.length - 1; i++ )
             points ~= encodedToMapCoords( nodes[ line.nodes_ids[i] ] );
         
-        auto r = Polyline( points, line.type );
-        
         auto from_node_idx = addPoint( line.nodes_ids[0] );
         auto to_node_idx = addPoint( line.nodes_ids[$-1] );
         
-        Graph.Edge.Direction forward = { to_node: to_node_idx, weight: 1.0 };
-        Graph.Edge.Direction backward = { to_node: from_node_idx, weight: 1.0 };
+        auto edge = CREATE_EDGE!( Graph.Edge )( from_node_idx, to_node_idx );
         
-        Graph.Edge edge = { forward: forward, backward: backward, payload: r };
+        edge.payload = Polyline( points, line.type );
         
         graph.addBidirectionalEdge( edge );
     }
+}
+
+Edge createEdge( Edge )( in size_t from_node_idx, in size_t to_node_idx )
+{
+    Edge.Direction forward = { to_node: to_node_idx, weight: 1.0 };
+    Edge.Direction backward = { to_node: from_node_idx, weight: 1.0 };
+    
+    Edge edge = { forward: forward, backward: backward };
+    
+    return edge;
 }
