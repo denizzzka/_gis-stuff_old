@@ -241,7 +241,7 @@ unittest
     
     auto s = g.findPath( from_idx, goal_idx );
     
-    writeln( g.nodes[9].edges );
+    writeln( g.nodes[9].edges_storage );
     
     assert( s != null );
     assert( s.length == 7 );
