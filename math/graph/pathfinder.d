@@ -192,42 +192,51 @@ unittest
     auto g = new G;
     
     immutable size_t width = 5;
-    size_t[ width ] upper_row;
+    size_t[ width+1 ] row;
     
-    size_t from;
+    size_t from_idx;
+    size_t goal_idx;
     
-    for( auto s = 0; s <= 10; s+=10 )
-        for( auto y=0; y<5; y++ )
-            for( auto x=0; x<5; x++ )
+    for( auto y=0; y<5; y++ )
+        for( auto x=0; x<5; x++ )
+        {
+            writeln("x=", x, " y=", y);
+            
+            if( x == 0 && y == 0 )
             {
-                if( from == 0 )
-                {
-                    DNP from_point = { coords: Vector2D!float(x+s, y) };
-                    from = g.addPoint( from_point );
-                }
-                
-                DNP to_up = { coords: Vector2D!float(x+s, y+1) };
-                DNP to_right = { coords: Vector2D!float(x+1+s, y) };
-                
-                upper_row[x] = g.addPoint( to_up );
-                size_t to_right_idx = g.addPoint( to_right );
-                
-                auto payload = "payload_string";
-                
-                Edge edge1 = { weight: 5, to_node: upper_row[x], payload: payload };
-                Edge edge2 = { weight: 4.7, to_node: to_right_idx, payload: payload };
-                
-                g.addEdge( from, edge1 );
-                g.addEdge( from, edge2 );
-                
-                from = to_right_idx;
+                DNP from_point = { coords: Vector2D!float(x, y) };
+                row[x] = g.addPoint( from_point );
             }
-
-    DNP f_p = { Vector2D!float(2,0) };
-    DNP g_p = { Vector2D!float(4,4) };
+            
+            size_t from = row[x];
+            
+            // saving test points:
+            if( x == 2 && y == 0 ) from_idx = from;
+            if( x == 4 && y == 4 ) goal_idx = from;
+            
+            DNP to_up = { coords: Vector2D!float(x, y+1) };
+            DNP to_right = { coords: Vector2D!float(x+1, y) };
+            
+            row[x] = g.addPoint( to_up );
+            row[x+1] = g.addPoint( to_right );
+            
+            auto payload = "payload_string";
+            
+            Edge up_edge = { weight: 5, to_node: row[x], payload: payload };
+            Edge right_edge = { weight: 4.7, to_node: row[x+1], payload: payload };
+            
+            void addEdgeF( size_t from, Edge edge )
+            {
+                writeln( "from coords=", g.nodes[ from ].point.coords,
+                         "edge to coords=", g.nodes[ edge.to_node ].point.coords );
+                g.addEdge( from, edge );
+            }
+            
+            addEdgeF( from, up_edge );
+            addEdgeF( from, right_edge );
+        }
     
-    size_t from_idx = 0;
-    size_t goal_idx = 24;
+    writeln( "from=", from_idx, " goal=", goal_idx );
     
     auto s = g.findPath( from_idx, goal_idx );
     
