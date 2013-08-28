@@ -1,10 +1,49 @@
 module math.graph.pathfinder;
 
-import math.graph.graph;
+import math.graph.graph: Graph;
 
 import std.algorithm: canFind;
 debug(graph) import std.stdio;
 
+
+struct TNode( _Edge, _Point )
+{
+    alias _Point Point;
+    alias _Edge Edge;
+    
+    Edge[] edges_storage;
+    
+    Point point;
+    
+    struct EdgesRange // TODO: remove it?
+    {
+        private
+        {
+            const TNode* node;
+            size_t edge_idx;
+        }
+        
+        ref const (Edge) opIndex( size_t idx ) const
+        {
+            return node.edges_storage[ edge_idx ];
+        }
+        
+        ref const (Edge) front() { return opIndex( edge_idx ); }
+        void popFront() { ++edge_idx; }
+        bool empty() const { return edge_idx >= length; }
+        size_t length() const { return node.edges_storage.length; }
+    }
+    
+    EdgesRange edges( size_t unused ) const
+    {
+        return EdgesRange( &this, 0 );
+    }
+    
+    void addEdge( Edge edge )
+    {
+        edges_storage ~= edge;
+    }
+}
 
 struct PathElement
 {
