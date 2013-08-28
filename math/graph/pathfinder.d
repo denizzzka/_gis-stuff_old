@@ -15,7 +15,7 @@ struct TNode( _Edge, _Point )
     
     Point point;
     
-    struct EdgesRange // TODO: remove it?
+    struct LogicalEdgesRange
     {
         private
         {
@@ -34,9 +34,9 @@ struct TNode( _Edge, _Point )
         size_t length() const { return node.edges_storage.length; }
     }
     
-    EdgesRange logicalEdges( size_t unused ) const
+    LogicalEdgesRange logicalEdges( size_t unused ) const
     {
-        return EdgesRange( &this, 0 );
+        return LogicalEdgesRange( &this );
     }
     
     void addEdge( Edge edge )
