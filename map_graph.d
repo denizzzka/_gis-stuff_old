@@ -222,7 +222,7 @@ class TMapGraph( _Node )
     alias Box!Coords BBox;
     alias TPolylineDescriptor!TMapGraph PolylineDescriptor;
     
-    alias Graph!Node G;    
+    alias Graph!Node G;
     
     public // TODO: need to be a package
     {
