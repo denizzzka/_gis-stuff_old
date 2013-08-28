@@ -85,10 +85,10 @@ void createEdge( Graph, PolylineDescriptor, Payload )(
         PolylineDescriptor descr,
         Payload payload )
 {
-    Edge.Direction forward = { to_node: to_node_idx, weight: 1.0 };
-    Edge.Direction backward = { to_node: from_node_idx, weight: 1.0 };
+    Graph.Edge.Direction forward = { to_node: to_node_idx, weight: 1.0 };
+    Graph.Edge.Direction backward = { to_node: from_node_idx, weight: 1.0 };
     
-    Edge edge = { forward: forward, backward: backward, payload: payload };
+    Graph.Edge edge = { forward: forward, backward: backward, payload: payload };
     
     graph.addBidirectionalEdge( edge );
 }

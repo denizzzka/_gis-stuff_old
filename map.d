@@ -130,12 +130,13 @@ struct Layer
     {
         POI = new PointsStorage;
         lines = new LinesStorage( 10 );
+        _lines = new _LinesStorage( 10 );
         roads = new RoadsStorage;
     }
     
     BBox boundary() const
     {
-        return POI.getBoundary.getCircumscribed( lines.getBoundary );
+        return POI.getBoundary.getCircumscribed( POI.getBoundary ); // FIXME
     }
     
     private
