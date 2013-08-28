@@ -159,12 +159,18 @@ struct TNode( _Edge, _Point )
         return EdgesRange( &this );
     }
     
-    void addEdge( Edge edge, TNode* otherNode )
+    size_t addEdge( Edge edge )
     {
-        size_t edge_idx = Edge.addToEdges( edge );
+        size_t global_idx = Edge.addToEdges( edge );
         
-        edges_idxs ~= edge_idx;
-        otherNode.edges_idxs ~= edge_idx;
+        addEdge( global_idx );
+        
+        return global_idx;
+    }
+    
+    void addEdge( size_t global_idx )
+    {
+        edges_idxs ~= global_idx;
     }
 }
 

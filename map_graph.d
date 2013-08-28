@@ -390,8 +390,6 @@ body
     
     size_t[ulong] already_stored;
     
-    // собственная функция нужна чтобы исключить пересечение между разными точками с одинаковыми координатами
-    // TODO: наверное, с переходом на ranges эта функция останется, а в graph.d аналогичная будет удалена
     size_t addPoint( ulong node_id )
     {
         auto p = node_id in already_stored;
@@ -431,6 +429,6 @@ body
         
         Graph.Edge edge = { forward: forward, backward: backward, payload: r };
         
-        graph.addEdge( from_node_idx, edge );
+        graph.addBidirectionalEdge!size_t( edge );
     }
 }
