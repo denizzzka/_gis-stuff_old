@@ -1,10 +1,5 @@
 module math.graph.graph;
 
-debug import math.geometry;
-debug(graph) import std.stdio;
-
-import std.algorithm;
-
 
 struct TEdge( _Payload )
 {

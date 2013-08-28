@@ -11,7 +11,7 @@ struct TNode( _Edge, _Point )
     alias _Point Point;
     alias _Edge Edge;
     
-    Edge[] edges_storage;
+    private Edge[] edges_storage;
     
     Point point;
     
@@ -34,7 +34,7 @@ struct TNode( _Edge, _Point )
         size_t length() const { return node.edges_storage.length; }
     }
     
-    EdgesRange edges( size_t unused ) const
+    EdgesRange logicalEdges( size_t unused ) const
     {
         return EdgesRange( &this, 0 );
     }
@@ -121,7 +121,7 @@ private
             closed ~= currNode;
             
             size_t edge_idx = -1;
-            foreach( e; curr.edges( currNode ) )
+            foreach( e; curr.logicalEdges( currNode ) )
             {
                 edge_idx++;
                 

@@ -88,7 +88,7 @@ struct TNode( _Edge, _Point )
     
     const Point point;
     
-    struct EdgesRange
+    struct LogicalEdgesRange
     {
         private
         {
@@ -120,15 +120,49 @@ struct TNode( _Edge, _Point )
         size_t length() const { return node.edges_idxs.length; }
     }
     
-    EdgesRange edges( size_t from_node_idx ) const
+    LogicalEdgesRange logicalEdges( size_t from_node_idx ) const
     {
-        return EdgesRange( &this, from_node_idx );
+        return LogicalEdgesRange( &this, from_node_idx );
+    }
+    
+    struct EdgesRange
+    {
+        private
+        {
+            const TNode* node;
+            size_t edge_idx;
+        }
+        
+        Edge.DirectedEdge front()
+        {
+            return opIndex( edge_idx );
+        }
+        
+        /// BUGS: returns all edges
+        Edge.DirectedEdge opIndex( size_t idx )
+        {
+            size_t global_idx = node.edges_idxs[ idx ];
+            Edge* edge = &Edge.edges[ global_idx ];
+            
+            auto res = Edge.DirectedEdge( global_idx, true );
+            
+            return res;
+        }
+        
+        void popFront() { ++edge_idx; }
+        bool empty() const { return edge_idx >= length; }
+        size_t length() const { return node.edges_idxs.length; }
+    }    
+    
+    EdgesRange edges() const
+    {
+        return EdgesRange( &this );
     }
     
     void addEdge( Edge edge )
     {
         size_t edge_idx = Edge.addToEdges( edge );
-        
+        // FIXME: assign another end of bidirectional edge?
         edges_idxs ~= edge_idx;
     }
 }

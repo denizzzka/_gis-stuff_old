@@ -2,8 +2,8 @@ module map_graph;
 
 import math.geometry;
 import math.rtree2d;
-import math.graph.graph: Graph, TEdge;
-import math.graph.pathfinder;
+import math.graph.graph: Graph, TEdge, TNode;
+//import math.graph.pathfinder;
 import osm: OsmCoords = Coords, encodedToMapCoords, ReadPrimitiveException;
 import map: MapCoords = Coords;
 import cat = categories: Line;
@@ -175,7 +175,7 @@ struct TPolylineDescriptor( MapGraph )
         
         res ~= start_node.point.coords;
         
-        auto edge = start_node.edges( node_idx )[ edge_idx ];
+        auto edge = start_node.edges[ edge_idx ];
         
         foreach( c; edge.payload.points )
             res ~= c;
@@ -209,7 +209,7 @@ struct TPolylineDescriptor( MapGraph )
     {
         auto node = mapGraph.graph.nodes[ node_idx ];
         
-        return node.edges( node_idx )[ edge_idx ];
+        return node.edges[ edge_idx ];
     }
 }
 
@@ -262,7 +262,7 @@ class TMapGraph( _Coords, Node )
         PolylineDescriptor[] res;
         
         foreach( j, ref const node; graph.nodes )
-            for( auto i = 0; i < node.edges( j ).length; i++ )
+            for( auto i = 0; i < node.edges.length; i++ )
                 res ~= PolylineDescriptor( j, i );
         
         return res;
