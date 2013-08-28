@@ -69,8 +69,8 @@ class Window
 		drawPOIs( pois );
 		window.draw( vertex_array );
 		
-		auto lines = scene.getLines();
-		drawLines( lines );
+		//auto lines = scene.getLines();
+		//drawLines( lines );
 		
 		auto roads = scene.getRoads();
 		drawRoads( roads );

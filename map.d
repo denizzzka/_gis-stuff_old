@@ -130,7 +130,7 @@ struct Layer
     {
         POI = new PointsStorage;
         lines = new LinesStorage( 10 );
-        _lines = new _LinesStorage( 10 );
+        _lines = new _LinesStorage;
         roads = new RoadsStorage;
     }
     

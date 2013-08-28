@@ -127,18 +127,21 @@ class POV
         return res;
     }
     
-    Line*[] getLines() const
+    LineGraph.Polylines[] getLines() const
     {
-        Line*[] res;
+        LineGraph.Polylines[] res;
         
         foreach( ref region; map.regions )
         {
             auto num = getCurrentLayerNum();
             
-            res ~= region.layers[ num ].lines.search( boundary_meters );
+            auto curr = LineGraph.Polylines( region.line_graph );
+            
+            curr.descriptors ~= region.layers[ num ]._lines.search( boundary_meters );
+            res ~= curr;
         }
         
-        debug(scene) writeln("found ways number=", res.length);
+        debug(scene) writeln("found lines number=", res.length);
         return res;
     }
     
