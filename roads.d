@@ -162,8 +162,10 @@ struct TNode( _Edge, _Point )
     void addEdge( Edge edge )
     {
         size_t edge_idx = Edge.addToEdges( edge );
-        // FIXME: assign another end of bidirectional edge?
         edges_idxs ~= edge_idx;
+        
+        // FIXME:
+        //otherNode.edges_idxs ~= edge_idx;
     }
 }
 
