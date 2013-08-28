@@ -236,12 +236,9 @@ unittest
     assert( s != null );
     assert( s.length == 7 );
     
-    /*
     DNP g2_p = { Vector2D!float(11,4) };
-    size_t goal2;
-    assert( g.search( g2_p, goal2 ) );
+    size_t goal2_idx = g.addPoint( g2_p );
     
-    s = g.findPath( from, goal2 );
-    assert(!s); // path in unconnected graph can not be found
-    */
+    s = g.findPath( from_idx, goal2_idx );
+    assert(!s); // path to unconnected point can not be found
 }
