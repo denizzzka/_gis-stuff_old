@@ -4,11 +4,10 @@ import osmpbf.fileformat;
 import osmpbf.osmformat;
 import math.geometry;
 import math.earth;
-import map: Map, Region, BBox, Point, PointsStorage, Line, LinesStorage, addPoint, addLineToStorage, MapCoords = Coords, RGraph, TPrepareRoads;
+import map: Map, Region, BBox, Point, PointsStorage, Line, LinesStorage, addPoint, addLineToStorage, MapCoords = Coords, LineGraph, RGraph, TPrepareRoads;
 import cat = categories;
 import osm_tags_parsing;
 import map_graph: TPolylineDescription;
-import roads: RoadGraph;
 
 import std.stdio;
 import std.string;
@@ -349,7 +348,10 @@ Region getRegion( string filename, bool verbose )
     auto res = new Region;
     Coords[OSM_id] nodes_coords;
     
-    alias TPolylineDescription!( MapCoords, Coords ) RoadDescription;
+    alias TPolylineDescription!( MapCoords, Coords ) LineDescription;
+    alias LineDescription RoadDescription;
+    
+    LineDescription[] lines;
     auto roads = new TPrepareRoads!( RoadDescription, Coords[OSM_id], OSMCoords_id );
     
     while(true)
@@ -378,18 +380,17 @@ Region getRegion( string filename, bool verbose )
                     try
                     {
                         auto decoded = decodeWay( prim, w );
+                        auto type = getLineType( prim.stringtable, decoded );
                         
                         with( LineClass )
                         final switch( decoded.classification )
                         {
                             case AREA:
                             case POLYLINE:
-                                Line line = decoded.createLine( prim, nodes_coords );
-                                res.addLine( line );
+                                lines ~= LineDescription( decoded.coords_idx, type, nodes_coords );
                                 break;
                                 
                             case ROAD:
-                                auto type = getLineType( prim.stringtable, decoded );
                                 auto road = RoadDescription( decoded.coords_idx, type, nodes_coords );
                                 roads.addRoad( road, nodes_coords );
                                 break;

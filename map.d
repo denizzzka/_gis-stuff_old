@@ -194,6 +194,11 @@ class Region
             layers[ idx ].lines.addLineToStorage( line );
     }
     
+    void fillLines( AACoords, LinesDescr )( in AACoords nodes_coords, LinesDescr lines_descr )
+    {
+        lines = new LineGraph( nodes_coords, lines_descr );
+    }
+    
     void fillRoads( AACoords, PrepareRoads )( in AACoords nodes_coords, PrepareRoads prepared )
     {
         foreach( i, ref c; layers )
