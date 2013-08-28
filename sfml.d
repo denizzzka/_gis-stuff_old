@@ -3,7 +3,7 @@ module sfml;
 import dsfml.graphics;
 import scene;
 import math.geometry;
-import roads: getRoadPoints;
+import roads: getPointsDirected;
 
 import std.conv: to;
 import std.random;
@@ -144,7 +144,7 @@ class Window
         foreach( roads; allGraphsRoads )
 	    foreach( road_dscr; roads.descriptors )
 	    {
-		auto encoded_points = getRoadPoints( road_dscr, roads.map_graph );
+		auto encoded_points = getPointsDirected( road_dscr, roads.map_graph );
 		
 		Vector2r[] res_points;
 		

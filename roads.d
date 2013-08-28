@@ -156,13 +156,12 @@ struct TNode( _Edge, _Point )
             return opIndex( edge_idx );
         }
         
-        /// BUGS: returns all edges
         Edge.DirectedEdge opIndex( size_t idx )
         {
             size_t global_idx = node.edges_idxs[ idx ];
             Edge* edge = &Edge.edges[ global_idx ];
             
-            bool forward_direction = node_idx == edge.forward.to_node;
+            bool forward_direction = node_idx == edge.backward.to_node;
             
             auto res = Edge.DirectedEdge( global_idx, forward_direction );
             
@@ -174,7 +173,7 @@ struct TNode( _Edge, _Point )
         size_t length() const { return node.edges_idxs.length; }
     }
     
-    //@disable
+    // need to be a package
     EdgesRange edges() const
     {
         return EdgesRange( &this );
@@ -221,7 +220,7 @@ RoadGraph.PolylineDescriptor[] findPath( in RoadGraph road_graph, size_t from_no
     return res;
 }
 
-MapCoords[] getRoadPoints( in RoadGraph.PolylineDescriptor* descr, in RoadGraph roadGraph )
+MapCoords[] getPointsDirected( in RoadGraph.PolylineDescriptor* descr, in RoadGraph roadGraph )
 {
     MapCoords[] res;
     
@@ -238,8 +237,7 @@ MapCoords[] getRoadPoints( in RoadGraph.PolylineDescriptor* descr, in RoadGraph 
         foreach_reverse( c; edge.payload.points )
             res ~= c;
     
-    auto end_node_idx = edge.to_node;
-    res ~= roadGraph.graph.nodes[ end_node_idx ].point.coords;
+    res ~= roadGraph.graph.nodes[ edge.to_node ].point.coords;
     
     return res;
 }
