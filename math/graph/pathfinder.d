@@ -202,13 +202,15 @@ unittest
         {
             writeln("x=", x, " y=", y);
             
+            size_t from;
+            
             if( x == 0 && y == 0 )
             {
                 DNP from_point = { coords: Vector2D!float(x, y) };
-                row[x] = g.addPoint( from_point );
+                from = g.addPoint( from_point );
             }
-            
-            size_t from = row[x];
+            else
+                from = row[x];
             
             // saving test points:
             if( x == 2 && y == 0 ) from_idx = from;
@@ -218,7 +220,9 @@ unittest
             DNP to_right = { coords: Vector2D!float(x+1, y) };
             
             row[x] = g.addPoint( to_up );
-            row[x+1] = g.addPoint( to_right );
+            
+            if( y == 0 )
+                row[x+1] = g.addPoint( to_right );
             
             auto payload = "payload_string";
             
@@ -241,8 +245,10 @@ unittest
     
     auto s = g.findPath( from_idx, goal_idx );
     
-    writeln( g.nodes[9].edges_storage );
-    writeln( g.nodes[2].edges_storage );
+    foreach( i, c; g.nodes )
+        writeln( "node=", i, " ", c.edges_storage );
+    
+    writeln( s );
     
     assert( s != null );
     assert( s.length == 7 );
