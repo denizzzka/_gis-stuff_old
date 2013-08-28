@@ -44,7 +44,7 @@ class Graph( _Node )
         nodes[ from_node_idx ].addEdge( edge );
     }
     
-    void addBidirectionalEdge( UNUSED )( Edge edge )
+    void addBidirectionalEdge()( Edge edge )
     {
         size_t to_idx = edge.forward.to_node;
         size_t from_idx = edge.backward.to_node;

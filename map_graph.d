@@ -429,6 +429,6 @@ body
         
         Graph.Edge edge = { forward: forward, backward: backward, payload: r };
         
-        graph.addBidirectionalEdge!size_t( edge );
+        graph.addBidirectionalEdge( edge );
     }
 }
