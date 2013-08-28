@@ -291,7 +291,7 @@ class TMapGraph( _Node )
     }
 }
 
-/// Cuts lines on crossroads
+/// Cuts lines on crossings
 private
 DescriptionsTree.Payload[] preparePolylines(DescriptionsTree, ForeignCoords)(
         in DescriptionsTree lines_rtree,
