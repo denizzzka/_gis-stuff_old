@@ -3,7 +3,6 @@ module map_graph;
 import math.geometry;
 import math.rtree2d;
 import math.graph.graph: Graph, TEdge, TNode;
-//import math.graph.pathfinder;
 import osm: OsmCoords = Coords, encodedToMapCoords, ReadPrimitiveException;
 import map: MapCoords = Coords;
 import cat = categories: Line;
@@ -129,6 +128,8 @@ struct TPolyline( Coords )
 
 struct Point
 {
+    alias MapCoords Coords; // for template
+    
     MapCoords coords;
     
     this( MapCoords coords )
@@ -213,16 +214,15 @@ struct TPolylineDescriptor( MapGraph )
     }
 }
 
-class TMapGraph( _Coords, Node )
+class TMapGraph( _Node )
 {
-    alias _Coords Coords;
-    alias Box!Coords BBox;
-    alias TPolyline!Coords Polyline;
-    alias RTreePtrs!( BBox, Polyline ) PolylinesRTree;
+    alias _Node Node;
+    alias Node.Point.Coords Coords;
     alias Node.Edge Edge;
+    alias Box!Coords BBox;
     alias TPolylineDescriptor!TMapGraph PolylineDescriptor;
     
-    alias Graph!Node G;
+    alias Graph!Node G;    
     
     public // TODO: need to be a package
     {
@@ -346,7 +346,7 @@ unittest
     alias TEdge!( Polyline ) Edge;
     alias TNode!( Edge, Point ) Node;
     
-    alias TMapGraph!( Coords, Node ) G;
+    alias TMapGraph!( Node ) G;
     
     FC[] points = [
             FC(0,0), FC(1,1), FC(2,2), FC(3,3), FC(4,4), // first line

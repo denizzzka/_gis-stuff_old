@@ -171,7 +171,7 @@ alias TPolyline!MapCoords Road;
 alias TEdge!( float, Road ) Edge;
 alias TNode!( Edge, Point ) Node;
 
-alias TMapGraph!( MapCoords, Node ) RoadGraph;
+alias TMapGraph!( Node ) RoadGraph;
     
 RoadGraph.PolylineDescriptor[] findPath( in RoadGraph road_graph, size_t from_node_idx, size_t to_node_idx )
 {
