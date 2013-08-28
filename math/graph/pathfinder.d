@@ -225,7 +225,7 @@ unittest
             Edge up_edge = { weight: 5, to_node: row[x], payload: payload };
             Edge right_edge = { weight: 4.7, to_node: row[x+1], payload: payload };
             
-            void addEdgeF( size_t from, Edge edge )
+            void addEdgeDbg( size_t from, Edge edge )
             {
                 writeln( "from coords=", g.nodes[ from ].point.coords,
                          "edge to coords=", g.nodes[ edge.to_node ].point.coords );
@@ -233,8 +233,8 @@ unittest
                 g.addEdge( from, edge );
             }
             
-            addEdgeF( from, up_edge );
-            addEdgeF( from, right_edge );
+            addEdgeDbg( from, up_edge );
+            addEdgeDbg( from, right_edge );
         }
     
     writeln( "from=", from_idx, " goal=", goal_idx );
@@ -242,6 +242,7 @@ unittest
     auto s = g.findPath( from_idx, goal_idx );
     
     writeln( g.nodes[9].edges_storage );
+    writeln( g.nodes[2].edges_storage );
     
     assert( s != null );
     assert( s.length == 7 );
