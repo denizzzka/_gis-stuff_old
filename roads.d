@@ -9,7 +9,7 @@ struct TEdge( _Weight, _Payload )
     alias _Payload Payload;
     alias _Weight Weight;
     
-    static TEdge[] edges;
+    static TEdge[] edges; /// TODO: about static: what if template will be instanced twice with same types?
     
     Direction forward;
     Direction backward;
