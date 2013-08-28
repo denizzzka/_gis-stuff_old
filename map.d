@@ -102,6 +102,7 @@ struct Line
 
 alias RTreePtrs!(BBox, Point) PointsStorage; // TODO: 2D-Tree points storage
 alias RTreePtrs!(BBox, Line) LinesStorage;
+alias RTreePtrs!(BBox, LineGraph.PolylineDescriptor) _LinesStorage;
 alias RTreePtrs!(BBox, RGraph.PolylineDescriptor) RoadsStorage;
 
 void addPoint( PointsStorage storage, Point point )
@@ -120,6 +121,7 @@ struct Layer
 {
     PointsStorage POI;
     LinesStorage lines;
+    _LinesStorage _lines;
     RoadsStorage roads;
     
     RGraph road_graph;
@@ -199,7 +201,20 @@ class Region
     {
         line_graph = new LineGraph( nodes_coords, lines_descr );
         
-        auto all_lines = line_graph.getDescriptors();
+        auto descriptors = line_graph.getDescriptors();
+        
+        foreach( descr; descriptors )
+        {
+            auto type = descr.getPolyline( line_graph ).type;
+            auto layers_num = config.map.polylines.getProperty( type ).layers;
+            
+            foreach( num; layers_num )
+            {
+                auto bbox = descr.getBoundary( line_graph );
+                
+                layers[num]._lines.addObject( bbox, descr );
+            }
+        }
     }
     
     void fillRoads( AACoords, PrepareRoads )( in AACoords nodes_coords, PrepareRoads prepared )
