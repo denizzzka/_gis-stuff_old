@@ -192,37 +192,44 @@ unittest
     auto g = new G;
     
     immutable size_t width = 5;
-    size_t[ width ] upper_points;
+    size_t[ width ] upper_row;
+    
+    size_t from;
     
     for( auto s = 0; s <= 10; s+=10 )
         for( auto y=0; y<5; y++ )
             for( auto x=0; x<5; x++ )
             {
-                DNP from = { coords: Vector2D!float(x+s, y) };
-                size_t from_point = g.addPoint( from );
+                if( from == 0 )
+                {
+                    DNP from_point = { coords: Vector2D!float(x+s, y) };
+                    from = g.addPoint( from_point );
+                }
                 
                 DNP to_up = { coords: Vector2D!float(x+s, y+1) };
                 DNP to_right = { coords: Vector2D!float(x+1+s, y) };
                 
-                upper_points[x] = g.addPoint( to_up );
+                upper_row[x] = g.addPoint( to_up );
                 size_t to_right_idx = g.addPoint( to_right );
                 
                 auto payload = "payload_string";
                 
-                Edge edge1 = { weight: 5, to_node: upper_points[x], payload: payload };
+                Edge edge1 = { weight: 5, to_node: upper_row[x], payload: payload };
                 Edge edge2 = { weight: 4.7, to_node: to_right_idx, payload: payload };
                 
-                g.addEdge( from_point, edge1 );
-                g.addEdge( from_point, edge2 );
+                g.addEdge( from, edge1 );
+                g.addEdge( from, edge2 );
+                
+                from = to_right_idx;
             }
 
     DNP f_p = { Vector2D!float(2,0) };
     DNP g_p = { Vector2D!float(4,4) };
     
-    size_t from = 0;
-    size_t goal = 24;
+    size_t from_idx = 0;
+    size_t goal_idx = 24;
     
-    auto s = g.findPath( from, goal );
+    auto s = g.findPath( from_idx, goal_idx );
     
     assert( s !is null );
     assert( s.length == 7 );

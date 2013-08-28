@@ -58,13 +58,6 @@ class Graph( _Node )
     alias _Node Node;
     alias Node.Edge Edge;
     
-private:
-    
-    // TODO: remove it
-    //size_t[ Node.Point ] points; /// AA used for fast search of stored points
-    
-public:
-    
     Node[] nodes; /// contains nodes with all payload    
     
     size_t addPoint( Node.Point v )
@@ -79,27 +72,4 @@ public:
     {
         nodes[ from_node_idx ].addEdge( edge );
     }
-    
-    /*
-    void addEdgeToPoint( in Node.Point from, Edge edge )
-    {
-        size_t from_idx = addPoint( from );
-        
-        addEdge( from_idx, edge );
-    }
-    */
-    /*
-    bool search( in Node.Point point, out size_t index )
-    {
-        auto p = point in points;
-        
-        if( p is null )
-            return false;
-        else
-        {
-            index = *p;
-            return true;
-        }
-    }
-    */
 }
