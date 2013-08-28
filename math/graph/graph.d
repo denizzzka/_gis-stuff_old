@@ -1,4 +1,4 @@
-module math.graph;
+module math.graph.graph;
 
 debug import math.geometry;
 debug(graph) import std.stdio;

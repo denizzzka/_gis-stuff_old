@@ -2,7 +2,7 @@ module map_graph;
 
 import math.geometry;
 import math.rtree2d;
-import math.graph: Graph, TEdge, TNode;
+import math.graph.graph: Graph, TEdge, TNode;
 import osm: OsmCoords = Coords, encodedToMapCoords, ReadPrimitiveException;
 import map: MapCoords = Coords;
 import cat = categories: Line;
