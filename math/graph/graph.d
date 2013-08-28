@@ -14,6 +14,21 @@ struct TEdge( _Payload )
     Payload payload;
 }
 
+struct TNode( _Edge, _Point )
+{
+    alias _Point Point;
+    alias _Edge Edge;
+    
+    Edge[] edges;
+    
+    Point point;
+    
+    void addEdge( Edge edge )
+    {
+        edges ~= edge;
+    }
+}
+
 class Graph( _Node )
 {
     alias _Node Node;
