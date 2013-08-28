@@ -197,8 +197,8 @@ unittest
     size_t from_idx;
     size_t goal_idx;
     
-    for( auto y=0; y<5; y++ )
-        for( auto x=0; x<5; x++ )
+    for( auto y=0; y < 5; y++ )
+        for( auto x=0; x < width; x++ )
         {
             writeln("x=", x, " y=", y);
             
@@ -229,6 +229,7 @@ unittest
             {
                 writeln( "from coords=", g.nodes[ from ].point.coords,
                          "edge to coords=", g.nodes[ edge.to_node ].point.coords );
+                         
                 g.addEdge( from, edge );
             }
             
@@ -240,7 +241,7 @@ unittest
     
     auto s = g.findPath( from_idx, goal_idx );
     
-    assert( s !is null );
+    assert( s != null );
     assert( s.length == 7 );
     
     debug(graph)
