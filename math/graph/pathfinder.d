@@ -200,8 +200,6 @@ unittest
     for( auto y=0; y < 5; y++ )
         for( auto x=0; x < width; x++ )
         {
-            writeln("x=", x, " y=", y);
-            
             size_t from;
             
             if( x == 0 && y == 0 )
@@ -229,34 +227,15 @@ unittest
             Edge up_edge = { weight: 5, to_node: row[x], payload: payload };
             Edge right_edge = { weight: 4.7, to_node: row[x+1], payload: payload };
             
-            void addEdgeDbg( size_t from, Edge edge )
-            {
-                writeln( "from coords=", g.nodes[ from ].point.coords,
-                         "edge to coords=", g.nodes[ edge.to_node ].point.coords );
-                         
-                g.addEdge( from, edge );
-            }
-            
-            addEdgeDbg( from, up_edge );
-            addEdgeDbg( from, right_edge );
+            g.addEdge( from, up_edge );
+            g.addEdge( from, right_edge );
         }
     
-    writeln( "from=", from_idx, " goal=", goal_idx );
-    
     auto s = g.findPath( from_idx, goal_idx );
-    
-    foreach( i, c; g.nodes )
-        writeln( "node=", i, " ", c.edges_storage );
-    
-    writeln( s );
     
     assert( s != null );
     assert( s.length == 7 );
     
-    debug(graph)
-        foreach( i, c; s )
-            writeln( c, " ", g.nodes[ c.node_idx ].point );
-            
     /*
     DNP g2_p = { Vector2D!float(11,4) };
     size_t goal2;
