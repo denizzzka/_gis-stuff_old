@@ -172,8 +172,9 @@ struct TNode( _Edge, _Point )
         void popFront() { ++edge_idx; }
         bool empty() const { return edge_idx >= length; }
         size_t length() const { return node.edges_idxs.length; }
-    }    
+    }
     
+    //@disable
     EdgesRange edges() const
     {
         return EdgesRange( &this );
@@ -241,12 +242,4 @@ MapCoords[] getRoadPoints( in RoadGraph.PolylineDescriptor* descr, in RoadGraph 
     res ~= roadGraph.graph.nodes[ end_node_idx ].point.coords;
     
     return res;
-}
-
-Road getRoad( in RoadGraph.PolylineDescriptor* descr, in RoadGraph roadGraph )
-{
-    auto points = getRoadPoints( descr, roadGraph );
-    auto type = descr.getEdge( roadGraph ).payload.type;
-    
-    return Road( points, type );
 }
