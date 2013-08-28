@@ -259,7 +259,7 @@ class TMapGraph( _Node, alias CREATE_EDGE )
         
         graph = new G;
         
-        graph.descriptionsToPolylineGraph!CREATE_EDGE( prepared, nodes );
+        descriptionsToPolylineGraph!CREATE_EDGE( graph, prepared, nodes );
     }
     
     PolylineDescriptor[] getDescriptors() const
