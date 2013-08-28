@@ -193,7 +193,7 @@ alias TEdge!( float, Road ) Edge;
 alias TNode!( Edge, Point ) Node;
 
 alias TMapGraph!( Node, createEdge ) RoadGraph;
-    
+
 RoadGraph.PolylineDescriptor[] findPath( in RoadGraph road_graph, size_t from_node_idx, size_t to_node_idx )
 {
     auto path = findMathGraphPath( road_graph.graph, from_node_idx, to_node_idx );

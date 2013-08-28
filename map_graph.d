@@ -441,3 +441,9 @@ void createEdge( Graph, PolylineDescriptor, Payload )(
     
     graph.addEdge( from_node_idx, edge );
 }
+
+alias TPolyline!MapCoords Polyline;
+alias TEdge!Polyline Edge;
+alias TNode!( Edge, Point ) Node;
+
+alias TMapGraph!( Node, createEdge ) LineGraph;
