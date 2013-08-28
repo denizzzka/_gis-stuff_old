@@ -75,9 +75,9 @@ public:
         return nodes.length-1;
     }
     
-    void addEdge( in size_t from_idx, Edge edge )
+    void addEdge( in size_t from_node_idx, Edge edge )
     {
-        nodes[ from_idx ].addEdge( edge );
+        nodes[ from_node_idx ].addEdge( edge );
     }
     
     /*
