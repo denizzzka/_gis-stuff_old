@@ -99,7 +99,7 @@ struct Line
     }
 }
 
-alias RTreePtrs!(BBox, Point) PointsStorage;
+alias RTreePtrs!(BBox, Point) PointsStorage; // TODO: 2D-Tree points storage
 alias RTreePtrs!(BBox, Line) LinesStorage;
 alias RTreePtrs!(BBox, RGraph.PolylineDescriptor) RoadsStorage;
 
