@@ -39,8 +39,15 @@ class Graph( _Node )
         return nodes.length-1;
     }
     
-    void addEdge( in size_t from_node_idx, Edge edge )
+    void addEdge( SIZE_T )( in SIZE_T from_node_idx, Edge edge )
     {
         nodes[ from_node_idx ].addEdge( edge );
+    }
+    
+    void addEdge( SIZE_T )( in SIZE_T from_node_idx, in SIZE_T to_node_idx, Edge edge )
+    {
+        Node* to_node = &nodes[ to_node_idx ];
+        
+        nodes[ from_node_idx ].addEdge( edge, to_node );
     }
 }

@@ -159,13 +159,12 @@ struct TNode( _Edge, _Point )
         return EdgesRange( &this );
     }
     
-    void addEdge( Edge edge )
+    void addEdge( Edge edge, TNode* otherNode )
     {
         size_t edge_idx = Edge.addToEdges( edge );
-        edges_idxs ~= edge_idx;
         
-        // FIXME:
-        //otherNode.edges_idxs ~= edge_idx;
+        edges_idxs ~= edge_idx;
+        otherNode.edges_idxs ~= edge_idx;
     }
 }
 
