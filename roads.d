@@ -1,6 +1,5 @@
 module roads;
 
-// TODO: road -> multiline:
 import map_graph: MapCoords, Point, TMapGraph, TPolyline;
 private import math.graph.pathfinder: findMathGraphPath = findPath;
 
@@ -79,14 +78,19 @@ struct TEdge( _Weight, _Payload )
     }
 }
 
-Edge createEdge( Edge )( in size_t from_node_idx, in size_t to_node_idx )
+void createEdge( Graph, PolylineDescriptor, Payload )(
+        Graph graph,
+        in size_t from_node_idx,
+        in size_t to_node_idx,
+        PolylineDescriptor descr,
+        Payload payload )
 {
     Edge.Direction forward = { to_node: to_node_idx, weight: 1.0 };
     Edge.Direction backward = { to_node: from_node_idx, weight: 1.0 };
     
-    Edge edge = { forward: forward, backward: backward };
+    Edge edge = { forward: forward, backward: backward, payload: payload };
     
-    return edge;
+    graph.addBidirectionalEdge( edge );
 }
 
 struct TNode( _Edge, _Point )

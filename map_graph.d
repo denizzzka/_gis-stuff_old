@@ -343,7 +343,7 @@ unittest
     alias RTreePtrs!( BBox, PolylineDescription ) DescriptionsTree;
     
     alias TPolyline!Coords Polyline;
-    alias TEdge!( Polyline ) Edge;
+    alias TEdge!Polyline Edge;
     alias TNode!( Edge, Point ) Node;
     
     alias TMapGraph!( Node, createEdge ) G;
@@ -371,6 +371,8 @@ unittest
     auto prepared = preparePolylines( lines, nodes );
     
     assert( prepared.length == 5 );
+    
+    auto g = new G( nodes, [ w1, w2 ] );
 }
 
 private
@@ -422,20 +424,20 @@ body
         auto from_node_idx = addPoint( line.nodes_ids[0] );
         auto to_node_idx = addPoint( line.nodes_ids[$-1] );
         
-        auto edge = CREATE_EDGE!( Graph.Edge )( from_node_idx, to_node_idx );
+        auto poly = Polyline( points, line.type );
         
-        edge.payload = Polyline( points, line.type );
-        
-        graph.addBidirectionalEdge( edge );
+        CREATE_EDGE( graph, from_node_idx, to_node_idx, line, poly );
     }
 }
 
-Edge createEdge( Edge )( in size_t from_node_idx, in size_t to_node_idx )
+void createEdge( Graph, PolylineDescriptor, Payload )(
+        Graph graph,
+        in size_t from_node_idx,
+        in size_t to_node_idx,
+        PolylineDescriptor descr,
+        Payload payload )
 {
-    Edge.Direction forward = { to_node: to_node_idx, weight: 1.0 };
-    Edge.Direction backward = { to_node: from_node_idx, weight: 1.0 };
+    Graph.Edge edge = { to_node: to_node_idx, payload: payload };
     
-    Edge edge = { forward: forward, backward: backward };
-    
-    return edge;
+    graph.addEdge( from_node_idx, edge );
 }
