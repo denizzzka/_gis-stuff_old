@@ -29,14 +29,19 @@ struct TEdge( _Weight, _Payload )
     
     struct DirectedEdge
     {
-        private size_t global_edge_idx;
+        private const size_t global_edge_idx;
         
-        bool forward_direction;
+        bool forward;
+        
+        bool forward_direction() const
+        {
+            return forward;
+        }
         
         this( size_t edge_idx, bool forward_direction )
         {
             this.global_edge_idx = edge_idx;
-            this.forward_direction = forward_direction;
+            this.forward = forward_direction;
         }
         
         ref const (Payload) payload() const
@@ -160,7 +165,7 @@ struct TNode( _Edge, _Point )
             
             bool forward_direction = node_idx == edge.forward.to_node;
             
-            auto res = Edge.DirectedEdge( global_idx, true );
+            auto res = Edge.DirectedEdge( global_idx, forward_direction );
             
             return res;
         }
@@ -239,10 +244,10 @@ MapCoords[] getRoadPoints( in RoadGraph.PolylineDescriptor* descr, in RoadGraph 
     return res;
 }
 
-Road getRoad()( in RoadGraph.PolylineDescriptor* descr, in RoadGraph roadGraph ) const
+Road getRoad( in RoadGraph.PolylineDescriptor* descr, in RoadGraph roadGraph )
 {
     auto points = getRoadPoints( descr, roadGraph );
-    auto type = descr.getEdge();
+    auto type = descr.getEdge( roadGraph ).payload.type;
     
     return Road( points, type );
 }
