@@ -4,7 +4,6 @@ debug import math.geometry;
 debug(graph) import std.stdio;
 
 import std.algorithm;
-import std.range: isInputRange;
 
 
 struct TEdge( _Weight, _Payload )
@@ -71,11 +70,6 @@ private:
     
     // TODO: remove it
     size_t[ Node.Point ] points; /// AA used for fast search of stored points
-    
-    invariant()
-    {
-        //assert( isInputRange( typeof( Node.edges ) ) ); // FIXME
-    }
     
 public:
     
