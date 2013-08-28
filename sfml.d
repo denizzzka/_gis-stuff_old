@@ -69,8 +69,8 @@ class Window
 		drawPOIs( pois );
 		window.draw( vertex_array );
 		
-		//auto lines = scene.getLines();
-		//drawLines( lines );
+		auto lines = scene.getLines();
+		draw_Lines( lines );
 		
 		auto roads = scene.getRoads();
 		drawRoads( roads );
@@ -158,6 +158,30 @@ class Window
 		}
 		
 		auto color = road_dscr.getPolyline( roads.map_graph ).properties.color;
+		drawRoad( res_points, color );
+        }
+    }
+    
+    private
+    void draw_Lines( Polylines )( in Polylines[] polylines )
+    {
+        foreach( lines; polylines )
+	    foreach( line_dscr; lines.descriptors )
+	    {
+		auto encoded_points = line_dscr.getPoints( lines.map_graph );
+		
+		Vector2r[] res_points;
+		
+		foreach( i, encoded; encoded_points )
+		{
+		    Vector2r point = encoded;
+		    auto window_coords = scene.metersToScreen( point );
+		    res_points ~= window_coords;
+		    
+		    debug(sfml) writeln("draw line point i=", i, " encoded coords=", encoded, " meters=", point, " window_coords=", window_coords);
+		}
+		
+		auto color = line_dscr.getPolyline( lines.map_graph ).properties.color;
 		drawRoad( res_points, color );
         }
     }

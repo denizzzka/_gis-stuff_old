@@ -278,6 +278,7 @@ class TMapGraph( _Node, alias CREATE_EDGE )
             map_graph = graph;
         }
         
+        @disable
         Coords[] getPoints( in size_t descriptor_idx ) const
         {
             auto descriptor = descriptors[ descriptor_idx ];
