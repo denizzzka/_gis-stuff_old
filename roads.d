@@ -30,8 +30,7 @@ struct TEdge( _Weight, _Payload )
     struct DirectedEdge
     {
         private const size_t global_edge_idx;
-        
-        bool forward;
+        private bool forward;
         
         bool forward_direction() const
         {
@@ -51,16 +50,16 @@ struct TEdge( _Weight, _Payload )
         
         size_t to_node() const
         {
-            return getDirection.to_node;
+            return getStraightDirection.to_node;
         }
         
         float weight() const
         {
-            return getDirection.weight;
+            return getStraightDirection.weight;
         }
         
         private
-        ref Direction getDirection() const
+        ref Direction getStraightDirection() const
         {
             if( forward_direction )
                 return getEdge().forward;
