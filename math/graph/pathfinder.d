@@ -1,7 +1,6 @@
 module math.graph.pathfinder;
 
 import math.graph.graph;
-debug import math.geometry;
 
 import std.algorithm: canFind;
 debug(graph) import std.stdio;
@@ -151,26 +150,40 @@ private
     }
 }
 
-// Dumb Node Payload
-debug
-struct DNP
-{
-    Vector2D!float coords;
-    
-    float distance( in DNP v, in float weight ) const
-    {
-        return (coords - v.coords).length * weight;
-    }
-
-    float heuristic( in DNP v ) const
-    {
-        return (coords - v.coords).length;
-    }
-}
-
 unittest
 {
     import math.geometry;
+    
+    struct TEdge( _Weight, _Payload )
+    {
+        alias _Payload Payload;
+        alias _Weight Weight;
+        
+        const size_t to_node; /// direction
+        Weight weight;
+        Payload payload;
+        
+        invariant()
+        {
+            assert( weight >= 0 );
+        }
+    }
+    
+    // Dumb Node Point
+    struct DNP
+    {
+        Vector2D!float coords;
+        
+        float distance( in DNP v, in float weight ) const
+        {
+            return (coords - v.coords).length * weight;
+        }
+
+        float heuristic( in DNP v ) const
+        {
+            return (coords - v.coords).length;
+        }
+    }
     
     alias TEdge!( float, string ) Edge;
     alias TNode!( Edge, DNP ) Node;
@@ -178,11 +191,16 @@ unittest
     
     auto g = new G;
     
+    auto width = 5;
+    size_t[ width ] upper_points;
+    
     for( auto s = 0; s <= 10; s+=10 )
         for( auto y=0; y<5; y++ )
             for( auto x=0; x<5; x++ )
             {
-                DNP from = { coords: Vector2D!float(x+s, y) };
+                DNP point = { coords: Vector2D!float(x+s, y) };
+                size_t left_point = g.addPoint( point );
+                
                 DNP to_up = { coords: Vector2D!float(x+s, y+1) };
                 DNP to_right = { coords: Vector2D!float(x+1+s, y) };
                 

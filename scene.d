@@ -5,6 +5,7 @@ import math.geometry;
 import osm: Coords, metersToEncoded, encodedToMeters;
 import math.earth: Conv, WGS84, lon2canonical;
 import map: Point, Line, RGraph;
+import roads: findPath;
 
 import std.conv;
 import std.string;
@@ -35,7 +36,7 @@ class POV
     
     void updatePath()
     {
-        auto g = &map.regions[0].layers[0].road_graph;
+        auto g = map.regions[0].layers[0].road_graph;
         
         do
             found_path = g.findPath( g.getRandomNodeIdx, g.getRandomNodeIdx );

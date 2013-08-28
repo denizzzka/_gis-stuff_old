@@ -6,19 +6,12 @@ debug(graph) import std.stdio;
 import std.algorithm;
 
 
-struct TEdge( _Weight, _Payload )
+struct TEdge( _Payload )
 {
     alias _Payload Payload;
-    alias _Weight Weight;
     
     const size_t to_node; /// direction
-    Weight weight;
     Payload payload;
-    
-    invariant()
-    {
-        assert( weight >= 0 );
-    }
 }
 
 struct TNode( _Edge, _Point )
@@ -30,7 +23,7 @@ struct TNode( _Edge, _Point )
     
     Point point;
     
-    struct EdgesRange
+    struct EdgesRange // TODO: remove it?
     {
         private
         {
@@ -64,47 +57,38 @@ class Graph( _Node )
 {
     alias _Node Node;
     alias Node.Edge Edge;
-    alias Edge.Weight Weight;
     
 private:
     
     // TODO: remove it
-    size_t[ Node.Point ] points; /// AA used for fast search of stored points
+    //size_t[ Node.Point ] points; /// AA used for fast search of stored points
     
 public:
     
     Node[] nodes; /// contains nodes with all payload    
     
-    size_t addPoint( in Node.Point v )
+    size_t addPoint( Node.Point v )
     {
-        auto p = ( v in points );
+        Node n = { point: v };
+        nodes ~= n;
         
-        if( p !is null )
-            return *p;
-        else
-        {
-            points[v] = nodes.length;
-            
-            Node n = { point: v };
-            nodes ~= n;
-            
-            return nodes.length-1;
-        }
+        return nodes.length-1;
     }
     
-    void addEdge(T)( in size_t from_idx, T edge )
+    void addEdge( in size_t from_idx, Edge edge )
     {
         nodes[ from_idx ].addEdge( edge );
     }
     
-    // TODO: remove it?
-    void addEdgeToPayload(T)( in Node.Point from, T edge )
+    /*
+    void addEdgeToPoint( in Node.Point from, Edge edge )
     {
         size_t from_idx = addPoint( from );
         
         addEdge( from_idx, edge );
     }
-    
+    */
+    /*
     bool search( in Node.Point point, out size_t index )
     {
         auto p = point in points;
@@ -117,4 +101,5 @@ public:
             return true;
         }
     }
+    */
 }

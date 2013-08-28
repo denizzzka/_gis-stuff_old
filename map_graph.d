@@ -224,7 +224,7 @@ class TMapGraph( _Coords, Node )
     
     alias Graph!Node G;
     
-    private
+    public // TODO: need to be a package
     {
         G graph;
     }
@@ -285,21 +285,6 @@ class TMapGraph( _Coords, Node )
         }
     }
     
-    PolylineDescriptor[] findPath( size_t from_node_idx, size_t to_node_idx ) const
-    {
-        auto path = graph.findPath( from_node_idx, to_node_idx );
-        
-        debug(path) writeln("path from=", from_node_idx, " to=", to_node_idx);
-        
-        PolylineDescriptor[] res;
-        
-        if( path != null )
-            for( auto i = 1; i < path.length; i++ )
-                res ~= PolylineDescriptor( path[i].node_idx, path[i-1].came_through_edge_idx );
-        
-        return res;
-    }
-    
     size_t getRandomNodeIdx() const
     {
         return uniform( 0, graph.nodes.length );
@@ -358,7 +343,7 @@ unittest
     alias RTreePtrs!( BBox, PolylineDescription ) DescriptionsTree;
     
     alias TPolyline!Coords Polyline;
-    alias TEdge!( float, Polyline ) Edge;
+    alias TEdge!( Polyline ) Edge;
     alias TNode!( Edge, Point ) Node;
     
     alias TMapGraph!( Coords, Node ) G;

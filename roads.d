@@ -135,3 +135,18 @@ alias TEdge!( float, Road ) Edge;
 alias TNode!( Edge, Point ) Node;
 
 alias TMapGraph!( MapCoords, Node ) RoadGraph;
+    
+RoadGraph.PolylineDescriptor[] findPath( in RoadGraph road_graph, size_t from_node_idx, size_t to_node_idx )
+{
+    auto path = road_graph.graph.findPath( from_node_idx, to_node_idx );
+    
+    debug(path) writeln("path from=", from_node_idx, " to=", to_node_idx);
+    
+    RoadGraph.PolylineDescriptor[] res;
+    
+    if( path != null )
+        for( auto i = 1; i < path.length; i++ )
+            res ~= RoadGraph.PolylineDescriptor( path[i].node_idx, path[i-1].came_through_edge_idx );
+    
+    return res;
+}
