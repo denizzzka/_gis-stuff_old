@@ -157,7 +157,7 @@ class Window
 		    debug(sfml) writeln("draw line point i=", i, " encoded coords=", encoded, " meters=", point, " window_coords=", window_coords);
 		}
 		
-		auto color = Color.Green; // road_dscr.getPolyline( roads.map_graph ).properties.color;
+		auto color = road_dscr.getPolyline( roads.map_graph ).properties.color;
 		drawRoad( res_points, color );
         }
     }

@@ -240,7 +240,7 @@ class TPrepareRoads( Descr, AACoords, IDstruct )
         {
             auto epsilon = config.converter.layersGeneralization[n];
             
-            if( false /*epsilon*/ )
+            if( epsilon )
                 generalize( road_descr, nodes_coords, epsilon );
                 
             roads_to_store[n] ~= road_descr;
