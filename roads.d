@@ -2,6 +2,7 @@ module roads;
 
 // TODO: road -> multiline:
 import map_graph: MapCoords, Point, TMapGraph, TPolyline;
+private import math.graph.pathfinder: findMathGraphPath = findPath;
 
 
 struct TEdge( _Weight, _Payload )
@@ -138,7 +139,7 @@ alias TMapGraph!( MapCoords, Node ) RoadGraph;
     
 RoadGraph.PolylineDescriptor[] findPath( in RoadGraph road_graph, size_t from_node_idx, size_t to_node_idx )
 {
-    auto path = road_graph.graph.findPath( from_node_idx, to_node_idx );
+    auto path = findMathGraphPath( road_graph.graph, from_node_idx, to_node_idx );
     
     debug(path) writeln("path from=", from_node_idx, " to=", to_node_idx);
     
