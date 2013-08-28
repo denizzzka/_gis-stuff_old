@@ -266,7 +266,7 @@ class TMapGraph( _Node, alias CREATE_EDGE )
             descriptions_tree.addObject( boundary, c );
         }
         
-        auto prepared = descriptions_tree.preparePolylines( nodes );
+        auto prepared = descriptions_tree.preparePolylinesFromTree( nodes );
         
         graph = new G;
         
@@ -310,7 +310,7 @@ class TMapGraph( _Node, alias CREATE_EDGE )
 
 /// Cuts lines on crossings
 private
-DescriptionsTree.Payload[] preparePolylines(DescriptionsTree, ForeignCoords)(
+DescriptionsTree.Payload[] preparePolylinesFromTree(DescriptionsTree, ForeignCoords)(
         in DescriptionsTree lines_rtree,
         in ForeignCoords[ulong] nodes
     )
@@ -351,6 +351,29 @@ DescriptionsTree.Payload[] preparePolylines(DescriptionsTree, ForeignCoords)(
     
     return res;
 }
+
+/// Cuts lines on crossings
+private
+Description[] preparePolylines(Description, ForeignCoords)(
+        Description[] lines,
+        in ForeignCoords[ulong] nodes
+    )
+{
+    alias Description.BBox BBox;
+    alias RTreePtrs!( BBox, Description ) DescriptionsTree;
+    
+    auto tree = new DescriptionsTree;
+    
+    foreach( ref c; lines )
+    {
+        BBox boundary = c.getBoundary( nodes );
+        
+        tree.addObject( boundary, c );
+    }
+    
+    return preparePolylinesFromTree( tree, nodes );
+}
+
 unittest
 {
     alias MapCoords Coords;
@@ -381,9 +404,7 @@ unittest
     auto w1 = PolylineDescription( n1, cat.Line.HIGHWAY );
     auto w2 = PolylineDescription( n2, cat.Line.PRIMARY );
     
-    auto lines = new DescriptionsTree;
-    lines.addObject( w1.getBoundary( nodes ), w1 );
-    lines.addObject( w2.getBoundary( nodes ), w2 );
+    PolylineDescription[] lines = [ w1, w2 ];
     
     auto prepared = preparePolylines( lines, nodes );
     
