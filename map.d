@@ -7,7 +7,6 @@ import map_graph: LineGraph;
 import roads: RoadGraph;
 static import config.map;
 static import config.converter;
-static import math.reduce_points;
 
 debug(map) import std.stdio;
 
@@ -198,7 +197,7 @@ class Region
             layers[ idx ].lines.addLineToStorage( line );
     }
     
-    void fillLines( AACoords, LinesDescr )( in AACoords nodes_coords, LinesDescr lines_descr )
+    void fillLines( IDstruct, AACoords, LinesDescr )( in AACoords nodes_coords, LinesDescr lines_descr )
     {
         line_graph = new LineGraph( nodes_coords, lines_descr );
         
@@ -209,11 +208,16 @@ class Region
             auto type = descr.getPolyline( line_graph ).type;
             auto layers_num = config.map.polylines.getProperty( type ).layers;
             
-            foreach( num; layers_num )
+            foreach( n; layers_num )
             {
+                auto epsilon = config.converter.layersGeneralization[n];
+                
+                //if( epsilon )
+                    //descr.generalize!IDstruct( nodes_coords, epsilon );
+                
                 auto bbox = descr.getBoundary( line_graph );
                 
-                layers[num]._lines.addObject( bbox, descr );
+                layers[n]._lines.addObject( bbox, descr );
             }
         }
     }
@@ -241,26 +245,10 @@ class TPrepareRoads( Descr, AACoords, IDstruct )
             auto epsilon = config.converter.layersGeneralization[n];
             
             if( epsilon )
-                generalize( road_descr, nodes_coords, epsilon );
+                road_descr.generalize!IDstruct( nodes_coords, epsilon );
                 
             roads_to_store[n] ~= road_descr;
         }
-    }
-    
-    private
-    static void generalize( ref Descr descr, in AACoords nodes_coords, in real epsilon )
-    {
-        IDstruct[] points;
-        
-        foreach( c; descr.nodes_ids )
-            points ~= IDstruct( nodes_coords, c );
-            
-        descr.nodes_ids.destroy;
-        
-        auto reduced = math.reduce_points.reduce( points, epsilon );
-        
-        foreach( c; reduced )
-            descr.nodes_ids ~= c.id;
     }
 }
 

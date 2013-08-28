@@ -8,6 +8,7 @@ import map: MapCoords = Coords;
 import cat = categories: Line;
 static import config.map;
 import math.earth: mercator2coords, getSphericalDistance;
+static import math.reduce_points;
 
 import std.algorithm: canFind;
 import std.random: uniform;
@@ -100,6 +101,21 @@ struct TPolylineDescription( _Coords, _ForeignCoords )
         res.nodes_ids = nodes_ids[ from..to ];
         
         return res;
+    }
+    
+    void generalize( IDstruct )( in ForeignCoords[ulong] nodes_coords, in real epsilon )
+    {
+        IDstruct[] points;
+        
+        foreach( c; nodes_ids )
+            points ~= IDstruct( nodes_coords, c );
+            
+        nodes_ids.destroy;
+        
+        auto reduced = math.reduce_points.reduce( points, epsilon );
+        
+        foreach( c; reduced )
+            nodes_ids ~= c.id;
     }
 }
 
