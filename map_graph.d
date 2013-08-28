@@ -105,7 +105,7 @@ struct TPolylineDescription( _Coords, _ForeignCoords )
 
 struct TPolyline( Coords )
 {
-    private
+    public // need package here
     {
         Coords[] points; /// points between start and end points
     }
@@ -168,7 +168,7 @@ struct TPolylineDescriptor( MapGraph )
         this.edge_idx = edge_idx;
     }
     
-    Coords[] getPoints( in MapGraph mapGraph ) const
+    Coords[] getPoints()( in MapGraph mapGraph ) const
     {
         Coords[] res;
         
@@ -200,13 +200,13 @@ struct TPolylineDescriptor( MapGraph )
         return res;
     }
     
-    ref const (Polyline) getPolyline( in MapGraph mapGraph ) const
+    ref const (Polyline) getPolyline()( in MapGraph mapGraph ) const
     {
         return getEdge( mapGraph ).payload;
     }
     
     private
-    auto getEdge( in MapGraph mapGraph ) const
+    auto getEdge()( in MapGraph mapGraph ) const
     {
         auto node = mapGraph.graph.nodes[ node_idx ];
         
@@ -426,15 +426,14 @@ body
         auto from_node_idx = addPoint( line.nodes_ids[0] );
         auto to_node_idx = addPoint( line.nodes_ids[$-1] );
                 
-        CREATE_EDGE( graph, from_node_idx, to_node_idx, line, poly );
+        CREATE_EDGE( graph, from_node_idx, to_node_idx, poly );
     }
 }
 
-void createEdge( Graph, PolylineDescriptor, Payload )(
+void createEdge( Graph, Payload )(
         Graph graph,
         in size_t from_node_idx,
         in size_t to_node_idx,
-        PolylineDescriptor descr,
         Payload payload )
 {
     Graph.Edge edge = { to_node: to_node_idx, payload: payload };

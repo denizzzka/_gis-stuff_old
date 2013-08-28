@@ -78,11 +78,10 @@ struct TEdge( _Weight, _Payload )
     }
 }
 
-void createEdge( Graph, PolylineDescriptor, Payload )(
+void createEdge( Graph, Payload )(
         Graph graph,
         in size_t from_node_idx,
         in size_t to_node_idx,
-        PolylineDescriptor descr,
         Payload payload )
 {
     Graph.Edge.Direction forward = { to_node: to_node_idx, weight: 1.0 };
@@ -144,6 +143,7 @@ struct TNode( _Edge, _Point )
         private
         {
             const TNode* node;
+            size_t node_idx;
             size_t edge_idx;
         }
         
@@ -158,6 +158,8 @@ struct TNode( _Edge, _Point )
             size_t global_idx = node.edges_idxs[ idx ];
             Edge* edge = &Edge.edges[ global_idx ];
             
+            bool forward_direction = node_idx == edge.forward.to_node;
+            
             auto res = Edge.DirectedEdge( global_idx, true );
             
             return res;
@@ -171,6 +173,11 @@ struct TNode( _Edge, _Point )
     EdgesRange edges() const
     {
         return EdgesRange( &this );
+    }
+    
+    EdgesRange edgesFromNode( size_t curr_node_idx ) const
+    {
+        return EdgesRange( &this, curr_node_idx );
     }
     
     size_t addEdge( Edge edge )
@@ -207,4 +214,35 @@ RoadGraph.PolylineDescriptor[] findPath( in RoadGraph road_graph, size_t from_no
             res ~= RoadGraph.PolylineDescriptor( path[i].node_idx, path[i-1].came_through_edge_idx );
     
     return res;
+}
+
+MapCoords[] getRoadPoints( in RoadGraph.PolylineDescriptor* descr, in RoadGraph roadGraph )
+{
+    MapCoords[] res;
+    
+    auto start_node = &roadGraph.graph.nodes[ descr.node_idx ];
+    
+    res ~= start_node.point.coords;
+    
+    auto edge = start_node.edgesFromNode( descr.node_idx )[ descr.edge_idx ];
+    
+    if( edge.forward_direction )
+        foreach( c; edge.payload.points )
+            res ~= c;
+    else
+        foreach_reverse( c; edge.payload.points )
+            res ~= c;
+    
+    auto end_node_idx = edge.to_node;
+    res ~= roadGraph.graph.nodes[ end_node_idx ].point.coords;
+    
+    return res;
+}
+
+Road getRoad()( in RoadGraph.PolylineDescriptor* descr, in RoadGraph roadGraph ) const
+{
+    auto points = getRoadPoints( descr, roadGraph );
+    auto type = descr.getEdge();
+    
+    return Road( points, type );
 }
