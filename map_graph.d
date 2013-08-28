@@ -255,18 +255,7 @@ class TMapGraph( _Node, alias CREATE_EDGE )
     }
     body
     {
-        alias RTreePtrs!( BBox, PolylineDescription ) DescriptionsTree;
-        
-        auto descriptions_tree = new DescriptionsTree;
-        
-        foreach( i, c; descriptions )
-        {
-            BBox boundary = c.getBoundary( nodes );
-            
-            descriptions_tree.addObject( boundary, c );
-        }
-        
-        auto prepared = descriptions_tree.preparePolylinesFromTree( nodes );
+        auto prepared = descriptions.preparePolylines( nodes );
         
         graph = new G;
         
