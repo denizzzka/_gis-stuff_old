@@ -49,7 +49,7 @@ struct Point
     }
 }
 
-struct Line
+struct _Line
 {
     Coords[] nodes;
     cat.Line type;
@@ -89,9 +89,9 @@ struct Line
         return config.map.polylines.getProperty( type ).color;
     }
     
-    Line opSlice( size_t from, size_t to )
+    _Line opSlice( size_t from, size_t to )
     {
-        Line res = this;
+        _Line res = this;
         
         res.nodes = nodes[ from..to ];
         
@@ -100,8 +100,7 @@ struct Line
 }
 
 alias RTreePtrs!(BBox, Point) PointsStorage; // TODO: 2D-Tree points storage
-alias RTreePtrs!(BBox, Line) LinesStorage;
-alias RTreePtrs!(BBox, LineGraph.PolylineDescriptor) _LinesStorage;
+alias RTreePtrs!(BBox, LineGraph.PolylineDescriptor) LinesStorage;
 alias RTreePtrs!(BBox, RGraph.PolylineDescriptor) RoadsStorage;
 
 void addPoint( PointsStorage storage, Point point )
@@ -111,16 +110,10 @@ void addPoint( PointsStorage storage, Point point )
     storage.addObject( bbox, point );
 }
 
-void addLineToStorage( LinesStorage storage, Line line )
-{
-    storage.addObject( line.getBoundary, line );
-}
-
 struct Layer
 {
     PointsStorage POI;
     LinesStorage lines;
-    _LinesStorage _lines;
     RoadsStorage roads;
     
     RGraph road_graph;
@@ -128,8 +121,7 @@ struct Layer
     void init()
     {
         POI = new PointsStorage;
-        lines = new LinesStorage( 10 );
-        _lines = new _LinesStorage;
+        lines = new LinesStorage;
         roads = new RoadsStorage;
     }
     
@@ -189,14 +181,6 @@ class Region
         layers[layer_num].POI.addPoint( point );
     }
     
-    void addLine( Line line )
-    {
-        auto to_layers = config.map.polylines.getProperty( line.type ).layers;
-        
-        foreach( idx; to_layers )
-            layers[ idx ].lines.addLineToStorage( line );
-    }
-    
     void fillLines( IDstruct, AACoords, LinesDescr )( in AACoords nodes_coords, LinesDescr lines_descr )
     {
         line_graph = new LineGraph( nodes_coords, lines_descr );
@@ -217,7 +201,7 @@ class Region
                 
                 auto bbox = descr.getBoundary( line_graph );
                 
-                layers[n]._lines.addObject( bbox, descr );
+                layers[n].lines.addObject( bbox, descr );
             }
         }
     }

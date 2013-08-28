@@ -4,7 +4,7 @@ import osmpbf.fileformat;
 import osmpbf.osmformat;
 import math.geometry;
 import math.earth;
-import map: Map, Region, BBox, Point, PointsStorage, Line, LinesStorage, addPoint, addLineToStorage, MapCoords = Coords, LineGraph, RGraph, TPrepareRoads;
+import map: Map, Region, BBox, Point, PointsStorage, Line = _Line, addPoint, MapCoords = Coords, LineGraph, RGraph, TPrepareRoads;
 import cat = categories;
 import osm_tags_parsing;
 import map_graph: TPolylineDescription;

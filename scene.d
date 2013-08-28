@@ -4,7 +4,7 @@ import map;
 import math.geometry;
 import osm: Coords, metersToEncoded, encodedToMeters;
 import math.earth: Conv, WGS84, lon2canonical;
-import map: Point, Line, RGraph;
+import map: Point, Line = _Line, RGraph;
 import roads: findPath;
 
 import std.conv;
@@ -137,7 +137,7 @@ class POV
             
             auto curr = LineGraph.Polylines( region.line_graph );
             
-            curr.descriptors ~= region.layers[ num ]._lines.search( boundary_meters );
+            curr.descriptors ~= region.layers[ num ].lines.search( boundary_meters );
             res ~= curr;
         }
         
