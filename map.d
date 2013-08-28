@@ -153,6 +153,7 @@ struct Layer
 class Region
 {
     Layer[5] layers;
+    LineGraph line_graph;
     
     this()
     {
@@ -196,7 +197,9 @@ class Region
     
     void fillLines( AACoords, LinesDescr )( in AACoords nodes_coords, LinesDescr lines_descr )
     {
-        lines = new LineGraph( nodes_coords, lines_descr );
+        line_graph = new LineGraph( nodes_coords, lines_descr );
+        
+        auto all_lines = line_graph.getDescriptors();
     }
     
     void fillRoads( AACoords, PrepareRoads )( in AACoords nodes_coords, PrepareRoads prepared )

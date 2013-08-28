@@ -404,6 +404,7 @@ Region getRegion( string filename, bool verbose )
         }
     }
     
+    res.fillLines( nodes_coords, lines );
     res.fillRoads( nodes_coords, roads );
     
     return res;
