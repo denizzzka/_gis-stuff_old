@@ -421,11 +421,11 @@ body
         for( auto i = 1; i < line.nodes_ids.length - 1; i++ )
             points ~= encodedToMapCoords( nodes[ line.nodes_ids[i] ] );
         
-        auto from_node_idx = addPoint( line.nodes_ids[0] );
-        auto to_node_idx = addPoint( line.nodes_ids[$-1] );
-        
         auto poly = Polyline( points, line.type );
         
+        auto from_node_idx = addPoint( line.nodes_ids[0] );
+        auto to_node_idx = addPoint( line.nodes_ids[$-1] );
+                
         CREATE_EDGE( graph, from_node_idx, to_node_idx, line, poly );
     }
 }
