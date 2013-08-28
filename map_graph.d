@@ -431,8 +431,6 @@ body
         
         Graph.Edge edge = { forward: forward, backward: backward, payload: r };
         
-        size_t edge_idx = Graph.Edge.addToEdges( edge );
-        
-        graph.addEdge( from_node_idx, edge_idx );
+        graph.addEdge( from_node_idx, edge );
     }
 }

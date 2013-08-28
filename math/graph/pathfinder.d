@@ -198,22 +198,22 @@ unittest
         for( auto y=0; y<5; y++ )
             for( auto x=0; x<5; x++ )
             {
-                DNP point = { coords: Vector2D!float(x+s, y) };
-                size_t left_point = g.addPoint( point );
+                DNP from = { coords: Vector2D!float(x+s, y) };
+                size_t from_point = g.addPoint( point );
                 
                 DNP to_up = { coords: Vector2D!float(x+s, y+1) };
                 DNP to_right = { coords: Vector2D!float(x+1+s, y) };
                 
-                size_t to_up_idx = g.addPoint( to_up );
+                size_t upper_points[x] = g.addPoint( to_up );
                 size_t to_right_idx = g.addPoint( to_right );
                 
                 auto payload = "payload_string";
                 
-                Edge edge1 = { weight: 5, to_node: to_up_idx, payload: payload };
+                Edge edge1 = { weight: 5, to_node: upper_points[x], payload: payload };
                 Edge edge2 = { weight: 4.7, to_node: to_right_idx, payload: payload };
                 
-                g.addEdgeToPayload( from, edge1 );
-                g.addEdgeToPayload( from, edge2 );
+                g.addEdge( from_point, edge1 );
+                g.addEdge( from_point, edge2 );
             }
 
     DNP f_p = { Vector2D!float(2,0) };
