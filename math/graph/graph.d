@@ -22,6 +22,11 @@ struct TNode( _Edge, _Point )
     {
         edges ~= edge;
     }
+    
+    auto edgesFromNode( in size_t from_node_idx ) const
+    {
+        return edges;
+    }
 }
 
 class Graph( _Node )
@@ -53,8 +58,8 @@ class Graph( _Node )
         nodes[ to_idx ].addEdge( edge_idx ); // to --> from
     }
     
-    ref auto getEdge( in size_t node_idx, in size_t edge_idx ) const
+    ref auto getEdge()( in size_t node_idx, in size_t edge_idx ) const
     {
-        return nodes[ node_idx ].edges[ edge_idx ];
+        return nodes[ node_idx ].edgesFromNode( node_idx )[ edge_idx ];
     }
 }

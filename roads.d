@@ -147,7 +147,7 @@ struct TNode( _Edge, _Point )
         private
         {
             const TNode* node;
-            size_t node_idx;
+            const size_t node_idx;
             size_t edge_idx;
         }
         
@@ -173,10 +173,10 @@ struct TNode( _Edge, _Point )
         size_t length() const { return node.edges_idxs.length; }
     }
     
-    // need to be a package
-    EdgesRange edges() const
+    // TODO: need to be a package?
+    EdgesRange edgesFromNode( in size_t from_node_idx ) const
     {
-        return EdgesRange( &this );
+        return EdgesRange( &this, from_node_idx );
     }
         
     size_t addEdge( Edge edge )

@@ -192,7 +192,7 @@ struct TPolylineDescriptor( MapGraph )
         
         res ~= start_node.point.coords;
         
-        auto edge = start_node.edges[ edge_idx ];
+        auto edge = mapGraph.graph.getEdge( node_idx, edge_idx );
         
         foreach( c; edge.payload.points )
             res ~= c;
@@ -224,9 +224,7 @@ struct TPolylineDescriptor( MapGraph )
     private
     auto getEdge()( in MapGraph mapGraph ) const
     {
-        auto node = mapGraph.graph.nodes[ node_idx ];
-        
-        return node.edges[ edge_idx ];
+        return mapGraph.graph.getEdge( node_idx, edge_idx );
     }
 }
 
@@ -266,9 +264,9 @@ class TMapGraph( _Node, alias CREATE_EDGE )
     {
         PolylineDescriptor[] res;
         
-        foreach( j, ref const node; graph.nodes )
-            for( auto i = 0; i < node.edges.length; i++ )
-                res ~= PolylineDescriptor( j, i );
+        foreach( node_idx, ref const node; graph.nodes )
+            for( auto i = 0; i < node.edgesFromNode( node_idx ).length; i++ )
+                res ~= PolylineDescriptor( node_idx, i );
         
         return res;
     }
