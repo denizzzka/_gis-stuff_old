@@ -3,7 +3,7 @@ module map;
 import math.geometry;
 import math.rtree2d;
 import cat = categories;
-import map_graph: LineGraph;
+import map_graph: LineGraph, preparePolylines;
 import roads: RoadGraph;
 static import config.map;
 static import config.converter;
@@ -133,7 +133,9 @@ class Region
     
     void fillLines( IDstruct, AACoords, LinesDescr )( in AACoords nodes_coords, LinesDescr lines_descr )
     {
-        line_graph = new LineGraph( nodes_coords, lines_descr );
+        auto cuttedOnCrossings = preparePolylines( lines_descr, nodes_coords );
+        
+        line_graph = new LineGraph();
         
         auto descriptors = line_graph.getDescriptors();
         

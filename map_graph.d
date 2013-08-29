@@ -244,6 +244,11 @@ class TMapGraph( _Node, alias CREATE_EDGE )
         G graph;
     }
     
+    this()()
+    {
+        graph = new G;
+    }
+    
     this( ForeignCoords, PolylineDescription )(
             in ForeignCoords[ulong] nodes,
             scope PolylineDescription[] descriptions
@@ -254,7 +259,7 @@ class TMapGraph( _Node, alias CREATE_EDGE )
     }
     body
     {
-        graph = new G;
+        this();
         
         auto prepared = descriptions.preparePolylines( nodes );
         
@@ -349,7 +354,6 @@ class TMapGraph( _Node, alias CREATE_EDGE )
 }
 
 /// Cuts lines on crossings
-private
 DescriptionsTree.Payload[] preparePolylinesFromTree(DescriptionsTree, ForeignCoords)(
         in DescriptionsTree lines_rtree,
         in ForeignCoords[ulong] nodes
@@ -393,7 +397,6 @@ DescriptionsTree.Payload[] preparePolylinesFromTree(DescriptionsTree, ForeignCoo
 }
 
 /// Cuts lines on crossings
-private
 Description[] preparePolylines(Description, ForeignCoords)(
         Description[] lines,
         in ForeignCoords[ulong] nodes
