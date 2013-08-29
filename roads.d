@@ -179,6 +179,7 @@ struct TNode( _Edge, _Point )
         return EdgesRange( &this );
     }
     
+    @disable
     EdgesRange edgesFromNode( size_t curr_node_idx ) const
     {
         return EdgesRange( &this, curr_node_idx );
@@ -228,7 +229,7 @@ MapCoords[] getPointsDirected( in RoadGraph.PolylineDescriptor* descr, in RoadGr
     
     res ~= start_node.point.coords;
     
-    auto edge = start_node.edgesFromNode( descr.node_idx )[ descr.edge_idx ];
+    auto edge = roadGraph.graph.getEdge( descr.node_idx, descr.edge_idx );
     
     if( edge.forward_direction )
         foreach( c; edge.payload.points )

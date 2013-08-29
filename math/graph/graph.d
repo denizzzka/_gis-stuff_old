@@ -53,7 +53,7 @@ class Graph( _Node )
         nodes[ to_idx ].addEdge( edge_idx ); // to --> from
     }
     
-    auto getEdge( size_t node_idx, size_t edge_idx )
+    ref auto getEdge( in size_t node_idx, in size_t edge_idx ) const
     {
         return nodes[ node_idx ].edges[ edge_idx ];
     }
