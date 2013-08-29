@@ -14,18 +14,18 @@ struct TNode( _Edge, _Point )
     alias _Point Point;
     alias _Edge Edge;
     
-    Edge[] edges;
+    private Edge[] edges_storage;
     
     Point point;
     
     void addEdge( Edge edge )
     {
-        edges ~= edge;
+        edges_storage ~= edge;
     }
     
     auto edgesFromNode( in size_t from_node_idx ) const
     {
-        return edges;
+        return edges_storage;
     }
 }
 
