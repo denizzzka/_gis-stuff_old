@@ -4,7 +4,7 @@ import map;
 import math.geometry;
 import osm: Coords, metersToEncoded, encodedToMeters;
 import math.earth: Conv, WGS84, lon2canonical;
-import map: Point, Line = _Line, RGraph;
+import map: Point, RGraph;
 import roads: findPath;
 
 import std.conv;

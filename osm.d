@@ -4,7 +4,7 @@ import osmpbf.fileformat;
 import osmpbf.osmformat;
 import math.geometry;
 import math.earth;
-import map: Map, Region, BBox, Point, PointsStorage, Line = _Line, addPoint, MapCoords = Coords, LineGraph, RGraph, TPrepareRoads;
+import map: Map, Region, BBox, Point, PointsStorage, addPoint, MapCoords = Coords, LineGraph, RGraph, TPrepareRoads;
 import cat = categories;
 import osm_tags_parsing;
 import map_graph: TPolylineDescription;
@@ -221,16 +221,6 @@ struct DecodedLine
         }
         
         return res;
-    }
-    
-    private
-    Line createLine( in PrimitiveBlock prim, in Coords[ OSM_id ] nodes_coords ) const
-    {
-        return Line(
-                getCoords( nodes_coords ),
-                prim.stringtable.getLineType( this ),
-                tags.toString()
-            );
     }
 }
 

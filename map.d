@@ -49,56 +49,6 @@ struct Point
     }
 }
 
-struct _Line
-{
-    Coords[] nodes;
-    cat.Line type;
-    string tags;
-    
-    this( Coords[] nodes, in cat.Line type, in string tags )
-    {
-        this.nodes = nodes;
-        this.type = type;
-        this.tags = tags;
-    }
-    
-    this(this)
-    {
-        nodes = nodes.dup;
-    }
-    
-    @disable this();
-    
-    BBox getBoundary() const
-    in
-    {
-        assert( nodes.length > 0 );
-    }
-    body
-    {
-        auto res = BBox( nodes[0], Coords(0,0) );
-        
-        for( auto i = 1; i < nodes.length; i++ )
-            res.addCircumscribe( nodes[i] );
-        
-        return res;
-    }
-    
-    auto color() const
-    {
-        return config.map.polylines.getProperty( type ).color;
-    }
-    
-    _Line opSlice( size_t from, size_t to )
-    {
-        _Line res = this;
-        
-        res.nodes = nodes[ from..to ];
-        
-        return res;
-    }
-}
-
 alias RTreePtrs!(BBox, Point) PointsStorage; // TODO: 2D-Tree points storage
 alias RTreePtrs!(BBox, LineGraph.PolylineDescriptor) LinesStorage;
 alias RTreePtrs!(BBox, RGraph.PolylineDescriptor) RoadsStorage;
