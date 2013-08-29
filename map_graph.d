@@ -261,7 +261,11 @@ class TMapGraph( _Node, alias CREATE_EDGE )
         descriptionsToPolylineGraph!CREATE_EDGE( graph, prepared, nodes );
     }
     
-    void addPolyline( Description, ForeignID )( Description line )
+    void addPolyline( Description, ForeignID )(
+            Description line,
+            ref size_t[ForeignID] already_stored,
+            in ForeignCoords[ForeignID] nodes_coords
+        )
     in
     {
         assert( line.nodes_ids.length >= 2 );
@@ -270,15 +274,15 @@ class TMapGraph( _Node, alias CREATE_EDGE )
     {
         size_t[ForeignID] already_stored;
         
+        auto from_node_idx = addPoint( line.nodes_ids[0], already_stored, nodes_coords );
+        auto to_node_idx = addPoint( line.nodes_ids[$-1], already_stored, nodes_coords );
+        
         Coords points[];
         
         for( auto i = 1; i < line.nodes_ids.length - 1; i++ )
             points ~= encodedToMapCoords( nodes[ line.nodes_ids[i] ] );
         
         auto poly = Polyline( points, line.type );
-        
-        auto from_node_idx = addPoint( line.nodes_ids[0] );
-        auto to_node_idx = addPoint( line.nodes_ids[$-1] );
                 
         CREATE_EDGE( graph, from_node_idx, to_node_idx, poly );
     }
