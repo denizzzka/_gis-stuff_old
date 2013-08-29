@@ -163,18 +163,19 @@ class POV
         return res;
     }
     
-    Line[] getPathLines()
+    RGraph.Polylines[] getPathLines()
     {
-        Line[] res;
-        
         debug(scene) writeln("path=", found_path);
         
-        foreach( descriptor; found_path )
-            res ~= Line(
-                    descriptor.getPoints( map.regions[0].layers[0].road_graph ),
-                    cat.Line.PATH, ""
-                );
+        RGraph.Polylines[] res;
+        
+        auto curr = RGraph.Polylines( map.regions[ 0 ].layers[ 0 ].road_graph ); // FIXME
             
+        foreach( ref c; found_path )
+            curr.descriptors ~= &c;
+        
+        res ~= curr;
+        
         return res;
     }
     

@@ -76,7 +76,7 @@ class Window
 		drawRoads( roads );
 		
 		auto path = scene.getPathLines();
-		drawLines( path );
+		drawRoads( path );
 	    }
 	    
 	    drawCenter;
