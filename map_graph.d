@@ -231,7 +231,8 @@ struct TPolylineDescriptor( MapGraph )
 class TMapGraph( _Node, alias CREATE_EDGE )
 {
     alias _Node Node;
-    alias Node.Point.Coords Coords;
+    alias Node.Point Point;
+    alias Point.Coords Coords;
     alias Node.Edge Edge;
     alias Box!Coords BBox;
     alias TPolylineDescriptor!TMapGraph PolylineDescriptor;
@@ -258,6 +259,34 @@ class TMapGraph( _Node, alias CREATE_EDGE )
         graph = new G;
         
         descriptionsToPolylineGraph!CREATE_EDGE( graph, prepared, nodes );
+    }
+    
+    void addPolyline( Description )( Description line_descr )
+    {
+        size_t[ulong] already_stored;
+    
+
+    }
+    
+    private
+    size_t addPoint( ForeignID )( ForeignID node_id, ref size_t [ForeignID] already_stored, in ForeignCoords[ForeignID] nodes_coords )
+    {
+        size_t* p = node_id in already_stored;
+        
+        if( p !is null )
+            return *p;
+        else
+        {
+            auto coord = node_id in nodes;
+            
+            assert( coord != null );
+            
+            auto point = Point( encodedToMapCoords( *coord ) );
+            auto idx = graph.addPoint( point );
+            already_stored[ node_id ] = idx;
+            
+            return idx;
+        }
     }
     
     PolylineDescriptor[] getDescriptors() const
