@@ -355,7 +355,7 @@ class TMapGraph( _Node, alias CREATE_EDGE )
     }
 }
 
-DescriptionsTree.Payload[] cutOnCrossings(DescriptionsTree, ForeignCoords)(
+auto cutOnCrossings(DescriptionsTree, ForeignCoords)(
         in DescriptionsTree lines_rtree,
         in ForeignCoords[ulong] nodes
     )
