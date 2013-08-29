@@ -6,6 +6,7 @@ import osm: Coords, metersToEncoded, encodedToMeters;
 import math.earth: Conv, WGS84, lon2canonical;
 import map: Point, RGraph;
 import roads: findPath;
+import config.viewer;
 
 import std.conv;
 import std.string;
@@ -30,8 +31,6 @@ class POV
         Vector2r center; /// in meters
         real zoom; /// pixels per meter
         Box!(Vector2d) boundary_meters; /// coords in meters
-        
-        immutable double layers_zoom[] = [ 0.6, 0.35, 0.06, 0.02 ];
     }
     
     void updatePath()
@@ -100,9 +99,9 @@ class POV
     private
     size_t getCurrentLayerNum() const
     {
-        size_t layer_num = layers_zoom.length;
+        size_t layer_num = layersZoom.length;
         
-        foreach( i, curr_zoom; layers_zoom )
+        foreach( i, curr_zoom; layersZoom )
             if( zoom > curr_zoom )
             {
                 layer_num = i;
