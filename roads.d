@@ -82,7 +82,7 @@ struct TEdge( _Weight, _Payload )
     }
 }
 
-void createEdge( Graph, Payload )(
+size_t createEdge( Graph, Payload )(
         Graph graph,
         in size_t from_node_idx,
         in size_t to_node_idx,
@@ -93,7 +93,7 @@ void createEdge( Graph, Payload )(
     
     Graph.Edge edge = { forward: forward, backward: backward, payload: payload };
     
-    graph.addBidirectionalEdge( edge );
+    return graph.addBidirectionalEdge( edge );
 }
 
 struct TNode( _Edge, _Point )
@@ -183,14 +183,14 @@ struct TNode( _Edge, _Point )
     {
         size_t global_idx = Edge.addToEdges( edge );
         
-        addEdge( global_idx );
-        
-        return global_idx;
+        return addEdge( global_idx );
     }
     
-    void addEdge( size_t global_idx )
+    size_t addEdge( size_t global_idx )
     {
         edges_idxs ~= global_idx;
+        
+        return edges_idxs.length - 1;
     }
 }
 

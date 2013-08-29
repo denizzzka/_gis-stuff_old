@@ -18,9 +18,11 @@ struct TNode( _Edge, _Point )
     
     Point point;
     
-    void addEdge( Edge edge )
+    size_t addEdge( Edge edge )
     {
         edges_storage ~= edge;
+        
+        return edges_storage.length - 1;
     }
     
     auto edgesFromNode( in size_t from_node_idx ) const
@@ -44,18 +46,18 @@ class Graph( _Node )
         return nodes.length-1;
     }
     
-    void addEdge( in size_t from_node_idx, Edge edge )
+    size_t addEdge( in size_t from_node_idx, Edge edge )
     {
-        nodes[ from_node_idx ].addEdge( edge );
+        return nodes[ from_node_idx ].addEdge( edge );
     }
     
-    void addBidirectionalEdge()( Edge edge )
+    size_t addBidirectionalEdge()( Edge edge )
     {
         size_t to_idx = edge.forward.to_node;
         size_t from_idx = edge.backward.to_node;
         
-        auto edge_idx = nodes[ from_idx ].addEdge( edge ); // from --> to
-        nodes[ to_idx ].addEdge( edge_idx ); // to --> from
+        auto edge_idx = nodes[ to_idx ].addEdge( edge ); // to --> from
+        return nodes[ from_idx ].addEdge( edge_idx ); // from --> to
     }
     
     ref auto getEdge()( in size_t node_idx, in size_t edge_idx ) const

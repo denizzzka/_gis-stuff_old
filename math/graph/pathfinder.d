@@ -39,9 +39,11 @@ struct TNode( _Edge, _Point )
         return LogicalEdgesRange( &this );
     }
     
-    void addEdge( Edge edge )
+    size_t addEdge( Edge edge )
     {
         edges_storage ~= edge;
+        
+        return edges_storage.length - 1;
     }
 }
 

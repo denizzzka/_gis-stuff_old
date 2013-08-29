@@ -269,7 +269,7 @@ class TMapGraph( _Node, alias CREATE_EDGE )
             addPolyline( line, already_stored, nodes );
     }
     
-    void addPolyline( Description, ForeignID, ForeignCoords )(
+    PolylineDescriptor addPolyline( Description, ForeignID, ForeignCoords )(
             Description line,
             ref size_t[ForeignID] already_stored,
             in ForeignCoords[ForeignID] nodes_coords
@@ -290,7 +290,9 @@ class TMapGraph( _Node, alias CREATE_EDGE )
         
         auto poly = Polyline( points, line.type );
                 
-        CREATE_EDGE( graph, from_node_idx, to_node_idx, poly );
+        size_t edge_idx = CREATE_EDGE( graph, from_node_idx, to_node_idx, poly );
+        
+        return PolylineDescriptor( from_node_idx, edge_idx );
     }
     
     private
@@ -456,7 +458,7 @@ unittest
     auto g = new G( nodes, [ w1, w2 ] );
 }
 
-void createEdge( Graph, Payload )(
+size_t createEdge( Graph, Payload )(
         Graph graph,
         in size_t from_node_idx,
         in size_t to_node_idx,
@@ -464,7 +466,7 @@ void createEdge( Graph, Payload )(
 {
     Graph.Edge edge = { to_node: to_node_idx, payload: payload };
     
-    graph.addEdge( from_node_idx, edge );
+    return graph.addEdge( from_node_idx, edge );
 }
 
 alias TPolyline!MapCoords Polyline;

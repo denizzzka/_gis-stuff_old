@@ -150,11 +150,11 @@ class Region
                 if( epsilon )
                     descr.generalize!IDstruct( nodes_coords, epsilon );
                 
-                line_graph.addPolyline( descr, already_stored, nodes_coords );
+                auto descriptior = line_graph.addPolyline( descr, already_stored, nodes_coords );
                 
-                //auto bbox = descr.getBoundary( line_graph );
+                auto bbox = descriptior.getBoundary( line_graph );
                 
-                //layers[n].lines.addObject( bbox, descr );
+                layers[n].lines.addObject( bbox, descriptior );
             }
         }
     }
