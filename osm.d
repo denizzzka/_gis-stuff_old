@@ -382,7 +382,7 @@ Region getRegion( string filename, bool verbose )
                                 
                             case ROAD:
                                 auto road = RoadDescription( decoded.coords_idx, type, nodes_coords );
-                                roads.addRoad( road, nodes_coords );
+                                roads.addRoad( road );
                                 break;
                         }
                     }

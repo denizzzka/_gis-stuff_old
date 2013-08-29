@@ -96,7 +96,8 @@ struct Layer
 
 class Region
 {
-    Layer[5] layers;
+    immutable layers_num = 5;
+    Layer[layers_num] layers;
     LineGraph line_graph;
     
     this()
@@ -161,9 +162,11 @@ class Region
     
     void fillRoads( AACoords, PrepareRoads )( in AACoords nodes_coords, PrepareRoads prepared )
     {
+        auto road_layers = prepared.getRoadsLayers( nodes_coords );
+        
         foreach( i, ref c; layers )
         {
-            c.road_graph = new RGraph( nodes_coords, prepared.roads_to_store[i] );
+            c.road_graph = new RGraph( nodes_coords, road_layers[i] );
             c.fillRoadsRTree();
         }
     }
@@ -171,21 +174,35 @@ class Region
 
 class TPrepareRoads( Descr, AACoords, IDstruct )
 {
-    private Descr[][ Region.layers.length ] roads_to_store;
+    private Descr[] roads_to_store;
     
-    void addRoad( Descr road_descr, in AACoords nodes_coords )
+    void addRoad( Descr road_descr )
     {
-        auto to_layers = config.map.polylines.getProperty( road_descr.type ).layers;
+        roads_to_store ~= road_descr;
+    }
+    
+    auto getRoadsLayers( in AACoords nodes_coords )
+    {
+        auto cutted = cutOnCrossings( roads_to_store, nodes_coords );
         
-        foreach( n; to_layers )
+        Descr[][ Region.layers_num ] res;
+        
+        foreach( road_descr; cutted )
         {
-            auto epsilon = config.converter.layersGeneralization[n];
+            auto to_layers = config.map.polylines.getProperty( road_descr.type ).layers;
             
-            if( epsilon )
-                road_descr.generalize!IDstruct( nodes_coords, epsilon );
+            foreach( n; to_layers )
+            {
+                auto epsilon = config.converter.layersGeneralization[n];
                 
-            roads_to_store[n] ~= road_descr;
+                if( epsilon )
+                    road_descr.generalize!IDstruct( nodes_coords, epsilon );
+                    
+                res[n] ~= road_descr;
+            }
         }
+        
+        return res;
     }
 }
 
