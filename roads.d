@@ -101,9 +101,18 @@ struct TNode( _Edge, _Point )
     alias _Point Point;
     alias _Edge Edge;
     
+    private static TNode[] nodes;
+    
     private size_t[] edges_idxs;
     
     const Point point;
+    
+    static size_t addToNodes( TNode node )
+    {
+        nodes ~= node;
+        
+        return nodes.length - 1;
+    }
     
     struct LogicalEdgesRange
     {
