@@ -178,13 +178,7 @@ struct TNode( _Edge, _Point )
     {
         return EdgesRange( &this );
     }
-    
-    @disable
-    EdgesRange edgesFromNode( size_t curr_node_idx ) const
-    {
-        return EdgesRange( &this, curr_node_idx );
-    }
-    
+        
     size_t addEdge( Edge edge )
     {
         size_t global_idx = Edge.addToEdges( edge );
