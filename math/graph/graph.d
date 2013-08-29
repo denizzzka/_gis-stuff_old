@@ -14,9 +14,18 @@ struct TNode( _Edge, _Point )
     alias _Point Point;
     alias _Edge Edge;
     
+    private static TNode[] nodes;
+    
     Edge[] edges;
     
     Point point;
+    
+    static size_t addToNodes( TNode node )
+    {
+        nodes ~= node;
+        
+        return nodes.length - 1;
+    }
     
     void addEdge( Edge edge )
     {
@@ -34,9 +43,8 @@ class Graph( _Node )
     size_t addPoint( Node.Point v )
     {
         Node n = { point: v };
-        nodes ~= n;
         
-        return nodes.length-1;
+        return Node.addToNodes( n );
     }
     
     void addEdge( in size_t from_node_idx, Edge edge )
