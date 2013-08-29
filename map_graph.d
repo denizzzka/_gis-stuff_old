@@ -287,7 +287,7 @@ class TMapGraph( _Node, alias CREATE_EDGE )
     
     private
     size_t addPoint( ForeignID, ForeignCoords )(
-            ulong node_id,
+            in ForeignID node_id,
             ref size_t[ForeignID] already_stored,
             in ForeignCoords[ForeignID] nodes_coords
         )
