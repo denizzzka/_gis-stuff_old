@@ -388,7 +388,7 @@ Region getRegion( string filename, bool verbose )
                     }
                     catch( ReadPrimitiveException e )
                     {
-                        writeln("Way ", w.id, " excluded: ", e.msg );
+                        stderr.writeln("Way ", w.id, " excluded: ", e.msg );
                         continue;
                     }
         }
