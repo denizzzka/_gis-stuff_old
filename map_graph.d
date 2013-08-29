@@ -258,13 +258,13 @@ class TMapGraph( _Node, alias CREATE_EDGE )
         
         graph = new G;
         
-        descriptionsToPolylineGraph!CREATE_EDGE( graph, prepared, nodes );
+        descriptionsToPolylineGraph!CREATE_EDGE( this, prepared, nodes );
     }
     
-    void addPolyline( Description, ForeignID )(
+    void addPolyline( Description, ForeignCoords )(
             Description line,
-            ref size_t[ForeignID] already_stored,
-            in ForeignCoords[ForeignID] nodes_coords
+            ref size_t[ulong] already_stored,
+            in ForeignCoords[ulong] nodes_coords
         )
     in
     {
@@ -278,7 +278,7 @@ class TMapGraph( _Node, alias CREATE_EDGE )
         Coords points[];
         
         for( auto i = 1; i < line.nodes_ids.length - 1; i++ )
-            points ~= encodedToMapCoords( nodes[ line.nodes_ids[i] ] );
+            points ~= encodedToMapCoords( nodes_coords[ line.nodes_ids[i] ] );
         
         auto poly = Polyline( points, line.type );
                 
@@ -286,10 +286,10 @@ class TMapGraph( _Node, alias CREATE_EDGE )
     }
     
     private
-    size_t addPoint( ForeignID )(
-            ForeignID node_id,
-            ref size_t[ForeignID] already_stored,
-            in ForeignCoords[ForeignID] nodes_coords
+    size_t addPoint( ForeignCoords )(
+            ulong node_id,
+            ref size_t[ulong] already_stored,
+            in ForeignCoords[ulong] nodes_coords
         )
     {
         size_t* p = node_id in already_stored;
@@ -298,7 +298,7 @@ class TMapGraph( _Node, alias CREATE_EDGE )
             return *p;
         else
         {
-            auto coord = node_id in nodes;
+            auto coord = node_id in nodes_coords;
             
             assert( coord != null );
             
@@ -451,8 +451,8 @@ unittest
 }
 
 private
-void descriptionsToPolylineGraph( alias CREATE_EDGE, Graph, PolylineDescription, ForeignCoords )(
-        ref Graph graph,
+void descriptionsToPolylineGraph( alias CREATE_EDGE, MGraph, PolylineDescription, ForeignCoords )(
+        ref MGraph mgraph,
         in PolylineDescription[] descriptions,
         in ForeignCoords[ulong] nodes
     )
@@ -467,41 +467,11 @@ body
     
     size_t[ulong] already_stored;
     
-    size_t addPoint( ulong node_id )
-    {
-        auto p = node_id in already_stored;
-        
-        if( p !is null )
-            return *p;
-        else
-        {
-            auto coord = node_id in nodes;
-            
-            assert( coord != null );
-            
-            auto point = Point( encodedToMapCoords( *coord ) );
-            auto idx = graph.addPoint( point );
-            already_stored[ node_id ] = idx;
-            
-            return idx;
-        }
-    }
-    
     foreach( line; descriptions )
     {
         assert( line.nodes_ids.length >= 2 );
         
-        Coords points[];
-        
-        for( auto i = 1; i < line.nodes_ids.length - 1; i++ )
-            points ~= encodedToMapCoords( nodes[ line.nodes_ids[i] ] );
-        
-        auto poly = Polyline( points, line.type );
-        
-        auto from_node_idx = addPoint( line.nodes_ids[0] );
-        auto to_node_idx = addPoint( line.nodes_ids[$-1] );
-                
-        CREATE_EDGE( graph, from_node_idx, to_node_idx, poly );
+        mgraph.addPolyline( line, already_stored, nodes );
     }
 }
 
