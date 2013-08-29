@@ -56,8 +56,10 @@ class Graph( _Node )
         size_t to_idx = edge.forward.to_node;
         size_t from_idx = edge.backward.to_node;
         
-        auto edge_idx = nodes[ to_idx ].addEdge( edge ); // to --> from
-        return nodes[ from_idx ].addEdge( edge_idx ); // from --> to
+        auto global_edge_idx = Edge.addToEdges( edge );
+        
+        nodes[ to_idx ].addEdge( global_edge_idx );
+        return nodes[ from_idx ].addEdge( global_edge_idx );
     }
     
     ref auto getEdge()( in size_t node_idx, in size_t edge_idx ) const
