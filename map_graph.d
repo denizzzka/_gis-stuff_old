@@ -261,7 +261,7 @@ class TMapGraph( _Node, alias CREATE_EDGE )
     {
         this();
         
-        auto prepared = descriptions.preparePolylines( nodes );
+        auto prepared = cutOnCrossings( descriptions, nodes );
         
         size_t[ulong] already_stored;
         
@@ -355,8 +355,7 @@ class TMapGraph( _Node, alias CREATE_EDGE )
     }
 }
 
-/// Cuts lines on crossings
-DescriptionsTree.Payload[] preparePolylinesFromTree(DescriptionsTree, ForeignCoords)(
+DescriptionsTree.Payload[] cutOnCrossings(DescriptionsTree, ForeignCoords)(
         in DescriptionsTree lines_rtree,
         in ForeignCoords[ulong] nodes
     )
@@ -398,8 +397,7 @@ DescriptionsTree.Payload[] preparePolylinesFromTree(DescriptionsTree, ForeignCoo
     return res;
 }
 
-/// Cuts lines on crossings
-Description[] preparePolylines(Description, ForeignCoords)(
+Description[] cutOnCrossings(Description, ForeignCoords)(
         Description[] lines,
         in ForeignCoords[ulong] nodes
     )
@@ -416,7 +414,7 @@ Description[] preparePolylines(Description, ForeignCoords)(
         tree.addObject( boundary, c );
     }
     
-    return preparePolylinesFromTree( tree, nodes );
+    return cutOnCrossings( tree, nodes );
 }
 
 unittest
@@ -451,7 +449,7 @@ unittest
     
     PolylineDescription[] lines = [ w1, w2 ];
     
-    auto prepared = preparePolylines( lines, nodes );
+    auto prepared = cutOnCrossings( lines, nodes );
     
     assert( prepared.length == 5 );
     

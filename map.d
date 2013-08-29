@@ -3,7 +3,7 @@ module map;
 import math.geometry;
 import math.rtree2d;
 import cat = categories;
-import map_graph: LineGraph, preparePolylines;
+import map_graph: LineGraph, cutOnCrossings;
 import roads: RoadGraph;
 static import config.map;
 static import config.converter;
@@ -133,13 +133,13 @@ class Region
     
     void fillLines( IDstruct, AACoords, LinesDescr )( in AACoords nodes_coords, LinesDescr lines_descr )
     {
-        auto cuttedOnCrossings = preparePolylines( lines_descr, nodes_coords );
+        auto cutted = cutOnCrossings( lines_descr, nodes_coords );
         
         line_graph = new LineGraph;
         
         size_t[ulong] already_stored;
         
-        foreach( descr; cuttedOnCrossings )
+        foreach( descr; cutted )
         {
             auto layers_num = config.map.polylines.getProperty( descr.type ).layers;
             
