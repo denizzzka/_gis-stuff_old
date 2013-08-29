@@ -261,11 +261,26 @@ class TMapGraph( _Node, alias CREATE_EDGE )
         descriptionsToPolylineGraph!CREATE_EDGE( graph, prepared, nodes );
     }
     
-    void addPolyline( Description, ForeignID )( Description line_descr )
+    void addPolyline( Description, ForeignID )( Description line )
+    in
+    {
+        assert( line.nodes_ids.length >= 2 );
+    }
+    body
     {
         size_t[ForeignID] already_stored;
         
+        Coords points[];
         
+        for( auto i = 1; i < line.nodes_ids.length - 1; i++ )
+            points ~= encodedToMapCoords( nodes[ line.nodes_ids[i] ] );
+        
+        auto poly = Polyline( points, line.type );
+        
+        auto from_node_idx = addPoint( line.nodes_ids[0] );
+        auto to_node_idx = addPoint( line.nodes_ids[$-1] );
+                
+        CREATE_EDGE( graph, from_node_idx, to_node_idx, poly );
     }
     
     private
