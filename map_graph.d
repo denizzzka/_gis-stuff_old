@@ -258,7 +258,7 @@ class TMapGraph( _Node, alias CREATE_EDGE )
         
         graph = new G;
         
-        descriptionsToPolylineGraph!CREATE_EDGE( this, prepared, nodes );
+        descriptionsToPolylineGraph( this, prepared, nodes );
     }
     
     void addPolyline( Description, ForeignID, ForeignCoords )(
@@ -450,8 +450,9 @@ unittest
     auto g = new G( nodes, [ w1, w2 ] );
 }
 
+//@disable
 private
-void descriptionsToPolylineGraph( alias CREATE_EDGE, MGraph, PolylineDescription, ForeignCoords )(
+void descriptionsToPolylineGraph( MGraph, PolylineDescription, ForeignCoords )(
         ref MGraph mgraph,
         in PolylineDescription[] descriptions,
         in ForeignCoords[ulong] nodes
