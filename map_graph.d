@@ -272,8 +272,6 @@ class TMapGraph( _Node, alias CREATE_EDGE )
     }
     body
     {
-        size_t[ForeignID] already_stored;
-        
         auto from_node_idx = addPoint( line.nodes_ids[0], already_stored, nodes_coords );
         auto to_node_idx = addPoint( line.nodes_ids[$-1], already_stored, nodes_coords );
         
@@ -288,7 +286,11 @@ class TMapGraph( _Node, alias CREATE_EDGE )
     }
     
     private
-    size_t addPoint( ForeignID )( ForeignID node_id, ref size_t[ForeignID] already_stored, in ForeignCoords[ForeignID] nodes_coords )
+    size_t addPoint( ForeignID )(
+            ForeignID node_id,
+            ref size_t[ForeignID] already_stored,
+            in ForeignCoords[ForeignID] nodes_coords
+        )
     {
         size_t* p = node_id in already_stored;
         
