@@ -70,7 +70,7 @@ class Window
 		window.draw( vertex_array );
 		
 		auto lines = scene.getLines();
-		draw_Lines( lines );
+		drawLines( lines );
 		
 		auto roads = scene.getRoads();
 		drawRoads( roads );
@@ -97,26 +97,6 @@ class Window
             
 	    Vector2f c; c = cartesianToSFML(window_coords );
 	    vertex_array.append( Vertex(c, Color.Cyan) );
-        }
-    }
-    
-    private
-    void drawLines(T)( in T lines )
-    {
-        foreach( line; lines )
-        {
-            Vector2r[]  line_points;
-            
-            foreach( i, node; line.nodes )
-            {
-                Vector2r point = node;
-                auto window_coords = scene.metersToScreen( point );
-                line_points ~= window_coords;
-
-                debug(sfml) writeln("draw line point i=", i, " encoded coords=", point, " meters=", node, " window_coords=", window_coords);
-            }
-            
-            drawLine( line_points, line.color );
         }
     }
     
@@ -163,7 +143,7 @@ class Window
     }
     
     private
-    void draw_Lines( Polylines )( in Polylines[] polylines )
+    void drawLines( Polylines )( in Polylines[] polylines )
     {
         foreach( lines; polylines )
 	    foreach( line_dscr; lines.descriptors )
@@ -203,6 +183,7 @@ class Window
 	window.draw( cross );
     }
     
+    @disable
     private
     void drawLine( Vector2r[] coords, Color color )
     {
