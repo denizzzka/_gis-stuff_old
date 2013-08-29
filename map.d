@@ -135,25 +135,26 @@ class Region
     {
         auto cuttedOnCrossings = preparePolylines( lines_descr, nodes_coords );
         
-        line_graph = new LineGraph();
+        line_graph = new LineGraph;
         
-        auto descriptors = line_graph.getDescriptors();
+        size_t[ulong] already_stored;
         
-        foreach( descr; descriptors )
+        foreach( descr; cuttedOnCrossings )
         {
-            auto type = descr.getPolyline( line_graph ).type;
-            auto layers_num = config.map.polylines.getProperty( type ).layers;
+            auto layers_num = config.map.polylines.getProperty( descr.type ).layers;
             
             foreach( n; layers_num )
             {
                 auto epsilon = config.converter.layersGeneralization[n];
                 
-                //if( epsilon )
-                    //descr.generalize!IDstruct( nodes_coords, epsilon );
+                if( epsilon )
+                    descr.generalize!IDstruct( nodes_coords, epsilon );
                 
-                auto bbox = descr.getBoundary( line_graph );
+                line_graph.addPolyline( descr, already_stored, nodes_coords );
                 
-                layers[n].lines.addObject( bbox, descr );
+                //auto bbox = descr.getBoundary( line_graph );
+                
+                //layers[n].lines.addObject( bbox, descr );
             }
         }
     }
