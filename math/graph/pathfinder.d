@@ -11,7 +11,7 @@ struct TNode( _Edge, _Point )
     alias _Point Point;
     alias _Edge Edge;
     
-    private Edge[] edges_storage;
+    Edge[] edges;
     
     Point point;
     
@@ -25,13 +25,13 @@ struct TNode( _Edge, _Point )
         
         ref const (Edge) opIndex( size_t idx ) const
         {
-            return node.edges_storage[ edge_idx ];
+            return node.edges[ edge_idx ];
         }
         
         ref const (Edge) front() { return opIndex( edge_idx ); }
         void popFront() { ++edge_idx; }
         bool empty() const { return edge_idx >= length; }
-        size_t length() const { return node.edges_storage.length; }
+        size_t length() const { return node.edges.length; }
     }
     
     LogicalEdgesRange logicalEdges( size_t unused ) const
@@ -41,7 +41,7 @@ struct TNode( _Edge, _Point )
     
     void addEdge( Edge edge )
     {
-        edges_storage ~= edge;
+        edges ~= edge;
     }
 }
 

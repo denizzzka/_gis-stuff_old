@@ -52,4 +52,9 @@ class Graph( _Node )
         auto edge_idx = nodes[ from_idx ].addEdge( edge ); // from --> to
         nodes[ to_idx ].addEdge( edge_idx ); // to --> from
     }
+    
+    auto getEdge( size_t node_idx, size_t edge_idx )
+    {
+        return nodes[ node_idx ].edges[ edge_idx ];
+    }
 }
