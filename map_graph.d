@@ -254,11 +254,14 @@ class TMapGraph( _Node, alias CREATE_EDGE )
     }
     body
     {
-        auto prepared = descriptions.preparePolylines( nodes );
-        
         graph = new G;
         
-        descriptionsToPolylineGraph( this, prepared, nodes );
+        auto prepared = descriptions.preparePolylines( nodes );
+        
+        size_t[ulong] already_stored;
+        
+        foreach( line; descriptions )
+            addPolyline( line, already_stored, nodes );
     }
     
     void addPolyline( Description, ForeignID, ForeignCoords )(
@@ -448,32 +451,6 @@ unittest
     assert( prepared.length == 5 );
     
     auto g = new G( nodes, [ w1, w2 ] );
-}
-
-//@disable
-private
-void descriptionsToPolylineGraph( MGraph, PolylineDescription, ForeignCoords )(
-        ref MGraph mgraph,
-        in PolylineDescription[] descriptions,
-        in ForeignCoords[ulong] nodes
-    )
-in
-{
-    static assert( is( ForeignCoords == PolylineDescription.ForeignCoords ) );
-}
-body
-{
-    alias PolylineDescription.Coords Coords;
-    alias TPolyline!Coords Polyline;
-    
-    size_t[ulong] already_stored;
-    
-    foreach( line; descriptions )
-    {
-        assert( line.nodes_ids.length >= 2 );
-        
-        mgraph.addPolyline( line, already_stored, nodes );
-    }
 }
 
 void createEdge( Graph, Payload )(
