@@ -261,15 +261,15 @@ class TMapGraph( _Node, alias CREATE_EDGE )
         descriptionsToPolylineGraph!CREATE_EDGE( graph, prepared, nodes );
     }
     
-    void addPolyline( Description )( Description line_descr )
+    void addPolyline( Description, ForeignID )( Description line_descr )
     {
-        size_t[ulong] already_stored;
-    
-
+        size_t[ForeignID] already_stored;
+        
+        
     }
     
     private
-    size_t addPoint( ForeignID )( ForeignID node_id, ref size_t [ForeignID] already_stored, in ForeignCoords[ForeignID] nodes_coords )
+    size_t addPoint( ForeignID )( ForeignID node_id, ref size_t[ForeignID] already_stored, in ForeignCoords[ForeignID] nodes_coords )
     {
         size_t* p = node_id in already_stored;
         
