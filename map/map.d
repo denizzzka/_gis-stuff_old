@@ -131,7 +131,7 @@ class Region
         layers[layer_num].POI.addPoint( point );
     }
     
-    void fillLines( IDstruct, AACoords, LinesDescr )( in AACoords nodes_coords, LinesDescr lines_descr )
+    void fillLines( LinesDescr )( LinesDescr lines_descr )
     {
         auto cutted = cutOnCrossings( lines_descr );
         
@@ -148,7 +148,7 @@ class Region
                 auto epsilon = config.converter.layersGeneralization[n];
                 
                 if( epsilon )
-                    descr.generalize!IDstruct( nodes_coords, epsilon );
+                    descr.generalize( epsilon );
                 
                 auto descriptior = line_graph.addPolyline( descr, already_stored );
                 
@@ -182,7 +182,7 @@ class TPrepareRoads( Descr, AACoords, IDstruct )
             auto epsilon = config.converter.layersGeneralization[n];
             
             if( epsilon )
-                road_descr.generalize!IDstruct( nodes_coords, epsilon );
+                road_descr.generalize( epsilon );
                 
             roads_to_store[n] ~= road_descr;
         }

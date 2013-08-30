@@ -404,7 +404,7 @@ Region getRegion( string filename, bool verbose )
         }
     }
     
-    res.fillLines!( OSMCoords_id )( nodes_coords, lines );
+    res.fillLines( lines );
     res.fillRoads( nodes_coords, roads );
     
     return res;

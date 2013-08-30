@@ -85,19 +85,19 @@ struct TPolylineDescription( _ForeignCoords, alias MAP_COORDS_BY_ID )
         return res;
     }
     
-    void generalize( IDstruct )( in ForeignCoords[ulong] nodes_coords, in real epsilon )
+    void generalize( in real epsilon )
     {
-        IDstruct[] points;
+        NodeDescription[] points;
         
-        foreach( c; nodes_ids )
-            points ~= IDstruct( nodes_coords, c );
+        foreach( i, ref c; nodes_ids )
+            points ~= getNode( i );
             
         nodes_ids.destroy;
         
         auto reduced = math.reduce_points.reduce( points, epsilon );
         
         foreach( c; reduced )
-            nodes_ids ~= c.id;
+            nodes_ids ~= c.foreign_id;
     }
 }
 
