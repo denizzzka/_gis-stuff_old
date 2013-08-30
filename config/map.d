@@ -104,7 +104,7 @@ class Polylines
         
         auto map = json.object["Map"];
         
-        foreach( ref lineName; members )
+        foreach( member_idx, ref lineName; members )
         {
             auto color_vals = map.object[ lineName ].object["color"];
             
@@ -113,7 +113,8 @@ class Polylines
                 return to!ubyte( color_vals["R"].uinteger );
             }
             
-            auto color = Color( colorChan("R"), colorChan("G"), colorChan("B") );
+            properties[ member_idx ].color =
+                Color( colorChan("R"), colorChan("G"), colorChan("B") );
         }
     }
 };
