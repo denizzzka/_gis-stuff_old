@@ -302,7 +302,7 @@ Region getRegion( string filename, bool verbose )
         auto node_ptr = node_id in nodes_coords;
         
         if( !node_ptr )
-            throw new ReadPrimitiveException( "!! node "~to!string( node_id )~" is not found" );
+            throw new ReadPrimitiveException( "node "~to!string( node_id )~" is not found" );
         
         return encodedToMapCoords( *node_ptr );
     }
