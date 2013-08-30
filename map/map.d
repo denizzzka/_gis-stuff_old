@@ -150,7 +150,7 @@ class Region
                 if( epsilon )
                     descr.generalize!IDstruct( nodes_coords, epsilon );
                 
-                auto descriptior = line_graph.addPolyline( descr, already_stored, nodes_coords );
+                auto descriptior = line_graph.addPolyline( descr, already_stored );
                 
                 auto bbox = descriptior.getBoundary( line_graph );
                 
