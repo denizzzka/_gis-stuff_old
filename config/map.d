@@ -108,7 +108,10 @@ class Polylines
         {
             auto lineObj = map.object[ lineName ];
             
-            properties[ member_idx ].color = getColor( lineObj );
+            auto property = &properties[ member_idx ];
+            
+            property.color = getColor( lineObj );
+            property.layers = getSize_tArray( lineObj["layers"] );
         }
     }
 };
@@ -123,6 +126,16 @@ Color getColor( JSONValue v )
     }
     
     return Color( colorChan("R"), colorChan("G"), colorChan("B") );
+}
+
+size_t[] getSize_tArray( JSONValue v )
+{
+    size_t[] res;
+    
+    foreach( ref c; v.array )
+        res ~= to!uint( c.integer );
+        
+    return res;
 }
 
 const Polylines polylines;
