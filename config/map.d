@@ -5,6 +5,7 @@ static import categories;
 
 import std.json;
 import std.file: readText;
+import std.conv: to;
 
 
 struct PolylineProperties
@@ -105,7 +106,14 @@ class Polylines
         
         foreach( ref lineName; members )
         {
-            auto s = map.object[ lineName ].object["color"];
+            auto color_vals = map.object[ lineName ].object["color"];
+            
+            ubyte colorChan( string name )
+            {
+                return to!ubyte( color_vals["R"].uinteger );
+            }
+            
+            auto color = Color( colorChan("R"), colorChan("G"), colorChan("B") );
         }
     }
 };
