@@ -133,7 +133,7 @@ class Region
     
     void fillLines( IDstruct, AACoords, LinesDescr )( in AACoords nodes_coords, LinesDescr lines_descr )
     {
-        auto cutted = cutOnCrossings( lines_descr, nodes_coords );
+        auto cutted = cutOnCrossings( lines_descr );
         
         line_graph = new LineGraph;
         

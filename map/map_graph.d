@@ -157,7 +157,7 @@ class TMapGraph( _Node, alias CREATE_EDGE )
     {
         this();
         
-        auto prepared = cutOnCrossings( descriptions, nodes );
+        auto prepared = cutOnCrossings( descriptions );
         
         size_t[ulong] already_stored;
         
@@ -251,10 +251,7 @@ class TMapGraph( _Node, alias CREATE_EDGE )
     }
 }
 
-auto cutOnCrossings(DescriptionsTree, ForeignCoords)(
-        in DescriptionsTree lines_rtree,
-        in ForeignCoords[ulong] nodes
-    )
+auto cutOnCrossings(DescriptionsTree)( in DescriptionsTree lines_rtree )
 {
     alias DescriptionsTree.Payload PolylineDescription;
     alias DescriptionsTree.Box BBox;
@@ -269,15 +266,12 @@ auto cutOnCrossings(DescriptionsTree, ForeignCoords)(
         
         for( auto i = 1; i < line.nodes_ids.length - 1; i++ )
         {
-            auto curr_point = line.nodes_ids[i];
-            auto point_bbox = BBox(
-                    encodedToMapCoords( nodes[ curr_point ] ),
-                    Coords(0, 0)
-                );
+            auto curr_point_id = line.nodes_ids[i];
+            auto point_bbox = BBox( line.getNodeCoords( i ), Coords(0, 0) );
             auto near_lines = lines_rtree.search( point_bbox );
             
             foreach( n; near_lines )
-                if( n != lineptr && canFind( n.nodes_ids, curr_point ) )
+                if( n != lineptr && canFind( n.nodes_ids, curr_point_id ) )
                 {
                     res ~= line[ 0..i+1 ];
                     
@@ -293,10 +287,7 @@ auto cutOnCrossings(DescriptionsTree, ForeignCoords)(
     return res;
 }
 
-Description[] cutOnCrossings(Description, ForeignCoords)(
-        Description[] lines,
-        in ForeignCoords[ulong] nodes
-    )
+Description[] cutOnCrossings( Description )( Description[] lines )
 {
     alias Description.BBox BBox;
     alias RTreePtrs!( BBox, Description ) DescriptionsTree;
@@ -310,7 +301,7 @@ Description[] cutOnCrossings(Description, ForeignCoords)(
         tree.addObject( boundary, c );
     }
     
-    return cutOnCrossings( tree, nodes );
+    return cutOnCrossings( tree );
 }
 
 unittest
@@ -347,7 +338,7 @@ unittest
     
     PolylineDescription[] lines = [ w1, w2 ];
     
-    auto prepared = cutOnCrossings( lines, nodes );
+    auto prepared = cutOnCrossings( lines );
     
     assert( prepared.length == 5 );
     
