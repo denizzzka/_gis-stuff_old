@@ -106,18 +106,24 @@ class Polylines
         
         foreach( member_idx, ref lineName; members )
         {
-            auto color_vals = map.object[ lineName ].object["color"];
+            auto lineObj = map.object[ lineName ];
             
-            ubyte colorChan( string name )
-            {
-                return to!ubyte( color_vals["R"].uinteger );
-            }
-            
-            properties[ member_idx ].color =
-                Color( colorChan("R"), colorChan("G"), colorChan("B") );
+            properties[ member_idx ].color = getColor( lineObj );
         }
     }
 };
+
+Color getColor( JSONValue v )
+{
+    auto color_vals = v.object["color"];
+    
+    ubyte colorChan( string name )
+    {
+        return to!ubyte( color_vals["R"].uinteger );
+    }
+    
+    return Color( colorChan("R"), colorChan("G"), colorChan("B") );
+}
 
 const Polylines polylines;
 
