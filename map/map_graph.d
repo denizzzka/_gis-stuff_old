@@ -1,14 +1,14 @@
-module map_graph;
+module map.map_graph;
 
 import math.geometry;
 import math.rtree2d;
 import math.graph.graph: Graph, TEdge, TNode;
 import osm: OsmCoords = Coords, encodedToMapCoords, ReadPrimitiveException;
-import map: MapCoords = Coords;
+import map.map: MapCoords = Coords;
 import cat = categories: Line;
 static import config.map;
 import math.earth: mercator2coords, getSphericalDistance;
-static import math.reduce_points;
+import map.adapters;
 
 import std.algorithm: canFind;
 import std.random: uniform;

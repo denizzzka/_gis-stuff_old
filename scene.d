@@ -1,11 +1,11 @@
 module scene;
 
-import map;
+import map.map;
 import math.geometry;
 import osm: Coords, metersToEncoded, encodedToMeters;
 import math.earth: Conv, WGS84, lon2canonical;
-import map: Point, RGraph;
-import roads: findPath;
+import map.map: Point, RGraph;
+import map.roads: findPath;
 import config.viewer;
 
 import std.conv;

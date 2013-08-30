@@ -4,10 +4,10 @@ import osmpbf.fileformat;
 import osmpbf.osmformat;
 import math.geometry;
 import math.earth;
-import map: Map, Region, BBox, Point, PointsStorage, addPoint, MapCoords = Coords, LineGraph, RGraph, TPrepareRoads;
+import map.map: Map, Region, BBox, Point, PointsStorage, addPoint, MapCoords = Coords, LineGraph, RGraph, TPrepareRoads;
 import cat = categories;
 import osm_tags_parsing;
-import map_graph: TPolylineDescription;
+import map.adapters: TPolylineDescription;
 
 import std.stdio;
 import std.string;

@@ -1,3 +1,12 @@
+module map.adapters;
+
+import math.geometry;
+import cat = categories: Line;
+import osm: OsmCoords = Coords, encodedToMapCoords, ReadPrimitiveException;
+
+static import math.reduce_points;
+
+
 struct TPolylineDescription( _Coords, _ForeignCoords )
 {
     alias _Coords Coords;

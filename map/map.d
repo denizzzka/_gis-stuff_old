@@ -1,10 +1,10 @@
-module map;
+module map.map;
 
 import math.geometry;
 import math.rtree2d;
 import cat = categories;
-import map_graph: LineGraph, cutOnCrossings;
-import roads: RoadGraph;
+import map.map_graph: LineGraph, cutOnCrossings;
+import map.roads: RoadGraph;
 static import config.map;
 static import config.converter;
 

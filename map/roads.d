@@ -1,6 +1,6 @@
-module roads;
+module map.roads;
 
-import map_graph: MapCoords, Point, TMapGraph, TPolyline;
+import map.map_graph: MapCoords, Point, TMapGraph, TPolyline;
 private import math.graph.pathfinder: findMathGraphPath = findPath;
 
 
