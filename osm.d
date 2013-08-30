@@ -2,12 +2,12 @@ module osm;
 
 import osmpbf.fileformat;
 import osmpbf.osmformat;
-import math.geometry;
+import math.geometry: Vector2D, degrees2radians, radians2degrees;
 import math.earth;
-import map.map: Map, Region, BBox, Point, PointsStorage, addPoint, MapCoords = Coords, LineGraph, RGraph, TPrepareRoads;
+import map.map: Map, Region, BBox, Point, MapCoords = Coords, TPrepareRoads;
+import map.adapters: TPolylineDescription;
 import cat = categories;
 import osm_tags_parsing;
-import map.adapters: TPolylineDescription;
 
 import std.stdio;
 import std.string;
