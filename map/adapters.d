@@ -1,5 +1,6 @@
 module map.adapters;
 
+import map.map: Coords;
 import math.geometry;
 import cat = categories: Line;
 import osm: OsmCoords = Coords, encodedToMapCoords, ReadPrimitiveException;
@@ -7,9 +8,8 @@ import osm: OsmCoords = Coords, encodedToMapCoords, ReadPrimitiveException;
 static import math.reduce_points;
 
 
-struct TPolylineDescription( _Coords, _ForeignCoords )
+struct TPolylineDescription( _ForeignCoords )
 {
-    alias _Coords Coords;
     alias _ForeignCoords ForeignCoords;
     alias Box!Coords BBox;
     

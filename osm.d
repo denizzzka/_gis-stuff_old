@@ -338,7 +338,7 @@ Region getRegion( string filename, bool verbose )
     auto res = new Region;
     Coords[OSM_id] nodes_coords;
     
-    alias TPolylineDescription!( MapCoords, Coords ) LineDescription;
+    alias TPolylineDescription!( Coords ) LineDescription;
     alias LineDescription RoadDescription;
     
     LineDescription[] lines;
