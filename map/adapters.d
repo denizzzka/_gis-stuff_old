@@ -8,7 +8,7 @@ import osm: encodedToMapCoords;
 static import math.reduce_points;
 
 
-struct TPolylineDescription( _ForeignCoords, alias FOREIGN_COORDS_BY_ID )
+struct TPolylineDescription( _ForeignCoords, alias MAP_COORDS_BY_ID )
 {
     alias _ForeignCoords ForeignCoords;
     alias Box!Coords BBox;
@@ -30,7 +30,7 @@ struct TPolylineDescription( _ForeignCoords, alias FOREIGN_COORDS_BY_ID )
         // checking
         if( nodes )
             for( size_t i = 0; i < nodes_ids.length; i++ )
-                getNodeForeignCoords( i );
+                getNode( i );
     }
     
     @disable this();
@@ -41,7 +41,7 @@ struct TPolylineDescription( _ForeignCoords, alias FOREIGN_COORDS_BY_ID )
     }
     
     private
-    ForeignCoords getNodeForeignCoords( in size_t node_idx ) const
+    Coords getNode( in size_t node_idx ) const
     in
     {
         assert( node_idx < nodes_ids.length );
@@ -50,28 +50,22 @@ struct TPolylineDescription( _ForeignCoords, alias FOREIGN_COORDS_BY_ID )
     {
         auto foreign_id = nodes_ids[ node_idx ];
         
-        return FOREIGN_COORDS_BY_ID( foreign_id );
+        return MAP_COORDS_BY_ID( foreign_id );
     }
     
-    private
-    Coords getNode( in ForeignCoords[ulong] nodes, in size_t node_idx ) const
-    {
-        return encodedToMapCoords( getNodeForeignCoords( node_idx ) );
-    }
-    
-    BBox getBoundary( in ForeignCoords[ulong] nodes ) const
+    BBox getBoundary() const
     in
     {
         assert( nodes_ids.length >= 2 );
     }
     body
     {
-        auto start_node = getNode( nodes, 0 );
+        auto start_node = getNode( 0 );
         auto res = BBox( start_node, Coords(0,0) );
         
         for( auto i = 1; i < nodes_ids.length; i++ )
         {
-            auto curr_node = getNode( nodes, i );
+            auto curr_node = getNode( i );
             res.addCircumscribe( curr_node );
         }
         

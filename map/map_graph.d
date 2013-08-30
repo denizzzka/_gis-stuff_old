@@ -305,7 +305,7 @@ Description[] cutOnCrossings(Description, ForeignCoords)(
     
     foreach( ref c; lines )
     {
-        BBox boundary = c.getBoundary( nodes );
+        BBox boundary = c.getBoundary;
         
         tree.addObject( boundary, c );
     }
@@ -338,7 +338,7 @@ unittest
     ulong[] n1 = [ 0, 10, 20, 30, 40 ];
     ulong[] n2 = [ 50, 60, 20, 70, 80, 30 ];
     
-    FC getNodeByID( in ulong id ){ return nodes[id]; }
+    Coords getNodeByID( in ulong id ){ return encodedToMapCoords( nodes[id] ); }
     
     alias TPolylineDescription!( FC, getNodeByID ) PolylineDescription;
     
