@@ -382,7 +382,7 @@ Region getRegion( string filename, bool verbose )
     }
     
     res.fillLines( lines );
-    res.fillRoads( nodes_coords, roads );
+    res.fillRoads( roads );
     
     return res;
 }

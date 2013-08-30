@@ -159,11 +159,11 @@ class Region
         }
     }
     
-    void fillRoads( AACoords, PrepareRoads )( in AACoords nodes_coords, PrepareRoads prepared )
+    void fillRoads( PrepareRoads )( PrepareRoads prepared )
     {
         foreach( i, ref c; layers )
         {
-            c.road_graph = new RGraph( nodes_coords, prepared.roads_to_store[i] );
+            c.road_graph = new RGraph( prepared.roads_to_store[i] );
             c.fillRoadsRTree();
         }
     }

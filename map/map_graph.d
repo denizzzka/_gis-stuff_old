@@ -144,15 +144,7 @@ class TMapGraph( _Node, alias CREATE_EDGE )
         graph = new G;
     }
     
-    this( ForeignCoords, PolylineDescription )(
-            in ForeignCoords[ulong] nodes,
-            scope PolylineDescription[] descriptions
-        )
-    in
-    {
-        static assert( is( ForeignCoords == PolylineDescription.ForeignCoords ) );
-    }
-    body
+    this( PolylineDescription )( scope PolylineDescription[] descriptions )
     {
         this();
         
@@ -344,7 +336,7 @@ unittest
     
     assert( prepared.length == 5 );
     
-    auto g = new G( nodes, [ w1, w2 ] );
+    auto g = new G( [ w1, w2 ] );
 }
 
 size_t createEdge( Graph, Payload )(
