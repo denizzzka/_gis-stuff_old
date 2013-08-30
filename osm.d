@@ -181,24 +181,6 @@ struct DecodedLine
     {
         assert( coords_idx.length >= 2 );
     }
-    
-    private
-    MapCoords[] getCoords( in Coords[ OSM_id ] nodes_coords ) const
-    {
-        MapCoords[] res;
-        
-        foreach( c; coords_idx )
-        {
-            auto p = c in nodes_coords;
-            
-            if( !p )
-                throw new ReadPrimitiveException( "node "~to!string( c )~" is not found" );
-            
-            res ~= encodedToMapCoords( nodes_coords[ c ] );
-        }
-        
-        return res;
-    }
 }
 
 DecodedLine decodeWay( in PrimitiveBlock prim, in Way way )
