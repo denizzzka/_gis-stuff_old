@@ -169,11 +169,11 @@ class Region
     }
 }
 
-class TPrepareRoads( Descr, AACoords, IDstruct )
+class TPrepareRoads( Descr )
 {
     private Descr[][ Region.layers.length ] roads_to_store;
     
-    void addRoad( Descr road_descr, in AACoords nodes_coords )
+    void addRoad( Descr road_descr )
     {
         auto to_layers = config.map.polylines.getProperty( road_descr.type ).layers;
         
