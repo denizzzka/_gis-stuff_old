@@ -1,7 +1,7 @@
 module map.adapters;
 
 import map.map: Coords;
-import math.geometry;
+import math.geometry: Box, to;
 import cat = categories: Line;
 import osm: OsmCoords = Coords, encodedToMapCoords, ReadPrimitiveException;
 
