@@ -215,12 +215,11 @@ class TMapGraph( _Node, alias CREATE_EDGE )
             return idx;
         }
     }
-    /*
+    
     private
-    size_t addPoint( ForeignID, ForeignNode )(
-            in ForeignID node_id,
-            ref size_t[ForeignID] already_stored,
-            in ForeignCoords[ForeignID] nodes_coords
+    size_t addPoint( ForeignNode, ForeignID = ForeignNode.ForeignID )(
+            ForeignNode node,
+            ref size_t[ ForeignID ] already_stored
         )
     {
         size_t* p = node_id in already_stored;
@@ -229,18 +228,14 @@ class TMapGraph( _Node, alias CREATE_EDGE )
             return *p;
         else
         {
-            auto coord = node_id in nodes_coords;
-            
-            assert( coord != null );
-            
-            auto point = Point( encodedToMapCoords( *coord ) );
+            auto point = Point( node.getCoords );
             auto idx = graph.addPoint( point );
             already_stored[ node_id ] = idx;
             
             return idx;
         }
     }
-    */
+    
     PolylineDescriptor[] getDescriptors() const
     {
         PolylineDescriptor[] res;
