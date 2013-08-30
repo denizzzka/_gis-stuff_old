@@ -25,7 +25,7 @@ struct TPolylineDescription( alias MAP_COORDS_BY_ID )
         this.nodes_ids = nodes_ids;
         this.type = type;
         
-        // checking
+        // coords reading checking
         for( size_t i = 0; i < nodes_ids.length; i++ )
             getNode( i ).getCoords;
     }
