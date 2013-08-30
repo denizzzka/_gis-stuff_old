@@ -1,0 +1,14 @@
+{
+    "Map":
+    {
+        "BUILDING":
+        {
+            "color": 111
+        },
+        
+        "OTHER":
+        {
+            "color": 111
+        }
+    }
+}

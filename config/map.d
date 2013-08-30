@@ -4,6 +4,7 @@ import dsfml.graphics: Color;
 static import categories;
 
 import std.json;
+import std.file: readText;
 
 
 struct PolylineProperties
@@ -97,7 +98,21 @@ class Polylines
     
     this( string filename )
     {
+        string file_content = readText( filename );
+        JSONValue json = parseJSON( file_content );
+        
+        auto map = json.object["Map"];
+        
+        foreach( ref lineName; members )
+        {
+            auto s = map.object[ lineName ].object["color"];
+        }
     }
 };
 
-static const Polylines polylines = new Polylines("asd");
+const Polylines polylines;
+
+static this()
+{
+    polylines = new Polylines("config/map.json");
+}
