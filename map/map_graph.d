@@ -327,8 +327,8 @@ unittest
     
     alias TPolylineDescription!( FC, getNodeByID ) PolylineDescription;
     
-    auto w1 = PolylineDescription( n1, cat.Line.HIGHWAY );
-    auto w2 = PolylineDescription( n2, cat.Line.PRIMARY );
+    auto w1 = PolylineDescription( n1, cat.Line.HIGHWAY, nodes );
+    auto w2 = PolylineDescription( n2, cat.Line.PRIMARY, nodes );
     
     PolylineDescription[] lines = [ w1, w2 ];
     

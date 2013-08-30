@@ -17,7 +17,7 @@ struct TPolylineDescription( _ForeignCoords, alias MAP_COORDS_BY_ID )
     cat.Line type;
     ulong way_id;
     
-    this( ulong[] nodes_ids, cat.Line type, in ForeignCoords[ulong] nodes = null )
+    this( ulong[] nodes_ids, cat.Line type, in ForeignCoords[ulong] nodes )
     in
     {
         assert( nodes_ids.length >= 2 );
@@ -28,9 +28,8 @@ struct TPolylineDescription( _ForeignCoords, alias MAP_COORDS_BY_ID )
         this.type = type;
         
         // checking
-        if( nodes )
-            for( size_t i = 0; i < nodes_ids.length; i++ )
-                getNodeCoords( i );
+        for( size_t i = 0; i < nodes_ids.length; i++ )
+            getNodeCoords( i );
     }
     
     @disable this();
