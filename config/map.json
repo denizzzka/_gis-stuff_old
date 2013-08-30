@@ -7,10 +7,52 @@
             "layers": [ 0 ]
         },
         
+        "BOUNDARY":
+        {
+            "color": { "R": 170, "G": 170, "B": 0 },
+            "layers": [ 0, 1, 2, 3, 4 ]
+        },
+        
+        "PATH":
+        {
+            "color": { "R": 255, "G": 0, "B": 255 },
+            "layers": [ 0, 1, 2, 3, 4 ]
+        },
+        
+        "HIGHWAY":
+        {
+            "color": { "R": 0, "G": 255, "B": 0 },
+            "layers": [ 0, 1, 2, 3, 4 ]
+        },
+        
+        "PRIMARY":
+        {
+            "color": { "R": 255, "G": 255, "B": 255 },
+            "layers": [ 0, 1, 2, 3 ]
+        },
+        
+        "SECONDARY":
+        {
+            "color": { "R": 255, "G": 255, "B": 0 },
+            "layers": [ 0, 1, 2 ]
+        },
+        
+        "ROAD_OTHER":
+        {
+            "color": { "R": 170, "G": 170, "B": 170 },
+            "layers": [ 0, 1 ]
+        },
+        
         "OTHER":
         {
             "color": { "R": 111, "G": 222, "B": 200 },
             "layers": [ 0 ]
+        },
+        
+        "UNSUPPORTED":
+        {
+            "color": { "R": 0, "G": 255, "B": 255 },
+            "layers": [ 0, 1 ]
         }
     }
 }
