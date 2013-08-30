@@ -1,11 +1,10 @@
 module scene;
 
-import map;
+import map.map;
 import math.geometry;
-import osm: Coords, metersToEncoded, encodedToMeters;
 import math.earth: Conv, WGS84, lon2canonical;
-import map: Point, RGraph;
-import roads: findPath;
+import map.map: Point, RGraph;
+import map.roads: findPath;
 import config.viewer;
 
 import std.conv;
@@ -48,12 +47,13 @@ class POV
     {
         alias Conv!WGS84 C;
         
-        auto radian_lon = C.mercator2lon( new_center.x );
-        radian_lon = lon2canonical( radian_lon );
-        auto mercator_lon = C.lon2mercator( radian_lon );
-        
         center.lat = new_center.lat;
-        center.lon = mercator_lon;
+        
+        // passing 180 meridian
+        auto radian_lon = C.mercator2lon( new_center.lon );
+        radian_lon = lon2canonical( radian_lon );
+        
+        center.lon = C.lon2mercator( radian_lon );
     }
     
     Vector2r getCenter() const
@@ -180,7 +180,7 @@ class POV
     
 	override string toString()
     {
-        return format("center=%s zoom=%g scene ecenter=%s mbox=%s size_len=%g", center, zoom, center.metersToEncoded, boundary_meters, boundary_meters.getSizeVector.length);	
+        return format("center=%s zoom=%g scene mbox=%s size_len=%g", center, zoom, boundary_meters, boundary_meters.getSizeVector.length);	
 	}
     
     void zoomToWholeMap(T)( T window_size )

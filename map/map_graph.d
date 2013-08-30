@@ -1,123 +1,18 @@
-module map_graph;
+module map.map_graph;
 
 import math.geometry;
 import math.rtree2d;
 import math.graph.graph: Graph, TEdge, TNode;
-import osm: OsmCoords = Coords, encodedToMapCoords, ReadPrimitiveException;
-import map: MapCoords = Coords;
+import map.map: MapCoords = Coords;
 import cat = categories: Line;
 static import config.map;
 import math.earth: mercator2coords, getSphericalDistance;
-static import math.reduce_points;
+import map.adapters: TPolylineDescription;
 
 import std.algorithm: canFind;
 import std.random: uniform;
 import std.stdio;
 
-
-struct TPolylineDescription( _Coords, _ForeignCoords )
-{
-    alias _Coords Coords;
-    alias _ForeignCoords ForeignCoords;
-    alias Box!Coords BBox;
-    
-    ulong nodes_ids[];
-    cat.Line type;
-    ulong way_id;
-    
-    this( ulong[] nodes_ids, cat.Line type, in ForeignCoords[ulong] nodes = null )
-    in
-    {
-        assert( nodes_ids.length >= 2 );
-    }
-    body
-    {
-        this.nodes_ids = nodes_ids;
-        this.type = type;
-        
-        // checking
-        if( nodes )
-            for( size_t i = 0; i < nodes_ids.length; i++ )
-                getNodeForeignCoords( nodes, i );
-    }
-    
-    @disable this();
-    
-    this(this)
-    {
-        nodes_ids = nodes_ids.dup;
-    }
-    
-    private
-    const (ForeignCoords*) getNodeForeignCoords(
-            in ForeignCoords[ulong] nodes,
-            in size_t node_idx
-        ) const
-    in
-    {
-        assert( node_idx < nodes_ids.length );
-    }
-    body
-    {
-        auto node_id = nodes_ids[ node_idx ];
-        
-        auto node_ptr = node_id in nodes;
-        
-        if( !node_ptr )
-            throw new ReadPrimitiveException( "polyline node "~to!string( node_id )~" is not found" );
-        
-        return node_ptr;
-    }        
-    
-    private
-    Coords getNode( in ForeignCoords[ulong] nodes, in size_t node_idx ) const
-    {
-        return encodedToMapCoords( *getNodeForeignCoords( nodes, node_idx ) );
-    }
-    
-    BBox getBoundary( in ForeignCoords[ulong] nodes ) const
-    in
-    {
-        assert( nodes_ids.length >= 2 );
-    }
-    body
-    {
-        auto start_node = getNode( nodes, 0 );
-        auto res = BBox( start_node, Coords(0,0) );
-        
-        for( auto i = 1; i < nodes_ids.length; i++ )
-        {
-            auto curr_node = getNode( nodes, i );
-            res.addCircumscribe( curr_node );
-        }
-        
-        return res;
-    }
-    
-    TPolylineDescription opSlice( size_t from, size_t to )
-    {
-        auto res = this;
-        
-        res.nodes_ids = nodes_ids[ from..to ];
-        
-        return res;
-    }
-    
-    void generalize( IDstruct )( in ForeignCoords[ulong] nodes_coords, in real epsilon )
-    {
-        IDstruct[] points;
-        
-        foreach( c; nodes_ids )
-            points ~= IDstruct( nodes_coords, c );
-            
-        nodes_ids.destroy;
-        
-        auto reduced = math.reduce_points.reduce( points, epsilon );
-        
-        foreach( c; reduced )
-            nodes_ids ~= c.id;
-    }
-}
 
 struct TPolyline( Coords )
 {
@@ -249,30 +144,24 @@ class TMapGraph( _Node, alias CREATE_EDGE )
         graph = new G;
     }
     
-    this( ForeignCoords, PolylineDescription )(
-            in ForeignCoords[ulong] nodes,
-            scope PolylineDescription[] descriptions
-        )
-    in
-    {
-        static assert( is( ForeignCoords == PolylineDescription.ForeignCoords ) );
-    }
-    body
+    this( PolylineDescription )( scope PolylineDescription[] descriptions )
     {
         this();
         
-        auto prepared = cutOnCrossings( descriptions, nodes );
+        auto prepared = cutOnCrossings( descriptions );
         
         size_t[ulong] already_stored;
         
         foreach( line; descriptions )
-            addPolyline( line, already_stored, nodes );
+            addPolyline( line, already_stored );
     }
     
-    PolylineDescriptor addPolyline( Description, ForeignID, ForeignCoords )(
+    PolylineDescriptor addPolyline(
+            Description,
+            ForeignID = Description.ForeignNode.ForeignID
+        )(
             Description line,
-            ref size_t[ForeignID] already_stored,
-            in ForeignCoords[ForeignID] nodes_coords
+            ref size_t[ForeignID] already_stored
         )
     in
     {
@@ -280,13 +169,15 @@ class TMapGraph( _Node, alias CREATE_EDGE )
     }
     body
     {
-        auto from_node_idx = addPoint( line.nodes_ids[0], already_stored, nodes_coords );
-        auto to_node_idx = addPoint( line.nodes_ids[$-1], already_stored, nodes_coords );
+        size_t last_node = line.nodes_ids.length - 1;
+        
+        auto from_node_idx = addPoint( line.getNode( 0 ), already_stored );
+        auto to_node_idx = addPoint( line.getNode( last_node ), already_stored );
         
         Coords points[];
         
-        for( auto i = 1; i < line.nodes_ids.length - 1; i++ )
-            points ~= encodedToMapCoords( nodes_coords[ line.nodes_ids[i] ] );
+        for( auto i = 1; i < last_node; i++ )
+            points ~= line.getNode( i ).getCoords;
         
         auto poly = Polyline( points, line.type );
                 
@@ -296,25 +187,20 @@ class TMapGraph( _Node, alias CREATE_EDGE )
     }
     
     private
-    size_t addPoint( ForeignID, ForeignCoords )(
-            in ForeignID node_id,
-            ref size_t[ForeignID] already_stored,
-            in ForeignCoords[ForeignID] nodes_coords
+    size_t addPoint( ForeignNode, ForeignID = ForeignNode.ForeignID )(
+            ForeignNode node,
+            ref size_t[ ForeignID ] already_stored
         )
     {
-        size_t* p = node_id in already_stored;
+        size_t* p = node.foreign_id in already_stored;
         
         if( p !is null )
             return *p;
         else
         {
-            auto coord = node_id in nodes_coords;
-            
-            assert( coord != null );
-            
-            auto point = Point( encodedToMapCoords( *coord ) );
+            auto point = Point( node.getCoords );
             auto idx = graph.addPoint( point );
-            already_stored[ node_id ] = idx;
+            already_stored[ node.foreign_id ] = idx;
             
             return idx;
         }
@@ -355,10 +241,7 @@ class TMapGraph( _Node, alias CREATE_EDGE )
     }
 }
 
-auto cutOnCrossings(DescriptionsTree, ForeignCoords)(
-        in DescriptionsTree lines_rtree,
-        in ForeignCoords[ulong] nodes
-    )
+auto cutOnCrossings(DescriptionsTree)( in DescriptionsTree lines_rtree )
 {
     alias DescriptionsTree.Payload PolylineDescription;
     alias DescriptionsTree.Box BBox;
@@ -373,15 +256,12 @@ auto cutOnCrossings(DescriptionsTree, ForeignCoords)(
         
         for( auto i = 1; i < line.nodes_ids.length - 1; i++ )
         {
-            auto curr_point = line.nodes_ids[i];
-            auto point_bbox = BBox(
-                    encodedToMapCoords( nodes[ curr_point ] ),
-                    Coords(0, 0)
-                );
+            auto curr_point_id = line.nodes_ids[i];
+            auto point_bbox = BBox( line.getNode( i ).getCoords, Coords(0, 0) );
             auto near_lines = lines_rtree.search( point_bbox );
             
             foreach( n; near_lines )
-                if( n != lineptr && canFind( n.nodes_ids, curr_point ) )
+                if( n != lineptr && canFind( n.nodes_ids, curr_point_id ) )
                 {
                     res ~= line[ 0..i+1 ];
                     
@@ -397,10 +277,7 @@ auto cutOnCrossings(DescriptionsTree, ForeignCoords)(
     return res;
 }
 
-Description[] cutOnCrossings(Description, ForeignCoords)(
-        Description[] lines,
-        in ForeignCoords[ulong] nodes
-    )
+Description[] cutOnCrossings( Description )( Description[] lines )
 {
     alias Description.BBox BBox;
     alias RTreePtrs!( BBox, Description ) DescriptionsTree;
@@ -409,21 +286,19 @@ Description[] cutOnCrossings(Description, ForeignCoords)(
     
     foreach( ref c; lines )
     {
-        BBox boundary = c.getBoundary( nodes );
+        BBox boundary = c.getBoundary;
         
         tree.addObject( boundary, c );
     }
     
-    return cutOnCrossings( tree, nodes );
+    return cutOnCrossings( tree );
 }
 
 unittest
 {
     alias MapCoords Coords;
-    alias OsmCoords FC; // foreign coords
-    alias TPolylineDescription!(Coords, FC) PolylineDescription;
+    alias Vector2D!long FC; // foreign coords
     alias Box!Coords BBox;
-    alias RTreePtrs!( BBox, PolylineDescription ) DescriptionsTree;
     
     alias TPolyline!Coords Polyline;
     alias TEdge!Polyline Edge;
@@ -444,16 +319,24 @@ unittest
     ulong[] n1 = [ 0, 10, 20, 30, 40 ];
     ulong[] n2 = [ 50, 60, 20, 70, 80, 30 ];
     
-    auto w1 = PolylineDescription( n1, cat.Line.HIGHWAY );
-    auto w2 = PolylineDescription( n2, cat.Line.PRIMARY );
+    Coords getNodeByID( in ulong id )
+    {
+        Coords res; res = nodes[ id ];
+        return res;
+    }
+    
+    alias TPolylineDescription!( FC, getNodeByID ) PolylineDescription;
+    
+    auto w1 = PolylineDescription( n1, cat.Line.HIGHWAY, nodes );
+    auto w2 = PolylineDescription( n2, cat.Line.PRIMARY, nodes );
     
     PolylineDescription[] lines = [ w1, w2 ];
     
-    auto prepared = cutOnCrossings( lines, nodes );
+    auto prepared = cutOnCrossings( lines );
     
     assert( prepared.length == 5 );
     
-    auto g = new G( nodes, [ w1, w2 ] );
+    auto g = new G( [ w1, w2 ] );
 }
 
 size_t createEdge( Graph, Payload )(

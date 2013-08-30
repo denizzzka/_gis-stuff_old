@@ -45,10 +45,10 @@ body
     for( size_t i = 1; i < points.length - 1; i++ )
     {
         // TODO: remove this
-        static if( __traits( compiles, points[0].getMapCoords ) )
+        static if( __traits( compiles, points[0].getCoords ) )
         {
-            auto vector = points[$-1].getMapCoords - points[0].getMapCoords;
-            auto point = points[i].getMapCoords - points[0].getMapCoords;
+            auto vector = points[$-1].getCoords - points[0].getCoords;
+            auto point = points[i].getCoords - points[0].getCoords;
         }
         else
         {

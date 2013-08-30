@@ -1,10 +1,10 @@
-module map;
+module map.map;
 
 import math.geometry;
 import math.rtree2d;
 import cat = categories;
-import map_graph: LineGraph, cutOnCrossings;
-import roads: RoadGraph;
+import map.map_graph: LineGraph, cutOnCrossings;
+import map.roads: RoadGraph;
 static import config.map;
 static import config.converter;
 
@@ -131,9 +131,9 @@ class Region
         layers[layer_num].POI.addPoint( point );
     }
     
-    void fillLines( IDstruct, AACoords, LinesDescr )( in AACoords nodes_coords, LinesDescr lines_descr )
+    void fillLines( LinesDescr )( LinesDescr lines_descr )
     {
-        auto cutted = cutOnCrossings( lines_descr, nodes_coords );
+        auto cutted = cutOnCrossings( lines_descr );
         
         line_graph = new LineGraph;
         
@@ -148,9 +148,9 @@ class Region
                 auto epsilon = config.converter.layersGeneralization[n];
                 
                 if( epsilon )
-                    descr.generalize!IDstruct( nodes_coords, epsilon );
+                    descr.generalize( epsilon );
                 
-                auto descriptior = line_graph.addPolyline( descr, already_stored, nodes_coords );
+                auto descriptior = line_graph.addPolyline( descr, already_stored );
                 
                 auto bbox = descriptior.getBoundary( line_graph );
                 
@@ -159,21 +159,21 @@ class Region
         }
     }
     
-    void fillRoads( AACoords, PrepareRoads )( in AACoords nodes_coords, PrepareRoads prepared )
+    void fillRoads( PrepareRoads )( PrepareRoads prepared )
     {
         foreach( i, ref c; layers )
         {
-            c.road_graph = new RGraph( nodes_coords, prepared.roads_to_store[i] );
+            c.road_graph = new RGraph( prepared.roads_to_store[i] );
             c.fillRoadsRTree();
         }
     }
 }
 
-class TPrepareRoads( Descr, AACoords, IDstruct )
+class TPrepareRoads( Descr )
 {
     private Descr[][ Region.layers.length ] roads_to_store;
     
-    void addRoad( Descr road_descr, in AACoords nodes_coords )
+    void addRoad( Descr road_descr )
     {
         auto to_layers = config.map.polylines.getProperty( road_descr.type ).layers;
         
@@ -182,7 +182,7 @@ class TPrepareRoads( Descr, AACoords, IDstruct )
             auto epsilon = config.converter.layersGeneralization[n];
             
             if( epsilon )
-                road_descr.generalize!IDstruct( nodes_coords, epsilon );
+                road_descr.generalize( epsilon );
                 
             roads_to_store[n] ~= road_descr;
         }
