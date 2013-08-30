@@ -164,7 +164,7 @@ class TMapGraph( _Node, alias CREATE_EDGE )
         foreach( line; descriptions )
             addPolyline( line, already_stored );
     }
-        
+    
     PolylineDescriptor addPolyline(
             Description,
             ForeignID = Description.ForeignNode.ForeignID
