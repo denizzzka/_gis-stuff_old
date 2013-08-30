@@ -2,7 +2,6 @@ module scene;
 
 import map.map;
 import math.geometry;
-import osm: Coords, metersToEncoded, encodedToMeters;
 import math.earth: Conv, WGS84, lon2canonical;
 import map.map: Point, RGraph;
 import map.roads: findPath;
@@ -180,7 +179,7 @@ class POV
     
 	override string toString()
     {
-        return format("center=%s zoom=%g scene ecenter=%s mbox=%s size_len=%g", center, zoom, center.metersToEncoded, boundary_meters, boundary_meters.getSizeVector.length);	
+        return format("center=%s zoom=%g scene mbox=%s size_len=%g", center, zoom, boundary_meters, boundary_meters.getSizeVector.length);	
 	}
     
     void zoomToWholeMap(T)( T window_size )
