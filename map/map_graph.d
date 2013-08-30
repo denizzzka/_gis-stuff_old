@@ -3,7 +3,6 @@ module map.map_graph;
 import math.geometry;
 import math.rtree2d;
 import math.graph.graph: Graph, TEdge, TNode;
-import osm: OsmCoords = Coords, encodedToMapCoords, ReadPrimitiveException;
 import map.map: MapCoords = Coords;
 import cat = categories: Line;
 static import config.map;
@@ -306,7 +305,7 @@ Description[] cutOnCrossings( Description )( Description[] lines )
 unittest
 {
     alias MapCoords Coords;
-    alias OsmCoords FC; // foreign coords
+    alias Vector2D!long FC; // foreign coords
     alias Box!Coords BBox;
     
     alias TPolyline!Coords Polyline;
@@ -328,7 +327,11 @@ unittest
     ulong[] n1 = [ 0, 10, 20, 30, 40 ];
     ulong[] n2 = [ 50, 60, 20, 70, 80, 30 ];
     
-    Coords getNodeByID( in ulong id ){ return encodedToMapCoords( nodes[id] ); }
+    Coords getNodeByID( in ulong id )
+    {
+        Coords res; res = nodes[ id ];
+        return res;
+    }
     
     alias TPolylineDescription!( FC, getNodeByID ) PolylineDescription;
     
