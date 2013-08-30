@@ -8,7 +8,7 @@ import osm: OsmCoords = Coords, encodedToMapCoords, ReadPrimitiveException;
 static import math.reduce_points;
 
 
-struct TPolylineDescription( _ForeignCoords )
+struct TPolylineDescription( _ForeignCoords, alias FOREIGN_COORDS_BY_ID )
 {
     alias _ForeignCoords ForeignCoords;
     alias Box!Coords BBox;
@@ -38,6 +38,19 @@ struct TPolylineDescription( _ForeignCoords )
     this(this)
     {
         nodes_ids = nodes_ids.dup;
+    }
+    
+    private
+    ForeignCoords getNodeForeignCoords( in size_t node_idx ) const
+    in
+    {
+        assert( node_idx < nodes_ids.length );
+    }
+    body
+    {
+        auto foreign_id = nodes_ids[ node_idx ];
+        
+        return FOREIGN_COORDS_BY_ID( foreign_id );
     }
     
     private

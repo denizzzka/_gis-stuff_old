@@ -338,7 +338,17 @@ Region getRegion( string filename, bool verbose )
     auto res = new Region;
     Coords[OSM_id] nodes_coords;
     
-    alias TPolylineDescription!( Coords ) LineDescription;
+    ref Coords getOsmCoordsByNodeIdx( in OSM_id node_id )
+    {
+        auto node_ptr = node_id in nodes_coords;
+        
+        if( !node_ptr )
+            throw new ReadPrimitiveException( "!! node "~to!string( node_id )~" is not found" );
+        
+        return *node_ptr;
+    }
+    
+    alias TPolylineDescription!( Coords, getOsmCoordsByNodeIdx ) LineDescription;
     alias LineDescription RoadDescription;
     
     LineDescription[] lines;

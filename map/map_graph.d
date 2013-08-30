@@ -317,7 +317,8 @@ unittest
 {
     alias MapCoords Coords;
     alias OsmCoords FC; // foreign coords
-    alias TPolylineDescription!( FC ) PolylineDescription;
+    FC func( in ulong id ){ return FC(0, 0); }
+    alias TPolylineDescription!( FC, func ) PolylineDescription;
     alias Box!Coords BBox;
     alias RTreePtrs!( BBox, PolylineDescription ) DescriptionsTree;
     
