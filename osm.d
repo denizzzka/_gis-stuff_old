@@ -307,7 +307,7 @@ Region getRegion( string filename, bool verbose )
         return encodedToMapCoords( *node_ptr );
     }
     
-    alias TPolylineDescription!( Coords, getMapCoordsByNodeIdx ) LineDescription;
+    alias TPolylineDescription!( getMapCoordsByNodeIdx ) LineDescription;
     alias LineDescription RoadDescription;
     
     LineDescription[] lines;
@@ -346,11 +346,11 @@ Region getRegion( string filename, bool verbose )
                         {
                             case AREA:
                             case POLYLINE:
-                                lines ~= LineDescription( decoded.coords_idx, type, nodes_coords );
+                                lines ~= LineDescription( decoded.coords_idx, type );
                                 break;
                                 
                             case ROAD:
-                                auto road = RoadDescription( decoded.coords_idx, type, nodes_coords );
+                                auto road = RoadDescription( decoded.coords_idx, type );
                                 roads.addRoad( road );
                                 break;
                         }

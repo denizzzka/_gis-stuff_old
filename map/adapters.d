@@ -7,17 +7,15 @@ import cat = categories: Line;
 static import math.reduce_points;
 
 
-struct TPolylineDescription( _ForeignCoords, alias MAP_COORDS_BY_ID )
+struct TPolylineDescription( alias MAP_COORDS_BY_ID )
 {
-    alias _ForeignCoords ForeignCoords;
     alias Box!Coords BBox;
     alias TNodeDescription!( ulong, MAP_COORDS_BY_ID ) NodeDescription;
     
     ulong nodes_ids[];
     cat.Line type;
-    ulong way_id;
     
-    this( ulong[] nodes_ids, cat.Line type, in ForeignCoords[ulong] nodes )
+    this( ulong[] nodes_ids, cat.Line type )
     in
     {
         assert( nodes_ids.length >= 2 );
