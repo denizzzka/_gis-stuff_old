@@ -2,12 +2,12 @@ module osm;
 
 import osmpbf.fileformat;
 import osmpbf.osmformat;
-import math.geometry;
+import math.geometry: Vector2D, degrees2radians, radians2degrees;
 import math.earth;
-import map: Map, Region, BBox, Point, PointsStorage, addPoint, MapCoords = Coords, LineGraph, RGraph, TPrepareRoads;
+import map.map: Map, Region, BBox, Point, MapCoords = Coords, TPrepareRoads;
+import map.adapters: TPolylineDescription;
 import cat = categories;
 import osm_tags_parsing;
-import map_graph: TPolylineDescription;
 
 import std.stdio;
 import std.string;
@@ -20,29 +20,6 @@ import std.algorithm: canFind;
 
 alias Vector2D!long Coords;
 alias ulong OSM_id;
-
-struct OSMCoords_id
-{
-    const Coords[ OSM_id ] aa;
-    OSM_id id;
-    
-    Coords getOsmCoords()
-    {
-        auto p = id in aa;
-        
-        if( !p )
-            throw new ReadPrimitiveException( "node "~to!string( id )~" is not found" );
-                
-        return aa[ id ];
-    }
-    
-    MapCoords getMapCoords()
-    {
-        return encodedToMapCoords( getOsmCoords() );
-    }
-    
-    alias getMapCoords this;
-}
 
 struct PureBlob
 {
@@ -204,24 +181,6 @@ struct DecodedLine
     {
         assert( coords_idx.length >= 2 );
     }
-    
-    private
-    MapCoords[] getCoords( in Coords[ OSM_id ] nodes_coords ) const
-    {
-        MapCoords[] res;
-        
-        foreach( c; coords_idx )
-        {
-            auto p = c in nodes_coords;
-            
-            if( !p )
-                throw new ReadPrimitiveException( "node "~to!string( c )~" is not found" );
-            
-            res ~= encodedToMapCoords( nodes_coords[ c ] );
-        }
-        
-        return res;
-    }
 }
 
 DecodedLine decodeWay( in PrimitiveBlock prim, in Way way )
@@ -338,11 +297,21 @@ Region getRegion( string filename, bool verbose )
     auto res = new Region;
     Coords[OSM_id] nodes_coords;
     
-    alias TPolylineDescription!( MapCoords, Coords ) LineDescription;
+    MapCoords getMapCoordsByNodeIdx( in OSM_id node_id )
+    {
+        auto node_ptr = node_id in nodes_coords;
+        
+        if( !node_ptr )
+            throw new ReadPrimitiveException( "node "~to!string( node_id )~" is not found" );
+        
+        return encodedToMapCoords( *node_ptr );
+    }
+    
+    alias TPolylineDescription!( Coords, getMapCoordsByNodeIdx ) LineDescription;
     alias LineDescription RoadDescription;
     
     LineDescription[] lines;
-    auto roads = new TPrepareRoads!( RoadDescription, Coords[OSM_id], OSMCoords_id );
+    auto roads = new TPrepareRoads!( RoadDescription );
     
     while(true)
     {
@@ -382,7 +351,7 @@ Region getRegion( string filename, bool verbose )
                                 
                             case ROAD:
                                 auto road = RoadDescription( decoded.coords_idx, type, nodes_coords );
-                                roads.addRoad( road, nodes_coords );
+                                roads.addRoad( road );
                                 break;
                         }
                     }
@@ -394,8 +363,8 @@ Region getRegion( string filename, bool verbose )
         }
     }
     
-    res.fillLines!( OSMCoords_id )( nodes_coords, lines );
-    res.fillRoads( nodes_coords, roads );
+    res.fillLines( lines );
+    res.fillRoads( roads );
     
     return res;
 }

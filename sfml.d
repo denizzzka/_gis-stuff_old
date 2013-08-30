@@ -3,7 +3,7 @@ module sfml;
 import dsfml.graphics;
 import scene;
 import math.geometry;
-import roads: getPointsDirected;
+import map.roads: getPointsDirected;
 
 import std.conv: to;
 import std.random;

@@ -2,7 +2,7 @@ module main;
 
 import math.geometry;
 import osm: getMap;
-import map;
+import map.map;
 import scene;
 static import sfml;
 
