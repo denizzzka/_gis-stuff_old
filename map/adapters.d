@@ -3,7 +3,6 @@ module map.adapters;
 import map.map: Coords;
 import math.geometry: Box, to;
 import cat = categories: Line;
-import osm: encodedToMapCoords;
 
 static import math.reduce_points;
 
