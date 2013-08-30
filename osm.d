@@ -21,29 +21,6 @@ import std.algorithm: canFind;
 alias Vector2D!long Coords;
 alias ulong OSM_id;
 
-struct OSMCoords_id
-{
-    const Coords[ OSM_id ] aa;
-    OSM_id id;
-    
-    Coords getOsmCoords()
-    {
-        auto p = id in aa;
-        
-        if( !p )
-            throw new ReadPrimitiveException( "node "~to!string( id )~" is not found" );
-                
-        return aa[ id ];
-    }
-    
-    MapCoords getMapCoords()
-    {
-        return encodedToMapCoords( getOsmCoords() );
-    }
-    
-    alias getMapCoords this;
-}
-
 struct PureBlob
 {
     string type;
