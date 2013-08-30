@@ -11,7 +11,7 @@ struct TPolylineDescription( _ForeignCoords, alias MAP_COORDS_BY_ID )
 {
     alias _ForeignCoords ForeignCoords;
     alias Box!Coords BBox;
-    alias TNodeDescription!MAP_COORDS_BY_ID NodeDescription;
+    alias TNodeDescription!( ulong, MAP_COORDS_BY_ID ) NodeDescription;
     
     ulong nodes_ids[];
     cat.Line type;
@@ -101,9 +101,11 @@ struct TPolylineDescription( _ForeignCoords, alias MAP_COORDS_BY_ID )
     }
 }
 
-struct TNodeDescription( alias MAP_COORDS_BY_ID )
+struct TNodeDescription( _ForeignID, alias MAP_COORDS_BY_ID )
 {
-    const ulong foreign_id;
+    alias _ForeignID ForeignID;
+    
+    const ForeignID foreign_id;
     
     Coords getCoords() const
     {
