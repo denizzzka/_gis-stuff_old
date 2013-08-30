@@ -317,10 +317,7 @@ unittest
 {
     alias MapCoords Coords;
     alias OsmCoords FC; // foreign coords
-    FC func( in ulong id ){ return FC(0, 0); }
-    alias TPolylineDescription!( FC, func ) PolylineDescription;
     alias Box!Coords BBox;
-    alias RTreePtrs!( BBox, PolylineDescription ) DescriptionsTree;
     
     alias TPolyline!Coords Polyline;
     alias TEdge!Polyline Edge;
@@ -340,6 +337,10 @@ unittest
     
     ulong[] n1 = [ 0, 10, 20, 30, 40 ];
     ulong[] n2 = [ 50, 60, 20, 70, 80, 30 ];
+    
+    FC getNodeByID( in ulong id ){ return nodes[id]; }
+    
+    alias TPolylineDescription!( FC, getNodeByID ) PolylineDescription;
     
     auto w1 = PolylineDescription( n1, cat.Line.HIGHWAY );
     auto w2 = PolylineDescription( n2, cat.Line.PRIMARY );

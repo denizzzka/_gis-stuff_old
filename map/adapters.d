@@ -30,7 +30,7 @@ struct TPolylineDescription( _ForeignCoords, alias FOREIGN_COORDS_BY_ID )
         // checking
         if( nodes )
             for( size_t i = 0; i < nodes_ids.length; i++ )
-                getNodeForeignCoords( nodes, i );
+                getNodeForeignCoords( i );
     }
     
     @disable this();
@@ -54,30 +54,9 @@ struct TPolylineDescription( _ForeignCoords, alias FOREIGN_COORDS_BY_ID )
     }
     
     private
-    const (ForeignCoords*) getNodeForeignCoords(
-            in ForeignCoords[ulong] nodes,
-            in size_t node_idx
-        ) const
-    in
-    {
-        assert( node_idx < nodes_ids.length );
-    }
-    body
-    {
-        auto node_id = nodes_ids[ node_idx ];
-        
-        auto node_ptr = node_id in nodes;
-        
-        if( !node_ptr )
-            throw new ReadPrimitiveException( "polyline node "~to!string( node_id )~" is not found" );
-        
-        return node_ptr;
-    }        
-    
-    private
     Coords getNode( in ForeignCoords[ulong] nodes, in size_t node_idx ) const
     {
-        return encodedToMapCoords( *getNodeForeignCoords( nodes, node_idx ) );
+        return encodedToMapCoords( getNodeForeignCoords( node_idx ) );
     }
     
     BBox getBoundary( in ForeignCoords[ulong] nodes ) const
