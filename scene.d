@@ -45,14 +45,14 @@ class POV
     
     void setCenter( in Vector2r new_center )
     {
+        center = new_center;
+        
         alias Conv!WGS84 C;
         
-        auto radian_lon = C.mercator2lon( new_center.x );
+        // passing 180 meridian
+        auto radian_lon = C.mercator2lon( center.lon );
         radian_lon = lon2canonical( radian_lon );
-        auto mercator_lon = C.lon2mercator( radian_lon );
-        
-        center.lat = new_center.lat;
-        center.lon = mercator_lon;
+        center.lon = C.lon2mercator( radian_lon );
     }
     
     Vector2r getCenter() const
