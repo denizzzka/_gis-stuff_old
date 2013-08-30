@@ -11,6 +11,7 @@ struct TPolylineDescription( _ForeignCoords, alias MAP_COORDS_BY_ID )
 {
     alias _ForeignCoords ForeignCoords;
     alias Box!Coords BBox;
+    alias TNodeDescription!MAP_COORDS_BY_ID NodeDescription;
     
     ulong nodes_ids[];
     cat.Line type;
@@ -46,9 +47,14 @@ struct TPolylineDescription( _ForeignCoords, alias MAP_COORDS_BY_ID )
     }
     body
     {
-        auto foreign_id = nodes_ids[ node_idx ];
+        return getNode( node_idx ).getCoords;
+    }
+    
+    NodeDescription getNode( in size_t node_idx ) const
+    {
+        NodeDescription node = { foreign_id: nodes_ids[ node_idx ] };
         
-        return MAP_COORDS_BY_ID( foreign_id );
+        return node;
     }
     
     BBox getBoundary() const
@@ -93,4 +99,14 @@ struct TPolylineDescription( _ForeignCoords, alias MAP_COORDS_BY_ID )
         foreach( c; reduced )
             nodes_ids ~= c.id;
     }
+}
+
+struct TNodeDescription( alias MAP_COORDS_BY_ID )
+{
+    const ulong foreign_id;
+    
+    Coords getCoords() const
+    {
+        return MAP_COORDS_BY_ID( foreign_id );
+    }    
 }
