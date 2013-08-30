@@ -29,7 +29,7 @@ struct TPolylineDescription( _ForeignCoords, alias MAP_COORDS_BY_ID )
         
         // checking
         for( size_t i = 0; i < nodes_ids.length; i++ )
-            getNodeCoords( i );
+            getNode( i ).getCoords;
     }
     
     @disable this();
@@ -39,17 +39,12 @@ struct TPolylineDescription( _ForeignCoords, alias MAP_COORDS_BY_ID )
         nodes_ids = nodes_ids.dup;
     }
     
-    Coords getNodeCoords( in size_t node_idx ) const
+    NodeDescription getNode( in size_t node_idx ) const
     in
     {
         assert( node_idx < nodes_ids.length );
     }
     body
-    {
-        return getNode( node_idx ).getCoords;
-    }
-    
-    NodeDescription getNode( in size_t node_idx ) const
     {
         NodeDescription node = { foreign_id: nodes_ids[ node_idx ] };
         
@@ -63,12 +58,12 @@ struct TPolylineDescription( _ForeignCoords, alias MAP_COORDS_BY_ID )
     }
     body
     {
-        auto start_node = getNodeCoords( 0 );
+        auto start_node = getNode( 0 ).getCoords;
         auto res = BBox( start_node, Coords(0,0) );
         
         for( auto i = 1; i < nodes_ids.length; i++ )
         {
-            auto curr_node = getNodeCoords( i );
+            auto curr_node = getNode( i ).getCoords;
             res.addCircumscribe( curr_node );
         }
         

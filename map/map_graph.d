@@ -177,7 +177,7 @@ class TMapGraph( _Node, alias CREATE_EDGE )
         Coords points[];
         
         for( auto i = 1; i < last_node; i++ )
-            points ~= line.getNodeCoords( i );
+            points ~= line.getNode( i ).getCoords;
         
         auto poly = Polyline( points, line.type );
                 
@@ -257,7 +257,7 @@ auto cutOnCrossings(DescriptionsTree)( in DescriptionsTree lines_rtree )
         for( auto i = 1; i < line.nodes_ids.length - 1; i++ )
         {
             auto curr_point_id = line.nodes_ids[i];
-            auto point_bbox = BBox( line.getNodeCoords( i ), Coords(0, 0) );
+            auto point_bbox = BBox( line.getNode( i ).getCoords, Coords(0, 0) );
             auto near_lines = lines_rtree.search( point_bbox );
             
             foreach( n; near_lines )
