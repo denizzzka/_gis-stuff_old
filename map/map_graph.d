@@ -176,12 +176,14 @@ class TMapGraph( _Node, alias CREATE_EDGE )
     }
     body
     {
-        auto from_node_idx = addPoint( line.nodes_ids[0], already_stored, nodes_coords );
-        auto to_node_idx = addPoint( line.nodes_ids[$-1], already_stored, nodes_coords );
+        size_t last_node = line.nodes_ids.length - 1;
+        
+        auto from_node_idx = addPoint( line.getNode( 0 ), already_stored );
+        auto to_node_idx = addPoint( line.getNode( last_node ), already_stored );
         
         Coords points[];
         
-        for( auto i = 1; i < line.nodes_ids.length - 1; i++ )
+        for( auto i = 1; i < last_node; i++ )
             points ~= encodedToMapCoords( nodes_coords[ line.nodes_ids[i] ] );
         
         auto poly = Polyline( points, line.type );
@@ -222,7 +224,7 @@ class TMapGraph( _Node, alias CREATE_EDGE )
             ref size_t[ ForeignID ] already_stored
         )
     {
-        size_t* p = node_id in already_stored;
+        size_t* p = node.foreign_id in already_stored;
         
         if( p !is null )
             return *p;
@@ -230,7 +232,7 @@ class TMapGraph( _Node, alias CREATE_EDGE )
         {
             auto point = Point( node.getCoords );
             auto idx = graph.addPoint( point );
-            already_stored[ node_id ] = idx;
+            already_stored[ node.foreign_id ] = idx;
             
             return idx;
         }
