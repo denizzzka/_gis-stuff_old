@@ -1,17 +1,10 @@
 import osmpbf.osmformat: StringTable, Node;
 import osm: DecodedLine;
-import categories;
+import config.categories;
 
 import std.conv: to;
 import std.algorithm: canFind;
 
-
-enum LineClass
-{
-    AREA,
-    POLYLINE,
-    ROAD
-}
 
 string getStringByIndex( in StringTable stringtable, in uint index )
 {

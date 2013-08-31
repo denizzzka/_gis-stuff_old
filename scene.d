@@ -1,9 +1,9 @@
 module scene;
 
 import map.map;
+import map.map: RGraph; // FIXME: remove duplicate import map.map
 import math.geometry;
 import math.earth: Conv, WGS84, lon2canonical;
-import map.map: Point, RGraph;
 import map.roads: findPath;
 import config.viewer;
 
@@ -126,40 +126,9 @@ class POV
         return res;
     }
     
-    LineGraph.Polylines[] getLines() const
+    MapLinesDescriptor[] getAnyLines() const
     {
-        LineGraph.Polylines[] res;
-        
-        foreach( ref region; map.regions )
-        {
-            auto num = getCurrentLayerNum();
-            
-            auto curr = LineGraph.Polylines( region.line_graph );
-            
-            curr.descriptors ~= region.layers[ num ].lines.search( boundary_meters );
-            res ~= curr;
-        }
-        
-        debug(scene) writeln("found lines number=", res.length);
-        return res;
-    }
-    
-    RGraph.Polylines[] getRoads() const
-    {
-        RGraph.Polylines[] res;
-        
-        foreach( ref region; map.regions )
-        {
-            auto num = getCurrentLayerNum();
-            
-            auto curr = RGraph.Polylines( region.layers[ num ].road_graph );
-            
-            curr.descriptors ~= region.layers[ num ].roads.search( boundary_meters );
-            res ~= curr;
-        }
-        
-        debug(scene) writeln("found roads number=", res.length);
-        return res;
+        return map.getLines( getCurrentLayerNum, boundary_meters );
     }
     
     RGraph.Polylines[] getPathLines()

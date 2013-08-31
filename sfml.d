@@ -4,6 +4,8 @@ import dsfml.graphics;
 import scene;
 import math.geometry;
 import map.roads: getPointsDirected;
+import map.map: MapLinesDescriptor, MapCoords = Coords;
+import cat = config.categories;
 
 import std.conv: to;
 import std.random;
@@ -69,14 +71,8 @@ class Window
 		drawPOIs( pois );
 		window.draw( vertex_array );
 		
-		auto lines = scene.getLines();
-		drawLines( lines );
-		
-		auto roads = scene.getRoads();
-		drawRoads( roads );
-		
-		auto path = scene.getPathLines();
-		drawRoads( path );
+		auto any = scene.getAnyLines();
+		drawAnyLines( any );
 	    }
 	    
 	    drawCenter;
@@ -101,30 +97,32 @@ class Window
     }
     
     private
-    void drawRoad( Vector2r[] coords, Color color )
+    void drawAnyLines( in MapLinesDescriptor[] map_lines )
     {
-	debug(sfml) writeln("draw road, nodes num=", coords.length, " color=", color);
-	
-	auto line = new VertexArray( PrimitiveType.LinesStrip, coords.length );
-	
-	foreach( i, point; coords )
-	{
-	    Vector2f c; c = cartesianToSFML( point );
-	    debug(sfml) writeln("draw road node, window coords=", c);
-	    
-	    line[i] = Vertex(c, color);
-	}
-	
-	window.draw( line );
-    }
-    
-    private
-    void drawRoads( in RGraph.Polylines[] allGraphsRoads )
-    {
-        foreach( roads; allGraphsRoads )
-	    foreach( road_dscr; roads.descriptors )
+        foreach( reg_lines; map_lines )
+	    foreach( line; reg_lines.lines )
 	    {
-		auto encoded_points = getPointsDirected( road_dscr, roads.map_graph );
+		MapCoords[] encoded_points;
+		Color color;
+		
+		with( cat.LineClass ) final switch( line.line_class )
+		{
+		    case POLYLINE:
+			auto graph = reg_lines.region.line_graph;
+			encoded_points = line.line.getPoints( graph );
+			color = line.line.getPolyline( graph ).properties.color;
+			break;
+			
+		    case ROAD:
+			auto graph = reg_lines.region.layers[ reg_lines.layer_num ].road_graph;
+			encoded_points = getPointsDirected( &line.road, graph );
+			color = line.road.getPolyline( graph ).properties.color;
+			break;
+			
+		    case AREA:
+			assert( true, "AREA is unsupported" );
+			break;
+		}
 		
 		Vector2r[] res_points;
 		
@@ -137,33 +135,8 @@ class Window
 		    debug(sfml) writeln("draw line point i=", i, " encoded coords=", encoded, " meters=", point, " window_coords=", window_coords);
 		}
 		
-		auto color = road_dscr.getPolyline( roads.map_graph ).properties.color;
-		drawRoad( res_points, color );
-        }
-    }
-    
-    private
-    void drawLines( Polylines )( in Polylines[] polylines )
-    {
-        foreach( lines; polylines )
-	    foreach( line_dscr; lines.descriptors )
-	    {
-		auto encoded_points = line_dscr.getPoints( lines.map_graph );
-		
-		Vector2r[] res_points;
-		
-		foreach( i, encoded; encoded_points )
-		{
-		    Vector2r point = encoded;
-		    auto window_coords = scene.metersToScreen( point );
-		    res_points ~= window_coords;
-		    
-		    debug(sfml) writeln("draw line point i=", i, " encoded coords=", encoded, " meters=", point, " window_coords=", window_coords);
-		}
-		
-		auto color = line_dscr.getPolyline( lines.map_graph ).properties.color;
-		drawRoad( res_points, color );
-        }
+		drawLine( res_points, color );
+	    }
     }
     
     void drawCenter()
@@ -183,7 +156,6 @@ class Window
 	window.draw( cross );
     }
     
-    @disable
     private
     void drawLine( Vector2r[] coords, Color color )
     {

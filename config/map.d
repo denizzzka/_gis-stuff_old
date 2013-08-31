@@ -1,7 +1,7 @@
 module config.map;
 
 import dsfml.graphics: Color;
-static import categories;
+static import cat = config.categories;
 
 import std.json;
 import std.file: readText;
@@ -16,11 +16,11 @@ struct PolylineProperties
 
 class Polylines
 {
-    immutable string[] members = [ __traits( allMembers, categories.Line ) ];
+    immutable string[] members = [ __traits( allMembers, cat.Line ) ];
     
     private static PolylineProperties[ members.length ] properties;
     
-    ref PolylineProperties getProperty( in categories.Line enum_type ) const
+    ref PolylineProperties getProperty( in cat.Line enum_type ) const
     {
         return properties[ enum_type ];
     }

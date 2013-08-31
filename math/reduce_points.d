@@ -16,9 +16,16 @@ real parallelSqr( V )( in V v1, in V v2 )
 private
 real normalLength( V )( in V vector, in V point_coords )
 {
-    auto square = abs( parallelSqr( vector, point_coords ) );
+    auto vector_length = vector.length;
     
-    return square / vector.length;
+    if( vector_length )
+    {
+        auto square = abs( parallelSqr( vector, point_coords ) );
+        
+        return square / vector.length;
+    }
+    else
+        return point_coords.length;
 }
 unittest
 {

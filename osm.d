@@ -4,9 +4,9 @@ import osmpbf.fileformat;
 import osmpbf.osmformat;
 import math.geometry: Vector2D, degrees2radians, radians2degrees;
 import math.earth;
-import map.map: Map, Region, BBox, Point, MapCoords = Coords, TPrepareRoads;
+import map.map: Map, Region, BBox, Point, MapCoords = Coords, TPrepareLines;
 import map.adapters: TPolylineDescription;
-import cat = categories;
+import cat = config.categories;
 import osm_tags_parsing;
 
 import std.stdio;
@@ -174,7 +174,7 @@ unittest
 struct DecodedLine
 {
     OSM_id[] coords_idx;
-    LineClass classification;
+    cat.LineClass classification;
     Tag[] tags;
     
     invariant()
@@ -310,8 +310,8 @@ Region getRegion( string filename, bool verbose )
     alias TPolylineDescription!( getMapCoordsByNodeIdx ) LineDescription;
     alias LineDescription RoadDescription;
     
-    LineDescription[] lines;
-    auto roads = new TPrepareRoads!( RoadDescription );
+    auto lines = new TPrepareLines!( LineDescription );
+    auto roads = new TPrepareLines!( RoadDescription );
     
     while(true)
     {
@@ -341,12 +341,13 @@ Region getRegion( string filename, bool verbose )
                         auto decoded = decodeWay( prim, w );
                         auto type = getLineType( prim.stringtable, decoded );
                         
-                        with( LineClass )
+                        with( cat.LineClass )
                         final switch( decoded.classification )
                         {
                             case AREA:
                             case POLYLINE:
-                                lines ~= LineDescription( decoded.coords_idx, type );
+                                auto line = LineDescription( decoded.coords_idx, type );
+                                lines.addRoad( line );
                                 break;
                                 
                             case ROAD:
