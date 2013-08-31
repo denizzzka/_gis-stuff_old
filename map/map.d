@@ -133,7 +133,7 @@ class Region
         
         size_t[ulong] already_stored;
         
-        foreach( i, ref layer; layers )
+        foreach( i, ref unused; layers )
         {
             auto epsilon = config.converter.layersGeneralization[i];
             auto cutted = cutOnCrossings( prepared.lines_to_store[i] );
@@ -152,37 +152,35 @@ class Region
                     line: descriptior
                 };
                 
-                layer._lines.addObject( bbox, any );
+                layers[i]._lines.addObject( bbox, any );
             }
         }
     }
     
-    void fillRoads( Prepared )( Prepared prepared )
+    void fillRoads( PrepareRoads )( PrepareRoads prepared )
     {
-        size_t[ulong] already_stored;
-        
-        foreach( i, ref layer; layers )
+        foreach( i, ref c; layers )
         {
-            layer.road_graph = new RoadGraph;
-            
             auto epsilon = config.converter.layersGeneralization[i];
             auto cutted = cutOnCrossings( prepared.lines_to_store[i] );
             
             foreach( ref descr; cutted )
-            {
                 if( epsilon )
                     descr.generalize( epsilon );
+            
+            c.road_graph = new RGraph( cutted );
+            
+            auto descriptors = c.road_graph.getDescriptors();
+            
+            foreach( descr; descriptors )
+            {
+                auto bbox = descr.getBoundary( c.road_graph );
                 
-                auto descriptior = layer.road_graph.addPolyline( descr, already_stored );
+                AnyLineDescriptor any = { line_class: cat.LineClass.ROAD };
                 
-                auto bbox = descriptior.getBoundary( layer.road_graph );
+                any.road = descr;
                 
-                AnyLineDescriptor any = {
-                    line_class: cat.LineClass.ROAD,
-                };
-                any.road = descriptior;
-                
-                layer._lines.addObject( bbox, any );
+                layers[i]._lines.addObject( bbox, any );
             }
         }
     }
