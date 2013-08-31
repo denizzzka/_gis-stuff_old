@@ -127,17 +127,16 @@ class Region
         layers[layer_num].POI.addPoint( point );
     }
     
-    void fillLines( LinesDescr )( LinesDescr lines_descr )
+    void fillLines( Prepared )( Prepared prepared )
     {
         line_graph = new LineGraph;
         
         size_t[ulong] already_stored;
-        auto sorted = sortByLayers( lines_descr );
         
-        foreach( i, ref unused; layers )
+        foreach( i, ref layer; layers )
         {
             auto epsilon = config.converter.layersGeneralization[i];
-            auto cutted = cutOnCrossings( sorted[i] );
+            auto cutted = cutOnCrossings( prepared.lines_to_store[i] );
             
             foreach( ref descr; cutted )
             {
@@ -153,32 +152,37 @@ class Region
                     line: descriptior
                 };
                 
-                layers[i]._lines.addObject( bbox, any );
+                layer._lines.addObject( bbox, any );
             }
         }
     }
     
-    void fillRoads( RoadsDescr )( RoadsDescr roads_descr )
+    void fillRoads( Prepared )( Prepared prepared )
     {
-        auto sorted = sortByLayers( roads_descr );
+        size_t[ulong] already_stored;
         
-        foreach( i, ref c; layers )
+        foreach( i, ref layer; layers )
         {
-            auto cutted = cutOnCrossings( sorted[i] );
+            layer.road_graph = new RoadGraph;
             
-            c.road_graph = new RGraph( cutted );
+            auto epsilon = config.converter.layersGeneralization[i];
+            auto cutted = cutOnCrossings( prepared.lines_to_store[i] );
             
-            auto descriptors = c.road_graph.getDescriptors();
-            
-            foreach( descr; descriptors )
+            foreach( ref descr; cutted )
             {
-                auto bbox = descr.getBoundary( c.road_graph );
+                if( epsilon )
+                    descr.generalize( epsilon );
                 
-                AnyLineDescriptor any = { line_class: cat.LineClass.ROAD };
+                auto descriptior = layer.road_graph.addPolyline( descr, already_stored );
                 
-                any.road = descr;
+                auto bbox = descriptior.getBoundary( layer.road_graph );
                 
-                layers[i]._lines.addObject( bbox, any );
+                AnyLineDescriptor any = {
+                    line_class: cat.LineClass.ROAD,
+                };
+                any.road = descriptior;
+                
+                layer._lines.addObject( bbox, any );
             }
         }
     }
@@ -197,6 +201,26 @@ Descr[][5] sortByLayers( Descr )( Descr[] lines )
     }
     
     return res;
+}
+
+class TPrepareLines( Descr )
+{
+    private Descr[][ Region.layers.length ] lines_to_store;
+    
+    void addRoad( Descr line_descr )
+    {
+        auto to_layers = config.map.polylines.getProperty( line_descr.type ).layers;
+        
+        foreach( n; to_layers )
+        {
+            auto epsilon = config.converter.layersGeneralization[n];
+            
+            if( epsilon )
+                line_descr.generalize( epsilon );
+                
+            lines_to_store[n] ~= line_descr;
+        }
+    }
 }
 
 struct MapLinesDescriptor
