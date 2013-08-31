@@ -169,7 +169,12 @@ class Region
                 
                 auto bbox = descriptior.getBoundary( line_graph );
                 
-                layers[n].lines.addObject( bbox, descriptior );
+                AnyLineDescriptor any = {
+                    line_class: cat.LineClass.POLYLINE,
+                    line: descriptior
+                };
+                
+                layers[n]._lines.addObject( bbox, any );
             }
         }
     }
