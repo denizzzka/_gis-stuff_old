@@ -160,11 +160,13 @@ class Region
         }
     }
     
-    void fillRoads( PrepareRoads )( PrepareRoads prepared )
+    void fillRoads( RoadsDescr )( RoadsDescr roads_descr )
     {
+        auto sorted = sortByLayers( roads_descr );
+        
         foreach( i, ref c; layers )
         {
-            auto cutted = cutOnCrossings( prepared.lines_to_store[i] );
+            auto cutted = cutOnCrossings( sorted[i] );
             
             c.road_graph = new RGraph( cutted );
             
@@ -184,24 +186,19 @@ class Region
     }
 }
 
-class TPrepareLines( Descr )
+Descr[][5] sortByLayers( Descr )( Descr[] lines )
 {
-    private Descr[][ Region.layers.length ] lines_to_store;
+    Descr[][5] res;
     
-    void addRoad( Descr line_descr )
+    foreach( ref line; lines )
     {
-        auto to_layers = config.map.polylines.getProperty( line_descr.type ).layers;
+        auto to_layers = config.map.polylines.getProperty( line.type ).layers;
         
-        foreach( n; to_layers )
-        {
-            auto epsilon = config.converter.layersGeneralization[n];
-            
-            if( epsilon )
-                line_descr.generalize( epsilon );
-                
-            lines_to_store[n] ~= line_descr;
-        }
+        foreach( layer_num; to_layers )
+            res[][ layer_num ] ~= line;
     }
+    
+    return res;
 }
 
 struct MapLinesDescriptor
