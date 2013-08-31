@@ -188,21 +188,6 @@ class Region
     }
 }
 
-Descr[][5] sortByLayers( Descr )( Descr[] lines )
-{
-    Descr[][5] res;
-    
-    foreach( ref line; lines )
-    {
-        auto to_layers = config.map.polylines.getProperty( line.type ).layers;
-        
-        foreach( layer_num; to_layers )
-            res[][ layer_num ] ~= line;
-    }
-    
-    return res;
-}
-
 class TPrepareLines( Descr )
 {
     private Descr[][ Region.layers.length ] lines_to_store;
