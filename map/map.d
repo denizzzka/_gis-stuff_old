@@ -94,20 +94,6 @@ struct Layer
     {
         return POI.getBoundary.getCircumscribed( POI.getBoundary ); // FIXME
     }
-    
-    @disable
-    private
-    void fillRoadsRTree()
-    {
-        auto descriptors = road_graph.getDescriptors();
-        
-        foreach( descr; descriptors )
-        {
-            auto bbox = descr.getBoundary( road_graph );
-            
-            roads.addObject( bbox, descr );
-        }
-    }
 }
 
 class Region
@@ -184,9 +170,9 @@ class Region
     {
         foreach( i, ref c; layers )
         {
-            // cutOnCrossings( lines_descr ); // TODO: enable it
+            auto cutted = cutOnCrossings( prepared.roads_to_store[i] );
             
-            c.road_graph = new RGraph( prepared.roads_to_store[i] );
+            c.road_graph = new RGraph( cutted );
             
             auto descriptors = c.road_graph.getDescriptors();
             
