@@ -74,14 +74,14 @@ void addPoint( PointsStorage storage, Point point )
 struct Layer
 {
     PointsStorage POI;
-    LinesRTree _lines;
+    LinesRTree lines;
     
     RGraph road_graph;
     
     void init()
     {
         POI = new PointsStorage;
-        _lines = new LinesRTree;
+        lines = new LinesRTree;
     }
     
     BBox boundary() const
@@ -127,7 +127,7 @@ class Region
         layers[layer_num].POI.addPoint( point );
     }
     
-    void fillLines( Prepared )( Prepared prepared )
+    void fillLines( Prepare )( Prepare prepared )
     {
         line_graph = new LineGraph;
         
@@ -152,35 +152,37 @@ class Region
                     line: descriptior
                 };
                 
-                layers[i]._lines.addObject( bbox, any );
+                layers[i].lines.addObject( bbox, any );
             }
         }
     }
     
-    void fillRoads( PrepareRoads )( PrepareRoads prepared )
+    void fillRoads( Prepare )( Prepare prepared )
     {
-        foreach( i, ref c; layers )
+        foreach( i, ref layer; layers )
         {
+            layer.road_graph = new RoadGraph;
+            
+            size_t[ulong] already_stored;
+            
             auto epsilon = config.converter.layersGeneralization[i];
             auto cutted = cutOnCrossings( prepared.lines_to_store[i] );
             
-            foreach( ref descr; cutted )
+            foreach( descr; cutted )
+            {
                 if( epsilon )
                     descr.generalize( epsilon );
-            
-            c.road_graph = new RGraph( cutted );
-            
-            auto descriptors = c.road_graph.getDescriptors();
-            
-            foreach( descr; descriptors )
-            {
-                auto bbox = descr.getBoundary( c.road_graph );
                 
-                AnyLineDescriptor any = { line_class: cat.LineClass.ROAD };
+                auto descriptior = layer.road_graph.addPolyline( descr, already_stored );
                 
-                any.road = descr;
+                auto bbox = descriptior.getBoundary( layer.road_graph );
                 
-                layers[i]._lines.addObject( bbox, any );
+                AnyLineDescriptor any = {
+                    line_class: cat.LineClass.ROAD,
+                };
+                any.road = descriptior;
+                
+                layer.lines.addObject( bbox, any );
             }
         }
     }
@@ -246,7 +248,7 @@ class Map
         {
             MapLinesDescriptor curr = { region: &region, layer_num: layer_num };
             
-            curr.lines ~= region.layers[ layer_num ]._lines.search( boundary );
+            curr.lines ~= region.layers[ layer_num ].lines.search( boundary );
             
             res ~= curr;
         }
