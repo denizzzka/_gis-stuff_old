@@ -64,7 +64,7 @@ struct AnyLineDescriptor
     }    
 }
 
-alias RTreePtrs!(BBox, AnyLineDescriptor) _LinesStorage;
+alias RTreePtrs!(BBox, AnyLineDescriptor) LinesRTree;
 
 void addPoint( PointsStorage storage, Point point )
 {
@@ -78,7 +78,7 @@ struct Layer
     PointsStorage POI;
     LinesStorage lines;
     RoadsStorage roads;
-    _LinesStorage _lines;
+    LinesRTree _lines;
     
     RGraph road_graph;
     
