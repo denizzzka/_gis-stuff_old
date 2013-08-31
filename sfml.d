@@ -77,6 +77,9 @@ class Window
 		auto roads = scene.getRoads();
 		drawRoads( roads );
 		
+		auto any = scene.getAnyLines();
+		drawAnyLines( any );
+		
 		auto path = scene.getPathLines();
 		drawRoads( path );
 	    }
