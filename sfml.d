@@ -4,6 +4,8 @@ import dsfml.graphics;
 import scene;
 import math.geometry;
 import map.roads: getPointsDirected;
+import map.map: MapLinesDescriptor, MapCoords = Coords;
+import cat = categories;
 
 import std.conv: to;
 import std.random;
@@ -166,6 +168,49 @@ class Window
         }
     }
     
+    private
+    void drawAnyLines( in MapLinesDescriptor[] map_lines )
+    {
+        foreach( reg_lines; map_lines )
+	    foreach( line; reg_lines.lines )
+	    {
+		MapCoords[] encoded_points;
+		Color color;
+		
+		with( cat.LineClass ) final switch( line.line_class )
+		{
+		    case POLYLINE:
+			auto graph = reg_lines.region.line_graph;
+			encoded_points = line.line.getPoints( graph );
+			color = line.line.getPolyline( graph ).properties.color;
+			break;
+			
+		    case ROAD:
+			auto graph = reg_lines.region.layers[ reg_lines.layer_num ].road_graph;
+			encoded_points = getPointsDirected( &line.road, graph );
+			color = line.road.getPolyline( graph ).properties.color;
+			break;
+			
+		    case AREA:
+			assert( true, "AREA is unsupported" );
+			break;
+		}
+		
+		Vector2r[] res_points;
+		
+		foreach( i, encoded; encoded_points )
+		{
+		    Vector2r point = encoded;
+		    auto window_coords = scene.metersToScreen( point );
+		    res_points ~= window_coords;
+		    
+		    debug(sfml) writeln("draw line point i=", i, " encoded coords=", encoded, " meters=", point, " window_coords=", window_coords);
+		}
+		
+		drawLine( res_points, color );
+	    }
+    }
+    
     void drawCenter()
     {
 	auto c = getCenter();
@@ -183,7 +228,6 @@ class Window
 	window.draw( cross );
     }
     
-    @disable
     private
     void drawLine( Vector2r[] coords, Color color )
     {

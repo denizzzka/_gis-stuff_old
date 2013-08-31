@@ -211,7 +211,9 @@ class TPrepareRoads( Descr )
 
 struct MapLinesDescriptor
 {
-    const Layer* layer;
+    const Region* region;
+    const size_t layer_num;
+    
     AnyLineDescriptor*[] lines;
 }
 
@@ -230,9 +232,9 @@ class Map
         
         foreach( ref region; regions )
         {
-            MapLinesDescriptor curr = { layer: &region.layers[ layer_num ] };
+            MapLinesDescriptor curr = { region: &region, layer_num: layer_num };
             
-            curr.lines ~= curr.layer._lines.search( boundary );
+            curr.lines ~= region.layers[ layer_num ]._lines.search( boundary );
             
             res ~= curr;
         }
