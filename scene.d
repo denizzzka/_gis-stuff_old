@@ -131,42 +131,6 @@ class POV
         return map.getLines( getCurrentLayerNum, boundary_meters );
     }
     
-    LineGraph.Polylines[] getLines() const
-    {
-        LineGraph.Polylines[] res;
-        
-        foreach( ref region; map.regions )
-        {
-            auto num = getCurrentLayerNum();
-            
-            auto curr = LineGraph.Polylines( region.line_graph );
-            
-            curr.descriptors ~= region.layers[ num ].lines.search( boundary_meters );
-            res ~= curr;
-        }
-        
-        debug(scene) writeln("found lines number=", res.length);
-        return res;
-    }
-    
-    RGraph.Polylines[] getRoads() const
-    {
-        RGraph.Polylines[] res;
-        
-        foreach( ref region; map.regions )
-        {
-            auto num = getCurrentLayerNum();
-            
-            auto curr = RGraph.Polylines( region.layers[ num ].road_graph );
-            
-            curr.descriptors ~= region.layers[ num ].roads.search( boundary_meters );
-            res ~= curr;
-        }
-        
-        debug(scene) writeln("found roads number=", res.length);
-        return res;
-    }
-    
     RGraph.Polylines[] getPathLines()
     {
         debug(scene) writeln("path=", found_path);

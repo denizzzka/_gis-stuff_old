@@ -71,17 +71,8 @@ class Window
 		drawPOIs( pois );
 		window.draw( vertex_array );
 		
-		auto lines = scene.getLines();
-		drawLines( lines );
-		
-		auto roads = scene.getRoads();
-		drawRoads( roads );
-		
 		auto any = scene.getAnyLines();
 		drawAnyLines( any );
-		
-		auto path = scene.getPathLines();
-		drawRoads( path );
 	    }
 	    
 	    drawCenter;
@@ -102,72 +93,6 @@ class Window
             
 	    Vector2f c; c = cartesianToSFML(window_coords );
 	    vertex_array.append( Vertex(c, Color.Cyan) );
-        }
-    }
-    
-    private
-    void drawRoad( Vector2r[] coords, Color color )
-    {
-	debug(sfml) writeln("draw road, nodes num=", coords.length, " color=", color);
-	
-	auto line = new VertexArray( PrimitiveType.LinesStrip, coords.length );
-	
-	foreach( i, point; coords )
-	{
-	    Vector2f c; c = cartesianToSFML( point );
-	    debug(sfml) writeln("draw road node, window coords=", c);
-	    
-	    line[i] = Vertex(c, color);
-	}
-	
-	window.draw( line );
-    }
-    
-    private
-    void drawRoads( in RGraph.Polylines[] allGraphsRoads )
-    {
-        foreach( roads; allGraphsRoads )
-	    foreach( road_dscr; roads.descriptors )
-	    {
-		auto encoded_points = getPointsDirected( road_dscr, roads.map_graph );
-		
-		Vector2r[] res_points;
-		
-		foreach( i, encoded; encoded_points )
-		{
-		    Vector2r point = encoded;
-		    auto window_coords = scene.metersToScreen( point );
-		    res_points ~= window_coords;
-		    
-		    debug(sfml) writeln("draw line point i=", i, " encoded coords=", encoded, " meters=", point, " window_coords=", window_coords);
-		}
-		
-		auto color = road_dscr.getPolyline( roads.map_graph ).properties.color;
-		drawRoad( res_points, color );
-        }
-    }
-    
-    private
-    void drawLines( Polylines )( in Polylines[] polylines )
-    {
-        foreach( lines; polylines )
-	    foreach( line_dscr; lines.descriptors )
-	    {
-		auto encoded_points = line_dscr.getPoints( lines.map_graph );
-		
-		Vector2r[] res_points;
-		
-		foreach( i, encoded; encoded_points )
-		{
-		    Vector2r point = encoded;
-		    auto window_coords = scene.metersToScreen( point );
-		    res_points ~= window_coords;
-		    
-		    debug(sfml) writeln("draw line point i=", i, " encoded coords=", encoded, " meters=", point, " window_coords=", window_coords);
-		}
-		
-		auto color = line_dscr.getPolyline( lines.map_graph ).properties.color;
-		drawRoad( res_points, color );
         }
     }
     
