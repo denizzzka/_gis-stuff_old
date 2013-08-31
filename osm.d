@@ -4,7 +4,7 @@ import osmpbf.fileformat;
 import osmpbf.osmformat;
 import math.geometry: Vector2D, degrees2radians, radians2degrees;
 import math.earth;
-import map.map: Map, Region, BBox, Point, MapCoords = Coords, TPrepareRoads;
+import map.map: Map, Region, BBox, Point, MapCoords = Coords, TPrepareLines;
 import map.adapters: TPolylineDescription;
 import cat = categories;
 import osm_tags_parsing;
@@ -311,7 +311,7 @@ Region getRegion( string filename, bool verbose )
     alias LineDescription RoadDescription;
     
     LineDescription[] lines;
-    auto roads = new TPrepareRoads!( RoadDescription );
+    auto roads = new TPrepareLines!( RoadDescription );
     
     while(true)
     {

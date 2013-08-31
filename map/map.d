@@ -164,7 +164,7 @@ class Region
     {
         foreach( i, ref c; layers )
         {
-            auto cutted = cutOnCrossings( prepared.roads_to_store[i] );
+            auto cutted = cutOnCrossings( prepared.lines_to_store[i] );
             
             c.road_graph = new RGraph( cutted );
             
@@ -184,22 +184,22 @@ class Region
     }
 }
 
-class TPrepareRoads( Descr )
+class TPrepareLines( Descr )
 {
-    private Descr[][ Region.layers.length ] roads_to_store;
+    private Descr[][ Region.layers.length ] lines_to_store;
     
-    void addRoad( Descr road_descr )
+    void addRoad( Descr line_descr )
     {
-        auto to_layers = config.map.polylines.getProperty( road_descr.type ).layers;
+        auto to_layers = config.map.polylines.getProperty( line_descr.type ).layers;
         
         foreach( n; to_layers )
         {
             auto epsilon = config.converter.layersGeneralization[n];
             
             if( epsilon )
-                road_descr.generalize( epsilon );
+                line_descr.generalize( epsilon );
                 
-            roads_to_store[n] ~= road_descr;
+            lines_to_store[n] ~= line_descr;
         }
     }
 }
