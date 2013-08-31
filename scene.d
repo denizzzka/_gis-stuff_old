@@ -126,7 +126,7 @@ class POV
         return res;
     }
     
-    MapLinesDescriptor[] getAnyLines() const
+    MapLinesDescriptor[] getLines() const
     {
         return map.getLines( getCurrentLayerNum, boundary_meters );
     }
