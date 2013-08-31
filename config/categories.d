@@ -1,3 +1,6 @@
+module config.categories;
+
+
 enum LineClass: ubyte
 {
     AREA,

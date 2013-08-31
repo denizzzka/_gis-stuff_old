@@ -2,7 +2,7 @@ module map.map;
 
 import math.geometry;
 import math.rtree2d;
-import cat = categories;
+import cat = config.categories;
 import map.map_graph: LineGraph, cutOnCrossings;
 import map.roads: RoadGraph;
 static import config.map;

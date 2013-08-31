@@ -1,6 +1,6 @@
 import osmpbf.osmformat: StringTable, Node;
 import osm: DecodedLine;
-import categories;
+import config.categories;
 
 import std.conv: to;
 import std.algorithm: canFind;

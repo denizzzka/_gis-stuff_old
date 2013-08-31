@@ -6,7 +6,7 @@ import math.geometry: Vector2D, degrees2radians, radians2degrees;
 import math.earth;
 import map.map: Map, Region, BBox, Point, MapCoords = Coords, TPrepareLines;
 import map.adapters: TPolylineDescription;
-import cat = categories;
+import cat = config.categories;
 import osm_tags_parsing;
 
 import std.stdio;

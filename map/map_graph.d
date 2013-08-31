@@ -4,7 +4,7 @@ import math.geometry;
 import math.rtree2d;
 import math.graph.graph: Graph, TEdge, TNode;
 import map.map: MapCoords = Coords;
-import cat = categories: Line;
+import cat = config.categories: Line;
 static import config.map;
 import math.earth: mercator2coords, getSphericalDistance;
 import map.adapters: TPolylineDescription;

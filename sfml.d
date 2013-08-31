@@ -5,7 +5,7 @@ import scene;
 import math.geometry;
 import map.roads: getPointsDirected;
 import map.map: MapLinesDescriptor, MapCoords = Coords;
-import cat = categories;
+import cat = config.categories;
 
 import std.conv: to;
 import std.random;
