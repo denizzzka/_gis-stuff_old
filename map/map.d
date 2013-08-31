@@ -129,20 +129,18 @@ class Region
     
     void fillLines( LinesDescr )( LinesDescr lines_descr )
     {
-        auto cutted = cutOnCrossings( lines_descr );
-        
         line_graph = new LineGraph;
         
         size_t[ulong] already_stored;
+        auto sorted = sortByLayers( lines_descr );
         
-        foreach( descr; cutted )
+        foreach( i, ref unused; layers )
         {
-            auto layers_num = config.map.polylines.getProperty( descr.type ).layers;
+            auto epsilon = config.converter.layersGeneralization[i];
+            auto cutted = cutOnCrossings( sorted[i] );
             
-            foreach( n; layers_num )
+            foreach( ref descr; cutted )
             {
-                auto epsilon = config.converter.layersGeneralization[n];
-                
                 if( epsilon )
                     descr.generalize( epsilon );
                 
@@ -155,7 +153,7 @@ class Region
                     line: descriptior
                 };
                 
-                layers[n]._lines.addObject( bbox, any );
+                layers[i]._lines.addObject( bbox, any );
             }
         }
     }
