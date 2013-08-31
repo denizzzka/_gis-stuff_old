@@ -218,25 +218,23 @@ class Map
         return regions[0].boundary; // FIXME
     }
     
-    struct MapLineDescriptor
+    struct MapLinesDescriptor
     {
-        Layer* layer;
-        AnyLineDescriptor* line;
+        const Layer* layer;
+        AnyLineDescriptor*[] lines;
     }
     
-    MapLineDescriptor[] getLines( in size_t layer_num, in BBox boundary ) const
+    MapLinesDescriptor[] getLines( in size_t layer_num, in BBox boundary ) const
     {
-        MapLineDescriptor[] res;
+        MapLinesDescriptor[] res;
         
         foreach( ref region; regions )
         {
-            MapLineDescriptor curr;
+            MapLinesDescriptor curr = { layer: &region.layers[ layer_num ] };
             
+            curr.lines ~= curr.layer._lines.search( boundary );
             
-            //auto curr = LineGraph.Polylines( region.line_graph );
-            
-            //curr.descriptors ~= region.layers[ layer_num ].lines.search( boundary );
-            //res ~= curr;
+            res ~= curr;
         }
         
         return res;
