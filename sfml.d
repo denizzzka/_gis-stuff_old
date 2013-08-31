@@ -71,8 +71,8 @@ class Window
 		drawPOIs( pois );
 		window.draw( vertex_array );
 		
-		auto any = scene.getAnyLines();
-		drawAnyLines( any );
+		auto any = scene.getLines();
+		drawLines( any );
 	    }
 	    
 	    drawCenter;
@@ -97,7 +97,7 @@ class Window
     }
     
     private
-    void drawAnyLines( in MapLinesDescriptor[] map_lines )
+    void drawLines( in MapLinesDescriptor[] map_lines )
     {
         foreach( reg_lines; map_lines )
 	    foreach( line; reg_lines.lines )
