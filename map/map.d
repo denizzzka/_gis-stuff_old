@@ -87,6 +87,7 @@ struct Layer
         POI = new PointsStorage;
         lines = new LinesStorage;
         roads = new RoadsStorage;
+        _lines = new LinesRTree;
     }
     
     BBox boundary() const
