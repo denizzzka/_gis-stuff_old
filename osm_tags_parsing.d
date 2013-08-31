@@ -6,13 +6,6 @@ import std.conv: to;
 import std.algorithm: canFind;
 
 
-enum LineClass
-{
-    AREA,
-    POLYLINE,
-    ROAD
-}
-
 string getStringByIndex( in StringTable stringtable, in uint index )
 {
     char[] res;

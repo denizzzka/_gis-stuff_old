@@ -174,7 +174,7 @@ unittest
 struct DecodedLine
 {
     OSM_id[] coords_idx;
-    LineClass classification;
+    cat.LineClass classification;
     Tag[] tags;
     
     invariant()
@@ -341,7 +341,7 @@ Region getRegion( string filename, bool verbose )
                         auto decoded = decodeWay( prim, w );
                         auto type = getLineType( prim.stringtable, decoded );
                         
-                        with( LineClass )
+                        with( cat.LineClass )
                         final switch( decoded.classification )
                         {
                             case AREA:

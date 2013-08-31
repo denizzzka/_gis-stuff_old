@@ -1,3 +1,9 @@
+enum LineClass: ubyte
+{
+    AREA,
+    POLYLINE,
+    ROAD
+}
 
 enum Point : ubyte
 {

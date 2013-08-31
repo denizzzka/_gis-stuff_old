@@ -53,6 +53,17 @@ alias RTreePtrs!(BBox, Point) PointsStorage; // TODO: 2D-Tree points storage
 alias RTreePtrs!(BBox, LineGraph.PolylineDescriptor) LinesStorage;
 alias RTreePtrs!(BBox, RGraph.PolylineDescriptor) RoadsStorage;
 
+struct LinesDescriptorsStorage
+{
+    cat.LineClass line_class;
+    
+    union
+    {
+        LineGraph.PolylineDescriptor line;
+        RGraph.PolylineDescriptor road;
+    }    
+}
+
 void addPoint( PointsStorage storage, Point point )
 {
     BBox bbox = BBox( point.coords, Coords(0,0) );
