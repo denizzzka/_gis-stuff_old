@@ -209,6 +209,12 @@ class TPrepareRoads( Descr )
     }
 }
 
+struct MapLinesDescriptor
+{
+    const Layer* layer;
+    AnyLineDescriptor*[] lines;
+}
+
 class Map
 {
     Region[] regions;
@@ -216,12 +222,6 @@ class Map
     BBox boundary() const
     {
         return regions[0].boundary; // FIXME
-    }
-    
-    struct MapLinesDescriptor
-    {
-        const Layer* layer;
-        AnyLineDescriptor*[] lines;
     }
     
     MapLinesDescriptor[] getLines( in size_t layer_num, in BBox boundary ) const

@@ -1,9 +1,9 @@
 module scene;
 
 import map.map;
+import map.map: RGraph; // FIXME: remove duplicate import map.map
 import math.geometry;
 import math.earth: Conv, WGS84, lon2canonical;
-import map.map: Point, RGraph;
 import map.roads: findPath;
 import config.viewer;
 
@@ -124,6 +124,11 @@ class POV
         
         debug(scene) writeln("found POI number=", res.length);
         return res;
+    }
+    
+    MapLinesDescriptor[] getAnyLines() const
+    {
+        return map.getLines( getCurrentLayerNum, boundary_meters );
     }
     
     LineGraph.Polylines[] getLines() const
