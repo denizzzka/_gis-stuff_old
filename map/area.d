@@ -2,6 +2,7 @@ module map.area;
 
 import map.map: Coords, BBox;
 import cat = config.categories: Line;
+import config.map: polylines, PolylineProperties;
 
 
 struct AreaLine
@@ -45,5 +46,10 @@ struct Area
     BBox getBoundary() const
     {
         return perimeter.getBoundary;
+    }
+    
+    ref PolylineProperties properties() const
+    {
+        return polylines.getProperty( type );
     }
 }

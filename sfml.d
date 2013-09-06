@@ -97,10 +97,10 @@ class Window
     }
     
     private
-    void drawLines( in MapLinesDescriptor[] map_lines )
+    void drawLines( MapLinesDescriptor[] map_lines )
     {
-        foreach( reg_lines; map_lines )
-	    foreach( line; reg_lines.lines )
+        foreach( ref reg_lines; map_lines )
+	    foreach( ref line; reg_lines.lines )
 	    {
 		MapCoords[] encoded_points;
 		Color color;
@@ -120,7 +120,9 @@ class Window
 			break;
 			
 		    case AREA:
-			assert( true, "AREA is unsupported" );
+			auto area_points = line.area.perimeter.points;
+			encoded_points = area_points ~ area_points[0];
+			color = line.area.properties.color;
 			break;
 		}
 		
