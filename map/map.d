@@ -5,6 +5,7 @@ import math.rtree2d;
 import cat = config.categories;
 import map.map_graph: LineGraph, cutOnCrossings;
 import map.roads: RoadGraph;
+import map.area: Area;
 static import config.map;
 static import config.converter;
 
@@ -185,6 +186,11 @@ class Region
                 layer.lines.addObject( bbox, any );
             }
         }
+    }
+    
+    void fillAreas( Area[] areas )
+    {
+        
     }
 }
 

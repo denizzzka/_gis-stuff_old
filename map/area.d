@@ -1,13 +1,14 @@
 module map.area;
 
 import map.map: Coords;
+import cat = config.categories: Line;
 
 
 struct AreaLine
 {
     Coords[] points;
     
-    this( Description )( Description areaLine )
+    this( Description )( in Description areaLine )
     {
         foreach( i, ref unused; areaLine.nodes_ids )
             points ~= areaLine.getNode( i ).getCoords;
@@ -19,11 +20,15 @@ struct Area
     AreaLine perimeter;
     AreaLine[] holes;
     
-    this( Description )( in Description perimeter, in Description[] holes )
+    cat.Line type;
+    
+    this( Description )( in Description perimeter, in cat.Line type, in Description[] holes = null )
     {
-        perimeter = AreaLine( perimeter );
+        this.perimeter = AreaLine( perimeter );
         
         foreach( ref h; holes )
-            this.hole ~= AreaLine( h );
+            this.holes ~= AreaLine( h );
+            
+        this.type = type;
     }
 }

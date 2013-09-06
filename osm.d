@@ -6,6 +6,7 @@ import math.geometry: Vector2D, degrees2radians, radians2degrees;
 import math.earth;
 import map.map: Map, Region, BBox, Point, MapCoords = Coords, TPrepareLines;
 import map.adapters: TPolylineDescription;
+import map.area: Area;
 import cat = config.categories;
 import osm_tags_parsing;
 
@@ -313,6 +314,7 @@ Region getRegion( string filename, bool verbose )
     
     auto lines = new TPrepareLines!( LineDescription );
     auto roads = new TPrepareLines!( RoadDescription );
+    Area[] areas;    
     
     while(true)
     {
@@ -365,7 +367,8 @@ Region getRegion( string filename, bool verbose )
                                 if( decoded.coords_idx[0] != decoded.coords_idx[$-1] )
                                     throw new ReadPrimitiveException("area is not looped");
                                 
-                                auto area = AreaDescription( decoded.coords_idx[0..$-1], type );
+                                auto descr = AreaDescription( decoded.coords_idx[0..$-1], type );
+                                areas ~= Area( descr, type );
                                 break;
                         }
                     }
@@ -379,6 +382,7 @@ Region getRegion( string filename, bool verbose )
     
     res.fillLines( lines );
     res.fillRoads( roads );
+    res.fillAreas( areas );
     
     return res;
 }
