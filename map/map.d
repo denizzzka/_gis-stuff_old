@@ -197,14 +197,7 @@ class TPrepareLines( Descr )
         auto to_layers = config.map.polylines.getProperty( line_descr.type ).layers;
         
         foreach( n; to_layers )
-        {
-            auto epsilon = config.converter.layersGeneralization[n];
-            
-            if( epsilon )
-                line_descr.generalize( epsilon );
-                
             lines_to_store[n] ~= line_descr;
-        }
     }
 }
 
