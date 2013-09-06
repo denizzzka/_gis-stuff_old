@@ -24,6 +24,7 @@ enum Line : ubyte
     // other
     BUILDING,
     BOUNDARY,
+    WOOD,
     
     PATH, // path found
     

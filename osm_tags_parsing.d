@@ -167,6 +167,14 @@ Line examWayTag( in Tag[] tags, in Tag tag )
                     return BOUNDARY;
             }
             
+            case "natural":
+                if( tags.searchTags( ["natural"], ["wood"] ).length > 0 )
+                    return WOOD;
+            
+            case "landuse":
+                if( tags.searchTags( ["landuse"], ["forest"] ).length > 0 )
+                    return WOOD;
+                    
             default:
                 return UNSUPPORTED;
         }
@@ -188,6 +196,12 @@ body
             return ROAD;
         
         if( line.tags.searchTags( ["building"] ).length > 0 )
+            return AREA;
+        
+        if( line.tags.searchTags( ["natural"], ["wood"] ).length > 0 )
+            return AREA;
+        
+        if( line.tags.searchTags( ["landuse"], ["forest"] ).length > 0 )
             return AREA;
         
         return POLYLINE;
