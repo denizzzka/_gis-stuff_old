@@ -309,6 +309,7 @@ Region getRegion( string filename, bool verbose )
     
     alias TPolylineDescription!( getMapCoordsByNodeIdx ) LineDescription;
     alias LineDescription RoadDescription;
+    alias LineDescription AreaDescription;
     
     auto lines = new TPrepareLines!( LineDescription );
     auto roads = new TPrepareLines!( RoadDescription );
@@ -344,15 +345,18 @@ Region getRegion( string filename, bool verbose )
                         with( cat.LineClass )
                         final switch( decoded.classification )
                         {
-                            case AREA:
                             case POLYLINE:
                                 auto line = LineDescription( decoded.coords_idx, type );
-                                lines.addRoad( line );
+                                lines.addLine( line );
                                 break;
                                 
                             case ROAD:
                                 auto road = RoadDescription( decoded.coords_idx, type );
-                                roads.addRoad( road );
+                                roads.addLine( road );
+                                break;
+                                
+                            case AREA:
+                                auto area = AreaDescription( decoded.coords_idx[0..$-1], type );
                                 break;
                         }
                     }

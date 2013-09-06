@@ -192,7 +192,7 @@ class TPrepareLines( Descr )
 {
     private Descr[][ Region.layers.length ] lines_to_store;
     
-    void addRoad( Descr line_descr )
+    void addLine( Descr line_descr )
     {
         auto to_layers = config.map.polylines.getProperty( line_descr.type ).layers;
         
