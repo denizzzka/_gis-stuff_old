@@ -184,14 +184,12 @@ body
 {
     with( LineClass )
     {
-        foreach( t; line.tags )
-            if( t.key == "highway" )
-                return ROAD;
+        if( line.tags.searchTags( ["highway"] ).length > 0 )
+            return ROAD;
         
-        // TODO: need more checks here:
-        if( line.coords_idx[0] == line.coords_idx[$-1] )
+        if( line.tags.searchTags( ["building"] ).length > 0 )
             return AREA;
-        else
-            return POLYLINE;
+        
+        return POLYLINE;
     }
 }

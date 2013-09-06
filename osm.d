@@ -342,6 +342,9 @@ Region getRegion( string filename, bool verbose )
                         auto decoded = decodeWay( prim, w );
                         auto type = getLineType( prim.stringtable, decoded );
                         
+                        if( type == cat.Line.UNSUPPORTED )
+                            continue;
+                        
                         with( cat.LineClass )
                         final switch( decoded.classification )
                         {
@@ -356,6 +359,12 @@ Region getRegion( string filename, bool verbose )
                                 break;
                                 
                             case AREA:
+                                if( decoded.coords_idx.length < 3 )
+                                    throw new ReadPrimitiveException("too few points in the area");
+                                
+                                if( decoded.coords_idx[0] != decoded.coords_idx[$-1] )
+                                    throw new ReadPrimitiveException("area is not looped");
+                                
                                 auto area = AreaDescription( decoded.coords_idx[0..$-1], type );
                                 break;
                         }
