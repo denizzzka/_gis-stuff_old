@@ -60,6 +60,7 @@ struct AnyLineDescriptor
     {
         LineGraph.PolylineDescriptor line;
         RGraph.PolylineDescriptor road;
+        Area area;
     }    
 }
 
@@ -95,6 +96,7 @@ class Region
 {
     Layer[5] layers;
     LineGraph line_graph;
+    Area[] areas;
     
     this()
     {
@@ -190,7 +192,22 @@ class Region
     
     void fillAreas( Area[] areas )
     {
+        this.areas = areas;
         
+        foreach( ref area; areas )
+        {
+            auto to_layers = config.map.polylines.getProperty( area.type ).layers;
+            
+            foreach( n; to_layers )
+            {
+                AnyLineDescriptor any = {
+                    line_class: cat.LineClass.AREA
+                };
+                any.area = area;
+                
+                layers[n].lines.addObject( area.getBoundary, any );
+            }
+        }
     }
 }
 

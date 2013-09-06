@@ -1,6 +1,6 @@
 module map.area;
 
-import map.map: Coords;
+import map.map: Coords, BBox;
 import cat = config.categories: Line;
 
 
@@ -12,6 +12,16 @@ struct AreaLine
     {
         foreach( i, ref unused; areaLine.nodes_ids )
             points ~= areaLine.getNode( i ).getCoords;
+    }
+    
+    BBox getBoundary() const
+    {
+        auto res = BBox( points[0], Coords(0,0) );
+        
+        for( auto i = 1; i < points.length; i++ )
+            res.addCircumscribe( points[i] );
+        
+        return res;
     }
 }
 
@@ -30,5 +40,10 @@ struct Area
             this.holes ~= AreaLine( h );
             
         this.type = type;
+    }
+    
+    BBox getBoundary() const
+    {
+        return perimeter.getBoundary;
     }
 }
