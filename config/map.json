@@ -4,7 +4,7 @@
         "BUILDING":
         {
             "color": { "R": 247, "G": 195, "B": 148 },
-            "layers": [ 0 ]
+            "layers": [ 0, 1 ]
         },
         
         "BOUNDARY":
