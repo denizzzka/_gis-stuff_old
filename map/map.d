@@ -11,7 +11,7 @@ static import config.converter;
 debug(map) import std.stdio;
 
 
-alias Vector2D!double Coords;
+alias Vector2D!(double, "MapCoords") Coords;
 alias Box!Coords BBox;
 alias RoadGraph RGraph;
 

@@ -14,7 +14,6 @@ debug(scene) import std.stdio;
 
 
 alias Vector2D!real Vector2r;
-alias Vector2D!double Vector2d;
 alias Vector2D!size_t Vector2s;
 alias Vector2D!long Vector2l;
 
@@ -29,7 +28,7 @@ class POV
     {
         Vector2r center; /// in meters
         real zoom; /// pixels per meter
-        Box!(Vector2d) boundary_meters; /// coords in meters
+        Box!Coords boundary_meters;
     }
     
     void updatePath()
@@ -84,7 +83,7 @@ class POV
         
         auto leftDownCorner = center - b_size/2;
         
-        boundary_meters = Box!Vector2d( leftDownCorner.roundToDouble, b_size.roundToDouble );            
+        boundary_meters = Box!Coords( leftDownCorner.roundToDouble, b_size.roundToDouble );            
     }
     
     Vector2r metersToScreen( Vector2r from ) const

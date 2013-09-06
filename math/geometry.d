@@ -6,7 +6,7 @@ import std.conv: to;
 import std.traits: isScalarType;
 
 
-struct Vector2D( _T )
+struct Vector2D( _T, string name = "noname" )
 {
     alias _T T;
     
@@ -174,7 +174,7 @@ struct Box( _Vector, string S = "size" )
     alias getLeftUpperCorner lu;
     alias getRightDownCorner rd;
     
-    this( in Vector coords, in Vector size )
+    this(V)( in V coords, in V size )
     {
         static if( S == "size" )
         {
