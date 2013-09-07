@@ -14,7 +14,6 @@ debug(scene) import std.stdio;
 
 alias Vector2D!real Vector2r;
 alias Vector2D!size_t Vector2s;
-alias Vector2D!long Vector2l;
 
 
 class POV
@@ -25,9 +24,9 @@ class POV
     
     private
     {
-        Vector2r center; /// in meters
+        MercatorCoords center; /// in meters
         real zoom; /// pixels per meter
-        BBox boundary_meters;
+        BBox boundary_meters; /// in map coords
     }
     
     void updatePath()
@@ -41,7 +40,7 @@ class POV
         debug(scene) writeln( "New path: ", found_path );
     }
     
-    void setCenter( in Vector2r new_center )
+    void setCenter( in MercatorCoords new_center )
     {
         alias Conv!WGS84 C;
         
@@ -54,7 +53,7 @@ class POV
         center.lon = C.lon2mercator( radian_lon );
     }
     
-    Vector2r getCenter() const
+    MercatorCoords getCenter() const
     {
         return center;
     }
@@ -85,11 +84,11 @@ class POV
         boundary_meters = BBox( leftDownCorner.lround, b_size.lround );            
     }
     
-    Vector2r metersToScreen( Vector2r from ) const
+    Vector2r metersToScreen( in MercatorCoords from ) const
     {
         auto ld = boundary_meters.leftDownCorner;
         auto ld_relative = from - ld;
-        auto window_coords = ld_relative * zoom;
+        Vector2r window_coords = ld_relative * zoom;
         
         return window_coords;
     }

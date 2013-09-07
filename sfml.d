@@ -4,7 +4,7 @@ import dsfml.graphics;
 import scene;
 import math.geometry;
 import map.roads: getPointsDirected;
-import map.map: MapLinesDescriptor, MapCoords = Coords;
+import map.map: MapLinesDescriptor, MapCoords = Coords, MercatorCoords;
 import cat = config.categories;
 
 import std.conv: to;
@@ -86,7 +86,7 @@ class Window
     {
         for(auto i = 0; i < pois.length; i++)
         {
-            Vector2r node = pois[i].coords;
+            MercatorCoords node = pois[i].coords;
             auto window_coords = scene.metersToScreen( node );
             
             debug(sfml) writeln("draw point i=", i, " encoded coords=", pois[i], " meters=", node, " window_coords=", window_coords);
@@ -130,7 +130,7 @@ class Window
 		
 		foreach( i, encoded; encoded_points )
 		{
-		    Vector2r point = encoded;
+		    MercatorCoords point = encoded;
 		    auto window_coords = scene.metersToScreen( point );
 		    res_points ~= window_coords;
 		    
