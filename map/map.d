@@ -12,7 +12,6 @@ static import config.converter;
 debug(map) import std.stdio;
 
 
-//alias Vector2D!(double, "Map coords") Coords;
 alias Box!Coords BBox;
 alias Vector2D!(real, "MercatorCoords") MercatorCoords;
 
@@ -26,7 +25,7 @@ struct Coords
     
     this(T)( in T v ) pure
     {
-        map_coords = MapCoords(v);
+        map_coords = v;
     }
     
     this(T1, T2)( in T1 v1, in T2 v2 ) pure
