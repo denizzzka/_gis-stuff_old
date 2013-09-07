@@ -82,7 +82,7 @@ class POV
         
         auto leftDownCorner = center - b_size/2;
         
-        boundary_meters = Box!Coords( leftDownCorner.roundToDouble, b_size.roundToDouble );            
+        boundary_meters = Box!Coords( leftDownCorner.lround, b_size.lround );            
     }
     
     Vector2r metersToScreen( Vector2r from ) const

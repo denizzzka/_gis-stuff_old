@@ -240,14 +240,14 @@ Coords metersToEncoded( Vector2D!real meters )
     auto degrees = radians2degrees( radians );
     auto encoded = encodeCoords( degrees );
     
-    return encoded.round;
+    return encoded.lround;
 }
 
 MapCoords encodedToMapCoords( in Coords c )
 {
-    auto m = encodedToMeters( c );
+    auto m = encodedToMeters( c ) * 10;
     
-    return MapCoords( to!double( m.x ), to!double( m.y ) );
+    return MapCoords( m.lround );
 }
 
 void addPoints(

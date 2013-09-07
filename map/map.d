@@ -12,8 +12,14 @@ static import config.converter;
 debug(map) import std.stdio;
 
 
-alias Vector2D!(double, "MapCoords") Coords;
+alias Vector2D!(long, "MapCoords") Coords;
 alias Box!Coords BBox;
+alias Vector2D!(real, "MercatorCoords") MercatorCoords;
+
+MercatorCoords getMerkatorCoords( in Coords mapCoords )
+{
+    return MercatorCoords( mapCoords / 10 );
+}
 
 struct Point
 {
