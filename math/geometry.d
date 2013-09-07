@@ -102,26 +102,6 @@ struct Vector2D( _T, string name = "noname" )
         return r;
     }
     
-    Vector2D!long roundToLeftDown() const
-    {
-        Vector2D!long r;
-        
-        r.x = cast(long) floor(x);
-        r.y = cast(long) floor(y);
-        
-        return r;
-    }
-    
-    Vector2D!long roundToRightUpper() const
-    {
-        Vector2D!long r;
-        
-        r.x = cast(long) ceil(x);
-        r.y = cast(long) ceil(y);
-        
-        return r;
-    }
-    
     string toString() const
     {
         return "("~to!string(x)~";"~to!string(y)~")";
@@ -269,16 +249,6 @@ struct Box( _Vector, string S = "size" )
     void addCircumscribe(T)( in T v ) pure
     {
         this = this.getCircumscribed( v );
-    }
-    
-    auto roundCircumscribe() const
-    {
-        Box!(Vector2D!long) res;
-        
-        res.ld = ld.roundToLeftDown;
-        res.ru = ru.roundToRightUpper;
-        
-        return res;
     }
     
     ubyte[] Serialize() /// TODO: real serialization
