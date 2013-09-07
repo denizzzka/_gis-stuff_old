@@ -246,7 +246,7 @@ struct Box( _Vector, string S = "size" )
         return res;
     }
     
-    void addCircumscribe(T)( in T v )
+    void addCircumscribe(T)( in T v ) pure
     {
         this = this.getCircumscribed( v );
     }
