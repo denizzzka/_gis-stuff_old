@@ -54,7 +54,7 @@ alias RTreePtrs!(BBox, Point) PointsStorage; // TODO: 2D-Tree points storage
 
 struct AnyLineDescriptor
 {
-    cat.LineClass line_class;
+    cat.LineClass line_class; // TODO: here is need polymorphism
     
     union
     {
