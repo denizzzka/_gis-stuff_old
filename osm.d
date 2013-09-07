@@ -19,7 +19,7 @@ import std.math: round;
 import std.algorithm: canFind;
 
 
-alias Vector2D!long Coords;
+alias Vector2D!(long, "OSM coords") Coords;
 alias ulong OSM_id;
 
 struct PureBlob
@@ -239,8 +239,9 @@ Coords metersToEncoded( Vector2D!real meters )
     auto radians = mercator2coords( meters );
     auto degrees = radians2degrees( radians );
     auto encoded = encodeCoords( degrees );
+    Coords res = encoded.round;
     
-    return encoded.round;
+    return res;
 }
 
 MapCoords encodedToMapCoords( in Coords c )
