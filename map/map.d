@@ -14,6 +14,7 @@ debug(map) import std.stdio;
 
 alias Vector2D!(double, "Map coords") Coords;
 alias Box!Coords BBox;
+alias Vector2D!(real, "Mercator coords") MercatorCoords;
 
 struct Point
 {
