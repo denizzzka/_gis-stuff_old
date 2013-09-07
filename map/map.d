@@ -14,7 +14,6 @@ debug(map) import std.stdio;
 
 alias Vector2D!(double, "MapCoords") Coords;
 alias Box!Coords BBox;
-alias RoadGraph RGraph;
 
 struct Point
 {
@@ -59,7 +58,7 @@ struct AnyLineDescriptor
     union
     {
         LineGraph.PolylineDescriptor line;
-        RGraph.PolylineDescriptor road;
+        RoadGraph.PolylineDescriptor road;
         Area area;
     }    
 }
@@ -78,7 +77,7 @@ struct Layer
     PointsStorage POI;
     LinesRTree lines;
     
-    RGraph road_graph;
+    RoadGraph road_graph;
     
     void init()
     {

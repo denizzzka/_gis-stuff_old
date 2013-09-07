@@ -1,7 +1,6 @@
 module scene;
 
 import map.map;
-import map.map: RGraph; // FIXME: remove duplicate import map.map
 import math.geometry;
 import math.earth: Conv, WGS84, lon2canonical;
 import map.roads: findPath;
@@ -22,7 +21,7 @@ class POV
 {
     const Map map;
     
-    RGraph.PolylineDescriptor[] found_path;
+    RoadGraph.PolylineDescriptor[] found_path;
     
     private
     {
@@ -130,13 +129,13 @@ class POV
         return map.getLines( getCurrentLayerNum, boundary_meters );
     }
     
-    RGraph.Polylines[] getPathLines()
+    RoadGraph.Polylines[] getPathLines()
     {
         debug(scene) writeln("path=", found_path);
         
-        RGraph.Polylines[] res;
+        RoadGraph.Polylines[] res;
         
-        auto curr = RGraph.Polylines( map.regions[ 0 ].layers[ 0 ].road_graph ); // FIXME
+        auto curr = RoadGraph.Polylines( map.regions[ 0 ].layers[ 0 ].road_graph ); // FIXME
             
         foreach( ref c; found_path )
             curr.descriptors ~= &c;
