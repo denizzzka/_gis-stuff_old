@@ -4,7 +4,7 @@ import osmpbf.fileformat;
 import osmpbf.osmformat;
 import math.geometry: Vector2D, degrees2radians, radians2degrees;
 import math.earth;
-import map.map: Map, Region, BBox, Point, MapCoords = Coords, TPrepareLines;
+import map.map: Map, Region, BBox, Point, MapCoords = Coords, MercatorCoords, TPrepareLines;
 import map.adapters: TPolylineDescription;
 import map.area: Area;
 import cat = config.categories;
@@ -19,7 +19,7 @@ import std.math: round;
 import std.algorithm: canFind;
 
 
-alias Vector2D!long Coords;
+alias Vector2D!(long, "OSMCoords") Coords;
 alias ulong OSM_id;
 
 struct PureBlob
@@ -234,13 +234,14 @@ Vector2D!real encodedToMeters( in Coords c )
     return coords2mercator( radians );
 }
 
-Coords metersToEncoded( Vector2D!real meters )
+Coords metersToEncoded( in MercatorCoords meters )
 {
     auto radians = mercator2coords( meters );
     auto degrees = radians2degrees( radians );
     auto encoded = encodeCoords( degrees );
+    Coords res = encoded.lround;
     
-    return encoded.lround;
+    return res;
 }
 
 MapCoords encodedToMapCoords( in Coords c )

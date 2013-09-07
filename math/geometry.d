@@ -74,8 +74,8 @@ struct Vector2D( _T, string name = "noname" )
             static assert( false, "op \""~op~"\" is not found" );
     }
     
-    void opOpAssign( string op, T )( in T v )
-    if( !isScalarType!(T) )
+    void opOpAssign( string op, V )( in V v )
+    if( !isScalarType!(V) )
     {
         static if( op == "+" )
             x += v.x, y += v.y;
@@ -253,7 +253,7 @@ struct Box( _Vector, string S = "size" )
         return res;
     }
     
-    Box!Vector getCircumscribed( in Box!Vector b ) const pure
+    Box!Vector getCircumscribed( in Box!Vector b ) const
     {
         Box!Vector res;
         
@@ -266,7 +266,7 @@ struct Box( _Vector, string S = "size" )
         return res;
     }
     
-    void addCircumscribe(T)( in T v ) pure
+    void addCircumscribe(T)( in T v )
     {
         this = this.getCircumscribed( v );
     }

@@ -86,7 +86,7 @@ class Window
     {
         for(auto i = 0; i < pois.length; i++)
         {
-            MercatorCoords node = pois[i].coords;
+            MercatorCoords node = pois[i].coords.getMercatorCoords;
             auto window_coords = scene.metersToScreen( node );
             
             debug(sfml) writeln("draw point i=", i, " encoded coords=", pois[i], " meters=", node, " window_coords=", window_coords);
@@ -130,7 +130,7 @@ class Window
 		
 		foreach( i, encoded; encoded_points )
 		{
-		    MercatorCoords point = encoded;
+		    MercatorCoords point = encoded.getMercatorCoords;
 		    auto window_coords = scene.metersToScreen( point );
 		    res_points ~= window_coords;
 		    
