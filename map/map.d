@@ -16,6 +16,11 @@ alias Vector2D!(double, "Map coords") Coords;
 alias Box!Coords BBox;
 alias Vector2D!(real, "Mercator coords") MercatorCoords;
 
+MercatorCoords getMercatorCoords( in Coords map_coords ) pure
+{
+    return MercatorCoords( map_coords / 10 );
+}
+
 struct Point
 {
     private
