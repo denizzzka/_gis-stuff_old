@@ -27,7 +27,7 @@ class POV
     {
         Vector2r center; /// in meters
         real zoom; /// pixels per meter
-        Box!Coords boundary_meters;
+        BBox boundary_meters;
     }
     
     void updatePath()
@@ -82,7 +82,7 @@ class POV
         
         auto leftDownCorner = center - b_size/2;
         
-        boundary_meters = Box!Coords( leftDownCorner.lround, b_size.lround );            
+        boundary_meters = BBox( leftDownCorner.lround, b_size.lround );            
     }
     
     Vector2r metersToScreen( Vector2r from ) const
