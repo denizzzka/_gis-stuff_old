@@ -12,13 +12,32 @@ static import config.converter;
 debug(map) import std.stdio;
 
 
-alias Vector2D!(long, "MapCoords") Coords;
+//alias Vector2D!(long, "MapCoords") Coords;
 alias Box!Coords BBox;
 alias Vector2D!(real, "MercatorCoords") MercatorCoords;
 
-MercatorCoords getMerkatorCoords( in Coords mapCoords )
+struct Coords
 {
-    return MercatorCoords( mapCoords / 10 );
+    alias Vector2D!(long, "MapCoords") MapCoords;
+    
+    MapCoords map_coords;
+    
+    alias map_coords this;
+    
+    this(T)( in T v ) pure
+    {
+        map_coords = MapCoords(v);
+    }
+    
+    this(T1, T2)( in T1 v1, in T2 v2 ) pure
+    {
+        map_coords = MapCoords( v1, v2 );
+    }
+    
+    MercatorCoords getMercatorCoords() const pure
+    {
+        return MercatorCoords( map_coords / 10 );
+    }
 }
 
 struct Point
