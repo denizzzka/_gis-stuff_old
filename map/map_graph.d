@@ -321,8 +321,7 @@ unittest
     
     Coords getNodeByID( in ulong id )
     {
-        Coords res; res = nodes[ id ];
-        return res;
+        return Coords( nodes[ id ] );
     }
     
     alias TPolylineDescription!( getNodeByID ) PolylineDescription;
