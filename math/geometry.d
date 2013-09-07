@@ -92,12 +92,12 @@ struct Vector2D( _T, string name = "noname" )
         y = v.y;
     }
     
-    Vector2D!long round() const
+    Vector2D!long lround() const
     {
         Vector2D!long r;
         
-        r.x = lround(x);
-        r.y = lround(y);
+        r.x = std.math.lround(x);
+        r.y = std.math.lround(y);
         
         return r;
     }

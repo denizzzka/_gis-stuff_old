@@ -239,7 +239,7 @@ Coords metersToEncoded( Vector2D!real meters )
     auto radians = mercator2coords( meters );
     auto degrees = radians2degrees( radians );
     auto encoded = encodeCoords( degrees );
-    Coords res = encoded.round;
+    Coords res = encoded.lround;
     
     return res;
 }
