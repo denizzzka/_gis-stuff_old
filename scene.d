@@ -27,7 +27,7 @@ class POV
     {
         Vector2r center; /// in meters
         real zoom; /// pixels per meter
-        Box!Coords boundary_meters;
+        Box!MercatorCoords boundary_meters;
     }
     
     void updatePath()
@@ -82,7 +82,7 @@ class POV
         
         auto leftDownCorner = center - b_size/2;
         
-        boundary_meters = Box!Coords( leftDownCorner.roundToDouble, b_size.roundToDouble );            
+        boundary_meters = Box!MercatorCoords( leftDownCorner, b_size );            
     }
     
     Vector2r metersToScreen( Vector2r from ) const
@@ -117,7 +117,7 @@ class POV
         {
             auto num = getCurrentLayerNum();
             
-            res ~= region.layers[ num ].POI.search( boundary_meters );
+            res ~= region.layers[ num ].POI.search( boundary_meters.toBBox );
         }
         
         debug(scene) writeln("found POI number=", res.length);
@@ -126,7 +126,7 @@ class POV
     
     MapLinesDescriptor[] getLines() const
     {
-        return map.getLines( getCurrentLayerNum, boundary_meters );
+        return map.getLines( getCurrentLayerNum, boundary_meters.toBBox );
     }
     
     RoadGraph.Polylines[] getPathLines()

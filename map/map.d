@@ -55,7 +55,7 @@ BBox toBBox( in MBBox mbox )
 {
     auto res = BBox(
             mbox.ld.roundToLeftDown!long,
-            mbox.getSizeVector.roundToRightUpper!long
+            mbox.ru.roundToRightUpper!long
         );
     
     return res;
