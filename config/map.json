@@ -4,60 +4,80 @@
         "BUILDING":
         {
             "color": { "R": 247, "G": 195, "B": 148 },
+            "thickness": 1,
+            "outlineThickness": 1,
             "layers": [ 0, 1 ]
         },
         
         "BOUNDARY":
         {
             "color": { "R": 170, "G": 170, "B": 0 },
+            "thickness": 1,
+            "outlineThickness": 1,
             "layers": [ 0, 1, 2, 3, 4 ]
         },
         
         "WOOD":
         {
             "color": { "R": 141, "G": 197, "B": 108 },
+            "thickness": 1,
+            "outlineThickness": 1,
             "layers": [ 0, 1, 2, 3 ]
         },
         
         "PATH":
         {
             "color": { "R": 255, "G": 0, "B": 255 },
+            "thickness": 1,
+            "outlineThickness": 1,
             "layers": [ 0, 1, 2, 3, 4 ]
         },
         
         "HIGHWAY":
         {
             "color": { "R": 0, "G": 255, "B": 0 },
+            "thickness": 10,
+            "outlineThickness": 1,
             "layers": [ 0, 1, 2, 3, 4 ]
         },
         
         "PRIMARY":
         {
             "color": { "R": 255, "G": 255, "B": 255 },
+            "thickness": 10,
+            "outlineThickness": 1,
             "layers": [ 0, 1, 2, 3 ]
         },
         
         "SECONDARY":
         {
             "color": { "R": 255, "G": 255, "B": 0 },
+            "thickness": 10,
+            "outlineThickness": 1,
             "layers": [ 0, 1, 2 ]
         },
         
         "ROAD_OTHER":
         {
             "color": { "R": 170, "G": 170, "B": 170 },
+            "thickness": 5,
+            "outlineThickness": 1,
             "layers": [ 0, 1 ]
         },
         
         "OTHER":
         {
             "color": { "R": 111, "G": 222, "B": 200 },
+            "thickness": 1,
+            "outlineThickness": 1,
             "layers": [ 0 ]
         },
         
         "UNSUPPORTED":
         {
             "color": { "R": 0, "G": 255, "B": 255 },
+            "thickness": 1,
+            "outlineThickness": 1,
             "layers": [ 0, 1 ]
         }
     }

@@ -10,8 +10,10 @@ import std.conv: to;
 
 struct PolylineProperties
 {
-    Color color;
-    size_t[] layers;
+    Color color = Color.Cyan;
+    float thickness = 1;
+    float outlineThickness = 1;
+    size_t[] layers = [ 1, 2, 3, 4, 5 ];
 }
 
 class Polylines
@@ -36,10 +38,12 @@ class Polylines
         {
             auto lineObj = map.object[ lineName ];
             
-            auto property = &properties[ member_idx ];
+            auto prop = &properties[ member_idx ];
             
-            property.color = getColor( lineObj );
-            property.layers = getSize_tArray( lineObj["layers"] );
+            prop.color = getColor( lineObj );
+            prop.thickness = lineObj["thickness"].floating;
+            prop.outlineThickness = lineObj["outlineThickness"].floating;
+            prop.layers = getSize_tArray( lineObj["layers"] );
         }
     }
 };
