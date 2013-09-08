@@ -5,6 +5,7 @@ import math.geometry;
 import math.earth: Conv, WGS84, lon2canonical;
 import map.roads: findPath;
 import config.viewer;
+import render.window: WindowCoords;
 
 import std.conv;
 import std.string;
@@ -77,7 +78,7 @@ class POV
     private
     void calcBoundary(T)( T window )
     {
-        Vector2r w_size = window.getWindowSize();
+        Vector2r w_size = window.getSize();
         MercatorCoords size_vector = w_size / zoom;
         
         auto leftDownCorner = center - size_vector/2;
@@ -85,11 +86,11 @@ class POV
         boundary_meters = Box!MercatorCoords( leftDownCorner, size_vector );            
     }
     
-    Vector2r metersToScreen( in MercatorCoords from ) const
+    WindowCoords metersToScreen( in MercatorCoords from ) const
     {
         auto ld = boundary_meters.leftDownCorner;
         auto ld_relative = from - ld;
-        Vector2r window_coords = ld_relative * zoom;
+        WindowCoords window_coords = ld_relative * zoom;
         
         return window_coords;
     }

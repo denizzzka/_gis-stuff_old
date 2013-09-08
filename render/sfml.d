@@ -1,11 +1,13 @@
 module render.sfml;
 
+import render.window;
 import dsfml.graphics;
 import scene;
 import math.geometry;
 import map.roads: getPointsDirected;
 import map.map: MapLinesDescriptor, MapCoords, MercatorCoords;
 import cat = config.categories;
+import render.road;
 
 import std.conv: to;
 import std.random;
@@ -33,7 +35,7 @@ struct Vector2f
     }
 }
 
-class Window
+class Window : IWindow
 {
     POV scene;
     RenderWindow window;    
@@ -97,8 +99,19 @@ class Window
     }
     
     private
-    void drawLines( MapLinesDescriptor[] map_lines )
+    WindowCoords[] MapToWindowCoords( MapCoords[] map_points )
     {
+	WindowCoords[] res;
+	
+	foreach( i, point; map_points )
+	    res ~= scene.metersToScreen( point );
+	    
+	return res;
+    }
+    
+    private
+    void drawLines( MapLinesDescriptor[] map_lines )
+    {	
         foreach( ref reg_lines; map_lines )
 	    foreach( ref line; reg_lines.lines )
 	    {
@@ -116,8 +129,15 @@ class Window
 		    case ROAD:
 			auto graph = reg_lines.region.layers[ reg_lines.layer_num ].road_graph;
 			encoded_points = getPointsDirected( &line.road, graph );
-			color = line.road.getPolyline( graph ).properties.color;
-			break;
+			
+			auto bend1 = scene.metersToScreen( encoded_points[0] );
+			auto bend2 = scene.metersToScreen( encoded_points[$-1] );
+			drawRoadBend( bend1, line.road.getPolyline( graph ).type );
+			drawRoadBend( bend2, line.road.getPolyline( graph ).type );
+			
+			auto crds = MapToWindowCoords( encoded_points );
+			drawRoadSegments( crds, line.road.getPolyline( graph ).type );
+			continue;
 			
 		    case AREA:
 			auto area_points = line.area.perimeter.points;
@@ -126,17 +146,7 @@ class Window
 			break;
 		}
 		
-		Vector2r[] res_points;
-		
-		foreach( i, encoded; encoded_points )
-		{
-		    MercatorCoords point = encoded.getMercatorCoords;
-		    auto window_coords = scene.metersToScreen( point );
-		    res_points ~= window_coords;
-		    
-		    debug(sfml) writeln("draw line point i=", i, " encoded coords=", encoded, " meters=", point, " window_coords=", window_coords);
-		}
-		
+		auto res_points = MapToWindowCoords( encoded_points );
 		drawLine( res_points, color );
 	    }
     }
@@ -159,7 +169,7 @@ class Window
     }
     
     private
-    void drawLine( Vector2r[] coords, Color color )
+    void drawLine( WindowCoords[] coords, Color color )
     {
 	debug(sfml) writeln("draw line, nodes num=", coords.length, " color=", color);
 	
@@ -176,9 +186,10 @@ class Window
 	window.draw( line );
     }
         
-    Vector2s getWindowSize()
+    Vector2uint getSize()
     {
-        Vector2s res; res = window.size;
+        Vector2uint res = window.size;
+	
 	return res;
     }
     
@@ -198,6 +209,8 @@ class Window
 	
 	return from;
     }
+    
+    mixin Road;
     
     private void eventsProcessing()
     {

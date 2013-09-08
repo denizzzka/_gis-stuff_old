@@ -189,7 +189,7 @@ class Region
             auto epsilon = config.converter.layersGeneralization[i];
             auto cutted = cutOnCrossings( prepared.lines_to_store[i] );
             
-            foreach( ref descr; cutted )
+            foreach( descr; cutted )
             {
                 if( epsilon )
                     descr.generalize( epsilon );
@@ -242,12 +242,17 @@ class Region
     {
         this.areas = areas;
         
-        foreach( ref area; areas )
+        foreach( area; areas )
         {
             auto to_layers = config.map.polylines.getProperty( area.type ).layers;
             
             foreach( n; to_layers )
             {
+                auto epsilon = config.converter.layersGeneralization[n];
+                
+                if( epsilon )
+                    area.generalize( epsilon );
+                
                 AnyLineDescriptor any = {
                     line_class: cat.LineClass.AREA
                 };
