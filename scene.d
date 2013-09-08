@@ -25,7 +25,7 @@ class POV
     
     private
     {
-        Vector2r center; /// in meters
+        MercatorCoords center; /// in meters
         real zoom; /// pixels per meter
         Box!MercatorCoords boundary_meters;
     }
@@ -41,7 +41,7 @@ class POV
         debug(scene) writeln( "New path: ", found_path );
     }
     
-    void setCenter( in Vector2r new_center )
+    void setCenter( in MercatorCoords new_center )
     {
         alias Conv!WGS84 C;
         
@@ -54,7 +54,7 @@ class POV
         center.lon = C.lon2mercator( radian_lon );
     }
     
-    Vector2r getCenter() const
+    MercatorCoords getCenter() const
     {
         return center;
     }
@@ -77,12 +77,12 @@ class POV
     private
     void calcBoundary(T)( T window )
     {
-        Vector2r b_size; b_size = window.getWindowSize();
-        b_size /= zoom;
+        Vector2r w_size = window.getWindowSize();
+        MercatorCoords size_vector = w_size / zoom;
         
-        auto leftDownCorner = center - b_size/2;
+        auto leftDownCorner = center - size_vector/2;
         
-        boundary_meters = Box!MercatorCoords( leftDownCorner, b_size );            
+        boundary_meters = Box!MercatorCoords( leftDownCorner, size_vector );            
     }
     
     Vector2r metersToScreen( in MercatorCoords from ) const
