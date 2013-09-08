@@ -12,7 +12,6 @@ static import config.converter;
 debug(map) import std.stdio;
 
 
-alias Box!Coords BBox;
 alias Vector2D!(real, "Mercator coords") MercatorCoords;
 
 struct Coords
@@ -47,6 +46,19 @@ struct Coords
     }
     
     alias map_coords this;
+}
+
+alias Box!Coords BBox;
+alias Box!MercatorCoords MBBox;
+
+BBox toBBox( in MBBox mbox )
+{
+    auto res = BBox(
+            mbox.ld.roundToLeftDown!long,
+            mbox.getSizeVector.roundToRightUpper!long
+        );
+    
+    return res;
 }
 
 struct Point

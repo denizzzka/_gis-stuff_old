@@ -102,6 +102,26 @@ struct Vector2D( _T, string name = "noname" )
         return r;
     }
     
+    Vector2D!T roundToLeftDown( T )() const
+    {
+        Vector2D!T r;
+        
+        r.x = cast(T) floor(x);
+        r.y = cast(T) floor(y);
+        
+        return r;
+    }
+    
+    Vector2D!T roundToRightUpper( T )() const
+    {
+        Vector2D!T r;
+        
+        r.x = cast(T) ceil(x);
+        r.y = cast(T) ceil(y);
+        
+        return r;
+    }
+        
     string toString() const
     {
         return "("~to!string(x)~";"~to!string(y)~")";
