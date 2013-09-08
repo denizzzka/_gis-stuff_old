@@ -5,7 +5,7 @@ import dsfml.graphics: Color;
 
 
 alias Vector2D!uint Vector2uint;
-alias Vector2D!real Vector2r;
+alias Vector2D!(real, "Window coords") WindowCoords;
 
 interface IWindow
 {
@@ -18,4 +18,6 @@ interface IWindow
     
     void drawRoad( Vector2r[] coords, Color color );
     */
+    
+    void drawRoadBend( WindowCoords coords, Color color );
 }

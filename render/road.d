@@ -1,6 +1,11 @@
 module render.road;
 
-//import render.sfml: cartesianToSFML;
 import dsfml.graphics;
 
-//drawNode(
+
+mixin template Road()
+{
+    void drawRoadBend( WindowCoords coords, Color color )
+    {
+    }
+}

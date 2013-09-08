@@ -7,6 +7,7 @@ import math.geometry;
 import map.roads: getPointsDirected;
 import map.map: MapLinesDescriptor, MapCoords, MercatorCoords;
 import cat = config.categories;
+import render.road;
 
 import std.conv: to;
 import std.random;
@@ -200,6 +201,8 @@ class Window : IWindow
 	
 	return from;
     }
+    
+    mixin Road;
     
     private void eventsProcessing()
     {
