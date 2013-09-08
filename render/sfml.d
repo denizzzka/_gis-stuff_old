@@ -1,5 +1,6 @@
 module render.sfml;
 
+import render.window;
 import dsfml.graphics;
 import scene;
 import math.geometry;
@@ -33,7 +34,7 @@ struct Vector2f
     }
 }
 
-class Window
+class Window : IWindow
 {
     POV scene;
     RenderWindow window;    
@@ -176,9 +177,10 @@ class Window
 	window.draw( line );
     }
         
-    Vector2s getWindowSize()
+    Vector2uint getSize()
     {
-        Vector2s res; res = window.size;
+        Vector2uint res = window.size;
+	
 	return res;
     }
     

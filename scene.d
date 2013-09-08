@@ -77,7 +77,7 @@ class POV
     private
     void calcBoundary(T)( T window )
     {
-        Vector2r w_size = window.getWindowSize();
+        Vector2r w_size = window.getSize();
         MercatorCoords size_vector = w_size / zoom;
         
         auto leftDownCorner = center - size_vector/2;
