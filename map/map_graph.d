@@ -60,7 +60,7 @@ struct Point
     
     auto getRadiansCoords() const
     {
-        return mercator2coords( coords );
+        return mercator2coords( coords.getMercatorCoords );
     }
 }
 
@@ -103,10 +103,10 @@ struct TPolylineDescriptor( MapGraph )
         auto points = getPoints( mapGraph );
         assert( points.length > 0 );
         
-        auto res = BBox( points[0].map_coords, Coords(0,0) );
+        auto res = BBox( points[0].map_coords, MapCoords.Coords(0,0) );
         
         for( auto i = 1; i < points.length; i++ )
-            res.addCircumscribe( points[i] );
+            res.addCircumscribe( points[i].map_coords );
         
         return res;
     }
@@ -298,7 +298,7 @@ unittest
 {
     alias MapCoords Coords;
     alias Vector2D!long FC; // foreign coords
-    alias Box!Coords BBox;
+    alias Box!(MapCoords.Coords) BBox;
     
     alias TPolyline!Coords Polyline;
     alias TEdge!Polyline Edge;
@@ -321,7 +321,10 @@ unittest
     
     Coords getNodeByID( in ulong id )
     {
-        return Coords( nodes[ id ] );
+        Coords res;
+        res.map_coords = nodes[ id ];
+        
+        return res;
     }
     
     alias TPolylineDescription!( getNodeByID ) PolylineDescription;

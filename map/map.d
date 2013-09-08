@@ -44,7 +44,7 @@ struct MapCoords
         return res;
     }
     
-    //alias getMercatorCoords this;
+    alias getMercatorCoords this;
 }
 
 /*
@@ -76,12 +76,10 @@ MapCoords map_coords( in MapCoords coords )
 
 MapCoords getMapCoords( in MercatorCoords coords )
 {
-    MapCoords res = ( coords * 10 ).lround;
-    
-    return res;
+    return MapCoords( coords );
 }
 
-MercatorCoords getMercatorCoords( in MapCoords map_coords )
+MercatorCoords getMercatorCoords( in MapCoords.Coords map_coords )
 {
     MercatorCoords res = map_coords;
     res /= 10;
@@ -164,7 +162,7 @@ alias RTreePtrs!(BBox, AnyLineDescriptor) LinesRTree;
 
 void addPoint( PointsStorage storage, Point point )
 {
-    BBox bbox = BBox( point.coords, MapCoords(0,0) );
+    BBox bbox = BBox( point.coords.map_coords, MapCoords.Coords(0,0) );
     
     storage.addObject( bbox, point );
 }
