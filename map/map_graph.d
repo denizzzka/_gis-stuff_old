@@ -103,7 +103,7 @@ struct TPolylineDescriptor( MapGraph )
         auto points = getPoints( mapGraph );
         assert( points.length > 0 );
         
-        auto res = BBox( points[0], Coords(0,0) );
+        auto res = BBox( points[0].map_coords, Coords(0,0) );
         
         for( auto i = 1; i < points.length; i++ )
             res.addCircumscribe( points[i] );
@@ -129,7 +129,7 @@ class TMapGraph( _Node, alias CREATE_EDGE )
     alias Node.Point Point;
     alias Point.Coords Coords;
     alias Node.Edge Edge;
-    alias Box!Coords BBox;
+    alias Box!(Coords.Coords) BBox;
     alias TPolylineDescriptor!TMapGraph PolylineDescriptor;
     
     alias Graph!Node G;
@@ -257,7 +257,7 @@ auto cutOnCrossings(DescriptionsTree)( in DescriptionsTree lines_rtree )
         for( auto i = 1; i < line.nodes_ids.length - 1; i++ )
         {
             auto curr_point_id = line.nodes_ids[i];
-            auto point_bbox = BBox( line.getNode( i ).getCoords, Coords(0, 0) );
+            auto point_bbox = BBox( line.getNode( i ).getCoords.map_coords, Coords(0, 0) );
             auto near_lines = lines_rtree.search( point_bbox );
             
             foreach( n; near_lines )

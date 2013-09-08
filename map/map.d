@@ -12,14 +12,19 @@ static import config.converter;
 debug(map) import std.stdio;
 
 
-alias Vector2D!(long, "Map coords") MapCoords;
+//alias Vector2D!(long, "Map coords") MapCoords;
 alias Vector2D!(real, "Mercator coords") MercatorCoords;
 
-alias Vector2D!(long, "Map coords vector") Coords;
-
-struct _MapCoords
+struct MapCoords
 {
-    package Coords map_coords;
+    alias Vector2D!(long, "Map coords vector") Coords;
+    
+    Coords map_coords;
+    
+    this( MercatorCoords coords )
+    {
+        map_coords = ( coords * 10 ).lround;
+    }
     
     this( Coords coords )
     {
@@ -42,28 +47,32 @@ struct _MapCoords
     //alias getMercatorCoords this;
 }
 
-alias Box!Coords CBox;
+/*
+alias Box!(MapCoords.Coords) CBox;
 
-CBox getBoundary( in _MapCoords[] coords )
+CBox getBoundary( in MapCoords[] coords )
 in
 {
     assert( coords.length > 0 );
 }
 body
 {
-    auto res = CBox( coords[0].map_coords, Coords(0, 0) );
+    auto res = CBox( coords[0].map_coords, MapCoords.Coords(0, 0) );
     
     for( auto i = 1; i < coords.length; i++ )
         res.addCircumscribe( coords[i].map_coords );
     
     return res;
 }
+*/
 
 // temporary dumb function
+/*
 MapCoords map_coords( in MapCoords coords )
 {
     return coords;
 }
+*/
 
 MapCoords getMapCoords( in MercatorCoords coords )
 {
@@ -80,7 +89,7 @@ MercatorCoords getMercatorCoords( in MapCoords map_coords )
     return res;
 }
 
-alias Box!MapCoords BBox;
+alias Box!(MapCoords.Coords) BBox;
 alias Box!MercatorCoords MBBox;
 
 BBox toBBox( in MBBox mbox )
