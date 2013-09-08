@@ -15,6 +15,50 @@ debug(map) import std.stdio;
 alias Vector2D!(long, "Map coords") MapCoords;
 alias Vector2D!(real, "Mercator coords") MercatorCoords;
 
+alias Vector2D!(long, "Map coords vector") Coords;
+
+struct _MapCoords
+{
+    private Coords map_coords;
+    
+    this( Coords coords )
+    {
+        map_coords = coords;
+    }
+    
+    this( long x, long y )
+    {
+        map_coords = Coords( x, y );
+    }
+    
+    MercatorCoords getMercatorCoords() const pure
+    {
+        MercatorCoords res = map_coords;
+        res /= 10;
+        
+        return res;
+    }
+    
+    //alias getMercatorCoords this;
+}
+
+alias Box!Coords CBox;
+
+CBox getBoundary( _MapCoords[] coords )
+in
+{
+    assert( coords.length > 0 );
+}
+body
+{
+    auto res = CBox( coords[0].map_coords, Coords(0, 0) );
+    
+    for( auto i = 1; i < coords.length; i++ )
+        res.addCircumscribe( coords[i].map_coords );
+    
+    return res;
+}
+
 MapCoords getMapCoords( in MercatorCoords coords )
 {
     MapCoords res = ( coords * 10 ).lround;
