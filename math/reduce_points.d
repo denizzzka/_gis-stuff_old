@@ -1,6 +1,7 @@
 module math.reduce_points;
 
 import math.geometry: Vector2D;
+import map.map: getMercatorCoords;
 
 import std.math;
 
@@ -54,8 +55,8 @@ body
         // TODO: remove this
         static if( __traits( compiles, points[0].getCoords ) )
         {
-            auto vector = points[$-1].getCoords - points[0].getCoords;
-            auto point = points[i].getCoords - points[0].getCoords;
+            auto vector = points[$-1].getCoords.getMercatorCoords - points[0].getCoords.getMercatorCoords;
+            auto point = points[i].getCoords.getMercatorCoords - points[0].getCoords.getMercatorCoords;
         }
         else
         {
