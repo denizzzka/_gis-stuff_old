@@ -16,6 +16,7 @@ If no options are passed "-release" option will be used.
 * * *
 ![Image](screenshots/malta_lines_3_colored.png)
 ![Image](screenshots/malta_5_pathfinding.png)
+![Image](screenshots/working_on_rendering_of_roads.png)
 * * *
 
 Roadmap:
