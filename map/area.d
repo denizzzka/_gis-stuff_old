@@ -3,6 +3,7 @@ module map.area;
 import map.map: MapCoords, BBox;
 import cat = config.categories: Line;
 import config.map: polylines, PolylineProperties;
+static import math.reduce_points;
 
 
 struct AreaLine
@@ -23,6 +24,12 @@ struct AreaLine
             res.addCircumscribe( points[i].map_coords );
         
         return res;
+    }
+    
+    private
+    void generalize( in real epsilon )
+    {
+        points = math.reduce_points.reduce( points, epsilon );
     }
 }
 
@@ -51,5 +58,10 @@ struct Area
     ref PolylineProperties properties() const
     {
         return polylines.getProperty( type );
+    }
+    
+    void generalize( in real epsilon )
+    {
+        perimeter.generalize( epsilon );
     }
 }
