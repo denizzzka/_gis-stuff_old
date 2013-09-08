@@ -222,28 +222,11 @@ Vector2D!real decodeCoords( in Coords c ) pure
     return Vector2D!real( c.x / 10_000_000f,  c.y / 10_000_000f );
 }
 
-@disable
-Vector2D!real encodeCoords( Vector2D!real c ) pure
-{
-    return Vector2D!real( c.x * 10_000_000f,  c.y * 10_000_000f );
-}
-
 MercatorCoords encodedToMercator( in Coords c )
 {
     auto decoded = decodeCoords( c );
     auto radians = degrees2radians( decoded );
     MercatorCoords res = coords2mercator( radians );
-    return res;
-}
-
-@disable
-Coords metersToEncoded( Vector2D!real meters )
-{
-    auto radians = mercator2coords( meters );
-    auto degrees = radians2degrees( radians );
-    auto encoded = encodeCoords( degrees );
-    Coords res = encoded.lround;
-    
     return res;
 }
 
