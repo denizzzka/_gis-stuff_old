@@ -63,27 +63,6 @@ body
     return res;
 }
 
-// temporary dumb function
-/*
-MapCoords map_coords( in MapCoords coords )
-{
-    return coords;
-}
-*/
-
-MapCoords getMapCoords( in MercatorCoords coords )
-{
-    return MapCoords( coords );
-}
-
-MercatorCoords getMercatorCoords( in MapCoords.Coords map_coords )
-{
-    MercatorCoords res = map_coords;
-    res /= 10;
-    
-    return res;
-}
-
 alias Box!MercatorCoords MBBox;
 
 BBox toBBox( in MBBox mbox )
@@ -100,8 +79,8 @@ MBBox toMBBox( in BBox bbox )
 {
     MBBox res;
     
-    res.ld = bbox.ld.getMercatorCoords;
-    res.ru = bbox.ru.getMercatorCoords;
+    res.ld = MapCoords( bbox.ld );
+    res.ru = MapCoords( bbox.ru );
     
     return res;
 }
