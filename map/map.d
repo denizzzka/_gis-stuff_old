@@ -12,40 +12,22 @@ static import config.converter;
 debug(map) import std.stdio;
 
 
+alias Vector2D!(long, "Map coords") Coords;
 alias Vector2D!(real, "Mercator coords") MercatorCoords;
 
-struct Coords
+Coords getMapCoords( in MercatorCoords coords )
 {
-    alias Vector2D!(long, "Map coords") MapCoords;
+    Coords res = ( coords * 10 ).lround;
     
-    MapCoords map_coords;
+    return res;
+}
+
+MercatorCoords getMercatorCoords( in Coords map_coords )
+{
+    MercatorCoords res = map_coords;
+    res /= 10;
     
-    this(T)( in T v )
-    if( is( T == MercatorCoords ) )
-    {
-        map_coords = ( v * 10 ).lround;
-    }
-    
-    this(T)( in T v ) pure
-    if( !is( T == MercatorCoords ) )
-    {
-        map_coords = v;
-    }
-    
-    this(T1, T2)( in T1 v1, in T2 v2 ) pure
-    {
-        map_coords = MapCoords( v1, v2 );
-    }
-    
-    MercatorCoords getMercatorCoords() const pure
-    {
-        MercatorCoords res = map_coords;
-        res /= 10;
-        
-        return res;
-    }
-    
-    alias map_coords this;
+    return res;
 }
 
 alias Box!Coords BBox;
@@ -55,8 +37,8 @@ BBox toBBox( in MBBox mbox )
 {
     BBox res;
     
-    res.ld.map_coords = (mbox.ld * 10).roundToLeftDown!long;
-    res.ru.map_coords = (mbox.ru * 10).roundToRightUpper!long;
+    res.ld = (mbox.ld * 10).roundToLeftDown!long;
+    res.ru = (mbox.ru * 10).roundToRightUpper!long;
     
     return res;
 }

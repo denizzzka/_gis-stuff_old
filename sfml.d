@@ -4,7 +4,7 @@ import dsfml.graphics;
 import scene;
 import math.geometry;
 import map.roads: getPointsDirected;
-import map.map: MapLinesDescriptor, MapCoords = Coords, MercatorCoords;
+import map.map: MapLinesDescriptor, MapCoords = Coords, MercatorCoords, getMercatorCoords;
 import cat = config.categories;
 
 import std.conv: to;

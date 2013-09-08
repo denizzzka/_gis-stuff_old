@@ -4,7 +4,7 @@ import osmpbf.fileformat;
 import osmpbf.osmformat;
 import math.geometry: Vector2D, degrees2radians, radians2degrees;
 import math.earth;
-import map.map: Map, Region, BBox, Point, MapCoords = Coords, MercatorCoords, TPrepareLines;
+import map.map: Map, Region, BBox, Point, MapCoords = Coords, MercatorCoords, getMapCoords, TPrepareLines;
 import map.adapters: TPolylineDescription;
 import map.area: Area;
 import cat = config.categories;
@@ -249,9 +249,7 @@ Coords metersToEncoded( Vector2D!real meters )
 
 MapCoords encodedToMapCoords( in Coords c )
 {
-    auto m = encodedToMercator( c );
-    
-    return MapCoords( m );
+    return c.encodedToMercator.getMapCoords;
 }
 
 void addPoints(
