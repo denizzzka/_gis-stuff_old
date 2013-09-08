@@ -85,11 +85,11 @@ class POV
         boundary_meters = Box!MercatorCoords( leftDownCorner, b_size );            
     }
     
-    Vector2r metersToScreen( Vector2r from ) const
+    Vector2r metersToScreen( in MercatorCoords from ) const
     {
         auto ld = boundary_meters.leftDownCorner;
         auto ld_relative = from - ld;
-        auto window_coords = ld_relative * zoom;
+        Vector2r window_coords = ld_relative * zoom;
         
         return window_coords;
     }

@@ -53,17 +53,20 @@ alias Box!MercatorCoords MBBox;
 
 BBox toBBox( in MBBox mbox )
 {
-    auto res = BBox(
-            mbox.ld.roundToLeftDown!long,
-            mbox.ru.roundToRightUpper!long
-        );
+    BBox res;
+    
+    res.ld.map_coords = (mbox.ld * 10).roundToLeftDown!long;
+    res.ru.map_coords = (mbox.ru * 10).roundToRightUpper!long;
     
     return res;
 }
 
 MBBox toMBBox( in BBox bbox )
 {
-    auto res = MBBox( bbox.ld, bbox.getSizeVector );
+    MBBox res;
+    
+    res.ld = bbox.ld.getMercatorCoords;
+    res.ru = bbox.ru.getMercatorCoords;
     
     return res;
 }
