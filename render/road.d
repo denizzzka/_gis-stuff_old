@@ -15,11 +15,9 @@ mixin template Road()
         
         Vector2f sfml_coords; sfml_coords = cartesianToSFML( center );
         
-        sfml_coords.x -= radius;
-        sfml_coords.y -= radius;
-        
         auto circle = new CircleShape;
         
+        circle.origin = Vector2f( radius, radius );
         circle.radius = radius;
         circle.outlineThickness = prop.outlineThickness;
         circle.fillColor = prop.color;
@@ -41,7 +39,9 @@ mixin template Road()
         
         auto rect = new RectangleShape;
         
+        rect.origin = Vector2f( 0, prop.thickness / 2 );
         rect.position = sfml_from;
+        rect.rotation = angleOX.radian2degree - 90;
         rect.size = Vector2f( length, prop.thickness );
         rect.outlineThickness = prop.outlineThickness;
         rect.fillColor = prop.color;
