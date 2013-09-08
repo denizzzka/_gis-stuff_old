@@ -3,7 +3,7 @@ module map.map_graph;
 import math.geometry;
 import math.rtree2d;
 import math.graph.graph: Graph, TEdge, TNode;
-import map.map: MapCoords = Coords;
+import map.map: MapCoords;
 import cat = config.categories: Line;
 static import config.map;
 import math.earth: mercator2coords, getSphericalDistance;

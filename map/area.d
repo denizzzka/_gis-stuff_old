@@ -1,13 +1,13 @@
 module map.area;
 
-import map.map: Coords, BBox;
+import map.map: MapCoords, BBox;
 import cat = config.categories: Line;
 import config.map: polylines, PolylineProperties;
 
 
 struct AreaLine
 {
-    Coords[] points;
+    MapCoords[] points;
     
     this( Description )( in Description areaLine )
     {
@@ -17,7 +17,7 @@ struct AreaLine
     
     BBox getBoundary() const
     {
-        auto res = BBox( points[0], Coords(0,0) );
+        auto res = BBox( points[0], MapCoords(0,0) );
         
         for( auto i = 1; i < points.length; i++ )
             res.addCircumscribe( points[i] );

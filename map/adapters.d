@@ -1,6 +1,6 @@
 module map.adapters;
 
-import map.map: Coords;
+import map.map: MapCoords;
 import math.geometry: Box, to;
 import cat = config.categories: Line;
 
@@ -9,7 +9,7 @@ static import math.reduce_points;
 
 struct TPolylineDescription( alias MAP_COORDS_BY_ID )
 {
-    alias Box!Coords BBox;
+    alias Box!MapCoords BBox;
     alias TNodeDescription!( ulong, MAP_COORDS_BY_ID ) NodeDescription;
     
     ulong nodes_ids[];
@@ -57,7 +57,7 @@ struct TPolylineDescription( alias MAP_COORDS_BY_ID )
     body
     {
         auto start_node = getNode( 0 ).getCoords;
-        auto res = BBox( start_node, Coords(0,0) );
+        auto res = BBox( start_node, MapCoords(0,0) );
         
         for( auto i = 1; i < nodes_ids.length; i++ )
         {
@@ -99,7 +99,7 @@ struct TNodeDescription( _ForeignID, alias MAP_COORDS_BY_ID )
     
     const ForeignID foreign_id;
     
-    Coords getCoords() const
+    MapCoords getCoords() const
     {
         return MAP_COORDS_BY_ID( foreign_id );
     }    

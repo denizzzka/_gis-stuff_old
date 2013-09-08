@@ -4,7 +4,7 @@ import osmpbf.fileformat;
 import osmpbf.osmformat;
 import math.geometry: Vector2D, degrees2radians, radians2degrees;
 import math.earth;
-import map.map: Map, Region, BBox, Point, MapCoords = Coords, MercatorCoords, getMapCoords, TPrepareLines;
+import map.map: Map, Region, BBox, Point, MapCoords, MercatorCoords, getMapCoords, TPrepareLines;
 import map.adapters: TPolylineDescription;
 import map.area: Area;
 import cat = config.categories;

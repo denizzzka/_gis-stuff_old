@@ -12,17 +12,17 @@ static import config.converter;
 debug(map) import std.stdio;
 
 
-alias Vector2D!(long, "Map coords") Coords;
+alias Vector2D!(long, "Map coords") MapCoords;
 alias Vector2D!(real, "Mercator coords") MercatorCoords;
 
-Coords getMapCoords( in MercatorCoords coords )
+MapCoords getMapCoords( in MercatorCoords coords )
 {
-    Coords res = ( coords * 10 ).lround;
+    MapCoords res = ( coords * 10 ).lround;
     
     return res;
 }
 
-MercatorCoords getMercatorCoords( in Coords map_coords )
+MercatorCoords getMercatorCoords( in MapCoords map_coords )
 {
     MercatorCoords res = map_coords;
     res /= 10;
@@ -30,7 +30,7 @@ MercatorCoords getMercatorCoords( in Coords map_coords )
     return res;
 }
 
-alias Box!Coords BBox;
+alias Box!MapCoords BBox;
 alias Box!MercatorCoords MBBox;
 
 BBox toBBox( in MBBox mbox )
@@ -57,12 +57,12 @@ struct Point
 {
     private
     {
-        Coords _coords;
+        MapCoords _coords;
         cat.Point _type;
         string _tags;
     }
     
-    this( in Coords coords, in cat.Point type, in string tags )
+    this( in MapCoords coords, in cat.Point type, in string tags )
     {
         _coords = coords;
         _type = type;
@@ -71,7 +71,7 @@ struct Point
     
     @disable this();
     
-    Coords coords() const
+    MapCoords coords() const
     {
         return _coords;
     }
@@ -105,7 +105,7 @@ alias RTreePtrs!(BBox, AnyLineDescriptor) LinesRTree;
 
 void addPoint( PointsStorage storage, Point point )
 {
-    BBox bbox = BBox( point.coords, Coords(0,0) );
+    BBox bbox = BBox( point.coords, MapCoords(0,0) );
     
     storage.addObject( bbox, point );
 }
