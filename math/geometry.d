@@ -206,12 +206,16 @@ struct Box( _Vector, string S = "size" )
     
     Vector getSizeVector() const
     {
-        return ru - ld;
+        auto res = ru - ld;
+        
+        return Vector( res );
     }
     
     Vector getCenter() const
     {
-        return ld + getSizeVector() / 2;
+        auto res = ld + getSizeVector() / 2;
+        
+        return Vector( res );
     }
     
     auto getArea() const
@@ -246,7 +250,7 @@ struct Box( _Vector, string S = "size" )
         return res;
     }
     
-    void addCircumscribe(T)( in T v ) pure
+    void addCircumscribe(T)( in T v )
     {
         this = this.getCircumscribed( v );
     }
