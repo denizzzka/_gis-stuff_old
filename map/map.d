@@ -21,8 +21,6 @@ struct Coords
     
     MapCoords map_coords;
     
-    alias map_coords this;
-    
     this(T)( in T v ) pure
     {
         map_coords = v;
@@ -36,10 +34,12 @@ struct Coords
     MercatorCoords getMercatorCoords() const pure
     {
         MercatorCoords res = map_coords;
-        res /= 10;
+        //res /= 10;
         
         return res;
     }
+    
+    alias map_coords this;
 }
 
 struct Point
