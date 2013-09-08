@@ -19,7 +19,7 @@ alias Vector2D!(long, "Map coords vector") Coords;
 
 struct _MapCoords
 {
-    private Coords map_coords;
+    package Coords map_coords;
     
     this( Coords coords )
     {
@@ -44,7 +44,7 @@ struct _MapCoords
 
 alias Box!Coords CBox;
 
-CBox getBoundary( _MapCoords[] coords )
+CBox getBoundary( in _MapCoords[] coords )
 in
 {
     assert( coords.length > 0 );
@@ -57,6 +57,12 @@ body
         res.addCircumscribe( coords[i].map_coords );
     
     return res;
+}
+
+// temporary dumb function
+MapCoords map_coords( in MapCoords coords )
+{
+    return coords;
 }
 
 MapCoords getMapCoords( in MercatorCoords coords )

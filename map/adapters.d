@@ -1,6 +1,6 @@
 module map.adapters;
 
-import map.map: MapCoords;
+import map.map: MapCoords, map_coords;
 import math.geometry: Box, to;
 import cat = config.categories: Line;
 
@@ -61,7 +61,7 @@ struct TPolylineDescription( alias MAP_COORDS_BY_ID )
         
         for( auto i = 1; i < nodes_ids.length; i++ )
         {
-            auto curr_node = getNode( i ).getCoords;
+            auto curr_node = getNode( i ).getCoords.map_coords;
             res.addCircumscribe( curr_node );
         }
         
