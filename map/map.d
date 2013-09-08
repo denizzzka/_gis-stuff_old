@@ -21,7 +21,14 @@ struct Coords
     
     MapCoords map_coords;
     
+    this(T)( in T v )
+    if( is( T == MercatorCoords ) )
+    {
+        map_coords = ( v * 10 ).lround;
+    }
+    
     this(T)( in T v ) pure
+    if( !is( T == MercatorCoords ) )
     {
         map_coords = v;
     }
@@ -34,7 +41,7 @@ struct Coords
     MercatorCoords getMercatorCoords() const pure
     {
         MercatorCoords res = map_coords;
-        //res /= 10;
+        res /= 10;
         
         return res;
     }

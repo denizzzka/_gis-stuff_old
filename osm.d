@@ -4,7 +4,7 @@ import osmpbf.fileformat;
 import osmpbf.osmformat;
 import math.geometry: Vector2D, degrees2radians, radians2degrees;
 import math.earth;
-import map.map: Map, Region, BBox, Point, MapCoords = Coords, TPrepareLines;
+import map.map: Map, Region, BBox, Point, MapCoords = Coords, MercatorCoords, TPrepareLines;
 import map.adapters: TPolylineDescription;
 import map.area: Area;
 import cat = config.categories;
@@ -222,18 +222,21 @@ Vector2D!real decodeCoords( in Coords c ) pure
     return Vector2D!real( c.x / 10_000_000f,  c.y / 10_000_000f );
 }
 
+@disable
 Vector2D!real encodeCoords( Vector2D!real c ) pure
 {
     return Vector2D!real( c.x * 10_000_000f,  c.y * 10_000_000f );
 }
 
-Vector2D!real encodedToMeters( in Coords c )
+MercatorCoords encodedToMercator( in Coords c )
 {
     auto decoded = decodeCoords( c );
     auto radians = degrees2radians( decoded );
-    return coords2mercator( radians );
+    MercatorCoords res = coords2mercator( radians );
+    return res;
 }
 
+@disable
 Coords metersToEncoded( Vector2D!real meters )
 {
     auto radians = mercator2coords( meters );
@@ -246,9 +249,9 @@ Coords metersToEncoded( Vector2D!real meters )
 
 MapCoords encodedToMapCoords( in Coords c )
 {
-    auto m = encodedToMeters( c );
+    auto m = encodedToMercator( c );
     
-    return MapCoords( to!double( m.x ), to!double( m.y ) );
+    return MapCoords( m );
 }
 
 void addPoints(
