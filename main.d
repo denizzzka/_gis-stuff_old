@@ -4,7 +4,7 @@ import math.geometry;
 import osm: getMap;
 import map.map;
 import scene;
-static import sfml;
+import render.sfml: Window;
 
 import std.getopt;
 import std.stdio;
@@ -21,7 +21,7 @@ void main( string[] args )
         "verbose", &verbose,
     );
     
-    auto window = new sfml.Window;
+    auto window = new Window;
     
     debug(test_map)
     {

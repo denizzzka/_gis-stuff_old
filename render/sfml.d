@@ -1,4 +1,4 @@
-module sfml;
+module render.sfml;
 
 import dsfml.graphics;
 import scene;
