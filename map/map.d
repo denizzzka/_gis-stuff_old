@@ -35,7 +35,10 @@ struct Coords
     
     MercatorCoords getMercatorCoords() const pure
     {
-        return MercatorCoords( map_coords / 10 );
+        MercatorCoords res = map_coords;
+        res /= 10;
+        
+        return res;
     }
 }
 
