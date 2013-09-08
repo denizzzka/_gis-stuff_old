@@ -38,8 +38,7 @@ void main( string[] args )
     
     window.scene = new POV( map );
     
-    window.scene.centerToWholeMap;
-    window.scene.zoomToWholeMap( window.window.size );
+    window.scene.setPOVtoBoundary( window.window.size, map.boundary );
     
     writeln( "Map bbox:", map.regions[0].boundary );
     

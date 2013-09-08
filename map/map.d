@@ -61,6 +61,13 @@ BBox toBBox( in MBBox mbox )
     return res;
 }
 
+MBBox toMBBox( in BBox bbox )
+{
+    auto res = MBBox( bbox.ld, bbox.getSizeVector );
+    
+    return res;
+}
+
 struct Point
 {
     private
@@ -131,9 +138,9 @@ struct Layer
         lines = new LinesRTree;
     }
     
-    BBox boundary() const
+    MBBox boundary() const
     {
-        return POI.getBoundary.getCircumscribed( POI.getBoundary ); // FIXME
+        return POI.getBoundary.getCircumscribed( POI.getBoundary ).toMBBox; // FIXME
     }
 }
 
@@ -149,7 +156,7 @@ class Region
             c.init;
     }
     
-    BBox boundary() const
+    MBBox boundary() const
     {
         return layers[0].boundary; // FIXME
     }
@@ -281,7 +288,7 @@ class Map
 {
     Region[] regions;
     
-    BBox boundary() const
+    MBBox boundary() const
     {
         return regions[0].boundary; // FIXME
     }

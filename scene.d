@@ -150,18 +150,21 @@ class POV
         return format("center=%s zoom=%g scene mbox=%s size_len=%g", center, zoom, boundary_meters, boundary_meters.getSizeVector.length);	
 	}
     
-    void zoomToWholeMap(T)( T window_size )
+    private
+    void setZoomToSize(T)( in T window_size, in MercatorCoords size )
     {
-        auto meters_size = map.boundary.getSizeVector;
-        
         zoom = fmin(
-                window_size.x / meters_size.x,
-                window_size.y / meters_size.y
-            );
+                window_size.x / size.x,
+                window_size.y / size.y
+            );        
     }
     
-    void centerToWholeMap()
+    void setPOVtoBoundary(T)( in T window_size, in MBBox boundary )
     {
-        center = map.boundary.ld + map.boundary.getSizeVector/2;
+        auto size_vector = boundary.getSizeVector;
+        
+        setZoomToSize( window_size, size_vector );
+        
+        center = boundary.ld + size_vector/2;
     }
 }
