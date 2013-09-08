@@ -19,7 +19,7 @@ struct MapCoords
 {
     alias Vector2D!(long, "Map coords vector") Coords;
     
-    Coords map_coords;
+    package Coords map_coords;
     
     this( MercatorCoords coords )
     {
