@@ -20,19 +20,14 @@ struct MapCoords
     
     package Coords map_coords;
     
-    this( MercatorCoords coords )
-    {
-        map_coords = ( coords * 10 ).lround;
-    }
-    
     this( Coords coords )
     {
         map_coords = coords;
     }
     
-    this( long x, long y )
+    this( MercatorCoords coords )
     {
-        map_coords = Coords( x, y );
+        map_coords = ( coords * 10 ).lround;
     }
     
     MercatorCoords getMercatorCoords() const pure
