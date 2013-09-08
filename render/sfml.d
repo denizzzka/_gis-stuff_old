@@ -118,6 +118,12 @@ class Window : IWindow
 		    case ROAD:
 			auto graph = reg_lines.region.layers[ reg_lines.layer_num ].road_graph;
 			encoded_points = getPointsDirected( &line.road, graph );
+			
+			auto bend1 = scene.metersToScreen( encoded_points[0] );
+			auto bend2 = scene.metersToScreen( encoded_points[$-1] );
+			drawRoadBend( bend1, line.road.getPolyline( graph ).type );
+			drawRoadBend( bend2, line.road.getPolyline( graph ).type );
+			
 			color = line.road.getPolyline( graph ).properties.color;
 			break;
 			
@@ -128,7 +134,7 @@ class Window : IWindow
 			break;
 		}
 		
-		Vector2r[] res_points;
+		WindowCoords[] res_points;
 		
 		foreach( i, encoded; encoded_points )
 		{
@@ -161,7 +167,7 @@ class Window : IWindow
     }
     
     private
-    void drawLine( Vector2r[] coords, Color color )
+    void drawLine( WindowCoords[] coords, Color color )
     {
 	debug(sfml) writeln("draw line, nodes num=", coords.length, " color=", color);
 	

@@ -7,17 +7,23 @@ import config.map: polylines;
 
 mixin template Road()
 {
-    void drawRoadBend( WindowCoords coords, cat.Line type )
+    void drawRoadBend( WindowCoords center, cat.Line type )
     {
-        Vector2f sfml_coords; sfml_coords = cartesianToSFML( coords );
+        auto prop = &polylines.getProperty( type );
         
-        auto property = &polylines.getProperty( type );
+        auto radius = prop.thickness / 2;
+        
+        Vector2f sfml_coords; sfml_coords = cartesianToSFML( center );
+        
+        sfml_coords.x -= radius;
+        sfml_coords.y -= radius;
         
         auto circle = new CircleShape;
         
-        circle.radius = property.thickness / 2;
-        circle.outlineThickness = property.outlineThickness;
-        circle.fillColor = property.color;
+        circle.radius = radius;
+        circle.outlineThickness = prop.outlineThickness;
+        circle.fillColor = prop.color;
+        circle.outlineColor = prop.outlineColor;
         circle.position = sfml_coords;
         
         window.draw( circle );

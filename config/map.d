@@ -11,8 +11,9 @@ import std.conv: to;
 struct PolylineProperties
 {
     Color color = Color.Cyan;
-    float thickness = 1;
-    float outlineThickness = 1;
+    Color outlineColor = Color.Magenta;
+    float thickness = 1.0;
+    float outlineThickness = 1.0;
     size_t[] layers = [ 1, 2, 3, 4, 5 ];
 }
 
@@ -40,7 +41,8 @@ class Polylines
             
             auto prop = &properties[ member_idx ];
             
-            prop.color = getColor( lineObj );
+            prop.color = getColor( lineObj["color"] );
+            prop.outlineColor = getColor( lineObj["outlineColor"] );
             prop.thickness = lineObj["thickness"].floating;
             prop.outlineThickness = lineObj["outlineThickness"].floating;
             prop.layers = getSize_tArray( lineObj["layers"] );
@@ -48,10 +50,8 @@ class Polylines
     }
 };
 
-Color getColor( JSONValue v )
+Color getColor( JSONValue color_vals )
 {
-    auto color_vals = v.object["color"];
-    
     ubyte chan( string name )
     {
         return to!ubyte( color_vals[ name ].uinteger );
