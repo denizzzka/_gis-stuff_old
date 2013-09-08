@@ -16,7 +16,7 @@ alias Vector2D!(real, "Mercator coords") MercatorCoords;
 
 struct Coords
 {
-    alias Vector2D!(double, "Map coords") MapCoords;
+    alias Vector2D!(long, "Map coords") MapCoords;
     
     MapCoords map_coords;
     
