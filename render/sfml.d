@@ -99,8 +99,19 @@ class Window : IWindow
     }
     
     private
-    void drawLines( MapLinesDescriptor[] map_lines )
+    WindowCoords[] MapToWindowCoords( MapCoords[] map_points )
     {
+	WindowCoords[] res;
+	
+	foreach( i, point; map_points )
+	    res ~= scene.metersToScreen( point );
+	    
+	return res;
+    }
+    
+    private
+    void drawLines( MapLinesDescriptor[] map_lines )
+    {	
         foreach( ref reg_lines; map_lines )
 	    foreach( ref line; reg_lines.lines )
 	    {
@@ -124,8 +135,9 @@ class Window : IWindow
 			drawRoadBend( bend1, line.road.getPolyline( graph ).type );
 			drawRoadBend( bend2, line.road.getPolyline( graph ).type );
 			
-			color = line.road.getPolyline( graph ).properties.color;
-			break;
+			auto crds = MapToWindowCoords( encoded_points );
+			drawRoadSegments( crds, line.road.getPolyline( graph ).type );
+			continue;
 			
 		    case AREA:
 			auto area_points = line.area.perimeter.points;
@@ -134,17 +146,7 @@ class Window : IWindow
 			break;
 		}
 		
-		WindowCoords[] res_points;
-		
-		foreach( i, encoded; encoded_points )
-		{
-		    MercatorCoords point = encoded.getMercatorCoords;
-		    auto window_coords = scene.metersToScreen( point );
-		    res_points ~= window_coords;
-		    
-		    debug(sfml) writeln("draw line point i=", i, " encoded coords=", encoded, " meters=", point, " window_coords=", window_coords);
-		}
-		
+		auto res_points = MapToWindowCoords( encoded_points );
 		drawLine( res_points, color );
 	    }
     }

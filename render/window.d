@@ -21,4 +21,5 @@ interface IWindow
     */
     
     void drawRoadBend( WindowCoords coords, cat.Line type );
+    void drawRoadSegments( WindowCoords[] coords, cat.Line type );
 }
