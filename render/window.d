@@ -1,6 +1,7 @@
 module render.window;
 
 import math.geometry;
+import cat = config.categories;
 import dsfml.graphics: Color;
 
 
@@ -19,5 +20,5 @@ interface IWindow
     void drawRoad( Vector2r[] coords, Color color );
     */
     
-    void drawRoadBend( WindowCoords coords, Color color );
+    void drawRoadBend( WindowCoords coords, cat.Line type );
 }
