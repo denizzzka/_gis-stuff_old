@@ -47,22 +47,6 @@ struct MapCoords
 }
 
 alias Box!(MapCoords.Coords) BBox;
-
-BBox getBoundary( in MapCoords[] coords )
-in
-{
-    assert( coords.length >= 1 );
-}
-body
-{
-    auto res = BBox( coords[0].map_coords, MapCoords.Coords(0,0) );
-    
-    for( auto i = 1; i < coords.length; i++ )
-        res.addCircumscribe( coords[i].map_coords );
-    
-    return res;
-}
-
 alias Box!MercatorCoords MBBox;
 
 BBox toBBox( in MBBox mbox )
