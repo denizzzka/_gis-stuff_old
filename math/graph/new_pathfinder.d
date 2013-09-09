@@ -180,7 +180,7 @@ unittest
     immutable size_t width = 5;
     NodeDescr[ width+1 ] row;
     
-    NodeDescr from_idx;
+    NodeDescr from;
     NodeDescr goal_idx;
     
     for( auto y=0; y < 5; y++ )
@@ -197,7 +197,7 @@ unittest
                 start_from = row[x];
             
             // saving test points:
-            if( x == 2 && y == 0 ) from_idx = start_from;
+            if( x == 2 && y == 0 ) from = start_from;
             if( x == 4 && y == 4 ) goal_idx = start_from;
             
             DNP to_up = { coords: Vector2D!float(x, y+1) };
@@ -218,7 +218,7 @@ unittest
             g.addEdge( conn_right_edge, right_edge_payload );
         }
     
-    auto s = pathFinder.findPath( g, from_idx, goal_idx );
+    auto s = pathFinder.findPath( g, from, goal_idx );
     
     assert( s != null );
     assert( s.length == 7 );
@@ -226,6 +226,6 @@ unittest
     DNP g2_p = { Vector2D!float(11,4) };
     NodeDescr goal2_idx = g.addPoint( g2_p );
     
-    s = pathFinder.findPath( g, from_idx, goal2_idx );
+    s = pathFinder.findPath( g, from, goal2_idx );
     assert(!s); // path to unconnected point can not be found
 }
