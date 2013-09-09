@@ -11,6 +11,7 @@ class DirectedGraph( Point, EdgePayload ) : IGraph!( Point, EdgePayload, NodeDes
     struct Edge
     {
         NodeDescr to_node;
+        
         EdgePayload payload;
     }
     
@@ -20,6 +21,7 @@ class DirectedGraph( Point, EdgePayload ) : IGraph!( Point, EdgePayload, NodeDes
         
         Point point;
         
+        private
         EdgeDescr addEdge( Edge edge )
         {
             EdgeDescr res = { idx: edges.length };

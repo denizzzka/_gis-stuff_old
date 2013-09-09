@@ -150,6 +150,7 @@ template PathFinder( Graph, NodeDescr, EdgeDescr )
         }
     }
 }
+
 unittest
 {
     import math.graph.digraph;
