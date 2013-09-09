@@ -15,8 +15,7 @@ class UndirectedGraph( Point, EdgePayload ) : IGraph!( Point, EdgePayload, NodeD
         EdgePayload payload;
     }
     
-    private
-    struct GlobalEdgeDescr { size_t idx; }
+    private struct GlobalEdgeDescr { size_t idx; }
     
     struct Node
     {
