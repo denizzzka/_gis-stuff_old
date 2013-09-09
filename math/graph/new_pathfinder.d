@@ -186,19 +186,19 @@ unittest
     for( auto y=0; y < 5; y++ )
         for( auto x=0; x < width; x++ )
         {
-            NodeDescr from;
+            NodeDescr start_from;
             
             if( x == 0 && y == 0 )
             {
                 DNP from_point = { coords: Vector2D!float(x, y) };
-                from = g.addPoint( from_point );
+                start_from = g.addPoint( from_point );
             }
             else
-                from = row[x];
+                start_from = row[x];
             
             // saving test points:
-            if( x == 2 && y == 0 ) from_idx = from;
-            if( x == 4 && y == 4 ) goal_idx = from;
+            if( x == 2 && y == 0 ) from_idx = start_from;
+            if( x == 4 && y == 4 ) goal_idx = start_from;
             
             DNP to_up = { coords: Vector2D!float(x, y+1) };
             DNP to_right = { coords: Vector2D!float(x+1, y) };
@@ -211,8 +211,8 @@ unittest
             EdgePayload up_edge_payload = { weight: 5 };
             EdgePayload right_edge_payload = { weight: 4.7 };
             
-            G.ConnectionInfo conn_up_edge = { from: from, to: row[x] };
-            G.ConnectionInfo conn_right_edge = { from: from, to: row[x+1] };
+            G.ConnectionInfo conn_up_edge = { from: start_from, to: row[x] };
+            G.ConnectionInfo conn_right_edge = { from: start_from, to: row[x+1] };
             
             g.addEdge( conn_up_edge, up_edge_payload );
             g.addEdge( conn_right_edge, right_edge_payload );
