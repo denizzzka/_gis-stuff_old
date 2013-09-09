@@ -7,7 +7,7 @@ template PathFinder( Graph, NodeDescr, EdgeDescr )
 {
     struct PathElement
     {
-        size_t node_idx;
+        NodeDescr node;
         size_t came_through_edge_idx;
     }
     
@@ -129,7 +129,7 @@ template PathFinder( Graph, NodeDescr, EdgeDescr )
             while( p = curr in scores, p )
             {
                 PathElement e;
-                e.node_idx = curr.idx;
+                e.node = curr;
                 e.came_through_edge_idx = p.came_through_edge;
                 
                 res ~= e;
