@@ -68,6 +68,26 @@ class DirectedGraph( Point, EdgePayload ) : IGraph!( Point, EdgePayload, NodeDes
         NodeDescr res = { idx: uniform( 0, nodes.length ) };
         return res;
     }
+    
+    struct NodesRange
+    {
+        private
+        {
+            DirectedGraph graph;
+            NodeDescr node;
+        }
+        
+        NodeDescr front() { return node; }
+        void popFront() { ++node.idx; }
+        bool empty() const { return node.idx >= length; }
+        size_t length() const { return graph.nodes.length; }
+    }
+    
+    NodesRange getNodes() const
+    {
+        NodesRange res = { node: { idx: 0 } };
+        return res;
+    }
 }
 
 unittest

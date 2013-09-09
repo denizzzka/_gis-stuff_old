@@ -1,9 +1,10 @@
+/*
 module map.new_map_graph;
 
 import math.geometry;
 import math.rtree2d;
-import math.graph.graph: Graph, TEdge, TNode;
-import map.map: MapCoords;
+import math.graph.digraph;
+import map.map: MapCoords, BBox;
 import cat = config.categories: Line;
 static import config.map;
 import math.earth: mercator2coords, getSphericalDistance;
@@ -63,8 +64,6 @@ struct Point
 
 struct TPolylineDescriptor( MapGraph )
 {
-    alias MapGraph.BBox BBox;
-    
     uint node_idx;
     uint edge_idx;
     
@@ -118,15 +117,12 @@ struct TPolylineDescriptor( MapGraph )
     }
 }
 
-class TMapGraph( _Node, alias CREATE_EDGE )
+class TMapGraph
 {
-    alias _Node Node;
-    alias Node.Point Point;
-    alias Node.Edge Edge;
     alias Box!(MapCoords.Coords) BBox;
     alias TPolylineDescriptor!TMapGraph PolylineDescriptor;
     
-    alias Graph!Node G;
+    alias DirectedGraph!( Point, Polyline ) G;
     
     public // TODO: need to be a package
     {
@@ -345,7 +341,5 @@ size_t createEdge( Graph, Payload )(
     return graph.addEdge( from_node_idx, edge );
 }
 
-alias TEdge!Polyline Edge;
-alias TNode!( Edge, Point ) Node;
-
-alias TMapGraph!( Node, createEdge ) LineGraph;
+alias TMapGraph LineGraph;
+*/
