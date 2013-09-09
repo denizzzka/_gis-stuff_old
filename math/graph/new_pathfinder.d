@@ -114,7 +114,7 @@ template PathFinder( Graph, NodeDescr, EdgeDescr )
                     
                     debug(graph)
                         writefln("Upd neighbor=%s edge=%s %s tentative=%s full=%s",
-                            neighborNode, edge_idx, neighbor.point, tentative, score[neighborNode].full);                
+                            neighborNode, edge.idx, neighbor.point, tentative, score[neighborNode].full);                
                 }
             }
 
@@ -224,8 +224,8 @@ unittest
     assert( s.length == 7 );
     
     DNP g2_p = { Vector2D!float(11,4) };
-    NodeDescr goal2_idx = g.addPoint( g2_p );
+    NodeDescr goal2 = g.addPoint( g2_p );
     
-    s = pathFinder.findPath( g, from, goal2_idx );
+    s = pathFinder.findPath( g, from, goal2 );
     assert(!s); // path to unconnected point can not be found
 }
