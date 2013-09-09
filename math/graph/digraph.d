@@ -58,14 +58,14 @@ class DirectedGraph( NodePayload, EdgePayload ) : IGraph!( NodePayload, EdgePayl
         return nodes[ conn.from.idx ].addEdge( e );
     }
     
-    ref getNodePayload( in NodeDescr node )
+    ref const(NodePayload) getNodePayload( in NodeDescr node ) const
     {
         return nodes[ node.idx ].payload;
     }
     
-    ref EdgePayload getEdgePayload( in NodeDescr node, in EdgeDescr edge )
+    ref const(Edge) getEdge( in NodeDescr node, in EdgeDescr edge ) const
     {
-        return nodes[ node.idx ].edges[ edge.idx ].payload;
+        return nodes[ node.idx ].edges[ edge.idx ];
     }
     
     NodeDescr getRandomNode() const
@@ -78,7 +78,7 @@ class DirectedGraph( NodePayload, EdgePayload ) : IGraph!( NodePayload, EdgePayl
     {
         private
         {
-            DirectedGraph graph;
+            const DirectedGraph graph;
             NodeDescr node;
         }
         
@@ -90,7 +90,28 @@ class DirectedGraph( NodePayload, EdgePayload ) : IGraph!( NodePayload, EdgePayl
     
     NodesRange getNodesRange() const
     {
-        NodesRange res = { node: { idx: 0 } };
+        NodesRange res = { graph: this, node: { idx: 0 } };
+        return res;
+    }
+    
+    struct EdgesRange
+    {
+        private
+        {
+            const DirectedGraph graph;
+            const NodeDescr node;
+            EdgeDescr edge;
+        }
+        
+        EdgeDescr front() { return edge; }
+        void popFront() { ++edge.idx; }
+        bool empty() const { return edge.idx >= length; }
+        size_t length() const { return graph.nodes.length; }
+    }
+    
+    EdgesRange getEdgesRange( in NodeDescr node ) const
+    {
+        EdgesRange res = { graph: this, node: node, edge: { idx: 0 } };
         return res;
     }
 }

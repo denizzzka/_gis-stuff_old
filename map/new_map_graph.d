@@ -1,4 +1,3 @@
-/*
 module map.new_map_graph;
 
 import math.geometry;
@@ -98,49 +97,46 @@ class MapGraph
             this.node = node;
             this.edge = edge;
         }
+    }
+    
+    Coords[] getPoints( in PolylineDescriptor descr ) const
+    {
+        Coords[] res;
         
-        Coords[] getPoints()( in MapGraph mapGraph ) const
-        {
-            Coords[] res;
-            
-            auto start_node = mapGraph.graph.nodes[ node_idx ];
-            
-            res ~= start_node.point.coords;
-            
-            auto edge = mapGraph.graph.getEdge( node_idx, edge_idx );
-            
-            foreach( c; edge.payload.points )
-                res ~= c;
-            
-            auto end_node_idx = edge.to_node;
-            res ~= mapGraph.graph.nodes[ end_node_idx ].point.coords;
-            
-            return res;
-        }
+        res ~= graph.getNodePayload( descr.node );
         
-        BBox getBoundary( in MapGraph mapGraph ) const
-        {
-            auto points = getPoints( mapGraph );
-            assert( points.length > 0 );
-            
-            auto res = BBox( points[0].map_coords, MapCoords.Coords(0,0) );
-            
-            for( auto i = 1; i < points.length; i++ )
-                res.addCircumscribe( points[i].map_coords );
-            
-            return res;
-        }
+        auto edge = graph.getEdge( descr.node, descr.edge );
         
-        ref const (Polyline) getPolyline()( in MapGraph mapGraph ) const
-        {
-            return getEdge( mapGraph ).payload;
-        }
+        foreach( c; edge.payload.points )
+            res ~= c;
         
-        private
-        auto getEdge()( in MapGraph mapGraph ) const
-        {
-            return mapGraph.graph.getEdge( node_idx, edge_idx );
-        }
+        res ~= graph.getNodePayload( edge.to_node );
+        
+        return res;
+    }
+    
+    BBox getBoundary( in PolylineDescriptor descr ) const
+    {
+        auto points = getPoints( descr );
+        assert( points.length > 0 );
+        
+        auto res = BBox( points[0].map_coords, MapCoords.Coords(0,0) );
+        
+        for( auto i = 1; i < points.length; i++ )
+            res.addCircumscribe( points[i].map_coords );
+        
+        return res;
+    }
+    
+    ref const (Polyline) getPolyline()( in MapGraph mapGraph ) const
+    {
+        return getEdge( mapGraph ).payload;
+    }
+    
+    private
+    auto getEdge()( in MapGraph mapGraph ) const
+    {
+        return mapGraph.graph.getEdge( node_idx, edge_idx );
     }
     
     PolylineDescriptor addPolyline(
@@ -197,9 +193,9 @@ class MapGraph
     {
         PolylineDescriptor[] res;
         
-        foreach( node_idx, ref const node; graph.getNodesRange )
-            for( auto i = 0; i < node.edgesFromNode( node_idx ).length; i++ )
-                res ~= PolylineDescriptor( node_idx, i );
+        foreach( node; graph.getNodesRange )
+            foreach( edge; graph.getEdgesRange( node ) )
+                res ~= PolylineDescriptor( node, edge );
         
         return res;
     }
@@ -339,4 +335,3 @@ size_t createEdge( Graph, Payload )(
 }
 
 alias MapGraph LineGraph;
-*/
