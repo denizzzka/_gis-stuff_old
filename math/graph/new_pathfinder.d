@@ -181,7 +181,7 @@ unittest
     NodeDescr[ width+1 ] row;
     
     NodeDescr from;
-    NodeDescr goal_idx;
+    NodeDescr goal;
     
     for( auto y=0; y < 5; y++ )
         for( auto x=0; x < width; x++ )
@@ -198,7 +198,7 @@ unittest
             
             // saving test points:
             if( x == 2 && y == 0 ) from = start_from;
-            if( x == 4 && y == 4 ) goal_idx = start_from;
+            if( x == 4 && y == 4 ) goal = start_from;
             
             DNP to_up = { coords: Vector2D!float(x, y+1) };
             DNP to_right = { coords: Vector2D!float(x+1, y) };
@@ -218,7 +218,7 @@ unittest
             g.addEdge( conn_right_edge, right_edge_payload );
         }
     
-    auto s = pathFinder.findPath( g, from, goal_idx );
+    auto s = pathFinder.findPath( g, from, goal );
     
     assert( s != null );
     assert( s.length == 7 );
