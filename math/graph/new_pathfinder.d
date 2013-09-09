@@ -14,7 +14,7 @@ template PathFinder( Graph, NodeDescr, EdgeDescr )
     /// A* algorithm
     ///
     /// Returns: elements in the reverse order
-    PathElement[] findPath( Graph, NodeDescr )( in Graph graph, in NodeDescr startNode, in NodeDescr goalNode )
+    PathElement[] findPath( in Graph graph, in NodeDescr startNode, in NodeDescr goalNode )
     {
         auto r = findPathScore( graph, startNode, goalNode );
         return (r is null) ? null : reconstructPath!( NodeDescr )( r, goalNode );
