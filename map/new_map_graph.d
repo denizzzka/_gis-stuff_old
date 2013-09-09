@@ -41,8 +41,6 @@ struct Polyline
 
 struct Point
 {
-    alias MapCoords Coords; // for template
-    
     MapCoords coords;
     
     this( MapCoords coords )
@@ -65,7 +63,6 @@ struct Point
 
 struct TPolylineDescriptor( MapGraph )
 {
-    alias MapGraph.Coords Coords;
     alias MapGraph.BBox BBox;
     
     uint node_idx;
@@ -125,9 +122,8 @@ class TMapGraph( _Node, alias CREATE_EDGE )
 {
     alias _Node Node;
     alias Node.Point Point;
-    alias Point.Coords Coords;
     alias Node.Edge Edge;
-    alias Box!(Coords.Coords) BBox;
+    alias Box!(MapCoords.Coords) BBox;
     alias TPolylineDescriptor!TMapGraph PolylineDescriptor;
     
     alias Graph!Node G;
