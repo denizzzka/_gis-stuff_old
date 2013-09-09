@@ -2,6 +2,7 @@ module map.map;
 
 import math.geometry;
 import math.rtree2d;
+static import math.earth;
 import cat = config.categories;
 import map.map_graph: LineGraph, cutOnCrossings;
 import map.roads: RoadGraph;
@@ -39,6 +40,16 @@ struct MapCoords
     }
     
     alias getMercatorCoords this;
+    
+    real getSphericalDistance( in MapCoords v ) const
+    {
+        return math.earth.getSphericalDistance( getRadiansCoords, v.getRadiansCoords );
+    }
+    
+    auto getRadiansCoords() const
+    {
+        return math.earth.mercator2coords( getMercatorCoords );
+    }
 }
 
 alias Box!(MapCoords.Coords) BBox;
