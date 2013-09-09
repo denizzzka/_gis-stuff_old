@@ -8,7 +8,7 @@ template PathFinder( Graph, NodeDescr, EdgeDescr )
     struct PathElement
     {
         NodeDescr node;
-        EdgeDescr came_through_edge_idx;
+        EdgeDescr came_through_edge;
     }
     
     /// A* algorithm
@@ -130,7 +130,7 @@ template PathFinder( Graph, NodeDescr, EdgeDescr )
             {
                 PathElement e;
                 e.node = curr;
-                e.came_through_edge_idx = p.came_through_edge;
+                e.came_through_edge = p.came_through_edge;
                 
                 res ~= e;
                 
