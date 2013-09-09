@@ -16,28 +16,28 @@ struct PathElement
 PathElement[] findPath( Graph, NodeDescr )( in Graph graph, in NodeDescr startNode, in NodeDescr goalNode )
 {
     auto r = findPathScore( graph, startNode, goalNode );
-    return (r is null) ? null : reconstructPath( r, goalNode );
+    return (r is null) ? null : reconstructPath!( NodeDescr )( r, goalNode );
 }
 
 private
 {
     /// A* algorithm
-    Score[size_t] findPathScore( Graph )( in Graph graph, in size_t startNode, in size_t goalNode )
+    Score[NodeDescr] findPathScore( Graph, NodeDescr )( in Graph graph, in NodeDescr startNode, in NodeDescr goalNode )
     in
     {
-        assert( startNode < graph.nodes.length );
-        assert( goalNode < graph.nodes.length );
+        assert( startNode.idx < graph.nodes.length );
+        assert( goalNode.idx < graph.nodes.length );
     }
     body
     {
         alias Graph.Node Node;
         
-        const (size_t)[] open; /// The set of tentative nodes to be evaluated
-        const (size_t)[] closed; /// The set of nodes already evaluated
-        Score[size_t] score;
+        const (NodeDescr)[] open; /// The set of tentative nodes to be evaluated
+        const (NodeDescr)[] closed; /// The set of nodes already evaluated
+        Score[NodeDescr] score;
         
-        const Node* start = &graph.nodes[startNode];
-        const Node* goal = &graph.nodes[goalNode];
+        const Node* start = &graph.nodes[startNode.idx];
+        const Node* goal = &graph.nodes[goalNode.idx];
         
         Score startScore = {
                 came_from: typeof(Score.came_from).max, // magic for correct path reconstruct
@@ -68,29 +68,29 @@ private
                     key_score = score[n].full;
                 }
             
-            const size_t currNode = open[key];
+            const NodeDescr currNode = open[key];
             
             if( currNode == goalNode )
                 return score;
             
-            const Node* curr = &graph.nodes[currNode];
+            const Node* curr = &graph.nodes[currNode.idx];
             debug(graph) writefln("Curr %s %s lowest full=%s", currNode, curr.point, key_score);
             
             open = open[0..key] ~ open[key+1..$];
             closed ~= currNode;
             
             size_t edge_idx = -1;
-            foreach( e; curr.logicalEdges( currNode ) )
+            foreach( e; curr.edges )
             {
                 edge_idx++;
                 
-                size_t neighborNode = e.to_node;
-                const Node* neighbor = &graph.nodes[neighborNode];
+                NodeDescr neighborNode = e.to_node;
+                const Node* neighbor = &graph.nodes[neighborNode.idx];
 
                 if( canFind( closed, neighborNode ) )
                     continue;
                 
-                auto tentative = score[currNode].g + curr.point.distance( neighbor.point, e.weight );
+                auto tentative = score[currNode].g + curr.point.distance( neighbor.point, e.payload.weight );
                 
                 if( !canFind( open, neighborNode ) )
                 {
@@ -103,7 +103,7 @@ private
                 
                 // Updating neighbor score
                 Score neighborScore = {
-                        came_from: currNode,
+                        came_from: currNode.idx,
                         came_through_edge: edge_idx,
                         g: tentative,
                         full: tentative + neighbor.point.heuristic( goal.point )
@@ -120,7 +120,7 @@ private
         return null;
     }
     
-    PathElement[] reconstructPath( Score[size_t] scores, size_t curr )
+    PathElement[] reconstructPath(NodeDescr)( Score[NodeDescr] scores, NodeDescr curr )
     {
         PathElement[] res;
         
@@ -128,12 +128,12 @@ private
         while( p = curr in scores, p )
         {
             PathElement e;
-            e.node_idx = curr;
+            e.node_idx = curr.idx;
             e.came_through_edge_idx = p.came_through_edge;
             
             res ~= e;
             
-            curr = p.came_from;
+            curr.idx = p.came_from;
         }
 
         return res;
@@ -222,7 +222,7 @@ unittest
     assert( s.length == 7 );
     
     DNP g2_p = { Vector2D!float(11,4) };
-    size_t goal2_idx = g.addPoint( g2_p );
+    NodeDescr goal2_idx = g.addPoint( g2_p );
     
     s = g.findPath( from_idx, goal2_idx );
     assert(!s); // path to unconnected point can not be found

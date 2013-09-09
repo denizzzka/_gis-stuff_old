@@ -11,7 +11,7 @@ interface IGraph( Point, EdgePayload, NodeDescr, EdgeDescr )
         NodeDescr to;
     }
     
-    EdgeDescr addEdge( ConnectionInfo ci, EdgePayload edgePayload );
+    EdgeDescr addEdge( in ConnectionInfo ci, EdgePayload edgePayload );
     
     const (EdgePayload)* getEdgePayload( in NodeDescr node, in EdgeDescr edge ) const;
 }

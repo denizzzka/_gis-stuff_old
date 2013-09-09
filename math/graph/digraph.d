@@ -3,8 +3,8 @@ module math.graph.digraph;
 import math.graph.iface;
 
 
-struct EdgeDescr { size_t idx; }
 struct NodeDescr { size_t idx; }
+struct EdgeDescr { size_t idx; }
 
 class DirectedGraph( Point, EdgePayload ) : IGraph!( Point, EdgePayload, NodeDescr, EdgeDescr )
 {
@@ -16,7 +16,7 @@ class DirectedGraph( Point, EdgePayload ) : IGraph!( Point, EdgePayload, NodeDes
     
     struct Node
     {
-        private Edge[] edges;
+        package Edge[] edges;
         
         Point point;
         
@@ -30,7 +30,7 @@ class DirectedGraph( Point, EdgePayload ) : IGraph!( Point, EdgePayload, NodeDes
         }
     }
     
-    private Node[] nodes;
+    package Node[] nodes;
     
     NodeDescr addPoint( Point v )
     {
