@@ -63,11 +63,11 @@ class UndirectedGraph( Point, EdgePayload ) : IGraph!( Point, EdgePayload, NodeD
         return nodes[ conn.from.idx ].addEdge( global );
     }
     
-    const (EdgePayload)* getEdgePayload( in NodeDescr node, in EdgeDescr edge ) const
+    ref EdgePayload getEdgePayload( in NodeDescr node, in EdgeDescr edge )
     {
         GlobalEdgeDescr global = nodes[ node.idx ].edges[ edge.idx ];
         
-        return &edges[ global.idx ].payload;
+        return edges[ global.idx ].payload;
     }
 }
 

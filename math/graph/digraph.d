@@ -56,9 +56,9 @@ class DirectedGraph( Point, EdgePayload ) : IGraph!( Point, EdgePayload, NodeDes
         return nodes[ conn.from.idx ].addEdge( e );
     }
     
-    const (EdgePayload)* getEdgePayload( in NodeDescr node, in EdgeDescr edge ) const
+    ref EdgePayload getEdgePayload( in NodeDescr node, in EdgeDescr edge )
     {
-        return &nodes[ node.idx ].edges[ edge.idx ].payload;
+        return nodes[ node.idx ].edges[ edge.idx ].payload;
     }
 }
 
