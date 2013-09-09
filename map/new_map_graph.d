@@ -311,5 +311,3 @@ size_t createEdge( Graph, Payload )(
     
     return graph.addEdge( from_node_idx, edge );
 }
-
-alias MapGraph LineGraph;
