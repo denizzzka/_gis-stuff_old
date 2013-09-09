@@ -18,6 +18,8 @@ struct Point
 {
     MapCoords coords;
     
+    alias coords this;
+    
     this( MapCoords coords )
     {
         this.coords = coords;
@@ -32,8 +34,6 @@ struct Point
     {
         return getSphericalDistance( getRadiansCoords, v.getRadiansCoords );
     }
-    
-    alias coords this;
 }
 
 struct Polyline
