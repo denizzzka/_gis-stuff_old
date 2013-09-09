@@ -3,6 +3,7 @@ module math.graph.new_pathfinder;
 import std.algorithm: canFind;
 debug(graph) import std.stdio;
 
+
 template PathFinder( Graph, NodeDescr, EdgeDescr )
 {
     struct PathElement
