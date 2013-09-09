@@ -63,7 +63,7 @@ class MapGraph
 {
     alias DirectedGraph!( Point, Polyline ) G;
     
-    public // TODO: need to be a package
+    protected // TODO: need to be a package
     {
         G graph;
     }
