@@ -17,7 +17,7 @@ template PathFinder( Graph, NodeDescr, EdgeDescr )
     PathElement[] findPath( in Graph graph, in NodeDescr startNode, in NodeDescr goalNode )
     {
         auto r = findPathScore( graph, startNode, goalNode );
-        return (r is null) ? null : reconstructPath!( NodeDescr )( r, goalNode );
+        return (r is null) ? null : reconstructPath( r, goalNode );
     }
     
     private
@@ -121,7 +121,7 @@ template PathFinder( Graph, NodeDescr, EdgeDescr )
             return null;
         }
         
-        PathElement[] reconstructPath(NodeDescr)( Score[NodeDescr] scores, NodeDescr curr )
+        PathElement[] reconstructPath( Score[NodeDescr] scores, NodeDescr curr )
         {
             PathElement[] res;
             
