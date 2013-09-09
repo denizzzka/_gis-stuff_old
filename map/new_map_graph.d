@@ -38,7 +38,7 @@ struct Point
 
 struct Polyline
 {
-    public // need package here
+    private // need package here
     {
         MapCoords[] points; /// points between start and end points
     }
