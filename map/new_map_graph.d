@@ -81,7 +81,7 @@ class MapGraph
         
         auto prepared = cutOnCrossings( descriptions );
         
-        size_t[ulong] already_stored;
+        NodeDescr[ulong] already_stored;
         
         foreach( line; descriptions )
             addPolyline( line, already_stored );
@@ -144,7 +144,7 @@ class MapGraph
             ForeignID = Description.ForeignNode.ForeignID
         )(
             Description line,
-            ref size_t[ForeignID] already_stored
+            ref NodeDescr[ForeignID] already_stored
         )
     in
     {
@@ -154,8 +154,8 @@ class MapGraph
     {
         size_t last_node = line.nodes_ids.length - 1;
         
-        auto from_node_idx = addPoint( line.getNode( 0 ), already_stored );
-        auto to_node_idx = addPoint( line.getNode( last_node ), already_stored );
+        auto from_node = addPoint( line.getNode( 0 ), already_stored );
+        auto to_node = addPoint( line.getNode( last_node ), already_stored );
         
         Coords points[];
         
@@ -163,29 +163,31 @@ class MapGraph
             points ~= line.getNode( i ).getCoords;
         
         auto poly = Polyline( points, line.type );
-                
-        size_t edge_idx = CREATE_EDGE( graph, from_node_idx, to_node_idx, poly );
         
-        return PolylineDescriptor( from_node_idx, edge_idx );
+        G.ConnectionInfo conn = { from: from_node, to: to_node };
+        
+        auto edgeDescr = graph.addEdge( conn, poly );
+        
+        return PolylineDescriptor( from_node, edgeDescr );
     }
     
     private
-    size_t addPoint( ForeignNode, ForeignID = ForeignNode.ForeignID )(
+    NodeDescr addPoint( ForeignNode, ForeignID = ForeignNode.ForeignID )(
             ForeignNode node,
-            ref size_t[ ForeignID ] already_stored
+            ref NodeDescr[ ForeignID ] already_stored
         )
     {
-        size_t* p = node.foreign_id in already_stored;
+        NodeDescr* p = node.foreign_id in already_stored;
         
         if( p !is null )
             return *p;
         else
         {
             auto point = Point( node.getCoords );
-            auto idx = graph.addPoint( point );
-            already_stored[ node.foreign_id ] = idx;
+            auto descr = graph.addNode( point );
+            already_stored[ node.foreign_id ] = descr;
             
-            return idx;
+            return descr;
         }
     }
     
@@ -202,25 +204,18 @@ class MapGraph
         
     static struct Polylines
     {
-        PolylineDescriptor*[] descriptors;
         const MapGraph map_graph;
+        PolylineDescriptor*[] descriptors;
         
         this( in MapGraph graph )
         {
             map_graph = graph;
         }
-        
-        @disable
-        Coords[] getPoints( in size_t descriptor_idx ) const
-        {
-            auto descriptor = descriptors[ descriptor_idx ];
-            return descriptor.getPoints( map_graph );
-        }
     }
     
-    size_t getRandomNodeIdx() const
+    NodeDescr getRandomNode() const
     {
-        return uniform( 0, graph.nodes.length );
+        return graph.getRandomNode;
     }
 }
 
@@ -279,14 +274,10 @@ Description[] cutOnCrossings( Description )( Description[] lines )
 
 unittest
 {
-    alias MapCoords Coords;
     alias Vector2D!long FC; // foreign coords
     alias Box!(MapCoords.Coords) BBox;
     
-    alias TEdge!Polyline Edge;
-    alias TNode!( Edge, Point ) Node;
-    
-    alias MapGraph!( Node, createEdge ) G;
+    alias MapGraph G;
     
     FC[] points = [
             FC(0,0), FC(1,1), FC(2,2), FC(3,3), FC(4,4), // first line
