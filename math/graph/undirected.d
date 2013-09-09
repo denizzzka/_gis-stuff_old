@@ -10,19 +10,22 @@ class UndirectedGraph( Point, EdgePayload ) : IGraph!( Point, EdgePayload, NodeD
 {
     struct Edge
     {
-        NodeDescr from_node;
-        NodeDescr to_node;
+        ConnectionInfo connection;
         
         EdgePayload payload;
     }
     
+    private
+    struct GlobalEdgeDescr { size_t idx; }
+    
     struct Node
     {
-        package Edge[] edges;
+        private GlobalEdgeDescr[] edges;
         
         Point point;
         
-        EdgeDescr addEdge( Edge edge )
+        private
+        EdgeDescr addEdge( GlobalEdgeDescr edge )
         {
             EdgeDescr res = { idx: edges.length };
             
@@ -33,6 +36,7 @@ class UndirectedGraph( Point, EdgePayload ) : IGraph!( Point, EdgePayload, NodeD
     }
     
     package Node[] nodes;
+    private Edge[] edges;
     
     bool isAvailable( in NodeDescr nd ) const
     {
@@ -51,14 +55,20 @@ class UndirectedGraph( Point, EdgePayload ) : IGraph!( Point, EdgePayload, NodeD
     
     EdgeDescr addEdge( in ConnectionInfo conn, EdgePayload edgePayload )
     {
-        Edge e = { to_node: conn.to, payload: edgePayload };
+        GlobalEdgeDescr global = { idx: edges.length };
         
-        return nodes[ conn.from.idx ].addEdge( e );
+        Edge e = { connection: conn, payload: edgePayload };
+        edges ~= e;
+        
+        nodes[ conn.to.idx ].addEdge( global );
+        return nodes[ conn.from.idx ].addEdge( global );
     }
     
     const (EdgePayload)* getEdgePayload( in NodeDescr node, in EdgeDescr edge ) const
     {
-        return &nodes[ node.idx ].edges[ edge.idx ].payload;
+        GlobalEdgeDescr global = nodes[ node.idx ].edges[ edge.idx ];
+        
+        return &edges[ global.idx ].payload;
     }
 }
 
