@@ -6,7 +6,7 @@ import math.graph.iface;
 struct NodeDescr { size_t idx; }
 struct EdgeDescr { size_t idx; }
 
-class UndirectedGraph( Point, EdgePayload ) : IGraph!( Point, EdgePayload, NodeDescr, EdgeDescr )
+class UndirectedGraph( NodePayload, EdgePayload ) : IGraph!( NodePayload, EdgePayload, NodeDescr, EdgeDescr )
 {
     struct Edge
     {
@@ -21,7 +21,7 @@ class UndirectedGraph( Point, EdgePayload ) : IGraph!( Point, EdgePayload, NodeD
     {
         private GlobalEdgeDescr[] edges;
         
-        Point point;
+        NodePayload payload;
         
         private
         EdgeDescr addEdge( GlobalEdgeDescr edge )
@@ -42,11 +42,11 @@ class UndirectedGraph( Point, EdgePayload ) : IGraph!( Point, EdgePayload, NodeD
         return nd.idx < nodes.length;
     }
     
-    NodeDescr addPoint( Point v )
+    NodeDescr addNode( NodePayload v )
     {
         NodeDescr res = { idx: nodes.length };
         
-        Node n = { point: v };
+        Node n = { payload: v };
         nodes ~= n;
         
         return res;

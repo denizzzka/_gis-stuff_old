@@ -17,6 +17,28 @@ import std.stdio;
 
 alias MapCoords Coords;
 
+struct Point
+{
+    MapCoords coords;
+    
+    this( MapCoords coords )
+    {
+        this.coords = coords;
+    }
+    
+    float distance( in Point v, in float weight ) const
+    {
+        return heuristic( v ) * weight;
+    }
+    
+    float heuristic( in Point v ) const
+    {
+        return getSphericalDistance( getRadiansCoords, v.getRadiansCoords );
+    }
+    
+    alias coords this;
+}
+
 struct Polyline
 {
     public // need package here
@@ -40,88 +62,8 @@ struct Polyline
     }
 }
 
-struct Point
+class MapGraph
 {
-    MapCoords coords;
-    
-    this( MapCoords coords )
-    {
-        this.coords = coords;
-    }
-    
-    float distance( in Point v, in float weight ) const
-    {
-        return heuristic( v ) * weight;
-    }
-    
-    float heuristic( in Point v ) const
-    {
-        return getSphericalDistance( getRadiansCoords, v.getRadiansCoords );
-    }
-    
-    alias coords this;
-}
-
-struct TPolylineDescriptor( MapGraph )
-{
-    uint node_idx;
-    uint edge_idx;
-    
-    this( uint node_idx, uint edge_idx )
-    {
-        this.node_idx = node_idx;
-        this.edge_idx = edge_idx;
-    }
-    
-    Coords[] getPoints()( in MapGraph mapGraph ) const
-    {
-        Coords[] res;
-        
-        auto start_node = &mapGraph.graph.nodes[ node_idx ];
-        
-        res ~= start_node.point.coords;
-        
-        auto edge = mapGraph.graph.getEdge( node_idx, edge_idx );
-        
-        foreach( c; edge.payload.points )
-            res ~= c;
-        
-        auto end_node_idx = edge.to_node;
-        res ~= mapGraph.graph.nodes[ end_node_idx ].point.coords;
-        
-        return res;
-    }
-    
-    BBox getBoundary( in MapGraph mapGraph ) const
-    {
-        auto points = getPoints( mapGraph );
-        assert( points.length > 0 );
-        
-        auto res = BBox( points[0].map_coords, MapCoords.Coords(0,0) );
-        
-        for( auto i = 1; i < points.length; i++ )
-            res.addCircumscribe( points[i].map_coords );
-        
-        return res;
-    }
-    
-    ref const (Polyline) getPolyline()( in MapGraph mapGraph ) const
-    {
-        return getEdge( mapGraph ).payload;
-    }
-    
-    private
-    auto getEdge()( in MapGraph mapGraph ) const
-    {
-        return mapGraph.graph.getEdge( node_idx, edge_idx );
-    }
-}
-
-class TMapGraph
-{
-    alias Box!(MapCoords.Coords) BBox;
-    alias TPolylineDescriptor!TMapGraph PolylineDescriptor;
-    
     alias DirectedGraph!( Point, Polyline ) G;
     
     public // TODO: need to be a package
@@ -144,6 +86,61 @@ class TMapGraph
         
         foreach( line; descriptions )
             addPolyline( line, already_stored );
+    }
+    
+    struct PolylineDescriptor
+    {
+        NodeDescr node;
+        EdgeDescr edge;
+        
+        this( NodeDescr node, EdgeDescr edge )
+        {
+            this.node = node;
+            this.edge = edge;
+        }
+        
+        Coords[] getPoints()( in MapGraph mapGraph ) const
+        {
+            Coords[] res;
+            
+            auto start_node = mapGraph.graph.nodes[ node_idx ];
+            
+            res ~= start_node.point.coords;
+            
+            auto edge = mapGraph.graph.getEdge( node_idx, edge_idx );
+            
+            foreach( c; edge.payload.points )
+                res ~= c;
+            
+            auto end_node_idx = edge.to_node;
+            res ~= mapGraph.graph.nodes[ end_node_idx ].point.coords;
+            
+            return res;
+        }
+        
+        BBox getBoundary( in MapGraph mapGraph ) const
+        {
+            auto points = getPoints( mapGraph );
+            assert( points.length > 0 );
+            
+            auto res = BBox( points[0].map_coords, MapCoords.Coords(0,0) );
+            
+            for( auto i = 1; i < points.length; i++ )
+                res.addCircumscribe( points[i].map_coords );
+            
+            return res;
+        }
+        
+        ref const (Polyline) getPolyline()( in MapGraph mapGraph ) const
+        {
+            return getEdge( mapGraph ).payload;
+        }
+        
+        private
+        auto getEdge()( in MapGraph mapGraph ) const
+        {
+            return mapGraph.graph.getEdge( node_idx, edge_idx );
+        }
     }
     
     PolylineDescriptor addPolyline(
@@ -200,7 +197,7 @@ class TMapGraph
     {
         PolylineDescriptor[] res;
         
-        foreach( node_idx, ref const node; graph.nodes )
+        foreach( node_idx, ref const node; graph.getNodesRange )
             for( auto i = 0; i < node.edgesFromNode( node_idx ).length; i++ )
                 res ~= PolylineDescriptor( node_idx, i );
         
@@ -210,9 +207,9 @@ class TMapGraph
     static struct Polylines
     {
         PolylineDescriptor*[] descriptors;
-        const TMapGraph map_graph;
+        const MapGraph map_graph;
         
-        this( in TMapGraph graph )
+        this( in MapGraph graph )
         {
             map_graph = graph;
         }
@@ -293,7 +290,7 @@ unittest
     alias TEdge!Polyline Edge;
     alias TNode!( Edge, Point ) Node;
     
-    alias TMapGraph!( Node, createEdge ) G;
+    alias MapGraph!( Node, createEdge ) G;
     
     FC[] points = [
             FC(0,0), FC(1,1), FC(2,2), FC(3,3), FC(4,4), // first line
@@ -341,5 +338,5 @@ size_t createEdge( Graph, Payload )(
     return graph.addEdge( from_node_idx, edge );
 }
 
-alias TMapGraph LineGraph;
+alias MapGraph LineGraph;
 */

@@ -8,7 +8,7 @@ import std.random: uniform;
 struct NodeDescr { size_t idx; }
 struct EdgeDescr { size_t idx; }
 
-class DirectedGraph( Point, EdgePayload ) : IGraph!( Point, EdgePayload, NodeDescr, EdgeDescr )
+class DirectedGraph( NodePayload, EdgePayload ) : IGraph!( NodePayload, EdgePayload, NodeDescr, EdgeDescr )
 {
     struct Edge
     {
@@ -21,7 +21,7 @@ class DirectedGraph( Point, EdgePayload ) : IGraph!( Point, EdgePayload, NodeDes
     {
         package Edge[] edges;
         
-        Point point;
+        NodePayload payload;
         
         private
         EdgeDescr addEdge( Edge edge )
@@ -41,11 +41,11 @@ class DirectedGraph( Point, EdgePayload ) : IGraph!( Point, EdgePayload, NodeDes
         return nd.idx < nodes.length;
     }
     
-    NodeDescr addPoint( Point v )
+    NodeDescr addNode( NodePayload nodePayload )
     {
         NodeDescr res = { idx: nodes.length };
         
-        Node n = { point: v };
+        Node n = { payload: nodePayload };
         nodes ~= n;
         
         return res;
@@ -56,6 +56,11 @@ class DirectedGraph( Point, EdgePayload ) : IGraph!( Point, EdgePayload, NodeDes
         Edge e = { to_node: conn.to, payload: edgePayload };
         
         return nodes[ conn.from.idx ].addEdge( e );
+    }
+    
+    ref getNodePayload( in NodeDescr node )
+    {
+        return nodes[ node.idx ].payload;
     }
     
     ref EdgePayload getEdgePayload( in NodeDescr node, in EdgeDescr edge )
@@ -83,7 +88,7 @@ class DirectedGraph( Point, EdgePayload ) : IGraph!( Point, EdgePayload, NodeDes
         size_t length() const { return graph.nodes.length; }
     }
     
-    NodesRange getNodes() const
+    NodesRange getNodesRange() const
     {
         NodesRange res = { node: { idx: 0 } };
         return res;

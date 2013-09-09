@@ -45,7 +45,7 @@ template PathFinder( Graph, NodeDescr, EdgeDescr )
                     came_from: { idx: typeof(Score.came_from.idx).max }, // magic for correct path reconstruct
                     came_through_edge: { idx: 666 }, // not magic, just for ease of debugging
                     g: 0,
-                    full: start.point.heuristic( goal.point )
+                    full: start.payload.heuristic( goal.payload )
                 };
             
             score[startNode] = startScore;
@@ -92,7 +92,7 @@ template PathFinder( Graph, NodeDescr, EdgeDescr )
                     if( canFind( closed, neighborNode ) )
                         continue;
                     
-                    auto tentative = score[currNode].g + curr.point.distance( neighbor.point, e.payload.weight );
+                    auto tentative = score[currNode].g + curr.payload.distance( neighbor.payload, e.payload.weight );
                     
                     if( !canFind( open, neighborNode ) )
                     {
@@ -108,7 +108,7 @@ template PathFinder( Graph, NodeDescr, EdgeDescr )
                             came_from: currNode,
                             came_through_edge: edge,
                             g: tentative,
-                            full: tentative + neighbor.point.heuristic( goal.point )
+                            full: tentative + neighbor.payload.heuristic( goal.payload )
                         };
                         
                     score[neighborNode] = neighborScore;
@@ -193,7 +193,7 @@ unittest
             if( x == 0 && y == 0 )
             {
                 DNP from_point = { coords: Vector2D!float(x, y) };
-                start_from = g.addPoint( from_point );
+                start_from = g.addNode( from_point );
             }
             else
                 start_from = row[x];
@@ -205,10 +205,10 @@ unittest
             DNP to_up = { coords: Vector2D!float(x, y+1) };
             DNP to_right = { coords: Vector2D!float(x+1, y) };
             
-            row[x] = g.addPoint( to_up );
+            row[x] = g.addNode( to_up );
             
             if( y == 0 )
-                row[x+1] = g.addPoint( to_right );
+                row[x+1] = g.addNode( to_right );
             
             EdgePayload up_edge_payload = { weight: 5 };
             EdgePayload right_edge_payload = { weight: 4.7 };
@@ -226,7 +226,7 @@ unittest
     assert( s.length == 7 );
     
     DNP g2_p = { Vector2D!float(11,4) };
-    NodeDescr goal2 = g.addPoint( g2_p );
+    NodeDescr goal2 = g.addNode( g2_p );
     
     s = pathFinder.findPath( g, from, goal2 );
     assert(!s); // path to unconnected point can not be found

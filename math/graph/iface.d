@@ -1,9 +1,9 @@
 module math.graph.iface;
 
 
-interface IGraph( Point, EdgePayload, NodeDescr, EdgeDescr )
+interface IGraph( NodePayload, EdgePayload, NodeDescr, EdgeDescr )
 {
-    NodeDescr addPoint( Point point );
+    NodeDescr addNode( NodePayload nodePayload );
     
     struct ConnectionInfo
     {
