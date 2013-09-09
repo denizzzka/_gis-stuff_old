@@ -196,7 +196,7 @@ class MapGraph
         
         return res;
     }
-        
+    
     static struct Polylines
     {
         const MapGraph map_graph;
