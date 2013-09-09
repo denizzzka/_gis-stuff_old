@@ -3,21 +3,14 @@ module math.graph.digraph;
 import math.graph.iface;
 
 
-struct EdgeDescr
-{
-    size_t idx;
-}
-
-struct NodeDescr
-{
-    size_t idx;
-}
+struct EdgeDescr { size_t idx; }
+struct NodeDescr { size_t idx; }
 
 class DirectedGraph( Point, EdgePayload ) : IGraph!( Point, EdgePayload, NodeDescr, EdgeDescr )
 {
     struct Edge
     {
-        size_t to_node;
+        NodeDescr to_node;
         EdgePayload payload;
     }
     
@@ -49,9 +42,11 @@ class DirectedGraph( Point, EdgePayload ) : IGraph!( Point, EdgePayload, NodeDes
         return res;
     }
     
-    EdgeDescr addEdge( in NodeDescr fromNode, Edge edge )
+    EdgeDescr addEdge( in ConnectionInfo conn, EdgePayload edgePayload )
     {
-        return nodes[ fromNode.idx ].addEdge( edge );
+        Edge e = { to_node: conn.to, payload: edgePayload };
+        
+        return nodes[ conn.from.idx ].addEdge( e );
     }
     
     const (EdgePayload)* getEdgePayload( in NodeDescr node, in EdgeDescr edge ) const
