@@ -32,6 +32,11 @@ class DirectedGraph( Point, EdgePayload ) : IGraph!( Point, EdgePayload, NodeDes
     
     package Node[] nodes;
     
+    bool isAvailable( in NodeDescr nd ) const
+    {
+        return nd.idx < nodes.length;
+    }
+    
     NodeDescr addPoint( Point v )
     {
         NodeDescr res = { idx: nodes.length };

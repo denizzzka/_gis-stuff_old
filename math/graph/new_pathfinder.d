@@ -27,8 +27,8 @@ template PathFinder( Graph, NodeDescr, EdgeDescr )
         Score[NodeDescr] findPathScore( in Graph graph, in NodeDescr startNode, in NodeDescr goalNode )
         in
         {
-            assert( startNode.idx < graph.nodes.length );
-            assert( goalNode.idx < graph.nodes.length );
+            assert( graph.isAvailable( startNode ) );
+            assert( graph.isAvailable( goalNode ) );
         }
         body
         {
