@@ -14,8 +14,6 @@ import std.random: uniform;
 import std.stdio;
 
 
-alias MapCoords Coords;
-
 struct Point
 {
     MapCoords coords;
@@ -42,12 +40,12 @@ struct Polyline
 {
     public // need package here
     {
-        Coords[] points; /// points between start and end points
+        MapCoords[] points; /// points between start and end points
     }
     
     cat.Line type = cat.Line.OTHER;
     
-    this( Coords[] points, cat.Line type )
+    this( MapCoords[] points, cat.Line type )
     {
         this.points = points;
         this.type = type;
@@ -99,9 +97,9 @@ class MapGraph
         }
     }
     
-    Coords[] getPoints( in PolylineDescriptor descr ) const
+    MapCoords[] getPoints( in PolylineDescriptor descr ) const
     {
-        Coords[] res;
+        MapCoords[] res;
         
         res ~= graph.getNodePayload( descr.node );
         
@@ -152,12 +150,13 @@ class MapGraph
     }
     body
     {
+        size_t first_node = 0;
         size_t last_node = line.nodes_ids.length - 1;
         
-        auto from_node = addPoint( line.getNode( 0 ), already_stored );
+        auto from_node = addPoint( line.getNode( first_node ), already_stored );
         auto to_node = addPoint( line.getNode( last_node ), already_stored );
         
-        Coords points[];
+        MapCoords points[];
         
         for( auto i = 1; i < last_node; i++ )
             points ~= line.getNode( i ).getCoords;
@@ -275,7 +274,6 @@ Description[] cutOnCrossings( Description )( Description[] lines )
 unittest
 {
     alias Vector2D!long FC; // foreign coords
-    alias Box!(MapCoords.Coords) BBox;
     
     alias MapGraph G;
     
@@ -292,9 +290,9 @@ unittest
     ulong[] n1 = [ 0, 10, 20, 30, 40 ];
     ulong[] n2 = [ 50, 60, 20, 70, 80, 30 ];
     
-    Coords getNodeByID( in ulong id )
+    MapCoords getNodeByID( in ulong id )
     {
-        Coords res;
+        MapCoords res;
         res.map_coords = nodes[ id ];
         
         return res;
