@@ -2,6 +2,8 @@ module math.graph.digraph;
 
 import math.graph.iface;
 
+import std.random: uniform;
+
 
 struct NodeDescr { size_t idx; }
 struct EdgeDescr { size_t idx; }
@@ -59,6 +61,12 @@ class DirectedGraph( Point, EdgePayload ) : IGraph!( Point, EdgePayload, NodeDes
     ref EdgePayload getEdgePayload( in NodeDescr node, in EdgeDescr edge )
     {
         return nodes[ node.idx ].edges[ edge.idx ].payload;
+    }
+    
+    NodeDescr getRandomNode() const
+    {
+        NodeDescr res = { idx: uniform( 0, nodes.length ) };
+        return res;
     }
 }
 
