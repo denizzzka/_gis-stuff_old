@@ -23,7 +23,7 @@ template PathFinder( Graph, NodeDescr, EdgeDescr )
     private
     {
         /// A* algorithm
-        Score[NodeDescr] findPathScore( Graph, NodeDescr )( in Graph graph, in NodeDescr startNode, in NodeDescr goalNode )
+        Score[NodeDescr] findPathScore( in Graph graph, in NodeDescr startNode, in NodeDescr goalNode )
         in
         {
             assert( startNode.idx < graph.nodes.length );
