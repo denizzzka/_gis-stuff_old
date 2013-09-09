@@ -59,6 +59,18 @@ struct Polyline
     }
 }
 
+struct PolylineDescriptor
+{
+    NodeDescr node;
+    EdgeDescr edge;
+    
+    this( NodeDescr node, EdgeDescr edge )
+    {
+        this.node = node;
+        this.edge = edge;
+    }
+}
+
 class MapGraph
 {
     alias DirectedGraph!( Point, Polyline ) G;
@@ -83,18 +95,6 @@ class MapGraph
         
         foreach( line; descriptions )
             addPolyline( line, already_stored );
-    }
-    
-    struct PolylineDescriptor
-    {
-        NodeDescr node;
-        EdgeDescr edge;
-        
-        this( NodeDescr node, EdgeDescr edge )
-        {
-            this.node = node;
-            this.edge = edge;
-        }
     }
     
     MapCoords[] getPoints( in PolylineDescriptor descr ) const
@@ -124,17 +124,6 @@ class MapGraph
             res.addCircumscribe( points[i].map_coords );
         
         return res;
-    }
-    
-    ref const (Polyline) getPolyline()( in MapGraph mapGraph ) const
-    {
-        return getEdge( mapGraph ).payload;
-    }
-    
-    private
-    auto getEdge()( in MapGraph mapGraph ) const
-    {
-        return mapGraph.graph.getEdge( node_idx, edge_idx );
     }
     
     PolylineDescriptor addPolyline(
