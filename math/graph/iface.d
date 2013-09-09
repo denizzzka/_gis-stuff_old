@@ -1,21 +1,11 @@
 module math.graph.iface;
 
 
-struct EdgeIdx
+interface IGraph( Point, EdgePayload, NodeDescr, EdgeDescr )
 {
-    size_t edgeIdx;
-}
-
-struct NodeIdx
-{
-    size_t nodeIdx;
-}
-
-interface IGraph( Point, EdgePayload )
-{
-    NodeIdx addPoint( Point point );
+    NodeDescr addPoint( Point point );
     
-    EdgeIdx addEdge( ConnectionInfo )( ConnectionInfo ci, EdgePayload edgePayload );
+    EdgeDescr addEdge( ConnectionInfo )( ConnectionInfo ci, EdgePayload edgePayload );
     
-    ref EdgePayload getEdgePayload( in size_t node_idx, in size_t edge_idx ) const;
+    const (EdgePayload)* getEdgePayload( in NodeDescr node, in EdgeDescr edge ) const;
 }
