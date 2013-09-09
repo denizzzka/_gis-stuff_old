@@ -8,7 +8,7 @@ template PathFinder( Graph, NodeDescr, EdgeDescr )
     struct PathElement
     {
         NodeDescr node;
-        size_t came_through_edge_idx;
+        EdgeDescr came_through_edge_idx;
     }
     
     /// A* algorithm
@@ -42,7 +42,7 @@ template PathFinder( Graph, NodeDescr, EdgeDescr )
             
             Score startScore = {
                     came_from: typeof(Score.came_from).max, // magic for correct path reconstruct
-                    came_through_edge: 666, // not magic, just for ease of debugging
+                    came_through_edge: { idx: 666 }, // not magic, just for ease of debugging
                     g: 0,
                     full: start.point.heuristic( goal.point )
                 };
@@ -80,10 +80,10 @@ template PathFinder( Graph, NodeDescr, EdgeDescr )
                 open = open[0..key] ~ open[key+1..$];
                 closed ~= currNode;
                 
-                size_t edge_idx = -1;
+                EdgeDescr edge = { idx: -1 };
                 foreach( e; curr.edges )
                 {
-                    edge_idx++;
+                    edge.idx++;
                     
                     NodeDescr neighborNode = e.to_node;
                     const Node* neighbor = &graph.nodes[neighborNode.idx];
@@ -105,7 +105,7 @@ template PathFinder( Graph, NodeDescr, EdgeDescr )
                     // Updating neighbor score
                     Score neighborScore = {
                             came_from: currNode.idx,
-                            came_through_edge: edge_idx,
+                            came_through_edge: edge,
                             g: tentative,
                             full: tentative + neighbor.point.heuristic( goal.point )
                         };
@@ -143,7 +143,7 @@ template PathFinder( Graph, NodeDescr, EdgeDescr )
         static struct Score
         {
             size_t came_from; /// Navigated node
-            size_t came_through_edge;
+            EdgeDescr came_through_edge;
             float g; /// Cost from start along best known path
             float full; /// f(x), estimated total cost from start to goal through node
         }
