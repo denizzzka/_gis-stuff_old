@@ -3,6 +3,7 @@ module map.new_map_graph;
 import math.geometry;
 import math.rtree2d;
 import math.graph.digraph;
+public import math.graph.digraph: NodeDescr, EdgeDescr;
 import map.map: MapCoords, BBox;
 import cat = config.categories: Line;
 static import config.map;
@@ -95,6 +96,12 @@ class MapGraph
         
         foreach( line; descriptions )
             addPolyline( line, already_stored );
+    }
+    
+    // TODO: replace this by getPayload()
+    ref const (Polyline) getPolyline( in PolylineDescriptor descr ) const
+    {
+        return graph.getEdge( descr.node, descr.edge ).payload;
     }
     
     MapCoords[] getPoints( in PolylineDescriptor descr ) const

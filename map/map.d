@@ -4,7 +4,8 @@ import math.geometry;
 import math.rtree2d;
 static import math.earth;
 import cat = config.categories;
-import map.map_graph: LineGraph, cutOnCrossings;
+//import map.map_graph: LineGraph, cutOnCrossings;
+import map.new_map_graph;
 import map.roads: RoadGraph;
 import map.area: Area;
 static import config.map;
@@ -117,7 +118,7 @@ struct AnyLineDescriptor
     
     union
     {
-        LineGraph.PolylineDescriptor line;
+        PolylineDescriptor line;
         RoadGraph.PolylineDescriptor road;
         Area area;
     }    
@@ -154,7 +155,7 @@ struct Layer
 class Region
 {
     Layer[5] layers;
-    LineGraph line_graph;
+    MapGraph line_graph;
     Area[] areas;
     
     this()
@@ -191,9 +192,9 @@ class Region
     
     void fillLines( Prepare )( Prepare prepared )
     {
-        line_graph = new LineGraph;
+        line_graph = new MapGraph;
         
-        size_t[ulong] already_stored;
+        NodeDescr[ulong] already_stored;
         
         foreach( i, ref unused; layers )
         {
@@ -205,13 +206,13 @@ class Region
                 if( epsilon )
                     descr.generalize( epsilon );
                 
-                auto descriptior = line_graph.addPolyline( descr, already_stored );
+                auto descriptor = line_graph.addPolyline( descr, already_stored );
                 
-                auto bbox = descriptior.getBoundary( line_graph );
+                auto bbox = line_graph.getBoundary( descriptor );
                 
                 AnyLineDescriptor any = {
                     line_class: cat.LineClass.POLYLINE,
-                    line: descriptior
+                    line: descriptor
                 };
                 
                 layers[i].lines.addObject( bbox, any );

@@ -118,5 +118,5 @@ class DirectedGraph( NodePayload, EdgePayload ) : IGraph!( NodePayload, EdgePayl
 
 unittest
 {
-    auto t = new DirectedGraph!( float, float );
+    auto t = new DirectedGraph!( float, double );
 }

@@ -122,8 +122,8 @@ class Window : IWindow
 		{
 		    case POLYLINE:
 			auto graph = reg_lines.region.line_graph;
-			encoded_points = line.line.getPoints( graph );
-			color = line.line.getPolyline( graph ).properties.color;
+			encoded_points = graph.getPoints( line.line );
+			color = graph.getPolyline( line.line ).properties.color;
 			break;
 			
 		    case ROAD:
