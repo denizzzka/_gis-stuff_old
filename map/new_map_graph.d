@@ -14,7 +14,9 @@ import std.random: uniform;
 import std.stdio;
 
 
-struct TPolyline( Coords )
+alias MapCoords Coords;
+
+struct Polyline
 {
     public // need package here
     {
@@ -65,7 +67,6 @@ struct TPolylineDescriptor( MapGraph )
 {
     alias MapGraph.Coords Coords;
     alias MapGraph.BBox BBox;
-    alias TPolyline!Coords Polyline;
     
     uint node_idx;
     uint edge_idx;
@@ -297,7 +298,6 @@ unittest
     alias Vector2D!long FC; // foreign coords
     alias Box!(MapCoords.Coords) BBox;
     
-    alias TPolyline!Coords Polyline;
     alias TEdge!Polyline Edge;
     alias TNode!( Edge, Point ) Node;
     
@@ -349,7 +349,6 @@ size_t createEdge( Graph, Payload )(
     return graph.addEdge( from_node_idx, edge );
 }
 
-alias TPolyline!MapCoords Polyline;
 alias TEdge!Polyline Edge;
 alias TNode!( Edge, Point ) Node;
 
