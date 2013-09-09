@@ -41,7 +41,7 @@ template PathFinder( Graph, NodeDescr, EdgeDescr )
             const Node* goal = &graph.nodes[goalNode.idx];
             
             Score startScore = {
-                    came_from: typeof(Score.came_from).max, // magic for correct path reconstruct
+                    came_from: { idx: typeof(Score.came_from.idx).max }, // magic for correct path reconstruct
                     came_through_edge: { idx: 666 }, // not magic, just for ease of debugging
                     g: 0,
                     full: start.point.heuristic( goal.point )
@@ -104,7 +104,7 @@ template PathFinder( Graph, NodeDescr, EdgeDescr )
                     
                     // Updating neighbor score
                     Score neighborScore = {
-                            came_from: currNode.idx,
+                            came_from: currNode,
                             came_through_edge: edge,
                             g: tentative,
                             full: tentative + neighbor.point.heuristic( goal.point )
@@ -134,7 +134,7 @@ template PathFinder( Graph, NodeDescr, EdgeDescr )
                 
                 res ~= e;
                 
-                curr.idx = p.came_from;
+                curr = p.came_from;
             }
 
             return res;
@@ -142,7 +142,7 @@ template PathFinder( Graph, NodeDescr, EdgeDescr )
         
         static struct Score
         {
-            size_t came_from; /// Navigated node
+            NodeDescr came_from; /// Navigated node
             EdgeDescr came_through_edge;
             float g; /// Cost from start along best known path
             float full; /// f(x), estimated total cost from start to goal through node
