@@ -58,10 +58,7 @@ struct Point
         return getSphericalDistance( getRadiansCoords, v.getRadiansCoords );
     }
     
-    auto getRadiansCoords() const
-    {
-        return mercator2coords( coords.getMercatorCoords );
-    }
+    alias coords this;
 }
 
 struct TPolylineDescriptor( MapGraph )
