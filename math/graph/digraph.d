@@ -68,6 +68,12 @@ class DirectedGraph( NodePayload, EdgePayload )
     }
     
     ref const(Edge) getEdge( in NodeDescr node, in EdgeDescr edge ) const
+    in
+    {
+        assert( node.idx < nodes.length );
+        assert( edge.idx < nodes[ node.idx ].edges.length );
+    }
+    body
     {
         return nodes[ node.idx ].edges[ edge.idx ];
     }

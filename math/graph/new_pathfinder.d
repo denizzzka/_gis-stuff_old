@@ -41,14 +41,14 @@ template PathFinder( Graph )
             const (NodeDescr)[] closed; /// The set of nodes already evaluated
             Score[NodeDescr] score;
             
-            const Node* start = &graph.nodes[startNode.idx];
-            const Node* goal = &graph.nodes[goalNode.idx];
+            const auto start = graph.getNodePayload( startNode );
+            const auto goal = graph.getNodePayload( goalNode );
             
             Score startScore = {
                     came_from: { idx: typeof(Score.came_from.idx).max }, // magic for correct path reconstruct
                     came_through_edge: { idx: 666 }, // not magic, just for ease of debugging
                     g: 0,
-                    full: start.payload.heuristic( goal.payload )
+                    full: start.heuristic( goal )
                 };
             
             score[startNode] = startScore;
@@ -78,24 +78,25 @@ template PathFinder( Graph )
                 if( currNode == goalNode )
                     return score;
                 
-                const Node* curr = &graph.nodes[currNode.idx];
+                const auto curr = graph.getNodePayload( currNode );
                 debug(graph) writefln("Curr %s %s lowest full=%s", currNode, curr.point, key_score);
                 
                 open = open[0..key] ~ open[key+1..$];
                 closed ~= currNode;
                 
-                EdgeDescr edge = { idx: -1 };
-                foreach( e; curr.edges )
+                foreach( edge; graph.getEdgesRange( currNode ) )
                 {
+                    const auto e = graph.getEdge( currNode, edge );
+                    // Edge e is removed
                     edge.idx++;
                     
                     NodeDescr neighborNode = e.to_node;
-                    const Node* neighbor = &graph.nodes[neighborNode.idx];
-
+                    const auto neighbor = graph.getNodePayload( neighborNode );
+                    
                     if( canFind( closed, neighborNode ) )
                         continue;
                     
-                    auto tentative = score[currNode].g + curr.payload.distance( neighbor.payload, e.payload.weight );
+                    auto tentative = score[currNode].g + curr.distance( neighbor, e.payload.weight );
                     
                     if( !canFind( open, neighborNode ) )
                     {
@@ -111,7 +112,7 @@ template PathFinder( Graph )
                             came_from: currNode,
                             came_through_edge: edge,
                             g: tentative,
-                            full: tentative + neighbor.payload.heuristic( goal.payload )
+                            full: tentative + neighbor.heuristic( goal )
                         };
                         
                     score[neighborNode] = neighborScore;
