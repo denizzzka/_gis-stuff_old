@@ -52,7 +52,7 @@ class UndirectedGraph( NodePayload, EdgePayload )
         }
     }
     
-    package Node[] nodes;
+    private Node[] nodes;
     private Edge[] edges;
     
     bool isAvailable( in NodeDescr nd ) const
@@ -153,5 +153,5 @@ class UndirectedGraph( NodePayload, EdgePayload )
 
 unittest
 {
-    auto t = new UndirectedGraph!( float, float );
+    auto t = new UndirectedGraph!( float, double );
 }
