@@ -16,13 +16,20 @@ class UndirectedGraph( NodePayload, EdgePayload )
     
     struct Edge
     {
-        ConnectionInfo connection;
+        const ConnectionInfo connection;
         
         EdgePayload payload;
+    }
+    
+    struct DirectedEdge
+    {
+        const Edge* edge;
+        alias edge this;
+        const bool forward_direction;
         
         NodeDescr to_node() const
         {
-            assert( false );
+            return forward_direction ? edge.connection.to : edge.connection.from;
         }
     }
     
@@ -94,11 +101,18 @@ class UndirectedGraph( NodePayload, EdgePayload )
         return nodes[ node.idx ].payload;
     }
     
-    ref const(Edge) getEdge( in NodeDescr node, in EdgeDescr edge ) const
+    DirectedEdge getEdge( in NodeDescr node, in EdgeDescr edge ) const
     {
         GlobalEdgeDescr global = nodes[ node.idx ].edges[ edge.idx ];
         
-        return edges[ global.idx ];
+        const (Edge)* e = &edges[ global.idx ];
+        
+        DirectedEdge directed = {
+                edge: e,
+                forward_direction: node == e.connection.from
+            };
+        
+        return directed;
     }
     
     NodeDescr getRandomNode() const
