@@ -50,6 +50,27 @@ class RoadGraph : MapGraph!( UG, RoadPoint, RoadLine )
         
         return res;
     }
+    
+    override
+    MapCoords[] getMapCoords( in PolylineDescriptor descr ) const
+    {
+        MapCoords[] res;
+        
+        res ~= graph.getNodePayload( descr.node );
+        
+        auto edge = graph.getEdge( descr.node, descr.edge );
+        
+        if( edge.forward_direction )
+            foreach( c; edge.payload.points )
+                res ~= c;
+        else
+            foreach_reverse( c; edge.payload.points )
+                res ~= c;
+        
+        res ~= graph.getNodePayload( edge.to_node );
+        
+        return res;
+    }
 }
 
 unittest

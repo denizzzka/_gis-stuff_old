@@ -38,10 +38,7 @@ struct MapGraphPoint
 
 struct MapPolyline
 {
-    private // need package here
-    {
-        MapCoords[] points; /// points between start and end points
-    }
+    package MapCoords[] points; /// points between start and end points
     
     cat.Line type = cat.Line.OTHER;
     
