@@ -18,10 +18,10 @@ template PathFinder( Graph )
     /// A* algorithm
     ///
     /// Returns: elements in the reverse order
-    PathElement[] findPath( in Graph graph, in NodeDescr startDescr, in NodeDescr goalDescr )
+    PathElement[] findPath( in Graph graph, in NodeDescr start, in NodeDescr goal )
     {
-        auto r = findPathScore( graph, startDescr, goalDescr );
-        return (r is null) ? null : reconstructPath( r, goalDescr );
+        auto r = findPathScore( graph, start, goal );
+        return (r is null) ? null : reconstructPath( r, goal );
     }
     
     private
