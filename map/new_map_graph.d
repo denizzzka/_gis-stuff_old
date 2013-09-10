@@ -191,9 +191,12 @@ class MapGraph( GraphEngine, Point )
     {
         PolylineDescriptor[] res;
         
-        foreach( node; graph.getNodesRange )
-            foreach( edge; graph.getEdgesRange( node ) )
-                res ~= PolylineDescriptor( node, edge );
+        void dg( NodeDescr node, EdgeDescr edge )
+        {
+            res ~= PolylineDescriptor( node, edge );
+        }
+        
+        graph.forAllEdges( &dg );
         
         return res;
     }
