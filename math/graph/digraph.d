@@ -5,10 +5,7 @@ import math.graph.iface;
 import std.random: uniform;
 
 
-struct NodeDescr { size_t idx; }
-struct EdgeDescr { size_t idx; }
-
-class DirectedGraph( NodePayload, EdgePayload ) : IGraph!( NodePayload, EdgePayload, NodeDescr, EdgeDescr )
+class DirectedGraph( NodePayload, EdgePayload ) : IGraph!( NodePayload, EdgePayload, DirectedGraph.NodeDescr, DirectedGraph.EdgeDescr )
 {
     struct Edge
     {
@@ -35,6 +32,9 @@ class DirectedGraph( NodePayload, EdgePayload ) : IGraph!( NodePayload, EdgePayl
     }
     
     package Node[] nodes;
+    
+    struct NodeDescr { size_t idx; }
+    struct EdgeDescr { size_t idx; }
     
     bool isAvailable( in NodeDescr nd ) const
     {

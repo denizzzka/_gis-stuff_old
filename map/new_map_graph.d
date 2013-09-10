@@ -3,7 +3,7 @@ module map.new_map_graph;
 import math.geometry;
 import math.rtree2d;
 import math.graph.digraph;
-public import math.graph.digraph: NodeDescr, EdgeDescr;
+public import math.graph.digraph;
 import map.map: MapCoords, BBox;
 import cat = config.categories: Line;
 static import config.map;
@@ -60,18 +60,6 @@ struct Polyline
     }
 }
 
-struct PolylineDescriptor
-{
-    NodeDescr node;
-    EdgeDescr edge;
-    
-    this( NodeDescr node, EdgeDescr edge )
-    {
-        this.node = node;
-        this.edge = edge;
-    }
-}
-
 class MapGraph( GraphEngine, Point )
 {
     alias GraphEngine G;
@@ -79,6 +67,18 @@ class MapGraph( GraphEngine, Point )
     protected // TODO: need to be a package
     {
         G graph;
+    }
+    
+    struct PolylineDescriptor
+    {
+        GraphEngine.NodeDescr node;
+        GraphEngine.EdgeDescr edge;
+        
+        this( NodeDescr node, EdgeDescr edge )
+        {
+            this.node = node;
+            this.edge = edge;
+        }
     }
     
     this()()
