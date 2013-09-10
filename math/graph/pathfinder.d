@@ -1,214 +1,162 @@
 module math.graph.pathfinder;
 
-import math.graph.graph: Graph;
-
 import std.algorithm: canFind;
 debug(graph) import std.stdio;
 
 
-struct TNode( _Edge, _Point )
+template PathFinder( Graph )
 {
-    alias _Point Point;
-    alias _Edge Edge;
+    alias Graph.NodeDescr NodeDescr;
+    alias Graph.EdgeDescr EdgeDescr;
     
-    private Edge[] edges_storage;
-    
-    Point point;
-    
-    struct LogicalEdgesRange
+    struct PathElement
     {
-        private
-        {
-            const TNode* node;
-            size_t edge_idx;
-        }
-        
-        ref const (Edge) opIndex( size_t idx ) const
-        {
-            return node.edges_storage[ edge_idx ];
-        }
-        
-        ref const (Edge) front() { return opIndex( edge_idx ); }
-        void popFront() { ++edge_idx; }
-        bool empty() const { return edge_idx >= length; }
-        size_t length() const { return node.edges_storage.length; }
+        NodeDescr node;
+        EdgeDescr came_through_edge;
     }
     
-    LogicalEdgesRange logicalEdges( size_t unused ) const
-    {
-        return LogicalEdgesRange( &this );
-    }
-    
-    size_t addEdge( Edge edge )
-    {
-        edges_storage ~= edge;
-        
-        return edges_storage.length - 1;
-    }
-}
-
-struct PathElement
-{
-    size_t node_idx;
-    size_t came_through_edge_idx;
-}
-
-/// A* algorithm
-///
-/// Returns: elements in the reverse order
-PathElement[] findPath( Graph )( in Graph graph, in size_t startNode, in size_t goalNode )
-{
-    auto r = findPathScore( graph, startNode, goalNode );
-    return (r is null) ? null : reconstructPath( r, goalNode );
-}
-
-private
-{
     /// A* algorithm
-    Score[size_t] findPathScore( Graph )( in Graph graph, in size_t startNode, in size_t goalNode )
-    in
+    ///
+    /// Returns: elements in the reverse order
+    PathElement[] findPath( in Graph graph, in NodeDescr start, in NodeDescr goal )
     {
-        assert( startNode < graph.nodes.length );
-        assert( goalNode < graph.nodes.length );
+        auto r = findPathScore( graph, start, goal );
+        return (r is null) ? null : reconstructPath( r, goal );
     }
-    body
+    
+    private
     {
-        alias Graph.Node Node;
-        
-        const (size_t)[] open; /// The set of tentative nodes to be evaluated
-        const (size_t)[] closed; /// The set of nodes already evaluated
-        Score[size_t] score;
-        
-        const Node* start = &graph.nodes[startNode];
-        const Node* goal = &graph.nodes[goalNode];
-        
-        Score startScore = {
-                came_from: typeof(Score.came_from).max, // magic for correct path reconstruct
-                came_through_edge: 666, // not magic, just for ease of debugging
-                g: 0,
-                full: start.point.heuristic( goal.point )
-            };
-        
-        score[startNode] = startScore;
-        open ~= startNode;
-        
-        debug(graph) writefln("Path goal point: %s", goal.point );
-        
-        while( open.length > 0 )
+        /// A* algorithm
+        Score[NodeDescr] findPathScore( in Graph graph, in NodeDescr startDescr, in NodeDescr goalDescr )
+        in
         {
-            debug(graph) writeln("Open: ", open);
-            debug(graph) writeln("open.length=", open.length);
-            debug(graph) writeln("closed.length=", closed.length);
-            debug(graph) writeln("score.length=", score.length);
+            assert( graph.isAvailable( startDescr ) );
+            assert( graph.isAvailable( goalDescr ) );
+        }
+        body
+        {
+            alias Graph.Node Node;
             
-            // Search for open node having the lowest heuristic value
-            size_t key;
-            float key_score = float.max;
-            foreach( i, n; open )
-                if( score[n].full < key_score )
-                {
-                    key = i;
-                    key_score = score[n].full;
-                }
+            const (NodeDescr)[] open; /// The set of tentative nodes to be evaluated
+            const (NodeDescr)[] closed; /// The set of nodes already evaluated
+            Score[NodeDescr] score;
             
-            const size_t currNode = open[key];
+            const auto start = graph.getNodePayload( startDescr );
+            const auto goal = graph.getNodePayload( goalDescr );
             
-            if( currNode == goalNode )
-                return score;
+            Score startScore = {
+                    came_from: { idx: typeof(Score.came_from.idx).max }, // magic for correct path reconstruct
+                    came_through_edge: { idx: 666 }, // not magic, just for ease of debugging
+                    g: 0,
+                    full: start.heuristic( goal )
+                };
             
-            const Node* curr = &graph.nodes[currNode];
-            debug(graph) writefln("Curr %s %s lowest full=%s", currNode, curr.point, key_score);
+            score[startDescr] = startScore;
+            open ~= startDescr;
             
-            open = open[0..key] ~ open[key+1..$];
-            closed ~= currNode;
+            debug(graph) writefln("Path goal point: %s", goal.point );
             
-            size_t edge_idx = -1;
-            foreach( e; curr.logicalEdges( currNode ) )
+            while( open.length > 0 )
             {
-                edge_idx++;
+                debug(graph) writeln("Open: ", open);
+                debug(graph) writeln("open.length=", open.length);
+                debug(graph) writeln("closed.length=", closed.length);
+                debug(graph) writeln("score.length=", score.length);
                 
-                size_t neighborNode = e.to_node;
-                const Node* neighbor = &graph.nodes[neighborNode];
-
-                if( canFind( closed, neighborNode ) )
-                    continue;
+                // Search for open node having the lowest heuristic value
+                size_t key;
+                float key_score = float.max;
+                foreach( i, n; open )
+                    if( score[n].full < key_score )
+                    {
+                        key = i;
+                        key_score = score[n].full;
+                    }
                 
-                auto tentative = score[currNode].g + curr.point.distance( neighbor.point, e.weight );
+                const NodeDescr currDescr = open[key];
                 
-                if( !canFind( open, neighborNode ) )
+                if( currDescr == goalDescr )
+                    return score;
+                
+                const auto curr = graph.getNodePayload( currDescr );
+                debug(graph) writefln("Curr %s %s lowest full=%s", currDescr, curr.point, key_score);
+                
+                open = open[0..key] ~ open[key+1..$];
+                closed ~= currDescr;
+                
+                foreach( edge; graph.getEdgesRange( currDescr ) )
                 {
-                    open ~= neighborNode;
-                    score[neighborNode] = Score();
-                }
-                else
-                    if( tentative >= score[neighborNode].g )
-                        continue;
-                
-                // Updating neighbor score
-                Score neighborScore = {
-                        came_from: currNode,
-                        came_through_edge: edge_idx,
-                        g: tentative,
-                        full: tentative + neighbor.point.heuristic( goal.point )
-                    };
+                    const auto e = graph.getEdge( currDescr, edge );
                     
-                score[neighborNode] = neighborScore;
-                
-                debug(graph)
-                    writefln("Upd neighbor=%s edge=%s %s tentative=%s full=%s",
-                        neighborNode, edge_idx, neighbor.point, tentative, score[neighborNode].full);                
+                    NodeDescr neighborNode = e.to_node;
+                    const auto neighbor = graph.getNodePayload( neighborNode );
+                    
+                    if( canFind( closed, neighborNode ) )
+                        continue;
+                    
+                    auto tentative = score[currDescr].g + curr.distance( neighbor, e.payload.weight );
+                    
+                    if( !canFind( open, neighborNode ) )
+                    {
+                        open ~= neighborNode;
+                        score[neighborNode] = Score();
+                    }
+                    else
+                        if( tentative >= score[neighborNode].g )
+                            continue;
+                    
+                    // Updating neighbor score
+                    Score neighborScore = {
+                            came_from: currDescr,
+                            came_through_edge: edge,
+                            g: tentative,
+                            full: tentative + neighbor.heuristic( goal )
+                        };
+                        
+                    score[neighborNode] = neighborScore;
+                    
+                    debug(graph)
+                        writefln("Upd neighbor=%s edge=%s %s tentative=%s full=%s",
+                            neighborNode, edge.idx, neighbor.point, tentative, score[neighborNode].full);                
+                }
             }
-        }
 
-        return null;
-    }
-    
-    PathElement[] reconstructPath( Score[size_t] scores, size_t curr )
-    {
-        PathElement[] res;
+            return null;
+        }
         
-        Score* p;
-        while( p = curr in scores, p )
+        PathElement[] reconstructPath( Score[NodeDescr] scores, NodeDescr curr )
         {
-            PathElement e;
-            e.node_idx = curr;
-            e.came_through_edge_idx = p.came_through_edge;
+            PathElement[] res;
             
-            res ~= e;
-            
-            curr = p.came_from;
-        }
+            Score* p;
+            while( p = curr in scores, p )
+            {
+                PathElement e;
+                e.node = curr;
+                e.came_through_edge = p.came_through_edge;
+                
+                res ~= e;
+                
+                curr = p.came_from;
+            }
 
-        return res;
-    }
-    
-    static struct Score
-    {
-        size_t came_from; /// Navigated node
-        size_t came_through_edge;
-        float g; /// Cost from start along best known path
-        float full; /// f(x), estimated total cost from start to goal through node
+            return res;
+        }
+        
+        static struct Score
+        {
+            NodeDescr came_from; /// Navigated node
+            EdgeDescr came_through_edge;
+            float g; /// Cost from start along best known path
+            float full; /// f(x), estimated total cost from start to goal through node
+        }
     }
 }
 
 unittest
 {
+    import math.graph.digraph;
     import math.geometry;
-    
-    struct TEdge( _Weight, _Payload )
-    {
-        alias _Payload Payload;
-        alias _Weight Weight;
-        
-        const size_t to_node; /// direction
-        Weight weight;
-        Payload payload;
-        
-        invariant()
-        {
-            assert( weight >= 0 );
-        }
-    }
     
     // Dumb Node Point
     struct DNP
@@ -226,60 +174,63 @@ unittest
         }
     }
     
-    alias TEdge!( float, string ) Edge;
-    alias TNode!( Edge, DNP ) Node;
-    alias Graph!( Node ) G;
+    struct EdgePayload { float weight; }
+    
+    alias DirectedGraph!( DNP, EdgePayload ) G;
+    alias PathFinder!( G ) pathFinder;
+    alias G.NodeDescr NodeDescr;
     
     auto g = new G;
     
     immutable size_t width = 5;
-    size_t[ width+1 ] row;
+    NodeDescr[ width+1 ] row;
     
-    size_t from_idx;
-    size_t goal_idx;
+    NodeDescr from;
+    NodeDescr goal;
     
     for( auto y=0; y < 5; y++ )
         for( auto x=0; x < width; x++ )
         {
-            size_t from;
+            NodeDescr start_from;
             
             if( x == 0 && y == 0 )
             {
                 DNP from_point = { coords: Vector2D!float(x, y) };
-                from = g.addPoint( from_point );
+                start_from = g.addNode( from_point );
             }
             else
-                from = row[x];
+                start_from = row[x];
             
             // saving test points:
-            if( x == 2 && y == 0 ) from_idx = from;
-            if( x == 4 && y == 4 ) goal_idx = from;
+            if( x == 2 && y == 0 ) from = start_from;
+            if( x == 4 && y == 4 ) goal = start_from;
             
             DNP to_up = { coords: Vector2D!float(x, y+1) };
             DNP to_right = { coords: Vector2D!float(x+1, y) };
             
-            row[x] = g.addPoint( to_up );
+            row[x] = g.addNode( to_up );
             
             if( y == 0 )
-                row[x+1] = g.addPoint( to_right );
+                row[x+1] = g.addNode( to_right );
             
-            auto payload = "payload_string";
+            EdgePayload up_edge_payload = { weight: 5 };
+            EdgePayload right_edge_payload = { weight: 4.7 };
             
-            Edge up_edge = { weight: 5, to_node: row[x], payload: payload };
-            Edge right_edge = { weight: 4.7, to_node: row[x+1], payload: payload };
+            G.ConnectionInfo conn_up_edge = { from: start_from, to: row[x] };
+            G.ConnectionInfo conn_right_edge = { from: start_from, to: row[x+1] };
             
-            g.addEdge( from, up_edge );
-            g.addEdge( from, right_edge );
+            g.addEdge( conn_up_edge, up_edge_payload );
+            g.addEdge( conn_right_edge, right_edge_payload );
         }
     
-    auto s = g.findPath( from_idx, goal_idx );
+    auto s = pathFinder.findPath( g, from, goal );
     
     assert( s != null );
     assert( s.length == 7 );
     
     DNP g2_p = { Vector2D!float(11,4) };
-    size_t goal2_idx = g.addPoint( g2_p );
+    NodeDescr goal2 = g.addNode( g2_p );
     
-    s = g.findPath( from_idx, goal2_idx );
+    s = pathFinder.findPath( g, from, goal2 );
     assert(!s); // path to unconnected point can not be found
 }

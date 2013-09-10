@@ -2,7 +2,7 @@ module map.road_graph;
 
 import map.map_graph;
 import math.graph.undirected;
-import math.graph.new_pathfinder: PathFinder;
+import math.graph.pathfinder: PathFinder;
 
 
 struct RoadPoint
