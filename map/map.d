@@ -125,7 +125,6 @@ struct AnyLineDescriptor
 }
 
 alias RTreePtrs!(BBox, AnyLineDescriptor) LinesRTree;
-alias MapGraph!( GraphPoint ) LineGraph;
 
 void addPoint( PointsStorage storage, Point point )
 {

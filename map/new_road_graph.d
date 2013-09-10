@@ -2,7 +2,7 @@ module map.new_road_graph;
 
 import map.new_map_graph;
 
-
+/*
 struct RoadPoint
 {
     GraphPoint point;
@@ -19,4 +19,4 @@ unittest
 {
     auto t = new RoadGraph;
 }
-
+*/

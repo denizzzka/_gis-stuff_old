@@ -72,9 +72,9 @@ struct PolylineDescriptor
     }
 }
 
-class MapGraph( Point )
+class MapGraph( Graph, Point )
 {
-    alias DirectedGraph!( Point, Polyline ) G;
+    alias Graph G;
     
     protected // TODO: need to be a package
     {
@@ -271,7 +271,8 @@ unittest
 {
     alias Vector2D!long FC; // foreign coords
     
-    alias MapGraph!GraphPoint G;
+    alias DirectedGraph!( GraphPoint, Polyline ) DG;
+    alias MapGraph!( DG, GraphPoint ) G;
     
     FC[] points = [
             FC(0,0), FC(1,1), FC(2,2), FC(3,3), FC(4,4), // first line
@@ -318,3 +319,6 @@ size_t createEdge( Graph, Payload )(
     
     return graph.addEdge( from_node_idx, edge );
 }
+
+alias DirectedGraph!( GraphPoint, Polyline ) DG;
+alias MapGraph!( DG, GraphPoint ) LineGraph;
