@@ -158,8 +158,10 @@ class Window : IWindow
     private
     void drawPath( RoadGraph.Polylines lines )
     {
-	void dg( in RoadGraph g, in RoadGraph.PolylineDescriptor descr )
+	void dg(  )
 	{
+	    RoadGraph g; RoadGraph.PolylineDescriptor descr;
+	    
 	    auto encoded_points = g.getMapCoords( descr );
 	    
 	    auto bend1 = scene.metersToScreen( encoded_points[0] );
@@ -173,7 +175,7 @@ class Window : IWindow
 	    drawRoadSegments( crds, type );
 	}
 	
-	//lines.forAllLines( &dg );
+	lines.forAllLines( &dg );
     }
     
     void drawCenter()

@@ -208,14 +208,12 @@ class MapGraph( GraphEngine, Point, Polyline )
         
         GraphLines[] lines;
         
-        /*
-        void forAllLines( void delegate( MapGraph graph, PolylineDescriptor descr ) dg )
+        void forAllLines( void delegate(  ) dg )
         {
             foreach( graphLines; lines )
-                foreach( descr; graphLines.descriptors )
-                    dg( graphLines.map_graph, descr );
+                foreach( descr; graphLines.descriptors ){}
+                    // MapGraph graph, PolylineDescriptor descr dg( graphLines.map_graph, descr );
         }
-        */
     }
     
     G.NodeDescr getRandomNode() const
