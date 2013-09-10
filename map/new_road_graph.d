@@ -38,7 +38,7 @@ class RoadGraph : MapGraph!( UG, RoadPoint, RoadLine )
     {
         alias PathFinder!( UG ) PF;
         
-        auto path = PF.findMathGraphPath( road_graph.graph, from_node, to_node );
+        auto path = PF.findPath( graph, from_node, to_node );
         
         debug(path) writeln("path from=", from_node, " to=", to_node);
         

@@ -128,15 +128,18 @@ class Window : IWindow
 			
 		    case ROAD:
 			auto graph = reg_lines.region.layers[ reg_lines.layer_num ].road_graph;
-			encoded_points = getPointsDirected( &line.road, graph );
+			//encoded_points = getPointsDirected( &line.road, graph ); // FIXME!
+			encoded_points = graph.getMapCoords( line.road );
 			
 			auto bend1 = scene.metersToScreen( encoded_points[0] );
 			auto bend2 = scene.metersToScreen( encoded_points[$-1] );
-			drawRoadBend( bend1, line.road.getPolyline( graph ).type );
-			drawRoadBend( bend2, line.road.getPolyline( graph ).type );
+			
+			auto type = graph.getPolyline( line.road ).type;
+			drawRoadBend( bend1, type );
+			drawRoadBend( bend2, type );
 			
 			auto crds = MapToWindowCoords( encoded_points );
-			drawRoadSegments( crds, line.road.getPolyline( graph ).type );
+			drawRoadSegments( crds, type );
 			continue;
 			
 		    case AREA:
