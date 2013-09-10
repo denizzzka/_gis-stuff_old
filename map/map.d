@@ -302,6 +302,8 @@ class Map
 {
     Region[] regions;
     
+    RoadGraph.Polylines found_path;
+    
     MBBox boundary() const
     {
         return regions[0].boundary; // FIXME
@@ -321,5 +323,23 @@ class Map
         }
         
         return res;
+    }
+    
+    void updatePath()
+    {
+        RoadGraph g = regions[0].layers[0].road_graph;
+        
+        RoadGraph.PolylineDescriptor[] path;
+        
+        do
+        {
+            path = g.findPath( g.getRandomNode, g.getRandomNode );
+        }
+        while( path.length == 0 );
+        
+        RoadGraph.Polylines.GraphLines gl = { map_graph: g, descriptors: path };
+        
+        found_path.lines.destroy;
+        found_path.lines ~= gl;
     }
 }

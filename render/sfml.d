@@ -154,31 +154,28 @@ class Window : IWindow
 		drawLine( res_points, color );
 	    }
     }
-    /*
+    
     private
-    void drawPath( RoadGraph.Polylines[] lines )
+    void drawPath( RoadGraph.Polylines lines )
     {
-	foreach( graph_lines; lines )
+	void dg( in RoadGraph g, in RoadGraph.PolylineDescriptor descr )
 	{
-	    auto graph = graph_lines.map_graph;
+	    auto encoded_points = g.getMapCoords( descr );
 	    
-	    foreach( line; graph_lines.descriptors )
-	    {
-		auto encoded_points = graph.getMapCoords( line );
+	    auto bend1 = scene.metersToScreen( encoded_points[0] );
+	    auto bend2 = scene.metersToScreen( encoded_points[$-1] );
 	    
-		auto bend1 = scene.metersToScreen( encoded_points[0] );
-		auto bend2 = scene.metersToScreen( encoded_points[$-1] );
-		
-		auto type = config.categories.Line.PATH;
-		drawRoadBend( bend1, type );
-		drawRoadBend( bend2, type );
-		
-		auto crds = MapToWindowCoords( encoded_points );
-		drawRoadSegments( crds, type );
-	    }
+	    auto type = config.categories.Line.PATH;
+	    drawRoadBend( bend1, type );
+	    drawRoadBend( bend2, type );
+	    
+	    auto crds = MapToWindowCoords( encoded_points );
+	    drawRoadSegments( crds, type );
 	}
+	
+	//lines.forAllLines( &dg );
     }
-    */
+    
     void drawCenter()
     {
 	auto c = getCenter();

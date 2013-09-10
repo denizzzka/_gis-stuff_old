@@ -202,18 +202,20 @@ class MapGraph( GraphEngine, Point, Polyline )
     {
         struct GraphLines
         {
-            const MapGraph map_graph;
+            MapGraph map_graph;
             PolylineDescriptor[] descriptors;
         };
         
         GraphLines[] lines;
         
-        void forAllLines( void delegate( const MapGraph graph, PolylineDescriptor descr ) dg )
+        /*
+        void forAllLines( void delegate( MapGraph graph, PolylineDescriptor descr ) dg )
         {
             foreach( graphLines; lines )
                 foreach( descr; graphLines.descriptors )
                     dg( graphLines.map_graph, descr );
         }
+        */
     }
     
     G.NodeDescr getRandomNode() const

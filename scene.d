@@ -23,8 +23,6 @@ class POV
 {
     const Map map;
     
-    RoadGraph.PolylineDescriptor[] found_path;
-    
     private
     {
         MercatorCoords center; /// in meters
@@ -32,15 +30,16 @@ class POV
         Box!MercatorCoords boundary_meters;
     }
     
-    void updatePath()
+    // TODO: need class Path
+    const (RoadGraph.Polylines) found_path()
     {
-        auto g = map.regions[0].layers[0].road_graph;
-        
-        do
-            found_path = g.findPath( g.getRandomNode, g.getRandomNode );
-        while( found_path.length == 0 );
-        
-        debug(scene) writeln( "New path: ", found_path );
+        return map.found_path;
+    }
+    
+    void updatePath() // TODO: remove it
+    {
+        auto _map = cast(Map) map;
+        _map.updatePath();
     }
     
     void setCenter( in MercatorCoords new_center )
