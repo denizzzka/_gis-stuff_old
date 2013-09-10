@@ -109,7 +109,7 @@ class UndirectedGraph( NodePayload, EdgePayload )
         
         DirectedEdge directed = {
                 edge: e,
-                forward_direction: node == e.connection.from
+                forward_direction: e.connection.from == node
             };
         
         return directed;

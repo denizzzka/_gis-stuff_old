@@ -153,7 +153,7 @@ template PathFinder( Graph )
         }
     }
 }
-/*
+
 unittest
 {
     import math.graph.digraph;
@@ -235,4 +235,3 @@ unittest
     s = pathFinder.findPath( g, from, goal2 );
     assert(!s); // path to unconnected point can not be found
 }
-*/
