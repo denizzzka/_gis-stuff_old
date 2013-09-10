@@ -74,6 +74,7 @@ class UndirectedGraph( NodePayload, EdgePayload )
         return nodes[ conn.from.idx ].addEdge( global );
     }
     
+    // TODO: maybe blocking by weight will be better
     EdgeDescr addOnewayEdge( ConnectionInfo conn, EdgePayload edgePayload )
     {
         GlobalEdgeDescr global = { idx: edges.length };
