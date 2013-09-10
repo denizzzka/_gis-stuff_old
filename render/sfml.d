@@ -122,7 +122,7 @@ class Window : IWindow
 		{
 		    case POLYLINE:
 			auto graph = reg_lines.region.line_graph;
-			encoded_points = graph.getPoints( line.line );
+			encoded_points = graph.getMapCoords( line.line );
 			color = graph.getPolyline( line.line ).properties.color;
 			break;
 			

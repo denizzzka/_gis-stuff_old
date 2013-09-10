@@ -15,7 +15,7 @@ import std.random: uniform;
 import std.stdio;
 
 
-struct Point
+struct GraphPoint
 {
     MapCoords coords;
     
@@ -26,12 +26,12 @@ struct Point
         this.coords = coords;
     }
     
-    float distance( in Point v, in float weight ) const
+    float distance( in GraphPoint v, in float weight ) const
     {
         return heuristic( v ) * weight;
     }
     
-    float heuristic( in Point v ) const
+    float heuristic( in GraphPoint v ) const
     {
         return getSphericalDistance( getRadiansCoords, v.getRadiansCoords );
     }
@@ -72,7 +72,7 @@ struct PolylineDescriptor
     }
 }
 
-class MapGraph
+class MapGraph( Point )
 {
     alias DirectedGraph!( Point, Polyline ) G;
     
@@ -104,7 +104,7 @@ class MapGraph
         return graph.getEdge( descr.node, descr.edge ).payload;
     }
     
-    MapCoords[] getPoints( in PolylineDescriptor descr ) const
+    MapCoords[] getMapCoords( in PolylineDescriptor descr ) const
     {
         MapCoords[] res;
         
@@ -122,7 +122,7 @@ class MapGraph
     
     BBox getBoundary( in PolylineDescriptor descr ) const
     {
-        auto points = getPoints( descr );
+        auto points = getMapCoords( descr );
         assert( points.length > 0 );
         
         auto res = BBox( points[0].map_coords, MapCoords.Coords(0,0) );
@@ -271,7 +271,7 @@ unittest
 {
     alias Vector2D!long FC; // foreign coords
     
-    alias MapGraph G;
+    alias MapGraph!GraphPoint G;
     
     FC[] points = [
             FC(0,0), FC(1,1), FC(2,2), FC(3,3), FC(4,4), // first line

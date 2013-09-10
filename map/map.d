@@ -125,6 +125,7 @@ struct AnyLineDescriptor
 }
 
 alias RTreePtrs!(BBox, AnyLineDescriptor) LinesRTree;
+alias MapGraph!( GraphPoint ) LineGraph;
 
 void addPoint( PointsStorage storage, Point point )
 {
@@ -155,7 +156,7 @@ struct Layer
 class Region
 {
     Layer[5] layers;
-    MapGraph line_graph;
+    LineGraph line_graph;
     Area[] areas;
     
     this()
@@ -192,7 +193,7 @@ class Region
     
     void fillLines( Prepare )( Prepare prepared )
     {
-        line_graph = new MapGraph;
+        line_graph = new LineGraph;
         
         NodeDescr[ulong] already_stored;
         
