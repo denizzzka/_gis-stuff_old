@@ -2,6 +2,7 @@ module map.new_road_graph;
 
 import map.new_map_graph;
 import math.graph.undirected;
+import math.graph.new_pathfinder: PathFinder;
 
 struct RoadPoint
 {
@@ -18,15 +19,25 @@ struct RoadPoint
 
 alias UndirectedGraph!( RoadPoint, Polyline ) UG;
 
-/*
 class RoadGraph : MapGraph!( UG, RoadPoint )
 {
+    RoadGraph.PolylineDescriptor[] findPath( NodeDescr from_node, NodeDescr to_node ) const
+    {
+        alias PathFinder!( UG ) PF;
+        
+        auto path = PF.findMathGraphPath( road_graph.graph, from_node, to_node );
+        
+        debug(path) writeln("path from=", from_node, " to=", to_node);
+        
+        RoadGraph.PolylineDescriptor[] res;
+        
+        if( path != null )
+            for( auto i = 1; i < path.length; i++ )
+                res ~= RoadGraph.PolylineDescriptor( path[i].node, path[i-1].came_through_edge );
+        
+        return res;
+    }
 }
-*/
-
-alias MapGraph!( UG, RoadPoint ) RoadGraph;
-
-static RoadGraph.Polylines ddd;
 
 unittest
 {

@@ -239,7 +239,7 @@ class Region
                 
                 auto descriptior = layer.road_graph.addPolyline( descr, already_stored );
                 
-                auto bbox = descriptior.getBoundary( layer.road_graph );
+                auto bbox = layer.road_graph.getBoundary( descriptior );
                 
                 AnyLineDescriptor any = {
                     line_class: cat.LineClass.ROAD,
