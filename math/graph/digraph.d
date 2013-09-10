@@ -103,7 +103,7 @@ class DirectedGraph( NodePayload, EdgePayload )
         EdgeDescr front() { return edge; }
         void popFront() { ++edge.idx; }
         bool empty() const { return edge.idx >= length; }
-        size_t length() const { return graph.nodes.length; }
+        size_t length() const { return graph.nodes[ node.idx ].edges.length; }
     }
     
     EdgesRange getEdgesRange( in NodeDescr node ) const

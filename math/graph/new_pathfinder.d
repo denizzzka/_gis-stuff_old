@@ -87,8 +87,6 @@ template PathFinder( Graph )
                 foreach( edge; graph.getEdgesRange( currNode ) )
                 {
                     const auto e = graph.getEdge( currNode, edge );
-                    // Edge e is removed
-                    edge.idx++;
                     
                     NodeDescr neighborNode = e.to_node;
                     const auto neighbor = graph.getNodePayload( neighborNode );
