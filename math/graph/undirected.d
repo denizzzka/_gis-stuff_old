@@ -125,7 +125,7 @@ class UndirectedGraph( NodePayload, EdgePayload )
     {
         for( NodeDescr n = { idx: 0 }; n.idx < nodes.length; n.idx++ )
             foreach( ref e; getEdgesRange( n ) )
-                if( getEdge( n, e ).connection.from == n )
+                if( getEdge( n, e ).forward_direction )
                     dg( n, e );
     }
     
