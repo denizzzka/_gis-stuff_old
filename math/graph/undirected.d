@@ -107,24 +107,12 @@ class UndirectedGraph( NodePayload, EdgePayload )
         return res;
     }
     
-    struct NodesRange // TODO: remove this
+    void forAllEdges( void delegate( NodeDescr node, EdgeDescr edge ) dg ) const
     {
-        private
-        {
-            const UndirectedGraph graph;
-            NodeDescr node;
-        }
-        
-        NodeDescr front() { return node; }
-        void popFront() { ++node.idx; }
-        bool empty() const { return node.idx >= length; }
-        size_t length() const { return graph.nodes.length; }
-    }
-    
-    NodesRange getNodesRange() const
-    {
-        NodesRange res = { graph: this, node: { idx: 0 } };
-        return res;
+        for( NodeDescr n = { idx: 0 }; n.idx < nodes.length; n.idx++ )
+            foreach( ref e; getEdgesRange( n ) )
+                if( getEdge( n, e ).connection.from == n )
+                    dg( n, e );
     }
     
     struct EdgesRange
