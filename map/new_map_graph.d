@@ -198,14 +198,21 @@ class MapGraph( GraphEngine, Point, Polyline )
         return res;
     }
     
-    static struct Polylines
+    struct Polylines
     {
-        const MapGraph map_graph;
-        PolylineDescriptor*[] descriptors;
-        
-        this( in MapGraph graph )
+        struct GraphLines
         {
-            map_graph = graph;
+            const MapGraph map_graph;
+            PolylineDescriptor[] descriptors;
+        };
+        
+        GraphLines[] lines;
+        
+        void forAllLines( void delegate( const MapGraph graph, PolylineDescriptor descr ) dg )
+        {
+            foreach( graphLines; lines )
+                foreach( descr; graphLines.descriptors )
+                    dg( graphLines.map_graph, descr );
         }
     }
     

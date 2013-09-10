@@ -5,7 +5,7 @@ import dsfml.graphics;
 import scene;
 import math.geometry;
 import map.roads: getPointsDirected;
-import map.map: MapLinesDescriptor, MapCoords, MercatorCoords;
+import map.map: MapLinesDescriptor, MapCoords, MercatorCoords, RoadGraph;
 import cat = config.categories;
 import render.road;
 
@@ -75,6 +75,8 @@ class Window : IWindow
 		
 		auto any = scene.getLines();
 		drawLines( any );
+		
+		//drawPath( scene.
 	    }
 	    
 	    drawCenter;
@@ -152,7 +154,31 @@ class Window : IWindow
 		drawLine( res_points, color );
 	    }
     }
-    
+    /*
+    private
+    void drawPath( RoadGraph.Polylines[] lines )
+    {
+	foreach( graph_lines; lines )
+	{
+	    auto graph = graph_lines.map_graph;
+	    
+	    foreach( line; graph_lines.descriptors )
+	    {
+		auto encoded_points = graph.getMapCoords( line );
+	    
+		auto bend1 = scene.metersToScreen( encoded_points[0] );
+		auto bend2 = scene.metersToScreen( encoded_points[$-1] );
+		
+		auto type = config.categories.Line.PATH;
+		drawRoadBend( bend1, type );
+		drawRoadBend( bend2, type );
+		
+		auto crds = MapToWindowCoords( encoded_points );
+		drawRoadSegments( crds, type );
+	    }
+	}
+    }
+    */
     void drawCenter()
     {
 	auto c = getCenter();
