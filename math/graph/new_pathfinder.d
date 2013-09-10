@@ -73,20 +73,20 @@ template PathFinder( Graph )
                         key_score = score[n].full;
                     }
                 
-                const NodeDescr currNode = open[key];
+                const NodeDescr currDescr = open[key];
                 
-                if( currNode == goalDescr )
+                if( currDescr == goalDescr )
                     return score;
                 
-                const auto curr = graph.getNodePayload( currNode );
-                debug(graph) writefln("Curr %s %s lowest full=%s", currNode, curr.point, key_score);
+                const auto curr = graph.getNodePayload( currDescr );
+                debug(graph) writefln("Curr %s %s lowest full=%s", currDescr, curr.point, key_score);
                 
                 open = open[0..key] ~ open[key+1..$];
-                closed ~= currNode;
+                closed ~= currDescr;
                 
-                foreach( edge; graph.getEdgesRange( currNode ) )
+                foreach( edge; graph.getEdgesRange( currDescr ) )
                 {
-                    const auto e = graph.getEdge( currNode, edge );
+                    const auto e = graph.getEdge( currDescr, edge );
                     
                     NodeDescr neighborNode = e.to_node;
                     const auto neighbor = graph.getNodePayload( neighborNode );
@@ -94,7 +94,7 @@ template PathFinder( Graph )
                     if( canFind( closed, neighborNode ) )
                         continue;
                     
-                    auto tentative = score[currNode].g + curr.distance( neighbor, e.payload.weight );
+                    auto tentative = score[currDescr].g + curr.distance( neighbor, e.payload.weight );
                     
                     if( !canFind( open, neighborNode ) )
                     {
@@ -107,7 +107,7 @@ template PathFinder( Graph )
                     
                     // Updating neighbor score
                     Score neighborScore = {
-                            came_from: currNode,
+                            came_from: currDescr,
                             came_through_edge: edge,
                             g: tentative,
                             full: tentative + neighbor.heuristic( goal )
