@@ -1,8 +1,9 @@
-module map.new_road_graph;
+module map.road_graph;
 
-import map.new_map_graph;
+import map.map_graph;
 import math.graph.undirected;
 import math.graph.new_pathfinder: PathFinder;
+
 
 struct RoadPoint
 {

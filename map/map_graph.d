@@ -1,4 +1,4 @@
-module map.new_map_graph;
+module map.map_graph;
 
 import math.geometry;
 import math.rtree2d;
