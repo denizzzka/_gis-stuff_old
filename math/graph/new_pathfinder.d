@@ -18,20 +18,20 @@ template PathFinder( Graph )
     /// A* algorithm
     ///
     /// Returns: elements in the reverse order
-    PathElement[] findPath( in Graph graph, in NodeDescr startNode, in NodeDescr goalNode )
+    PathElement[] findPath( in Graph graph, in NodeDescr startDescr, in NodeDescr goalDescr )
     {
-        auto r = findPathScore( graph, startNode, goalNode );
-        return (r is null) ? null : reconstructPath( r, goalNode );
+        auto r = findPathScore( graph, startDescr, goalDescr );
+        return (r is null) ? null : reconstructPath( r, goalDescr );
     }
     
     private
     {
         /// A* algorithm
-        Score[NodeDescr] findPathScore( in Graph graph, in NodeDescr startNode, in NodeDescr goalNode )
+        Score[NodeDescr] findPathScore( in Graph graph, in NodeDescr startDescr, in NodeDescr goalDescr )
         in
         {
-            assert( graph.isAvailable( startNode ) );
-            assert( graph.isAvailable( goalNode ) );
+            assert( graph.isAvailable( startDescr ) );
+            assert( graph.isAvailable( goalDescr ) );
         }
         body
         {
@@ -41,8 +41,8 @@ template PathFinder( Graph )
             const (NodeDescr)[] closed; /// The set of nodes already evaluated
             Score[NodeDescr] score;
             
-            const auto start = graph.getNodePayload( startNode );
-            const auto goal = graph.getNodePayload( goalNode );
+            const auto start = graph.getNodePayload( startDescr );
+            const auto goal = graph.getNodePayload( goalDescr );
             
             Score startScore = {
                     came_from: { idx: typeof(Score.came_from.idx).max }, // magic for correct path reconstruct
@@ -51,8 +51,8 @@ template PathFinder( Graph )
                     full: start.heuristic( goal )
                 };
             
-            score[startNode] = startScore;
-            open ~= startNode;
+            score[startDescr] = startScore;
+            open ~= startDescr;
             
             debug(graph) writefln("Path goal point: %s", goal.point );
             
@@ -75,7 +75,7 @@ template PathFinder( Graph )
                 
                 const NodeDescr currNode = open[key];
                 
-                if( currNode == goalNode )
+                if( currNode == goalDescr )
                     return score;
                 
                 const auto curr = graph.getNodePayload( currNode );
