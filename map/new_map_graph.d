@@ -200,6 +200,8 @@ class MapGraph( GraphEngine, Point, Polyline )
     
     struct Polylines
     {
+        alias MapGraph MapGraphType_copy_because_compiling_bug; // TODO
+        
         struct GraphLines
         {
             MapGraph map_graph;
@@ -208,11 +210,11 @@ class MapGraph( GraphEngine, Point, Polyline )
         
         GraphLines[] lines;
         
-        void forAllLines( void delegate(  ) dg )
+        void forAllLines( void delegate( inout MapGraph graph, inout PolylineDescriptor descr ) dg ) const
         {
             foreach( graphLines; lines )
-                foreach( descr; graphLines.descriptors ){}
-                    // MapGraph graph, PolylineDescriptor descr dg( graphLines.map_graph, descr );
+                foreach( descr; graphLines.descriptors )
+                    dg( graphLines.map_graph, descr );
         }
     }
     
