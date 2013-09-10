@@ -4,8 +4,11 @@ import std.algorithm: canFind;
 debug(graph) import std.stdio;
 
 
-template PathFinder( Graph, NodeDescr, EdgeDescr )
+template PathFinder( Graph )
 {
+    alias Graph.NodeDescr NodeDescr;
+    alias Graph.EdgeDescr EdgeDescr;
+    
     struct PathElement
     {
         NodeDescr node;
@@ -175,7 +178,8 @@ unittest
     struct EdgePayload { float weight; }
     
     alias DirectedGraph!( DNP, EdgePayload ) G;
-    alias PathFinder!( G, NodeDescr, EdgeDescr ) pathFinder;
+    alias PathFinder!( G ) pathFinder;
+    alias G.NodeDescr NodeDescr;
     
     auto g = new G;
     

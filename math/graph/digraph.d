@@ -1,15 +1,13 @@
 module math.graph.digraph;
 
-import math.graph.iface;
-
 import std.random: uniform;
 
 
-struct NodeDescr { size_t idx; }
-struct EdgeDescr { size_t idx; }
-
-class DirectedGraph( NodePayload, EdgePayload ) : IGraph!( NodePayload, EdgePayload, NodeDescr, EdgeDescr )
+class DirectedGraph( NodePayload, EdgePayload )
 {
+    struct NodeDescr { size_t idx; }
+    struct EdgeDescr { size_t idx; }
+
     struct Edge
     {
         NodeDescr to_node;
@@ -49,6 +47,12 @@ class DirectedGraph( NodePayload, EdgePayload ) : IGraph!( NodePayload, EdgePayl
         nodes ~= n;
         
         return res;
+    }
+    
+    struct ConnectionInfo
+    {
+        NodeDescr from;
+        NodeDescr to;
     }
     
     EdgeDescr addEdge( in ConnectionInfo conn, EdgePayload edgePayload )

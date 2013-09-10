@@ -118,7 +118,7 @@ struct AnyLineDescriptor
     
     union
     {
-        PolylineDescriptor line;
+        LineGraph.PolylineDescriptor line;
         RoadGraph.PolylineDescriptor road;
         Area area;
     }    
@@ -194,7 +194,7 @@ class Region
     {
         line_graph = new LineGraph;
         
-        NodeDescr[ulong] already_stored;
+        LineGraph.NodeDescr[ulong] already_stored;
         
         foreach( i, ref unused; layers )
         {

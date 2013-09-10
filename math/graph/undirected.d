@@ -1,13 +1,17 @@
 module math.graph.undirected;
 
-import math.graph.iface;
 
-
-struct NodeDescr { size_t idx; }
-struct EdgeDescr { size_t idx; }
-
-class UndirectedGraph( NodePayload, EdgePayload ) : IGraph!( NodePayload, EdgePayload, NodeDescr, EdgeDescr )
+class UndirectedGraph( NodePayload, EdgePayload )
 {
+    struct NodeDescr { size_t idx; }
+    struct EdgeDescr { size_t idx; }
+    
+    struct ConnectionInfo
+    {
+        NodeDescr from;
+        NodeDescr to;
+    }
+    
     struct Edge
     {
         ConnectionInfo connection;

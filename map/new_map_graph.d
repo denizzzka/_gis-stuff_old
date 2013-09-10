@@ -3,7 +3,6 @@ module map.new_map_graph;
 import math.geometry;
 import math.rtree2d;
 import math.graph.digraph;
-public import math.graph.digraph: NodeDescr, EdgeDescr;
 import map.map: MapCoords, BBox;
 import cat = config.categories: Line;
 static import config.map;
@@ -60,25 +59,27 @@ struct Polyline
     }
 }
 
-struct PolylineDescriptor
-{
-    NodeDescr node;
-    EdgeDescr edge;
-    
-    this( NodeDescr node, EdgeDescr edge )
-    {
-        this.node = node;
-        this.edge = edge;
-    }
-}
-
 class MapGraph( GraphEngine, Point )
 {
     alias GraphEngine G;
+    alias G.NodeDescr NodeDescr;
+    alias G.EdgeDescr EdgeDescr;
     
     protected // TODO: need to be a package
     {
         G graph;
+    }
+    
+    struct PolylineDescriptor
+    {
+        NodeDescr node;
+        EdgeDescr edge;
+        
+        this( NodeDescr node, EdgeDescr edge )
+        {
+            this.node = node;
+            this.edge = edge;
+        }
     }
     
     this()()
@@ -208,7 +209,7 @@ class MapGraph( GraphEngine, Point )
         }
     }
     
-    NodeDescr getRandomNode() const
+    G.NodeDescr getRandomNode() const
     {
         return graph.getRandomNode;
     }
