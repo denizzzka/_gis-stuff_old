@@ -5,17 +5,28 @@ import math.graph.undirected;
 
 struct RoadPoint
 {
-    GraphPoint point;
+    MapGraphPoint point;
     alias point this;
     
     byte level = 0;
+    
+    this( MapCoords coords )
+    {
+        point.coords = coords;
+    }
 }
 
 alias UndirectedGraph!( RoadPoint, Polyline ) UG;
 
+/*
 class RoadGraph : MapGraph!( UG, RoadPoint )
 {
 }
+*/
+
+alias MapGraph!( UG, RoadPoint ) RoadGraph;
+
+static RoadGraph.Polylines ddd;
 
 unittest
 {

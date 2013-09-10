@@ -14,7 +14,7 @@ import std.random: uniform;
 import std.stdio;
 
 
-struct GraphPoint
+struct MapGraphPoint
 {
     MapCoords coords;
     
@@ -25,12 +25,12 @@ struct GraphPoint
         this.coords = coords;
     }
     
-    float distance( in GraphPoint v, in float weight ) const
+    float distance( in MapGraphPoint v, in float weight ) const
     {
         return heuristic( v ) * weight;
     }
     
-    float heuristic( in GraphPoint v ) const
+    float heuristic( in MapGraphPoint v ) const
     {
         return getSphericalDistance( getRadiansCoords, v.getRadiansCoords );
     }
@@ -271,8 +271,8 @@ Description[] cutOnCrossings( Description )( Description[] lines )
     return cutOnCrossings( tree );
 }
 
-alias DirectedGraph!( GraphPoint, Polyline ) DG;
-alias MapGraph!( DG, GraphPoint ) LineGraph;
+alias DirectedGraph!( MapGraphPoint, Polyline ) DG;
+alias MapGraph!( DG, MapGraphPoint ) LineGraph;
 
 unittest
 {

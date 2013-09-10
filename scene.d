@@ -3,7 +3,8 @@ module scene;
 import map.map;
 import math.geometry;
 import math.earth: Conv, WGS84, lon2canonical;
-import map.roads: findPath;
+//import map.roads: findPath;
+import map.new_road_graph;
 import config.viewer;
 import render.window: WindowCoords;
 

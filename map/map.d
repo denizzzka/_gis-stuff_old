@@ -6,7 +6,8 @@ static import math.earth;
 import cat = config.categories;
 //import map.map_graph: LineGraph, cutOnCrossings;
 import map.new_map_graph;
-import map.roads: RoadGraph;
+import map.new_road_graph;
+//import map.roads: RoadGraph;
 import map.area: Area;
 static import config.map;
 static import config.converter;
@@ -226,7 +227,7 @@ class Region
         {
             layer.road_graph = new RoadGraph;
             
-            size_t[ulong] already_stored;
+            RoadGraph.NodeDescr[ulong] already_stored;
             
             auto epsilon = config.converter.layersGeneralization[i];
             auto cutted = cutOnCrossings( prepared.lines_to_store[i] );
