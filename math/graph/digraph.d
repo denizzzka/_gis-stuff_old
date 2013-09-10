@@ -17,7 +17,7 @@ class DirectedGraph( NodePayload, EdgePayload )
     
     struct Node
     {
-        package Edge[] edges;
+        private Edge[] edges;
         
         NodePayload payload;
         
@@ -32,7 +32,7 @@ class DirectedGraph( NodePayload, EdgePayload )
         }
     }
     
-    package Node[] nodes;
+    private Node[] nodes;
     
     bool isAvailable( in NodeDescr nd ) const
     {
