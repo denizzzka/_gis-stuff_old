@@ -36,7 +36,7 @@ struct MapGraphPoint
     }
 }
 
-struct Polyline
+struct MapPolyline
 {
     private // need package here
     {
@@ -59,7 +59,7 @@ struct Polyline
     }
 }
 
-class MapGraph( GraphEngine, Point )
+class MapGraph( GraphEngine, Point, Polyline )
 {
     alias GraphEngine G;
     alias G.NodeDescr NodeDescr;
@@ -271,8 +271,8 @@ Description[] cutOnCrossings( Description )( Description[] lines )
     return cutOnCrossings( tree );
 }
 
-alias DirectedGraph!( MapGraphPoint, Polyline ) DG;
-alias MapGraph!( DG, MapGraphPoint ) LineGraph;
+alias DirectedGraph!( MapGraphPoint, MapPolyline ) DG;
+alias MapGraph!( DG, MapGraphPoint, MapPolyline ) LineGraph;
 
 unittest
 {

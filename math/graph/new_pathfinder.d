@@ -84,10 +84,9 @@ template PathFinder( Graph )
                 open = open[0..key] ~ open[key+1..$];
                 closed ~= currNode;
                 
-                EdgeDescr edge = { idx: -1 };
-                foreach( e; curr.edges )
+                foreach( edge; graph.getEdgesRange( currNode ) )
                 {
-                    edge.idx++;
+                    auto e = &graph.getEdge( currNode, edge );
                     
                     NodeDescr neighborNode = e.to_node;
                     const Node* neighbor = &graph.nodes[neighborNode.idx];

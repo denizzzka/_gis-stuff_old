@@ -17,9 +17,22 @@ struct RoadPoint
     }
 }
 
-alias UndirectedGraph!( RoadPoint, Polyline ) UG;
+struct RoadLine
+{
+    MapPolyline polyline;
+    alias polyline this;
+    
+    float weight = 0;
+    
+    this( MapCoords[] points, cat.Line type )
+    {
+        polyline = MapPolyline( points, type );
+    }
+}
 
-class RoadGraph : MapGraph!( UG, RoadPoint )
+alias UndirectedGraph!( RoadPoint, RoadLine ) UG;
+
+class RoadGraph : MapGraph!( UG, RoadPoint, RoadLine )
 {
     RoadGraph.PolylineDescriptor[] findPath( NodeDescr from_node, NodeDescr to_node ) const
     {
