@@ -72,9 +72,9 @@ struct PolylineDescriptor
     }
 }
 
-class MapGraph( Graph, Point )
+class MapGraph( GraphEngine, Point )
 {
-    alias Graph G;
+    alias GraphEngine G;
     
     protected // TODO: need to be a package
     {
@@ -267,12 +267,14 @@ Description[] cutOnCrossings( Description )( Description[] lines )
     return cutOnCrossings( tree );
 }
 
+alias DirectedGraph!( GraphPoint, Polyline ) DG;
+alias MapGraph!( DG, GraphPoint ) LineGraph;
+
 unittest
 {
     alias Vector2D!long FC; // foreign coords
     
-    alias DirectedGraph!( GraphPoint, Polyline ) DG;
-    alias MapGraph!( DG, GraphPoint ) G;
+    alias LineGraph G;
     
     FC[] points = [
             FC(0,0), FC(1,1), FC(2,2), FC(3,3), FC(4,4), // first line
@@ -319,6 +321,3 @@ size_t createEdge( Graph, Payload )(
     
     return graph.addEdge( from_node_idx, edge );
 }
-
-alias DirectedGraph!( GraphPoint, Polyline ) DG;
-alias MapGraph!( DG, GraphPoint ) LineGraph;

@@ -1,6 +1,7 @@
 module map.new_road_graph;
 
 import map.new_map_graph;
+import math.graph.undirected;
 
 /*
 struct RoadPoint
@@ -11,7 +12,9 @@ struct RoadPoint
     byte level = 0;
 }
 
-class RoadGraph : MapGraph!( RoadPoint )
+alias UndirectedGraph!( RoadPoint, Polyline ) UG;
+
+class RoadGraph : MapGraph!( UG, RoadPoint )
 {
 }
 
