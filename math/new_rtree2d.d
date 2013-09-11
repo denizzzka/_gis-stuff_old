@@ -96,6 +96,28 @@ class RTreePtrs( _Box, _Payload )
     
     private
     {
+        Payload*[] search( in Box boundary, Node* curr, size_t currDepth = 0 ) const
+        {
+            Payload*[] res;
+            
+            if( currDepth > depth )
+            {
+                debug assert( curr.leafNode );
+                
+                res ~= curr.payload;
+            }
+            else
+            {
+                debug assert( !curr.leafNode );
+                
+                foreach( i, c; curr.children )
+                    if( c.boundary.isOverlappedBy( boundary ) )
+                        res ~= search( boundary, c, currDepth+1 );
+            }
+            
+            return res;
+        }
+        
         Node* selectLeafPlace( in Box newItemBoundary ) const
         {
             Node* curr = cast(Node*) root;
@@ -132,6 +154,8 @@ class RTreePtrs( _Box, _Payload )
             while( node )
             {
                 debug(rtptrs) writeln( "Correcting node ", node );
+                
+                debug assert( node.children[0].leafNode == leafs_level );
                 
                 if( (leafs_level && node.children.length > maxLeafChildren) // need split on leafs level?
                     || (!leafs_level && node.children.length > maxChildren) ) // need split of node?
@@ -358,7 +382,7 @@ unittest
             rtree.addObject( boundary, payload );
         }
         
-    rtree.showBranch( rtree.root );
+    debug(rtree) rtree.showBranch( rtree.root );
     
     size_t nodes, leafs, leafBlocksNum;
     rtree.statistic( nodes, leafs, leafBlocksNum );
@@ -367,5 +391,20 @@ unittest
     assert( nodes == 13 );
     assert( leafBlocksNum == 6 );
     
+    debug GC.enable();
     
+    assert( rtree.root.getBoundary == BBox(Vector(1, 1), Vector(3, 3)) );
+    
+    BBox search1 = BBox( Vector( 2, 2 ), Vector( 1, 1 ) );
+    BBox search2 = BBox( Vector( 2.1, 2.1 ), Vector( 0.8, 0.8 ) );
+    
+    /*
+    assert( rtree.search( search1 ).length == 9 );
+    assert( rtree.search( search2 ).length == 1 );
+    
+    auto rarr = new RTreeArray!(typeof(rtree))( rtree );
+    
+    assert( rarr.search( search1 ).length == 9 );
+    assert( rarr.search( search2 ).length == 1 );
+    */
 }
