@@ -2,15 +2,12 @@ module map.map_graph;
 
 import math.geometry;
 import math.rtree2d.ptrs;
-import math.graph.digraph;
 import map.map: MapCoords, BBox;
-static import config.map;
 import math.earth: mercator2coords, getSphericalDistance;
 import map.adapters: TPolylineDescription;
 
 import std.algorithm: canFind;
 import std.random: uniform;
-import std.stdio;
 
 
 struct MapGraphPoint
