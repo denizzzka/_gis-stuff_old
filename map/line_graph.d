@@ -2,7 +2,13 @@ module map.line_graph;
 
 import map.map_graph;
 import math.graph.digraph;
+import cat = config.categories: Line;
 
+
+struct LineProperties
+{
+    cat.Line type = cat.Line.OTHER;
+}
 
 alias DirectedGraph!( MapGraphPoint, MapPolyline ) DG;
 alias MapGraph!( DG, MapGraphPoint, MapPolyline ) LineGraph;

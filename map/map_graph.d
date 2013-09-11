@@ -4,7 +4,7 @@ import math.geometry;
 import math.rtree2d.ptrs;
 import math.graph.digraph;
 import map.map: MapCoords, BBox;
-import cat = config.categories: Line;
+import cat = config.categories: Line; // FIXME: remove it
 static import config.map;
 import math.earth: mercator2coords, getSphericalDistance;
 import map.adapters: TPolylineDescription;
