@@ -43,7 +43,6 @@ struct MapGraphPolyline
     this( MapCoords[] points )
     {
         this.points = points;
-        this.properties = properties;
     }
     
     @disable this();
