@@ -143,6 +143,18 @@ class RTreePtrs( _Box, _Payload )
             
             return boundary;
         }
+        /*
+        void assignParent( Node* parent )
+        {
+            if( parent )
+            {
+                parent.children ~= this;
+                parent.boundary.addCircumscribe( boundary );
+            }
+            
+            this.parent = parent;
+        }
+        */
     }
     
     struct Node
