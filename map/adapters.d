@@ -2,7 +2,6 @@ module map.adapters;
 
 import map.map: MapCoords;
 import math.geometry: Box, to;
-import cat = config.categories: Line;
 
 static import math.reduce_points;
 
