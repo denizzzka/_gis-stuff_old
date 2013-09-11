@@ -8,6 +8,8 @@ import cat = config.categories: Line;
 struct LineProperties
 {
     cat.Line type;
+    
+    
 }
 
 struct MapGraphLine
@@ -56,10 +58,13 @@ unittest
         return res;
     }
     
-    alias TPolylineDescription!( cat.Line, getNodeByID ) PolylineDescription;
+    alias TPolylineDescription!( LineProperties, getNodeByID ) PolylineDescription;
     
-    auto w1 = PolylineDescription( n1, cat.Line.HIGHWAY );
-    auto w2 = PolylineDescription( n2, cat.Line.PRIMARY );
+    LineProperties highway = { type: cat.Line.HIGHWAY };
+    LineProperties primary = { type: cat.Line.PRIMARY };
+    
+    auto w1 = PolylineDescription( n1, highway );
+    auto w2 = PolylineDescription( n2, primary );
     
     PolylineDescription[] lines = [ w1, w2 ];
     

@@ -124,7 +124,9 @@ class Window : IWindow
 		    case POLYLINE:
 			auto graph = reg_lines.region.line_graph;
 			encoded_points = graph.getMapCoords( line.line );
-			color = graph.getPolyline( line.line ).properties.color;
+			auto type = graph.getPolyline( line.line ).properties.type;
+			auto prop = &polylines.getProperty( type );
+			color = prop.color;
 			break;
 			
 		    case ROAD:
@@ -134,7 +136,7 @@ class Window : IWindow
 			auto bend1 = scene.metersToScreen( encoded_points[0] );
 			auto bend2 = scene.metersToScreen( encoded_points[$-1] );
 			
-			auto type = graph.getPolyline( line.road ).type;
+			auto type = graph.getPolyline( line.road ).properties.type;
 			drawRoadBend( bend1, type );
 			drawRoadBend( bend2, type );
 			
