@@ -94,6 +94,12 @@ class RTreePtrs( _Box, _Payload )
         return payload_ptr;        
     }
     
+    Payload*[] search( in Box boundary ) const
+    {
+        Node* r = cast(Node*) root;
+        return search( boundary, r );
+    }
+    
     private
     {
         Payload*[] search( in Box boundary, Node* curr, size_t currDepth = 0 ) const
@@ -398,10 +404,10 @@ unittest
     BBox search1 = BBox( Vector( 2, 2 ), Vector( 1, 1 ) );
     BBox search2 = BBox( Vector( 2.1, 2.1 ), Vector( 0.8, 0.8 ) );
     
-    /*
     assert( rtree.search( search1 ).length == 9 );
     assert( rtree.search( search2 ).length == 1 );
     
+    /*
     auto rarr = new RTreeArray!(typeof(rtree))( rtree );
     
     assert( rarr.search( search1 ).length == 9 );
