@@ -4,7 +4,6 @@ import math.rtree2d.ptrs;
 import math.geometry;
 import protobuf.runtime;
 
-
 debug import std.stdio;
 version(unittest) import std.string;
 

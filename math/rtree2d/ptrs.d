@@ -1,11 +1,10 @@
 module math.rtree2d.ptrs;
 
 import math.geometry;
-//import protobuf.runtime;
 
+import core.bitop;
 debug import std.stdio;
 version(unittest) import std.string;
-import core.bitop;
 
 
 class RTreePtrs( _Box, _Payload )
