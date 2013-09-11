@@ -115,11 +115,11 @@ class RTreePtrs( _Box, _Payload )
     ubyte depth = 0;
     Node* root;
     
-    this( in size_t maxChildren = 5, in size_t maxLeafChildren = 500 )
+    this( in size_t maxChildren = 5, in size_t maxLeafChildren = 250 )
     in
     {
         assert( maxChildren >= 2 );
-        assert( maxLeafChildren >= 2 );
+        assert( maxLeafChildren >= 1 );
     }
     body
     {
@@ -150,30 +150,25 @@ class RTreePtrs( _Box, _Payload )
         NodeBase base;
         alias base this;
         
-        private:
-            Node*[] children;
-    
-        public:
+        private Node*[] children;
         
-            void assignChild( Node* child )
-            {
-                children ~= child;
+        void assignChild( Node* child )
+        {
+            children ~= child;
+            
+            boundary = boundary.isNull ?
+                child.boundary :
+                boundary.getCircumscribed( child.boundary );
                 
-                boundary = boundary.isNull ?
-                    child.boundary :
-                    boundary.getCircumscribed( child.boundary );
-                    
-                child.parent = &this;
-            }
+            child.parent = &this;
+        }
     }
     
-    static struct Leaf
+    struct Leaf
     {
-    private:
-        Node* parent;
+        NodeBase base;
+        alias base this;
         
-    public:
-        Nullable!Box boundary;
         Payload payload;
         
         this( in Box boundary, Payload payload )
