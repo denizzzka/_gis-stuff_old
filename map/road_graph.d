@@ -9,16 +9,15 @@ import cat = config.categories: Line;
 struct RoadProperties
 {
     cat.Line type;
+    float weight = 0;
 }
 
 struct RoadLine
 {
-    MapGraphPolyline polyline;
-    alias polyline this;
+    package MapGraphPolyline polyline;
     
     RoadProperties properties;
-    
-    float weight = 0; // FIXME remove it
+    alias properties this;
     
     this( MapCoords[] points, RoadProperties properties )
     {
@@ -58,10 +57,10 @@ class RoadGraph : MapGraph!( UG, MapGraphPoint, RoadLine )
         auto edge = graph.getEdge( descr.node, descr.edge );
         
         if( edge.forward_direction )
-            foreach( c; edge.payload.points )
+            foreach( c; edge.payload.polyline.points )
                 res ~= c;
         else
-            foreach_reverse( c; edge.payload.points )
+            foreach_reverse( c; edge.payload.polyline.points )
                 res ~= c;
         
         res ~= graph.getNodePayload( edge.to_node );

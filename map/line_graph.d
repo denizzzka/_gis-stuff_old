@@ -8,13 +8,11 @@ import cat = config.categories: Line;
 struct LineProperties
 {
     cat.Line type;
-    
-    
 }
 
 struct MapGraphLine
 {
-    MapGraphPolyline polyline;
+    package MapGraphPolyline polyline;
     alias polyline this;
     
     LineProperties properties;

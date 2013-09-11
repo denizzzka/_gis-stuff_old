@@ -101,7 +101,7 @@ class MapGraph( GraphEngine, Point, Polyline )
         
         auto edge = graph.getEdge( descr.node, descr.edge );
         
-        foreach( c; edge.payload.points )
+        foreach( c; edge.payload.polyline.points )
             res ~= c;
         
         res ~= graph.getNodePayload( edge.to_node );
