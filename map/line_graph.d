@@ -13,9 +13,9 @@ struct LineProperties
 struct MapGraphLine
 {
     package MapGraphPolyline polyline;
-    alias polyline this;
     
     LineProperties properties;
+    alias properties this;
     
     this( MapCoords[] points, LineProperties properties )
     {
