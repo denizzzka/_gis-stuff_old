@@ -111,17 +111,20 @@ class RTreePtrs( _Box, _Payload )
     alias _Payload Payload;
     
     const ubyte maxChildren;
+    const ubyte maxLeafChildren;
     ubyte depth = 0;
     Node* root;
     
-    this( in ubyte maxChildren = 50 )
+    this( in ubyte maxChildren = 5, in ubyte maxLeafChildren = 50 )
     in
     {
         assert( maxChildren >= 2 );
+        assert( maxLeafChildren >= 2 );
     }
     body
     {
         this.maxChildren = maxChildren;
+        this.maxLeafChildren = maxLeafChildren;
         
         root = new Node;
     }
@@ -309,13 +312,15 @@ private:
         return r;
     }
     
-    void correct( Node* fromNode )
+    void correct( Node* fromDeepestNode )
     {
-        auto node = fromNode;
+        auto node = fromDeepestNode;
         
+        bool leafs_level = true;
         while( node )
         {
-            if( node.children.length > maxChildren ) // need split?
+            if( (leafs_level && node.children.length > maxLeafChildren) // need split on leafs level?
+                || (!leafs_level && node.children.length > maxChildren) ) // need split of node?
             {
                 if( node.parent is null ) // for root split need a new root node
                 {
@@ -339,6 +344,7 @@ private:
             }
             
             node = node.parent;
+            leafs_level = false;
         }
     }
     
@@ -467,7 +473,7 @@ unittest
     alias Vector2D!float Vector;
     alias Box!Vector BBox;
     
-    auto rtree = new RTreePtrs!(BBox, DumbPayload)( 2 );
+    auto rtree = new RTreePtrs!(BBox, DumbPayload)( 2, 2 );
     
     for( float y = 1; y < 4; y++ )
         for( float x = 1; x < 4; x++ )
