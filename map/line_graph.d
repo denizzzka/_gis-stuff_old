@@ -5,16 +5,21 @@ import math.graph.digraph;
 import cat = config.categories: Line;
 
 
-struct MapLine
+struct MapGraphLine
 {
     MapGraphPolyline polyline;
     alias polyline this;
     
     cat.Line type = cat.Line.OTHER;
+    
+    this( MapCoords[] points, cat.Line type )
+    {
+        polyline = MapGraphPolyline( points, type );
+    }
 }
 
-alias DirectedGraph!( MapGraphPoint, MapLine ) DG;
-alias MapGraph!( DG, MapGraphPoint, MapLine ) LineGraph;
+alias DirectedGraph!( MapGraphPoint, MapGraphLine ) DG;
+alias MapGraph!( DG, MapGraphPoint, MapGraphLine ) LineGraph;
 
 unittest
 {
