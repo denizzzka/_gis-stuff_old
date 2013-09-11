@@ -167,7 +167,7 @@ class RTreePtrs( _Box, _Payload )
         }
         
         /// Brute force method
-        RTreePtrs.Node* splitNode( RTreePtrs.Node* n )
+        Node* splitNode( Node* n )
         in
         {
             assert( !n.leafNode );
@@ -175,8 +175,6 @@ class RTreePtrs( _Box, _Payload )
         }
         body
         {
-            alias RTreePtrs.Node Node;
-            
             size_t len = n.children.length;
             
             float minArea = float.max;
