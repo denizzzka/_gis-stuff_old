@@ -8,6 +8,7 @@ debug import std.stdio;
 version(unittest) import std.string;
 
 
+// TODO: do not store bbox for every leaf element
 class RTreeArray( RTreePtrs )
 {
     alias RTreePtrs.Payload Payload;
