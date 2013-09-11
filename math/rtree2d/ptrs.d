@@ -1,7 +1,7 @@
-module math.new_rtree2d;
+module math.rtree2d.ptrs;
 
 import math.geometry;
-import protobuf.runtime;
+//import protobuf.runtime;
 
 debug import std.stdio;
 version(unittest) import std.string;
@@ -16,8 +16,8 @@ class RTreePtrs( _Box, _Payload )
     const size_t maxChildren;
     const size_t maxLeafChildren;
     
-    private ubyte depth = 0;
-    private Node* root;
+    package ubyte depth = 0;
+    package Node* root;
     
     private Payload[] payloads;
     
@@ -37,7 +37,7 @@ class RTreePtrs( _Box, _Payload )
     
     struct Node
     {
-        private
+        package
         {
             Node* parent;
             Box boundary;
@@ -98,6 +98,13 @@ class RTreePtrs( _Box, _Payload )
     {
         Node* r = cast(Node*) root;
         return search( boundary, r );
+    }
+    
+    Box getBoundary() const
+    {
+        assert( root.children.length );
+        
+        return root.boundary;
     }
     
     private
@@ -270,7 +277,27 @@ class RTreePtrs( _Box, _Payload )
             return newNode;
         }
         
-        void statistic(
+        debug
+        void showBranch( Node* from, uint depth = 0 )
+        {
+            writeln( "Depth: ", depth );
+            
+            if( depth > this.depth )
+            {
+                writeln( "Leaf: ", from, " parent: ", from.parent );
+            }
+            else
+            {
+                writeln( "Node: ", from, " parent: ", from.parent, " children: ", from.children );
+                
+                foreach( i, c; from.children )
+                {
+                    showBranch( c, depth+1 );
+                }
+            }
+        }
+        
+        package void statistic(
             ref size_t nodesNum,
             ref size_t leafsNum,
             ref size_t leafBlocksNum,
@@ -295,26 +322,6 @@ class RTreePtrs( _Box, _Payload )
                 
                 foreach( i, c; curr.children )
                     statistic( nodesNum, leafsNum, leafBlocksNum, c, currDepth+1 );
-            }
-        }
-        
-        debug
-        void showBranch( Node* from, uint depth = 0 )
-        {
-            writeln( "Depth: ", depth );
-            
-            if( depth > this.depth )
-            {
-                writeln( "Leaf: ", from, " parent: ", from.parent );
-            }
-            else
-            {
-                writeln( "Node: ", from, " parent: ", from.parent, " children: ", from.children );
-                
-                foreach( i, c; from.children )
-                {
-                    showBranch( c, depth+1 );
-                }
             }
         }
     }

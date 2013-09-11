@@ -6,7 +6,7 @@ DSFMLLIB := libdsfml
 LIBS := -L-ldl -L-lcsfml-graphics -L-lcsfml-window -L-lcsfml-system
 DFILES := \
 	pb_encoding.d osm.d scene.d osm_tags_parsing.d \
-	math/*.d math/graph/*.d map/*.d config/*.d render/*.d main.d
+	math/*.d math/rtree2d/*.d math/graph/*.d map/*.d config/*.d render/*.d main.d
 INCLUDE := -I/usr/include/dmd/ -I./DSFML/
 BITS := -m32
 

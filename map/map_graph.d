@@ -1,7 +1,7 @@
 module map.map_graph;
 
 import math.geometry;
-import math.rtree2d;
+import math.rtree2d.ptrs;;
 import math.graph.digraph;
 import map.map: MapCoords, BBox;
 import cat = config.categories: Line;

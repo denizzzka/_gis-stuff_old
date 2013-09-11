@@ -1,7 +1,7 @@
 module map.map;
 
 import math.geometry;
-import math.rtree2d;
+import math.rtree2d.ptrs;
 static import math.earth;
 import cat = config.categories;
 import map.map_graph;
