@@ -20,7 +20,7 @@ class RTreePtrs( _Box, _Payload )
     
     private Payload[] payloads;
     
-    this( in size_t maxChildren = 5, in size_t maxLeafChildren = 250 )
+    this( in size_t maxChildren = 4, in size_t maxLeafChildren = 50 )
     in
     {
         assert( maxChildren >= 2 );
@@ -206,7 +206,7 @@ class RTreePtrs( _Box, _Payload )
         Node* splitNode( Node* n )
         in
         {
-            assert( !n.leafNode );
+            debug assert( !n.leafNode );
             assert( n.children.length >= 2 );
         }
         body
