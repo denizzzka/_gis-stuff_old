@@ -210,6 +210,24 @@ class MapGraph( GraphEngine, Point, Polyline )
     {
         return graph.getRandomNode;
     }
+    
+    real calcSphericalLength( in PolylineDescriptor descr ) const
+    {
+        auto coords = getMapCoords( descr );
+        
+        assert( coords.length > 0 );
+        
+        auto prev = coords[0];
+        real res = 0;
+        
+        for( auto i = 1; i < coords.length; i++ )
+        {
+            res += prev.calcSphericalDistance( coords[i] );
+            prev = coords[i];
+        }
+        
+        return res;
+    }
 }
 
 auto cutOnCrossings(DescriptionsTree)( in DescriptionsTree lines_rtree )

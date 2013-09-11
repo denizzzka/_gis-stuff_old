@@ -42,7 +42,7 @@ struct MapCoords
     
     alias getMercatorCoords this;
     
-    real getSphericalDistance( in MapCoords v ) const
+    real calcSphericalDistance( in MapCoords v ) const
     {
         return math.earth.getSphericalDistance( getRadiansCoords, v.getRadiansCoords );
     }
