@@ -5,19 +5,6 @@ import math.graph.undirected;
 import math.graph.pathfinder: PathFinder;
 
 
-struct RoadPoint
-{
-    MapGraphPoint point;
-    alias point this;
-    
-    byte level = 0;
-    
-    this( MapCoords coords )
-    {
-        point.coords = coords;
-    }
-}
-
 struct RoadLine
 {
     MapPolyline polyline;
@@ -31,9 +18,9 @@ struct RoadLine
     }
 }
 
-alias UndirectedGraph!( RoadPoint, RoadLine ) UG;
+alias UndirectedGraph!( MapGraphPoint, RoadLine ) UG;
 
-class RoadGraph : MapGraph!( UG, RoadPoint, RoadLine )
+class RoadGraph : MapGraph!( UG, MapGraphPoint, RoadLine )
 {
     RoadGraph.PolylineDescriptor[] findPath( NodeDescr from_node, NodeDescr to_node ) const
     {
