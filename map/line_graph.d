@@ -5,14 +5,22 @@ import math.graph.digraph;
 import cat = config.categories: Line;
 
 
+struct LineProperties
+{
+    cat.Line type;
+}
+
 struct MapGraphLine
 {
     MapGraphPolyline polyline;
     alias polyline this;
     
-    this( MapCoords[] points, cat.Line type )
+    LineProperties properties;
+    
+    this( MapCoords[] points, LineProperties properties )
     {
-        polyline = MapGraphPolyline( points, type );
+        polyline = MapGraphPolyline( points );
+        this.properties = properties;
     }
 }
 

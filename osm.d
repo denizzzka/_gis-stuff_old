@@ -6,6 +6,8 @@ import math.geometry: Vector2D, degrees2radians, radians2degrees;
 import math.earth;
 import map.map: Map, Region, BBox, Point, MapCoords, MercatorCoords, TPrepareLines;
 import map.adapters: TPolylineDescription;
+import map.line_graph: LineProperties;
+import map.road_graph: RoadProperties;
 import map.area: Area;
 import cat = config.categories;
 import osm_tags_parsing;
@@ -293,9 +295,9 @@ Region getRegion( string filename, bool verbose )
         return encodedToMapCoords( *node_ptr );
     }
     
-    alias TPolylineDescription!( cat.Line, getMapCoordsByNodeIdx ) LineDescription;
-    alias LineDescription RoadDescription;
-    alias LineDescription AreaDescription;
+    alias TPolylineDescription!( LineProperties, getMapCoordsByNodeIdx ) LineDescription;
+    alias TPolylineDescription!( RoadProperties, getMapCoordsByNodeIdx ) RoadDescription;
+    alias TPolylineDescription!( cat.Line, getMapCoordsByNodeIdx ) AreaDescription;
     
     auto lines = new TPrepareLines!( LineDescription );
     auto roads = new TPrepareLines!( RoadDescription );
@@ -336,12 +338,14 @@ Region getRegion( string filename, bool verbose )
                         final switch( decoded.classification )
                         {
                             case POLYLINE:
-                                auto line = LineDescription( decoded.coords_idx, type );
+                                LineProperties prop = { type: type };
+                                auto line = LineDescription( decoded.coords_idx, prop );
                                 lines.addLine( line );
                                 break;
                                 
                             case ROAD:
-                                auto road = RoadDescription( decoded.coords_idx, type );
+                                RoadProperties prop = { type: type };
+                                auto road = RoadDescription( decoded.coords_idx, prop );
                                 roads.addLine( road );
                                 break;
                                 

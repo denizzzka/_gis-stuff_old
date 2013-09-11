@@ -40,20 +40,13 @@ struct MapGraphPolyline
 {
     package MapCoords[] points; /// points between start and end points
     
-    cat.Line type = cat.Line.OTHER; // FIXME remove it
-    
-    this( MapCoords[] points, cat.Line type )
+    this( MapCoords[] points )
     {
         this.points = points;
-        this.type = type;
+        this.properties = properties;
     }
     
     @disable this();
-    
-    ref config.map.PolylineProperties properties() const
-    {
-        return config.map.polylines.getProperty( type );
-    }
 }
 
 class MapGraph( GraphEngine, Point, Polyline )

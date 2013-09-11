@@ -5,16 +5,21 @@ import math.graph.undirected;
 import math.graph.pathfinder: PathFinder;
 
 
+struct RoadProperties
+{
+    cat.Line type;
+}
+
 struct RoadLine
 {
     MapGraphPolyline polyline;
     alias polyline this;
     
-    float weight = 0;
+    float weight = 0; // FIXME remove it
     
-    this( MapCoords[] points, cat.Line type )
+    this( MapCoords[] points, RoadProperties properties )
     {
-        polyline = MapGraphPolyline( points, type );
+        polyline = MapGraphPolyline( points, properties );
     }
 }
 
