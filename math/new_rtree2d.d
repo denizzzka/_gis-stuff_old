@@ -31,6 +31,8 @@ class RTreePtrs( _Box, _Payload )
     {
         this.maxChildren = maxChildren;
         this.maxLeafChildren = maxLeafChildren;
+        
+        root = new Node;
     }
     
     struct Node
@@ -61,6 +63,16 @@ class RTreePtrs( _Box, _Payload )
         {
             return boundary;
         }
+        
+        void assignChild( Node* child )
+        {
+            debug assert( !leafNode );
+            
+            children ~= child;
+            child.parent = &this;
+            
+            boundary.addCircumscribe( child.boundary );
+        }
     }
     
     void addObject( in Box boundary, Payload payload )
@@ -68,16 +80,14 @@ class RTreePtrs( _Box, _Payload )
         payloads ~= payload;
         Payload* payload_ptr = &payloads[$-1];
         
-        if( !root )
-        {
-            assert( !depth );
-            
-            root = new Node( boundary, payload_ptr );
-            
-            return;
-        }
+        Node* leaf = new Node( boundary, payload_ptr );
         
         auto place = selectLeafPlace( boundary );
+        
+        // unconditional add a leaf
+        place.assignChild( leaf );
+        
+        debug(rtptrs) writeln( "Add leaf ", leaf, " to node ", place );     
     }
     
     private
