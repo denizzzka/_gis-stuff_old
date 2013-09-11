@@ -216,14 +216,14 @@ class RTreePtrs( _Box, _Payload )
             }
             
             // split by places specified by bits of key
-            auto nChildren = n.children.dup;
+            auto oldChildren = n.children.dup;
             n.children.destroy;
             
             auto newNode = new Node;
             
             for( auto i = 0; i < len; i++ )
             {
-                auto c = nChildren[i];
+                auto c = oldChildren[i];
                 
                 if( bt( cast( size_t* ) &minAreaKey, i ) == 0 )
                     n.assignChild( c );
