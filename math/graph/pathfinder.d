@@ -159,7 +159,7 @@ unittest
     import math.geometry;
     
     // Dumb Node Point
-    struct DNP
+    static struct DNP
     {
         Vector2D!float coords;
         
@@ -174,7 +174,7 @@ unittest
         }
     }
     
-    struct EdgePayload { float weight; }
+    static struct EdgePayload { float weight; }
     
     alias DirectedGraph!( DNP, EdgePayload ) G;
     alias PathFinder!( G ) pathFinder;
