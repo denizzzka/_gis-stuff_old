@@ -129,12 +129,28 @@ class RTreePtrs( _Box, _Payload )
         root = new Node;
     }
     
-    static struct Node
+    struct NodeBase
     {
-        private:
-        
+        private
+        {
             Node* parent;
             Nullable!Box boundary;
+        }
+        
+        Box getBoundary() const
+        {
+            assert( !boundary.isNull );
+            
+            return boundary;
+        }
+    }
+    
+    struct Node
+    {
+        NodeBase base;
+        alias base this;
+        
+        private:
             Node*[] children;
     
         public:
@@ -148,13 +164,6 @@ class RTreePtrs( _Box, _Payload )
                     boundary.getCircumscribed( child.boundary );
                     
                 child.parent = &this;
-            }
-            
-            Box getBoundary() const
-            {
-                assert( !boundary.isNull );
-                
-                return boundary;
             }
     }
     
