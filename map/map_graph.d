@@ -155,7 +155,7 @@ class MapGraph( GraphEngine, Point, Polyline )
         for( auto i = 1; i < last_node; i++ )
             points ~= line.getNode( i ).getCoords;
         
-        auto poly = Polyline( points, line.type );
+        auto poly = Polyline( points, line.properties );
         
         G.ConnectionInfo conn = { from: from_node, to: to_node };
         

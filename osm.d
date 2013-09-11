@@ -293,7 +293,7 @@ Region getRegion( string filename, bool verbose )
         return encodedToMapCoords( *node_ptr );
     }
     
-    alias TPolylineDescription!( getMapCoordsByNodeIdx ) LineDescription;
+    alias TPolylineDescription!( cat.Line, getMapCoordsByNodeIdx ) LineDescription;
     alias LineDescription RoadDescription;
     alias LineDescription AreaDescription;
     

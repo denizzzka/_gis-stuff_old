@@ -282,7 +282,7 @@ class TPrepareLines( Descr )
     
     void addLine( Descr line_descr )
     {
-        auto to_layers = config.map.polylines.getProperty( line_descr.type ).layers;
+        auto to_layers = config.map.polylines.getProperty( line_descr.properties ).layers;
         
         foreach( n; to_layers )
             lines_to_store[n] ~= line_descr;

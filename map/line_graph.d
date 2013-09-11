@@ -10,8 +10,6 @@ struct MapGraphLine
     MapGraphPolyline polyline;
     alias polyline this;
     
-    cat.Line type = cat.Line.OTHER;
-    
     this( MapCoords[] points, cat.Line type )
     {
         polyline = MapGraphPolyline( points, type );
@@ -50,7 +48,7 @@ unittest
         return res;
     }
     
-    alias TPolylineDescription!( getNodeByID ) PolylineDescription;
+    alias TPolylineDescription!( cat.Line, getNodeByID ) PolylineDescription;
     
     auto w1 = PolylineDescription( n1, cat.Line.HIGHWAY );
     auto w2 = PolylineDescription( n2, cat.Line.PRIMARY );

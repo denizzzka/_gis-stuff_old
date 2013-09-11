@@ -7,15 +7,15 @@ import cat = config.categories: Line;
 static import math.reduce_points;
 
 
-struct TPolylineDescription( alias MAP_COORDS_BY_ID )
+struct TPolylineDescription( Properties, alias MAP_COORDS_BY_ID )
 {
     alias Box!(MapCoords.Coords) BBox;
     alias TNodeDescription!( ulong, MAP_COORDS_BY_ID ) NodeDescription;
     
     ulong nodes_ids[];
-    cat.Line type;
+    Properties properties;
     
-    this( ulong[] nodes_ids, cat.Line type )
+    this( ulong[] nodes_ids, Properties properties )
     in
     {
         assert( nodes_ids.length >= 2 );
@@ -23,7 +23,7 @@ struct TPolylineDescription( alias MAP_COORDS_BY_ID )
     body
     {
         this.nodes_ids = nodes_ids;
-        this.type = type;
+        this.properties = properties;
         
         // coords reading checking
         for( size_t i = 0; i < nodes_ids.length; i++ )

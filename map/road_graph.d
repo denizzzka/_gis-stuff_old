@@ -10,7 +10,6 @@ struct RoadLine
     MapGraphPolyline polyline;
     alias polyline this;
     
-    cat.Line type = cat.Line.OTHER;
     float weight = 0;
     
     this( MapCoords[] points, cat.Line type )
