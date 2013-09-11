@@ -36,7 +36,7 @@ struct MapGraphPoint
     }
 }
 
-struct MapPolyline
+struct MapGraphPolyline
 {
     package MapCoords[] points; /// points between start and end points
     
