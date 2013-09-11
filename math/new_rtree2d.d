@@ -389,6 +389,7 @@ unittest
         }
         
     debug(rtree) rtree.showBranch( rtree.root );
+    debug GC.enable();
     
     size_t nodes, leafs, leafBlocksNum;
     rtree.statistic( nodes, leafs, leafBlocksNum );
@@ -397,8 +398,6 @@ unittest
     assert( nodes == 13 );
     assert( leafBlocksNum == 6 );
     
-    debug GC.enable();
-    
     assert( rtree.root.getBoundary == BBox(Vector(1, 1), Vector(3, 3)) );
     
     BBox search1 = BBox( Vector( 2, 2 ), Vector( 1, 1 ) );
@@ -406,11 +405,4 @@ unittest
     
     assert( rtree.search( search1 ).length == 9 );
     assert( rtree.search( search2 ).length == 1 );
-    
-    /*
-    auto rarr = new RTreeArray!(typeof(rtree))( rtree );
-    
-    assert( rarr.search( search1 ).length == 9 );
-    assert( rarr.search( search2 ).length == 1 );
-    */
 }
