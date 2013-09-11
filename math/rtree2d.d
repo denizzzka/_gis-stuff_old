@@ -110,12 +110,12 @@ class RTreePtrs( _Box, _Payload )
     alias _Box Box;
     alias _Payload Payload;
     
-    const ubyte maxChildren;
-    const ubyte maxLeafChildren;
+    const size_t maxChildren;
+    const size_t maxLeafChildren;
     ubyte depth = 0;
     Node* root;
     
-    this( in ubyte maxChildren = 5, in ubyte maxLeafChildren = 50 )
+    this( in size_t maxChildren = 5, in size_t maxLeafChildren = 500 )
     in
     {
         assert( maxChildren >= 2 );
@@ -315,10 +315,14 @@ private:
     void correct( Node* fromDeepestNode )
     {
         auto node = fromDeepestNode;
-        
         bool leafs_level = true;
+        
+        debug(rtptrs) writeln( "Correcting from node ", fromDeepestNode );
+        
         while( node )
         {
+            debug(rtptrs) writeln( "Correcting node ", node );
+            
             if( (leafs_level && node.children.length > maxLeafChildren) // need split on leafs level?
                 || (!leafs_level && node.children.length > maxChildren) ) // need split of node?
             {
@@ -346,6 +350,8 @@ private:
             node = node.parent;
             leafs_level = false;
         }
+        
+        debug(rtptrs) writeln( "End of correction" );
     }
     
     /// convert number to number of bits
@@ -374,6 +380,12 @@ private:
         
         float minArea = float.max;
         uint minAreaKey;
+        
+        debug(rtptrs)
+        {
+            writeln( "Begin splitting node ", n, " by brute force" );
+            stdout.flush();
+        }
         
         // loop through all combinations of nodes
         auto capacity = numToBits!uint( len );
