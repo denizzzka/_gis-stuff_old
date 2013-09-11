@@ -68,33 +68,36 @@ class RTreePtrs( _Box, _Payload )
         {
             debug assert( !leafNode );
             
+            if( children.length )
+                boundary.addCircumscribe( child.boundary );
+            else
+                boundary = child.boundary;
+            
             children ~= child;
             child.parent = &this;
-            
-            boundary.addCircumscribe( child.boundary );
         }
     }
     
-    void addObject( in Box boundary, Payload payload )
+    Payload* addObject( in Box boundary, Payload payload )
     {
         payloads ~= payload;
         Payload* payload_ptr = &payloads[$-1];
         
         Node* leaf = new Node( boundary, payload_ptr );
-        
         auto place = selectLeafPlace( boundary );
         
-        // unconditional add a leaf
-        place.assignChild( leaf );
-        
         debug(rtptrs) writeln( "Add leaf ", leaf, " to node ", place );     
+        
+        place.assignChild( leaf ); // unconditional add a leaf
+        correct( place ); // correction of the tree
+        
+        return payload_ptr;        
     }
     
     private
     {
         Node* selectLeafPlace( in Box newItemBoundary ) const
         {
-            assert( root );
             Node* curr = cast(Node*) root;
             
             for( auto currDepth = 0; currDepth < depth; currDepth++ )
@@ -118,6 +121,143 @@ class RTreePtrs( _Box, _Payload )
             
             return curr;
         }
+        
+        void correct( in Node* fromDeepestNode )
+        {
+            auto node = cast(Node*) fromDeepestNode;
+            bool leafs_level = true;
+            
+            debug(rtptrs) writeln( "Correcting from node ", fromDeepestNode );
+            
+            while( node )
+            {
+                debug(rtptrs) writeln( "Correcting node ", node );
+                
+                if( (leafs_level && node.children.length > maxLeafChildren) // need split on leafs level?
+                    || (!leafs_level && node.children.length > maxChildren) ) // need split of node?
+                {
+                    if( node.parent is null ) // for root split need a new root node
+                    {
+                        auto old_root = root;
+                        root = new Node;
+                        root.assignChild( old_root );
+                        depth++;
+                        
+                        debug(rtptrs) writeln( "Added new root ", root, ", depth (without leafs) now is: ", depth );
+                    }
+                    
+                    Node* n = splitNode( node );
+                    node.parent.assignChild( n );
+                }
+                else // just recalculate boundary
+                {
+                    Box boundary = node.children[0].boundary;
+                    
+                    foreach( c; node.children[1..$] )
+                        boundary.addCircumscribe( c.boundary );
+                        
+                    node.boundary = boundary;
+                }
+                
+                node = node.parent;
+                leafs_level = false;
+            }
+            
+            debug(rtptrs) writeln( "End of correction" );
+        }
+        
+        /// Brute force method
+        RTreePtrs.Node* splitNode( RTreePtrs.Node* n )
+        in
+        {
+            assert( !n.leafNode );
+            assert( n.children.length >= 2 );
+        }
+        body
+        {
+            alias RTreePtrs.Node Node;
+            
+            size_t len = n.children.length;
+            
+            float minArea = float.max;
+            uint minAreaKey;
+            
+            debug(rtptrs)
+            {
+                writeln( "Begin splitting node ", n, " by brute force" );
+                stdout.flush();
+            }
+            
+            // loop through all combinations of nodes
+            auto capacity = numToBits!uint( len );
+            for( uint i = 1; i < ( capacity + 1 ) / 2; i++ )
+            {
+                Box b1;
+                Box b2;
+                
+                // division into two unique combinations of child nodes
+                uint j;
+                for( j = 0; j < len; j++ )
+                {
+                    auto boundary = n.children[j].boundary;
+                    
+                    if( bt( cast( size_t* ) &i, j ) == 0 )
+                        b1 = b1.getCircumscribed( boundary );
+                    else
+                        b2 = b2.getCircumscribed( boundary );
+                }
+                
+                // search for combination with minimum area
+                float area = b1.getArea() + b2.getArea();
+                
+                if( area < minArea )
+                {
+                    minArea = area;
+                    minAreaKey = j;
+                }
+            }
+            
+            // split by places specified by bits of key
+            auto nChildren = n.children.dup;
+            n.children.destroy;
+            
+            auto newNode = new Node;
+            
+            for( auto i = 0; i < len; i++ )
+            {
+                auto c = nChildren[i];
+                
+                if( bt( cast( size_t* ) &minAreaKey, i ) == 0 )
+                    n.assignChild( c );
+                else
+                    newNode.assignChild( c );
+            }
+            
+            debug(rtptrs)
+            {
+                writeln( "Split node ", n, " ", n.children, ", new ", newNode, " ", newNode.children );
+                stdout.flush();
+            }
+            
+            return newNode;
+        }
+    }
+}
+
+private
+{
+    /// convert number to number of bits
+    auto numToBits( T, N )( N n ) pure
+    {
+        T res;
+        for( N i = 0; i < n; i++ )
+            res = cast(T) ( res << 1 | 1 );
+            
+        return res;
+    }
+    unittest
+    {
+        assert( numToBits!ubyte( 3 ) == 0b_0000_0111 );
     }
 }
 
