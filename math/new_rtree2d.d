@@ -16,10 +16,10 @@ class RTreePtrs( _Box, _Payload )
     const size_t maxChildren;
     const size_t maxLeafChildren;
     
-    ubyte depth = 0;
-    Node* root;
+    private ubyte depth = 0;
+    private Node* root;
     
-    Payload[] payloads;
+    private Payload[] payloads;
     
     this( in size_t maxChildren = 5, in size_t maxLeafChildren = 250 )
     in
@@ -239,6 +239,54 @@ class RTreePtrs( _Box, _Payload )
             
             return newNode;
         }
+        
+        void statistic(
+            ref size_t nodesNum,
+            ref size_t leafsNum,
+            ref size_t leafBlocksNum,
+            Node* curr = null,
+            size_t currDepth = 0
+        )
+        {
+            if( !curr )
+            {
+                curr = root;
+                nodesNum = 1;
+            }
+            
+            if( currDepth == depth )
+            {
+                leafBlocksNum++;
+                leafsNum += curr.children.length;
+            }
+            else
+            {
+                nodesNum += curr.children.length;
+                
+                foreach( i, c; curr.children )
+                    statistic( nodesNum, leafsNum, leafBlocksNum, c, currDepth+1 );
+            }
+        }
+        
+        debug
+        void showBranch( Node* from, uint depth = 0 )
+        {
+            writeln( "Depth: ", depth );
+            
+            if( depth > this.depth )
+            {
+                writeln( "Leaf: ", from, " parent: ", from.parent );
+            }
+            else
+            {
+                writeln( "Node: ", from, " parent: ", from.parent, " children: ", from.children );
+                
+                foreach( i, c; from.children )
+                {
+                    showBranch( c, depth+1 );
+                }
+            }
+        }
     }
 }
 
@@ -261,7 +309,7 @@ private
 
 version(unittest)
 {
-    struct DumbPayload
+    static struct DumbPayload
     {
         char[6] data = [ 0x58, 0x58, 0x58, 0x58, 0x58, 0x58 ];
         
@@ -309,4 +357,15 @@ unittest
             
             rtree.addObject( boundary, payload );
         }
+        
+    rtree.showBranch( rtree.root );
+    
+    size_t nodes, leafs, leafBlocksNum;
+    rtree.statistic( nodes, leafs, leafBlocksNum );
+    
+    assert( leafs == 9 );
+    assert( nodes == 13 );
+    assert( leafBlocksNum == 6 );
+    
+    
 }
