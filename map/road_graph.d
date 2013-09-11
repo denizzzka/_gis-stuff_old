@@ -3,6 +3,7 @@ module map.road_graph;
 import map.map_graph;
 import math.graph.undirected;
 import math.graph.pathfinder: PathFinder;
+import cat = config.categories: Line;
 
 
 struct RoadProperties
@@ -15,11 +16,14 @@ struct RoadLine
     MapGraphPolyline polyline;
     alias polyline this;
     
+    RoadProperties properties;
+    
     float weight = 0; // FIXME remove it
     
     this( MapCoords[] points, RoadProperties properties )
     {
-        polyline = MapGraphPolyline( points, properties );
+        polyline = MapGraphPolyline( points );
+        this.properties = properties;
     }
 }
 

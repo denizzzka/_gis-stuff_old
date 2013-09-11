@@ -4,7 +4,6 @@ import math.geometry;
 import math.rtree2d.ptrs;
 import math.graph.digraph;
 import map.map: MapCoords, BBox;
-import cat = config.categories: Line; // FIXME: remove it
 static import config.map;
 import math.earth: mercator2coords, getSphericalDistance;
 import map.adapters: TPolylineDescription;
@@ -127,27 +126,27 @@ class MapGraph( GraphEngine, Point, Polyline )
             Description,
             ForeignID = Description.ForeignNode.ForeignID
         )(
-            Description line,
+            Description line_descr,
             ref NodeDescr[ForeignID] already_stored
         )
     in
     {
-        assert( line.nodes_ids.length >= 2 );
+        assert( line_descr.nodes_ids.length >= 2 );
     }
     body
     {
         size_t first_node = 0;
-        size_t last_node = line.nodes_ids.length - 1;
+        size_t last_node = line_descr.nodes_ids.length - 1;
         
-        auto from_node = addPoint( line.getNode( first_node ), already_stored );
-        auto to_node = addPoint( line.getNode( last_node ), already_stored );
+        auto from_node = addPoint( line_descr.getNode( first_node ), already_stored );
+        auto to_node = addPoint( line_descr.getNode( last_node ), already_stored );
         
         MapCoords points[];
         
         for( auto i = 1; i < last_node; i++ )
-            points ~= line.getNode( i ).getCoords;
+            points ~= line_descr.getNode( i ).getCoords;
         
-        auto poly = Polyline( points, line.properties );
+        auto poly = Polyline( points, line_descr.properties );
         
         G.ConnectionInfo conn = { from: from_node, to: to_node };
         
