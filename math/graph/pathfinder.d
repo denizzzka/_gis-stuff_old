@@ -45,7 +45,7 @@ template PathFinder( Graph )
             const auto goal = graph.getNodePayload( goalDescr );
             
             Score startScore = {
-                    came_from: { idx: typeof(Score.came_from.idx).max }, // magic for correct path reconstruct
+                    came_from: Graph.NodeMagic, // magic for correct path reconstruct
                     came_through_edge: { idx: 666 }, // not magic, just for ease of debugging
                     g: 0,
                     full: start.heuristic( goal )

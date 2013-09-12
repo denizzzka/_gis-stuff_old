@@ -5,8 +5,17 @@ import std.random: uniform;
 
 class UndirectedGraph( NodePayload, EdgePayload )
 {
-    struct NodeDescr { size_t idx; }
-    struct EdgeDescr { size_t idx; }
+    struct NodeDescr { private size_t idx; }
+    
+    immutable NodeDescr NodeMagic = { idx: size_t.max }; // magic for correct path reconstruct
+    
+    struct EdgeDescr
+    {
+        NodeDescr node;
+        private size_t idx;
+    }
+    
+    private struct GlobalEdgeDescr { private size_t idx; }
     
     struct ConnectionInfo
     {
@@ -32,8 +41,6 @@ class UndirectedGraph( NodePayload, EdgePayload )
             return forward_direction ? edge.connection.to : edge.connection.from;
         }
     }
-    
-    private struct GlobalEdgeDescr { size_t idx; }
     
     struct Node
     {
