@@ -4,11 +4,8 @@ import std.algorithm: canFind;
 debug(pathfinder) import std.stdio;
 
 
-template PathFinder( Graph )
+class PathFinder( GraphEngine ) : GraphEngine
 {
-    alias Graph.NodeDescr NodeDescr;
-    alias Graph.EdgeDescr EdgeDescr;
-    
     struct PathElement
     {
         NodeDescr node;
@@ -18,40 +15,38 @@ template PathFinder( Graph )
     /// A* algorithm
     ///
     /// Returns: elements in the reverse order
-    PathElement[] findPath( in Graph graph, in NodeDescr start, in NodeDescr goal )
+    PathElement[] findPath( in NodeDescr start, in NodeDescr goal )
     {
-        auto r = findPathScore( graph, start, goal );
+        auto r = findPathScore( start, goal );
         return (r is null) ? null : reconstructPath( r, goal );
     }
     
     private
     {
         /// A* algorithm
-        Score[NodeDescr] findPathScore( in Graph graph, in NodeDescr startDescr, in NodeDescr goalDescr )
+        Score[NodeDescr] findPathScore( in NodeDescr startDescr, in NodeDescr goalDescr )
         in
         {
-            assert( graph.isAvailable( startDescr ) );
-            assert( graph.isAvailable( goalDescr ) );
+            assert( isAvailable( startDescr ) );
+            assert( isAvailable( goalDescr ) );
         }
         body
         {
-            alias Graph.Node Node;
-            
             const (NodeDescr)[] open; /// The set of tentative nodes to be evaluated
             const (NodeDescr)[] closed; /// The set of nodes already evaluated
             Score[NodeDescr] score;
             
-            const auto start = graph.getNodePayload( startDescr );
-            const auto goal = graph.getNodePayload( goalDescr );
+            const auto start = getNodePayload( startDescr );
+            const auto goal = getNodePayload( goalDescr );
             
             Score startScore =
             {
                 came_through_edge: EdgeDescr(
-                        Graph.NodeMagic, // magic for correct path reconstruct
+                        NodeMagic, // magic for correct path reconstruct
                         666 // not magic, just for ease of debugging
                     ),
                 g: 0,
-                full: graph.heuristicDistance( start, goal )
+                //full: heuristicDistance( start, goal )
             };
             
             score[startDescr] = startScore;
@@ -84,23 +79,23 @@ template PathFinder( Graph )
                 if( currDescr == goalDescr )
                     return score;
                 
-                const auto curr = graph.getNodePayload( currDescr );
+                const auto curr = getNodePayload( currDescr );
                 debug(pathfinder) writefln("Curr %s %s lowest full=%s", currDescr, curr.point, key_score);
                 
                 open = open[0..key] ~ open[key+1..$];
                 closed ~= currDescr;
                 
-                foreach( edge; graph.getEdgesRange( currDescr ) )
+                foreach( edge; getEdgesRange( currDescr ) )
                 {
-                    const auto e = graph.getEdge( edge );
+                    const auto e = getEdge( edge );
                     
                     NodeDescr neighborNode = e.to_node;
-                    const auto neighbor = graph.getNodePayload( neighborNode );
+                    const auto neighbor = getNodePayload( neighborNode );
                     
                     if( canFind( closed, neighborNode ) )
                         continue;
                     
-                    auto tentative = score[currDescr].g + graph.distance( edge );
+                    auto tentative = score[currDescr].g; // + distance( edge );
                     
                     if( !canFind( open, neighborNode ) )
                     {
@@ -115,7 +110,7 @@ template PathFinder( Graph )
                     Score neighborScore = {
                             came_through_edge: edge,
                             g: tentative,
-                            full: tentative + graph.heuristicDistance( neighbor, goal )
+                            full: tentative // + heuristicDistance( neighbor, goal )
                         };
                         
                     score[neighborNode] = neighborScore;
@@ -175,7 +170,9 @@ unittest
     
     static struct EdgePayload { float weight; }
     
-    class G : DirectedGraph!( DNP, EdgePayload )
+    alias DirectedGraph!( DNP, EdgePayload ) DG;
+    
+    class G : PathFinder!DG
     {
         real heuristicDistance( in DNP from, in DNP to ) const
         {
@@ -194,7 +191,7 @@ unittest
     }
     
     //alias DirectedGraph!( DNP, EdgePayload ) G;
-    alias PathFinder!( G ) pathFinder;
+    //alias PathFinder!( G ) pathFinder;
     alias G.NodeDescr NodeDescr;
     
     auto g = new G;
@@ -240,7 +237,7 @@ unittest
             g.addEdge( conn_right_edge, right_edge_payload );
         }
     
-    auto s = pathFinder.findPath( g, from, goal );
+    auto s = g.findPath( from, goal );
     
     assert( s != null );
     assert( s.length == 7 );
@@ -248,6 +245,6 @@ unittest
     DNP g2_p = { Vector2D!float(11,4) };
     NodeDescr goal2 = g.addNode( g2_p );
     
-    s = pathFinder.findPath( g, from, goal2 );
+    s = g.findPath( from, goal2 );
     assert(!s); // path to unconnected point can not be found
 }
