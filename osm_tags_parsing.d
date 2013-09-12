@@ -211,9 +211,9 @@ body
     }
 }
 
-MapObjectProperties* parseTags( in Tag[] tags )
+Nullable!MapObjectProperties parseTags( in Tag[] tags )
 {
-    auto res = new MapObjectProperties;
+    Nullable!MapObjectProperties res;
     
     with( LineClass )
     {
@@ -225,10 +225,13 @@ MapObjectProperties* parseTags( in Tag[] tags )
             res.road.type = getRoadType( val );
             
             res.road.layer = tags.getZeroOrVal!byte( "layer" );
+            
+            return res;
         }
     }
     
-    return null;
+    res.nullify;
+    return res;
 }
 
 Nullable!string getNoneOrOneStringVal( in Tag[] tags, in string key )
