@@ -1,7 +1,7 @@
 module math.graph.pathfinder;
 
 import std.algorithm: canFind;
-debug(graph) import std.stdio;
+debug(pathfinder) import std.stdio;
 
 
 template PathFinder( Graph )
@@ -45,8 +45,11 @@ template PathFinder( Graph )
             const auto goal = graph.getNodePayload( goalDescr );
             
             Score startScore = {
-                    came_from: Graph.NodeMagic, // magic for correct path reconstruct
-                    came_through_edge: { idx: 666 }, // not magic, just for ease of debugging
+                    came_through_edge:
+                    {
+                        node: Graph.NodeMagic, // magic for correct path reconstruct
+                        idx: 666 // not magic, just for ease of debugging
+                    },
                     g: 0,
                     full: start.heuristic( goal )
                 };
@@ -54,14 +57,17 @@ template PathFinder( Graph )
             score[startDescr] = startScore;
             open ~= startDescr;
             
-            debug(graph) writefln("Path goal point: %s", goal.point );
+            debug(pathfinder) writefln("Path goal point: %s", goal.point );
             
             while( open.length > 0 )
             {
-                debug(graph) writeln("Open: ", open);
-                debug(graph) writeln("open.length=", open.length);
-                debug(graph) writeln("closed.length=", closed.length);
-                debug(graph) writeln("score.length=", score.length);
+                debug( pathfinder )
+                {
+                    writeln("Open: ", open);
+                    writeln("open.length=", open.length);
+                    writeln("closed.length=", closed.length);
+                    writeln("score.length=", score.length);
+                }
                 
                 // Search for open node having the lowest heuristic value
                 size_t key;
@@ -79,7 +85,7 @@ template PathFinder( Graph )
                     return score;
                 
                 const auto curr = graph.getNodePayload( currDescr );
-                debug(graph) writefln("Curr %s %s lowest full=%s", currDescr, curr.point, key_score);
+                debug(pathfinder) writefln("Curr %s %s lowest full=%s", currDescr, curr.point, key_score);
                 
                 open = open[0..key] ~ open[key+1..$];
                 closed ~= currDescr;
@@ -107,7 +113,6 @@ template PathFinder( Graph )
                     
                     // Updating neighbor score
                     Score neighborScore = {
-                            came_from: currDescr,
                             came_through_edge: edge,
                             g: tentative,
                             full: tentative + neighbor.heuristic( goal )
@@ -115,7 +120,7 @@ template PathFinder( Graph )
                         
                     score[neighborNode] = neighborScore;
                     
-                    debug(graph)
+                    debug(pathfinder)
                         writefln("Upd neighbor=%s edge=%s %s tentative=%s full=%s",
                             neighborNode, edge.idx, neighbor.point, tentative, score[neighborNode].full);                
                 }
@@ -137,7 +142,7 @@ template PathFinder( Graph )
                 
                 res ~= e;
                 
-                curr = p.came_from;
+                curr = p.came_through_edge.node;
             }
 
             return res;
@@ -145,8 +150,7 @@ template PathFinder( Graph )
         
         static struct Score
         {
-            NodeDescr came_from; /// Navigated node
-            EdgeDescr came_through_edge;
+            EdgeDescr came_through_edge; // edge with navigated node inside
             float g; /// Cost from start along best known path
             float full; /// f(x), estimated total cost from start to goal through node
         }
