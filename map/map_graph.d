@@ -55,17 +55,7 @@ class MapGraph( GraphEngine, Point, Polyline )
         G graph;
     }
     
-    struct PolylineDescriptor
-    {
-        NodeDescr node;
-        EdgeDescr edge;
-        
-        this( NodeDescr node, EdgeDescr edge )
-        {
-            this.node = node;
-            this.edge = edge;
-        }
-    }
+    alias EdgeDescr PolylineDescriptor;
     
     this()()
     {
@@ -87,7 +77,7 @@ class MapGraph( GraphEngine, Point, Polyline )
     // TODO: replace this by getPayload()
     ref const (Polyline) getPolyline( in PolylineDescriptor descr ) const
     {
-        return graph.getEdge( descr.edge ).payload;
+        return graph.getEdge( descr ).payload;
     }
     
     MapCoords[] getMapCoords( in PolylineDescriptor descr ) const
@@ -96,7 +86,7 @@ class MapGraph( GraphEngine, Point, Polyline )
         
         res ~= graph.getNodePayload( descr.node );
         
-        auto edge = graph.getEdge( descr.edge );
+        auto edge = graph.getEdge( descr );
         
         foreach( c; edge.payload.polyline.points )
             res ~= c;
@@ -147,9 +137,7 @@ class MapGraph( GraphEngine, Point, Polyline )
         
         G.ConnectionInfo conn = { from: from_node, to: to_node };
         
-        auto edgeDescr = graph.addEdge( conn, poly );
-        
-        return PolylineDescriptor( from_node, edgeDescr );
+        return graph.addEdge( conn, poly );
     }
     
     private
@@ -178,7 +166,7 @@ class MapGraph( GraphEngine, Point, Polyline )
         
         void dg( EdgeDescr edge )
         {
-            res ~= PolylineDescriptor( edge.node, edge );
+            res ~= edge;
         }
         
         graph.forAllEdges( &dg );

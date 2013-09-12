@@ -42,7 +42,7 @@ class RoadGraph : MapGraph!( UG, MapGraphPoint, RoadLine )
         
         if( path != null )
             for( auto i = 1; i < path.length; i++ )
-                res ~= RoadGraph.PolylineDescriptor( path[i].node, path[i-1].came_through_edge );
+                res ~= path[i-1].came_through_edge;
         
         return res;
     }
@@ -54,7 +54,7 @@ class RoadGraph : MapGraph!( UG, MapGraphPoint, RoadLine )
         
         res ~= graph.getNodePayload( descr.node );
         
-        auto edge = graph.getEdge( descr.edge );
+        auto edge = graph.getEdge( descr );
         
         if( edge.forward_direction )
             foreach( c; edge.payload.polyline.points )
