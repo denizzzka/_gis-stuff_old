@@ -36,8 +36,8 @@ class PathFinder( GraphEngine ) : GraphEngine
             const (NodeDescr)[] closed; /// The set of nodes already evaluated
             Score[NodeDescr] score;
             
-            const auto start = getNodePayload( startDescr );
-            const auto goal = getNodePayload( goalDescr );
+            //const auto start = getNodePayload( startDescr );
+            //const auto goal = getNodePayload( goalDescr );
             
             Score startScore =
             {
@@ -174,8 +174,11 @@ unittest
     
     class G : PathFinder!DG
     {
-        real heuristicDistance( in DNP from, in DNP to ) const
+        real heuristicDistance( in NodeDescr fromDescr, in NodeDescr toDescr ) const
         {
+            auto from = getNodePayload( fromDescr );
+            auto to = getNodePayload( toDescr );
+            
             return from.direct_distance( to );
         }
         
