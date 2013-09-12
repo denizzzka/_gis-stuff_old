@@ -216,6 +216,7 @@ Nullable!MapObjectProperties parseTags( in Tag[] tags )
     Nullable!MapObjectProperties res;
     
     with( LineClass )
+    with( Line )
     {
         if( !tags.getNoneOrOneStringVal( "highway" ).isNull )
         {
@@ -225,12 +226,23 @@ Nullable!MapObjectProperties parseTags( in Tag[] tags )
             res.road.type = getRoadType( val );
             
             res.road.layer = tags.getZeroOrVal!byte( "layer" );
+        }
+        
+        else if( searchTags( tags, ["admin_level"], ["1", "2", "3", "4"] ) )
+        {
+            res.line_class = POLYLINE;
             
-            return res;
+            res.line.type = BOUNDARY;
+        }
+        
+        else if( !tags.getNoneOrOneStringVal( "building" ).isNull )
+        {
+            res.line_class = POLYLINE;
+            
+            res.line.type = BUILDING;
         }
     }
     
-    res.nullify;
     return res;
 }
 

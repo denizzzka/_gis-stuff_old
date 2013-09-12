@@ -87,7 +87,7 @@ class RoadGraph : PathFinder!MG
             auto v1 = getEdge( e1 ).payload.type;
             auto v2 = getEdge( e2 ).payload.type;
             
-            return v1 > v2;
+            return v1 < v2; // less value mean greater road rank
         }
         
         sortEdges( &greater );
