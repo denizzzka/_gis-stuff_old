@@ -247,6 +247,8 @@ class Region
                 
                 layer.lines.addObject( bbox, any );
             }
+            
+            layer.road_graph.sortEdgesByReducingRank;
         }
     }
     
