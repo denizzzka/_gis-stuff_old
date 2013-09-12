@@ -108,8 +108,18 @@ class UndirectedGraph( NodePayload, EdgePayload )
         return nodes[ node.idx ].payload;
     }
     
-    DirectedEdge getEdge( in NodeDescr node, in EdgeDescr edge ) const
+    DirectedEdge getEdge( in EdgeDescr edge ) const
+    in
     {
+        auto node = edge.node;
+        
+        assert( node.idx < nodes.length );
+        assert( edge.idx < nodes[ node.idx ].edges.length );
+    }
+    body
+    {
+        auto node = edge.node;
+        
         GlobalEdgeDescr global = nodes[ node.idx ].edges[ edge.idx ];
         
         const (Edge)* e = &edges[ global.idx ];
@@ -132,7 +142,7 @@ class UndirectedGraph( NodePayload, EdgePayload )
     {
         for( NodeDescr n = { idx: 0 }; n.idx < nodes.length; n.idx++ )
             foreach( ref e; getEdgesRange( n ) )
-                if( getEdge( n, e ).forward_direction )
+                if( getEdge( e ).forward_direction )
                     dg( n, e );
     }
     

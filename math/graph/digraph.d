@@ -74,14 +74,17 @@ class DirectedGraph( NodePayload, EdgePayload )
         return nodes[ node.idx ].payload;
     }
     
-    ref const(Edge) getEdge( in NodeDescr node, in EdgeDescr edge ) const
+    ref const(Edge) getEdge( in EdgeDescr edge ) const
     in
     {
+        auto node = edge.node;
+        
         assert( node.idx < nodes.length );
         assert( edge.idx < nodes[ node.idx ].edges.length );
     }
     body
     {
+        auto node = edge.node;
         return nodes[ node.idx ].edges[ edge.idx ];
     }
     

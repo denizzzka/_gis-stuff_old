@@ -87,7 +87,7 @@ class MapGraph( GraphEngine, Point, Polyline )
     // TODO: replace this by getPayload()
     ref const (Polyline) getPolyline( in PolylineDescriptor descr ) const
     {
-        return graph.getEdge( descr.node, descr.edge ).payload;
+        return graph.getEdge( descr.edge ).payload;
     }
     
     MapCoords[] getMapCoords( in PolylineDescriptor descr ) const
@@ -96,7 +96,7 @@ class MapGraph( GraphEngine, Point, Polyline )
         
         res ~= graph.getNodePayload( descr.node );
         
-        auto edge = graph.getEdge( descr.node, descr.edge );
+        auto edge = graph.getEdge( descr.edge );
         
         foreach( c; edge.payload.polyline.points )
             res ~= c;
