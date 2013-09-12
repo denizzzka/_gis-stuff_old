@@ -62,12 +62,6 @@ class MapGraph( alias GraphEngine, Point, Polyline ) : GraphEngine!( Point, Poly
             addPolyline( line, already_stored );
     }
     
-    // TODO: replace this by getPayload()
-    ref const (Polyline) getPolyline( in EdgeDescr descr ) const
-    {
-        return getEdge( descr ).payload;
-    }
-    
     MapCoords[] getMapCoords( in EdgeDescr descr ) const
     {
         MapCoords[] res;
