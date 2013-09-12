@@ -6,6 +6,7 @@ import map.objects_properties;
 import std.conv: to;
 import std.algorithm: canFind;
 import std.exception: enforce;
+import std.typecons: Nullable;
 
 
 string getStringByIndex( in StringTable stringtable, in uint index )
@@ -216,37 +217,56 @@ MapObjectProperties* parseTags( in Tag[] tags )
     
     with( LineClass )
     {
-        if( tags.searchTags( ["highway"] ) )
+        if( tags.getNoneOrOneVal( "highway" ) )
         {
             res.line_class = ROAD;
             
-            auto val = tags.searchTags( ["highway"] )[0].value;
+            auto val = tags.getOneVal( "highway" );
             res.road.type = getRoadType( val );
+            
+            
         }
     }
     
     return null;
 }
 
-string* getNoneOrOne( in Tag[] tags, in string key )
+Nullable!string getNoneOrOneVal( in Tag[] tags, in string key )
 {
     auto arr = tags.searchTags( [ key ] );
     
     enforce( arr.length > 1, "Key "~key~" is found many times" );
     
+    Nullable!string res;
+    
     if( arr.length > 0 )
-        return &arr[0].value;
-    else
-        return null;
+        res = arr[0].value;
+        
+    return res;
 }
 
 string getOneVal( in Tag[] tags, in string key )
 {
-    string* res = getNoneOrOne( tags, key );
+    auto res = tags.getNoneOrOneVal( key );
     
-    enforce( res, "Key "~key~" is not found" );
+    enforce( !res.isNull, "Key "~key~" is not found" );
     
-    return *res;
+    return res;
+}
+
+Nullable!real getNoneOrRealVal( in Tag[] tags, in string key )
+{
+    auto str = tags.getNoneOrOneVal( key );
+    
+    Nullable!real res;
+    
+    if( !str.isNull )
+    {
+        string s = str;
+        res = to!real( s );
+    }
+    
+    return res;
 }
 
 Line getRoadType( in string val )
