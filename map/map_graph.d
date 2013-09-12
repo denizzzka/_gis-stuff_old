@@ -175,24 +175,6 @@ class MapGraph( alias GraphEngine, Point, Polyline ) : GraphEngine!( Point, Poly
                     dg( graphLines.map_graph, descr );
         }
     }
-    
-    real calcSphericalLength( in EdgeDescr descr ) const
-    {
-        auto coords = getMapCoords( descr );
-        
-        assert( coords.length > 0 );
-        
-        auto prev = coords[0];
-        real res = 0;
-        
-        for( auto i = 1; i < coords.length; i++ )
-        {
-            res += prev.calcSphericalDistance( coords[i] );
-            prev = coords[i];
-        }
-        
-        return res;
-    }
 }
 
 auto cutOnCrossings(DescriptionsTree)( in DescriptionsTree lines_rtree )
