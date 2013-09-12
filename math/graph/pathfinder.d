@@ -49,8 +49,6 @@ class PathFinder( GraphEngine ) : GraphEngine
             score[startDescr] = startScore;
             open ~= startDescr;
             
-            debug(pathfinder) writefln("Path goal point: %s", goal.point );
-            
             while( open.length > 0 )
             {
                 debug( pathfinder )
@@ -77,7 +75,7 @@ class PathFinder( GraphEngine ) : GraphEngine
                     return score;
                 
                 const auto curr = getNodePayload( currDescr );
-                debug(pathfinder) writefln("Curr %s %s lowest full=%s", currDescr, curr.point, key_score);
+                debug(pathfinder) writefln("Curr %s lowest full=%s", currDescr, key_score);
                 
                 open = open[0..key] ~ open[key+1..$];
                 closed ~= currDescr;
@@ -111,7 +109,7 @@ class PathFinder( GraphEngine ) : GraphEngine
                     
                     debug(pathfinder)
                         writefln("Upd neighbor=%s edge=%s %s tentative=%s full=%s",
-                            neighborDescr, edge.idx, neighbor.point, tentative, score[neighborDescr].full);                
+                            neighborDescr, edge, neighborDescr, tentative, score[neighborDescr].full);                
                 }
             }
 
@@ -234,6 +232,13 @@ unittest
     
     assert( s != null );
     assert( s.length == 7 );
+    
+    debug(pathfinder)
+    {
+        writeln("found path:");
+        foreach( c; s )
+            writeln("path element: ", c);
+    }
     
     DNP g2_p = { Vector2D!float(11,4) };
     NodeDescr goal2 = g.addNode( g2_p );

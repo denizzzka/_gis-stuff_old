@@ -30,24 +30,6 @@ private alias MapGraph!( UndirectedGraph, MapGraphPoint, RoadLine ) MG;
 
 class RoadGraph : PathFinder!MG
 {
-    EdgeDescr[] findPath2( NodeDescr from_node, NodeDescr to_node ) const
-    {
-        /*
-        alias PathFinder!( RoadGraph ) PF;
-        
-        auto path = PF.findPath( this, from_node, to_node );
-        
-        debug(path) writeln("path from=", from_node, " to=", to_node);
-        */
-        RoadGraph.EdgeDescr[] res;
-        /*
-        if( path != null )
-            for( auto i = 1; i < path.length; i++ )
-                res ~= path[i-1].came_through_edge;
-        */
-        return res;
-    }
-    
     override
     MapCoords[] getMapCoords( in EdgeDescr descr ) const
     {
