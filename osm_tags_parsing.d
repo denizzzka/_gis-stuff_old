@@ -1,11 +1,10 @@
 import osmpbf.osmformat: StringTable, Node;
-import osm: DecodedLine;
+import osm: DecodedLine, ReadPrimitiveException;
 import config.categories;
 import map.objects_properties;
 
 import std.conv: to;
 import std.algorithm: canFind;
-import std.exception: enforce;
 import std.typecons: Nullable;
 
 
@@ -216,7 +215,7 @@ body
 
 Nullable!MapObjectProperties parseTags( in Tag[] tags )
 {
-    Nullable!MapObjectProperties res;
+    MapObjectProperties res;
     
     with( LineClass )
     with( Line )
@@ -246,14 +245,16 @@ Nullable!MapObjectProperties parseTags( in Tag[] tags )
         }
     }
     
-    return res;
+    Nullable!MapObjectProperties null_ret;
+    return null_ret;
 }
 
 Nullable!string getNoneOrOneStringVal( in Tag[] tags, in string key )
 {
     auto arr = tags.searchTags( [ key ] );
     
-    enforce( arr.length > 1, "Key "~key~" is found many times" );
+    if( arr.length > 1 )
+        throw new ReadPrimitiveException( "Key "~key~" is found many times" );
     
     Nullable!string res;
     
@@ -267,7 +268,8 @@ string getOneStringVal( in Tag[] tags, in string key )
 {
     auto res = tags.getNoneOrOneStringVal( key );
     
-    enforce( !res.isNull, "Key "~key~" is not found" );
+    if( res.isNull )
+        throw new ReadPrimitiveException( "Key "~key~" is not found" );
     
     return res;
 }
