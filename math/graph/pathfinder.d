@@ -180,7 +180,18 @@ unittest
     
     static struct EdgePayload { float weight; }
     
-    alias DirectedGraph!( DNP, EdgePayload ) G;
+    class G : DirectedGraph!( DNP, EdgePayload )
+    {
+        real heuristicDistance( in NodeDescr fromDescr, in NodeDescr toDescr )
+        {
+            auto from = getNodePayload( fromDescr );
+            auto to = getNodePayload( toDescr );
+            
+            return from.heuristic( to );
+        }
+    }
+    
+    //alias DirectedGraph!( DNP, EdgePayload ) G;
     alias PathFinder!( G ) pathFinder;
     alias G.NodeDescr NodeDescr;
     
