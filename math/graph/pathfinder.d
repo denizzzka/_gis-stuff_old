@@ -86,7 +86,7 @@ template PathFinder( Graph )
                 
                 foreach( edge; graph.getEdgesRange( currDescr ) )
                 {
-                    const auto e = graph.getEdge( currDescr, edge );
+                    const auto e = graph.getEdge( edge );
                     
                     NodeDescr neighborNode = e.to_node;
                     const auto neighbor = graph.getNodePayload( neighborNode );
@@ -152,7 +152,7 @@ template PathFinder( Graph )
         }
     }
 }
-/*
+
 unittest
 {
     import math.graph.digraph;
@@ -234,4 +234,3 @@ unittest
     s = pathFinder.findPath( g, from, goal2 );
     assert(!s); // path to unconnected point can not be found
 }
-*/
