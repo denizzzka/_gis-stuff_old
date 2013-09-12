@@ -259,7 +259,7 @@ class Region
         
         foreach( area; areas )
         {
-            auto to_layers = config.map.polylines.getProperty( area.type ).layers;
+            auto to_layers = config.map.polylines.getProperty( area._properties.type ).layers;
             
             foreach( n; to_layers )
             {

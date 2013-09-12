@@ -8,10 +8,11 @@ import map.map: Map, Region, BBox, Point, MapCoords, MercatorCoords, TPrepareLin
 import map.adapters: TPolylineDescription;
 import map.line_graph: LineProperties;
 import map.road_graph: RoadProperties;
-import map.area: Area;
+import map.area: Area, AreaProperties;
 import cat = config.categories;
 import osm_tags_parsing;
 import map.objects_properties: LineClass; // FIXME: remove it
+import map.objects_properties: MapObjectProperties;
 
 import std.stdio;
 import std.string;
@@ -178,7 +179,6 @@ unittest
 struct DecodedLine
 {
     OSM_id[] coords_idx;
-    LineClass classification;
     Tag[] tags;
     
     invariant()
@@ -205,8 +205,6 @@ DecodedLine decodeWay( in PrimitiveBlock prim, in Way way )
     if( !way.keys.isNull )
         res.tags = prim.stringtable.getTagsByArray( way.keys, way.vals );
         
-    res.classification = classifyLine( res );
-    
     return res;
 }
 
@@ -298,7 +296,7 @@ Region getRegion( string filename, bool verbose )
     
     alias TPolylineDescription!( LineProperties, getMapCoordsByNodeIdx ) LineDescription;
     alias TPolylineDescription!( RoadProperties, getMapCoordsByNodeIdx ) RoadDescription;
-    alias TPolylineDescription!( cat.Line, getMapCoordsByNodeIdx ) AreaDescription;
+    alias TPolylineDescription!( AreaProperties, getMapCoordsByNodeIdx ) AreaDescription;
     
     auto lines = new TPrepareLines!( LineDescription );
     auto roads = new TPrepareLines!( RoadDescription );
@@ -330,23 +328,23 @@ Region getRegion( string filename, bool verbose )
                     try
                     {
                         auto decoded = decodeWay( prim, w );
-                        auto type = getLineType( prim.stringtable, decoded );
+                        auto nullableProp = parseTags( decoded.tags );
                         
-                        if( type == cat.Line.UNSUPPORTED )
+                        if( nullableProp.isNull )
                             continue;
                         
+                        MapObjectProperties prop = nullableProp;
+                        
                         with( LineClass )
-                        final switch( decoded.classification )
+                        final switch( prop.classification )
                         {
                             case POLYLINE:
-                                LineProperties prop = { type: type };
-                                auto line = LineDescription( decoded.coords_idx, prop );
+                                auto line = LineDescription( decoded.coords_idx, prop.line );
                                 lines.addLine( line );
                                 break;
                                 
                             case ROAD:
-                                RoadProperties prop = { type: type };
-                                auto road = RoadDescription( decoded.coords_idx, prop );
+                                auto road = RoadDescription( decoded.coords_idx, prop.road );
                                 roads.addLine( road );
                                 break;
                                 
@@ -357,8 +355,8 @@ Region getRegion( string filename, bool verbose )
                                 if( decoded.coords_idx[0] != decoded.coords_idx[$-1] )
                                     throw new ReadPrimitiveException("area is not looped");
                                 
-                                auto descr = AreaDescription( decoded.coords_idx[0..$-1], type );
-                                areas ~= Area( descr, type );
+                                auto descr = AreaDescription( decoded.coords_idx[0..$-1], prop.area );
+                                areas ~= Area( descr );
                                 break;
                         }
                     }

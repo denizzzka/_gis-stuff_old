@@ -127,6 +127,7 @@ Point examNodeTag( Tag[] tags, Tag tag )
     }
 }
 
+@disable
 Line getLineType( in StringTable stringtable, in DecodedLine line )
 {
     foreach( t; line.tags )
@@ -140,6 +141,7 @@ Line getLineType( in StringTable stringtable, in DecodedLine line )
     return Line.UNSUPPORTED;
 }
 
+@disable
 Line examWayTag( in Tag[] tags, in Tag tag )
 {
     with( Line )
@@ -186,6 +188,7 @@ Line examWayTag( in Tag[] tags, in Tag tag )
     }
 }
 
+@disable
 LineClass classifyLine( in DecodedLine line )
 in
 {
@@ -220,7 +223,7 @@ Nullable!MapObjectProperties parseTags( in Tag[] tags )
     {
         if( !tags.getNoneOrOneStringVal( "highway" ).isNull )
         {
-            res.line_class = ROAD;
+            res.classification = ROAD;
             
             auto val = tags.getOneStringVal( "highway" );
             res.road.type = getRoadType( val );
@@ -230,14 +233,14 @@ Nullable!MapObjectProperties parseTags( in Tag[] tags )
         
         else if( searchTags( tags, ["admin_level"], ["1", "2", "3", "4"] ) )
         {
-            res.line_class = POLYLINE;
+            res.classification = POLYLINE;
             
             res.line.type = BOUNDARY;
         }
         
         else if( !tags.getNoneOrOneStringVal( "building" ).isNull )
         {
-            res.line_class = POLYLINE;
+            res.classification = POLYLINE;
             
             res.line.type = BUILDING;
         }

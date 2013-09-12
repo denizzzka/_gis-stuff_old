@@ -5,6 +5,10 @@ import cat = config.categories: Line;
 import config.map: polylines, PolylineProperties;
 static import math.reduce_points;
 
+struct AreaProperties
+{
+    cat.Line type;
+}
 
 struct AreaLine
 {
@@ -38,16 +42,16 @@ struct Area
     AreaLine perimeter;
     AreaLine[] holes;
     
-    cat.Line type;
+    AreaProperties _properties;
     
-    this( Description )( in Description perimeter, in cat.Line type, in Description[] holes = null )
+    this( Description )( in Description perimeter, in Description[] holes = null )
     {
         this.perimeter = AreaLine( perimeter );
         
         foreach( ref h; holes )
             this.holes ~= AreaLine( h );
             
-        this.type = type;
+        _properties = perimeter.properties;
     }
     
     BBox getBoundary() const
@@ -57,7 +61,7 @@ struct Area
     
     ref PolylineProperties properties() const
     {
-        return polylines.getProperty( type );
+        return polylines.getProperty( _properties.type );
     }
     
     void generalize( in real epsilon )
