@@ -5,13 +5,7 @@ debug(pathfinder) import std.stdio;
 
 
 class PathFinder( GraphEngine ) : GraphEngine
-{
-    struct PathElement
-    {
-        NodeDescr node;
-        EdgeDescr came_through_edge;
-    }
-    
+{    
     abstract
     real heuristicDistance( in NodeDescr fromDescr, in NodeDescr toDescr ) const;
     
@@ -21,7 +15,7 @@ class PathFinder( GraphEngine ) : GraphEngine
     /// A* algorithm
     ///
     /// Returns: elements in the reverse order
-    PathElement[] findPath( in NodeDescr start, in NodeDescr goal )
+    EdgeDescr[] findPath( in NodeDescr start, in NodeDescr goal )
     {
         auto r = findPathScore( start, goal );
         return (r is null) ? null : reconstructPath( r, goal );
@@ -124,18 +118,14 @@ class PathFinder( GraphEngine ) : GraphEngine
             return null;
         }
         
-        PathElement[] reconstructPath( Score[NodeDescr] scores, NodeDescr curr )
+        EdgeDescr[] reconstructPath( Score[NodeDescr] scores, NodeDescr curr )
         {
-            PathElement[] res;
+            EdgeDescr[] res;
             
             Score* p;
             while( p = curr in scores, p )
             {
-                PathElement e;
-                e.node = curr;
-                e.came_through_edge = p.came_through_edge;
-                
-                res ~= e;
+                res ~= p.came_through_edge;
                 
                 curr = p.came_through_edge.node;
             }
