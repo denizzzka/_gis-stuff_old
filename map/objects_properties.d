@@ -15,6 +15,9 @@ struct MapObjectProperties
 {
     LineClass line_class;
     
-    LineProperties line;
-    RoadProperties road;
+    union
+    {
+        LineProperties line;
+        RoadProperties road;
+    }
 }
