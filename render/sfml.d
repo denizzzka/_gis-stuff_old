@@ -161,7 +161,7 @@ class Window : IWindow
     {
 	alias RoadGraph.Polylines.MapGraphType_copy_because_compiling_bug RG;
 	
-	void dg( inout RG g, inout RoadGraph.PolylineDescriptor descr )
+	void dg( inout RG g, inout RoadGraph.EdgeDescr descr )
 	{
 	    auto encoded_points = g.getMapCoords( descr );
 	    

@@ -28,7 +28,7 @@ struct RoadLine
 
 class RoadGraph : MapGraph!( UndirectedGraph, MapGraphPoint, RoadLine )
 {
-    RoadGraph.PolylineDescriptor[] findPath( NodeDescr from_node, NodeDescr to_node ) const
+    EdgeDescr[] findPath( NodeDescr from_node, NodeDescr to_node ) const
     {
         alias PathFinder!( RoadGraph ) PF;
         
@@ -36,7 +36,7 @@ class RoadGraph : MapGraph!( UndirectedGraph, MapGraphPoint, RoadLine )
         
         debug(path) writeln("path from=", from_node, " to=", to_node);
         
-        RoadGraph.PolylineDescriptor[] res;
+        RoadGraph.EdgeDescr[] res;
         
         if( path != null )
             for( auto i = 1; i < path.length; i++ )
@@ -46,7 +46,7 @@ class RoadGraph : MapGraph!( UndirectedGraph, MapGraphPoint, RoadLine )
     }
     
     override
-    MapCoords[] getMapCoords( in PolylineDescriptor descr ) const
+    MapCoords[] getMapCoords( in EdgeDescr descr ) const
     {
         MapCoords[] res;
         

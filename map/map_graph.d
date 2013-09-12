@@ -46,16 +46,8 @@ struct MapGraphPolyline
 
 class MapGraph( alias GraphEngine, Point, Polyline ) : GraphEngine!( Point, Polyline )
 {
-    protected // TODO: need to be a package
-    {
-        //GraphEngine graph;
-    }
-    
-    alias EdgeDescr PolylineDescriptor;
-    
     this()()
     {
-        //graph = new GraphEngine;
     }
     
     this( PolylineDescription )( scope PolylineDescription[] descriptions )
@@ -71,12 +63,12 @@ class MapGraph( alias GraphEngine, Point, Polyline ) : GraphEngine!( Point, Poly
     }
     
     // TODO: replace this by getPayload()
-    ref const (Polyline) getPolyline( in PolylineDescriptor descr ) const
+    ref const (Polyline) getPolyline( in EdgeDescr descr ) const
     {
         return getEdge( descr ).payload;
     }
     
-    MapCoords[] getMapCoords( in PolylineDescriptor descr ) const
+    MapCoords[] getMapCoords( in EdgeDescr descr ) const
     {
         MapCoords[] res;
         
@@ -92,7 +84,7 @@ class MapGraph( alias GraphEngine, Point, Polyline ) : GraphEngine!( Point, Poly
         return res;
     }
     
-    BBox getBoundary( in PolylineDescriptor descr ) const
+    BBox getBoundary( in EdgeDescr descr ) const
     {
         auto points = getMapCoords( descr );
         assert( points.length > 0 );
@@ -105,7 +97,7 @@ class MapGraph( alias GraphEngine, Point, Polyline ) : GraphEngine!( Point, Poly
         return res;
     }
     
-    PolylineDescriptor addPolyline(
+    EdgeDescr addPolyline(
             Description,
             ForeignID = Description.ForeignNode.ForeignID
         )(
@@ -156,9 +148,9 @@ class MapGraph( alias GraphEngine, Point, Polyline ) : GraphEngine!( Point, Poly
         }
     }
     
-    PolylineDescriptor[] getDescriptors() const
+    EdgeDescr[] getDescriptors() const
     {
-        PolylineDescriptor[] res;
+        EdgeDescr[] res;
         
         void dg( EdgeDescr edge )
         {
@@ -177,12 +169,12 @@ class MapGraph( alias GraphEngine, Point, Polyline ) : GraphEngine!( Point, Poly
         struct GraphLines
         {
             MapGraph map_graph;
-            PolylineDescriptor[] descriptors;
+            EdgeDescr[] descriptors;
         };
         
         GraphLines[] lines;
         
-        void forAllLines( void delegate( inout MapGraph graph, inout PolylineDescriptor descr ) dg ) const
+        void forAllLines( void delegate( inout MapGraph graph, inout EdgeDescr descr ) dg ) const
         {
             foreach( graphLines; lines )
                 foreach( descr; graphLines.descriptors )
@@ -190,7 +182,7 @@ class MapGraph( alias GraphEngine, Point, Polyline ) : GraphEngine!( Point, Poly
         }
     }
     
-    real calcSphericalLength( in PolylineDescriptor descr ) const
+    real calcSphericalLength( in EdgeDescr descr ) const
     {
         auto coords = getMapCoords( descr );
         

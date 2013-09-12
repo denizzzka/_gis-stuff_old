@@ -118,8 +118,8 @@ struct AnyLineDescriptor
     
     union
     {
-        LineGraph.PolylineDescriptor line;
-        RoadGraph.PolylineDescriptor road;
+        LineGraph.EdgeDescr line;
+        RoadGraph.EdgeDescr road;
         Area area;
     }    
 }
@@ -328,7 +328,7 @@ class Map
     {
         RoadGraph g = regions[0].layers[0].road_graph;
         
-        RoadGraph.PolylineDescriptor[] path;
+        RoadGraph.EdgeDescr[] path;
         
         do
         {
