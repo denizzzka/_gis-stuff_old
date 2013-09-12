@@ -97,8 +97,7 @@ class DirectedGraph( NodePayload, EdgePayload )
     
     NodeDescr getRandomNode() const
     {
-        auto res = NodeDescr( uniform( 0, nodes.length ) );
-        return res;
+        return NodeDescr( uniform( 0, nodes.length ) );
     }
     
     void forAllEdges( void delegate( NodeDescr node, EdgeDescr edge ) dg ) const
