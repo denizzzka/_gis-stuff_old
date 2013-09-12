@@ -100,7 +100,7 @@ template PathFinder( Graph )
                     if( canFind( closed, neighborNode ) )
                         continue;
                     
-                    auto tentative = score[currDescr].g + curr.distance( neighbor, e.payload.weight );
+                    auto tentative = score[currDescr].g + graph.distance( edge );
                     
                     if( !canFind( open, neighborNode ) )
                     {
@@ -167,12 +167,7 @@ unittest
     {
         Vector2D!float coords;
         
-        float distance( in DNP v, in float weight ) const
-        {
-            return (coords - v.coords).length * weight;
-        }
-
-        real _heuristic( in DNP v ) const
+        real direct_distance( in DNP v ) const
         {
             return (coords - v.coords).length;
         }
@@ -184,7 +179,7 @@ unittest
     {
         real heuristicDistance( in DNP from, in DNP to ) const
         {
-            return from._heuristic( to );
+            return from.direct_distance( to );
         }
         
         real distance( in EdgeDescr edgeDescr ) const
@@ -194,7 +189,7 @@ unittest
             auto edge = getEdge( edgeDescr );
             auto to_node = getNodePayload( edge.to_node );
             
-            return node._heuristic( to_node ) * edge.payload.weight;
+            return node.direct_distance( to_node ) * edge.payload.weight;
         }
     }
     
