@@ -17,6 +17,12 @@ class UndirectedGraph( NodePayload, EdgePayload )
     {
         NodeDescr node;
         private size_t idx;
+        
+        this( NodeDescr node, size_t idx )
+        {
+            this.node = node;
+            this.idx = idx;
+        }
     }
     
     private struct GlobalEdgeDescr { private size_t idx; }
@@ -88,12 +94,10 @@ class UndirectedGraph( NodePayload, EdgePayload )
         
         nodes[ conn.to.idx ].addEdge( global );
         
-        EdgeDescr res = {
-                node: conn.from,
-                idx: nodes[ conn.from.idx ].addEdge( global )
-            };
-        
-        return res;
+        return EdgeDescr(
+                conn.from,
+                nodes[ conn.from.idx ].addEdge( global )
+            );
     }
     
     ref const(NodePayload) getNodePayload( in NodeDescr node ) const
@@ -130,12 +134,12 @@ class UndirectedGraph( NodePayload, EdgePayload )
         return NodeDescr( uniform( 0, nodes.length ) );
     }
     
-    void forAllEdges( void delegate( NodeDescr node, EdgeDescr edge ) dg ) const
+    void forAllEdges( void delegate( EdgeDescr edge ) dg ) const
     {
         for( auto n = NodeDescr( 0 ); n.idx < nodes.length; n.idx++ )
             foreach( ref e; getEdgesRange( n ) )
                 if( getEdge( e ).forward_direction )
-                    dg( n, e );
+                    dg( e );
     }
     
     struct EdgesRange
@@ -157,11 +161,7 @@ class UndirectedGraph( NodePayload, EdgePayload )
         EdgesRange res =
         {
             graph: this,
-            edge:
-            {
-                node: node,
-                idx: 0
-            }
+            edge: EdgeDescr( node, 0 )
         };
         
         return res;

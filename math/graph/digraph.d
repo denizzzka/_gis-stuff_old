@@ -104,11 +104,11 @@ class DirectedGraph( NodePayload, EdgePayload )
         return NodeDescr( uniform( 0, nodes.length ) );
     }
     
-    void forAllEdges( void delegate( NodeDescr node, EdgeDescr edge ) dg ) const
+    void forAllEdges( void delegate( EdgeDescr edge ) dg ) const
     {
         for( auto n = NodeDescr( 0 ); n.idx < nodes.length; n.idx++ )
             foreach( ref e; getEdgesRange( n ) )
-                dg( n, e );
+                dg( e );
     }
     
     struct EdgesRange

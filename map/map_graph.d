@@ -176,9 +176,9 @@ class MapGraph( GraphEngine, Point, Polyline )
     {
         PolylineDescriptor[] res;
         
-        void dg( NodeDescr node, EdgeDescr edge )
+        void dg( EdgeDescr edge )
         {
-            res ~= PolylineDescriptor( node, edge );
+            res ~= PolylineDescriptor( edge.node, edge );
         }
         
         graph.forAllEdges( &dg );
