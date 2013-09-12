@@ -81,12 +81,15 @@ class RoadGraph : PathFinder!MG
     
     void sortEdgesByReducingRank()
     {
-        cat.Line getRank( in EdgeDescr edge )
+        bool greater( in EdgeDescr e1, in EdgeDescr e2 )
         {
-            return getEdge( edge ).payload.type;
+            auto v1 = getEdge( e1 ).payload.type;
+            auto v2 = getEdge( e2 ).payload.type;
+            
+            return v1 > v2;
         }
         
-        sortEdges( &getRank );
+        sortEdges( &greater );
     }
 }
 

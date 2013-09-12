@@ -1,6 +1,7 @@
 module math.graph.undirected;
 
 import std.random: uniform;
+import std.algorithm: sort;
 
 
 class UndirectedGraph( NodePayload, EdgePayload )
@@ -177,8 +178,26 @@ class UndirectedGraph( NodePayload, EdgePayload )
         return res;
     }
     
-    void sortEdges(T)( T delegate( in EdgeDescr edge ) getRank )
+    void sortEdges(T)( T delegate( in EdgeDescr edge, in EdgeDescr edge ) less )
     {
+        void nodeDg( NodeDescr node )
+        {
+            EdgeDescr[] be_sorted;
+            
+            foreach( e; getEdgesRange( node ) )
+                be_sorted ~= e;
+            
+            sort!( less )( be_sorted );
+            
+            GlobalEdgeDescr[] res_edges;
+            
+            foreach( e; be_sorted )
+                res_edges ~= nodes[ node.idx ].edges[ e.idx ];
+                
+            nodes[ node.idx ].edges = res_edges;
+        }
+        
+        forAllNodes( &nodeDg );
     }
 }
 
