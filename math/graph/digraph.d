@@ -103,14 +103,13 @@ class DirectedGraph( NodePayload, EdgePayload )
         private
         {
             const DirectedGraph graph;
-            const NodeDescr node;
             EdgeDescr edge;
         }
         
         EdgeDescr front() { return edge; }
         void popFront() { ++edge.idx; }
         bool empty() const { return edge.idx >= length; }
-        size_t length() const { return graph.nodes[ node.idx ].edges.length; }
+        size_t length() const { return graph.nodes[ edge.node.idx ].edges.length; }
     }
     
     EdgesRange getEdgesRange( in NodeDescr node ) const
@@ -118,7 +117,6 @@ class DirectedGraph( NodePayload, EdgePayload )
         EdgesRange res =
         {
             graph: this,
-            node: node,
             edge:
             {
                 node: node,
