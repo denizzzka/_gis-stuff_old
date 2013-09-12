@@ -90,34 +90,34 @@ class PathFinder( GraphEngine ) : GraphEngine
                 
                 foreach( edge; getEdgesRange( currDescr ) )
                 {
-                    NodeDescr neighborNode = getEdge( edge ).to_node;
+                    NodeDescr neighborDescr = getEdge( edge ).to_node;
                     
-                    if( canFind( closed, neighborNode ) )
+                    if( canFind( closed, neighborDescr ) )
                         continue;
                     
                     auto tentative = score[currDescr].g + distance( edge );
                     
-                    if( !canFind( open, neighborNode ) )
+                    if( !canFind( open, neighborDescr ) )
                     {
-                        open ~= neighborNode;
-                        score[neighborNode] = Score();
+                        open ~= neighborDescr;
+                        score[neighborDescr] = Score();
                     }
                     else
-                        if( tentative >= score[neighborNode].g )
+                        if( tentative >= score[neighborDescr].g )
                             continue;
                     
                     // Updating neighbor score
                     Score neighborScore = {
                             came_through_edge: edge,
                             g: tentative,
-                            full: tentative + heuristicDistance( neighborNode, goalDescr )
+                            full: tentative + heuristicDistance( neighborDescr, goalDescr )
                         };
                         
-                    score[neighborNode] = neighborScore;
+                    score[neighborDescr] = neighborScore;
                     
                     debug(pathfinder)
                         writefln("Upd neighbor=%s edge=%s %s tentative=%s full=%s",
-                            neighborNode, edge.idx, neighbor.point, tentative, score[neighborNode].full);                
+                            neighborDescr, edge.idx, neighbor.point, tentative, score[neighborDescr].full);                
                 }
             }
 
