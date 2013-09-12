@@ -153,7 +153,17 @@ class UndirectedGraph( NodePayload, EdgePayload )
     
     EdgesRange getEdgesRange( in NodeDescr node ) const
     {
-        EdgesRange res = { graph: this, node: node, edge: { idx: 0 } };
+        EdgesRange res =
+        {
+            graph: this,
+            node: node,
+            edge:
+            {
+                node: node,
+                idx: 0
+            }
+        };
+        
         return res;
     }
 }
