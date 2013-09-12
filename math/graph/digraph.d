@@ -5,9 +5,13 @@ import std.random: uniform;
 
 class DirectedGraph( NodePayload, EdgePayload )
 {
-    struct NodeDescr { private size_t idx; }
+    struct NodeDescr
+    {
+        private size_t idx;
+        this( size_t idx ){ this.idx = idx; }
+    }
     
-    immutable NodeDescr NodeMagic = { idx: size_t.max };
+    immutable auto NodeMagic = NodeDescr( size_t.max );
     
     struct EdgeDescr
     {
@@ -46,7 +50,7 @@ class DirectedGraph( NodePayload, EdgePayload )
     
     NodeDescr addNode( NodePayload nodePayload )
     {
-        NodeDescr res = { idx: nodes.length };
+        auto res = NodeDescr( nodes.length );
         
         Node n = { payload: nodePayload };
         nodes ~= n;
@@ -93,13 +97,13 @@ class DirectedGraph( NodePayload, EdgePayload )
     
     NodeDescr getRandomNode() const
     {
-        NodeDescr res = { idx: uniform( 0, nodes.length ) };
+        auto res = NodeDescr( uniform( 0, nodes.length ) );
         return res;
     }
     
     void forAllEdges( void delegate( NodeDescr node, EdgeDescr edge ) dg ) const
     {
-        for( NodeDescr n = { idx: 0 }; n.idx < nodes.length; n.idx++ )
+        for( auto n = NodeDescr( 0 ); n.idx < nodes.length; n.idx++ )
             foreach( ref e; getEdgesRange( n ) )
                 dg( n, e );
     }
