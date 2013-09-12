@@ -11,7 +11,7 @@ class DirectedGraph( NodePayload, EdgePayload )
         this( size_t idx ){ this.idx = idx; }
     }
     
-    immutable auto NodeMagic = NodeDescr( size_t.max );
+    immutable auto NodeMagic = NodeDescr( -1 );
     
     struct EdgeDescr
     {

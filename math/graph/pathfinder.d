@@ -39,7 +39,7 @@ class PathFinder( GraphEngine ) : GraphEngine
             Score startScore =
             {
                 came_through_edge: EdgeDescr(
-                        NodeMagic, // magic for correct path reconstruct
+                        NodeMagic, // for path reconstruct: value that can't be a node number in AA
                         666 // not magic, just for ease of debugging
                     ),
                 g: 0,
@@ -127,8 +127,9 @@ class PathFinder( GraphEngine ) : GraphEngine
                 
                 curr = p.came_through_edge.node;
             }
-
-            return res;
+            
+            // last path element contains garbage info "where from I am came to start"
+            return res[0 .. $-1];
         }
         
         static struct Score
@@ -231,11 +232,11 @@ unittest
     auto s = g.findPath( from, goal );
     
     assert( s != null );
-    assert( s.length == 7 );
+    assert( s.length == 6 );
     
     debug(pathfinder)
     {
-        writeln("found path:");
+        writeln("Found path from ", from, " to ", goal);
         foreach( c; s )
             writeln("path element: ", c);
     }
