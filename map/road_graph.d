@@ -10,6 +10,7 @@ struct RoadProperties
 {
     cat.Line type;
     float weight = 1;
+    byte layer;
 }
 
 struct RoadLine

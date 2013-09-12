@@ -217,21 +217,21 @@ MapObjectProperties* parseTags( in Tag[] tags )
     
     with( LineClass )
     {
-        if( tags.getNoneOrOneVal( "highway" ) )
+        if( !tags.getNoneOrOneStringVal( "highway" ).isNull )
         {
             res.line_class = ROAD;
             
-            auto val = tags.getOneVal( "highway" );
+            auto val = tags.getOneStringVal( "highway" );
             res.road.type = getRoadType( val );
             
-            
+            res.road.layer = tags.getZeroOrVal!byte( "layer" );
         }
     }
     
     return null;
 }
 
-Nullable!string getNoneOrOneVal( in Tag[] tags, in string key )
+Nullable!string getNoneOrOneStringVal( in Tag[] tags, in string key )
 {
     auto arr = tags.searchTags( [ key ] );
     
@@ -245,27 +245,40 @@ Nullable!string getNoneOrOneVal( in Tag[] tags, in string key )
     return res;
 }
 
-string getOneVal( in Tag[] tags, in string key )
+string getOneStringVal( in Tag[] tags, in string key )
 {
-    auto res = tags.getNoneOrOneVal( key );
+    auto res = tags.getNoneOrOneStringVal( key );
     
     enforce( !res.isNull, "Key "~key~" is not found" );
     
     return res;
 }
 
-Nullable!real getNoneOrRealVal( in Tag[] tags, in string key )
+Nullable!T getNoneOrVal( T )( in Tag[] tags, in string key )
 {
-    auto str = tags.getNoneOrOneVal( key );
+    auto str = tags.getNoneOrOneStringVal( key );
     
-    Nullable!real res;
+    Nullable!T res;
     
     if( !str.isNull )
     {
         string s = str;
-        res = to!real( s );
+        res = to!T( s );
     }
     
+    return res;
+}
+
+T getZeroOrVal( T )( in Tag[] tags, in string key )
+if( isNumeric(T) )
+{
+    auto r = tags.getNoneOrVal!( T )( key );
+    
+    T res = 0;
+    
+    if( !r.isNull )
+        res = r;
+        
     return res;
 }
 
