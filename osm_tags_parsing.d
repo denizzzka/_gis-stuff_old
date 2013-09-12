@@ -5,6 +5,7 @@ import map.objects_properties;
 
 import std.conv: to;
 import std.algorithm: canFind;
+import std.exception: enforce;
 
 
 string getStringByIndex( in StringTable stringtable, in uint index )
@@ -206,5 +207,61 @@ body
             return AREA;
         
         return POLYLINE;
+    }
+}
+
+MapObjectProperties* parseTags( in Tag[] tags )
+{
+    auto res = new MapObjectProperties;
+    
+    with( LineClass )
+    {
+        if( tags.searchTags( ["highway"] ) )
+        {
+            res.line_class = ROAD;
+            
+            auto val = tags.searchTags( ["highway"] )[0].value;
+            res.road.type = getRoadType( val );
+        }
+    }
+    
+    return null;
+}
+
+string* getNoneOrOne( in Tag[] tags, in string key )
+{
+    auto arr = tags.searchTags( [ key ] );
+    
+    enforce( arr.length > 1, "Key "~key~" is found many times" );
+    
+    if( arr.length > 0 )
+        return &arr[0].value;
+    else
+        return null;
+}
+
+string getOneVal( in Tag[] tags, in string key )
+{
+    string* res = getNoneOrOne( tags, key );
+    
+    enforce( res, "Key "~key~" is not found" );
+    
+    return *res;
+}
+
+Line getRoadType( in string val )
+{
+    with( Line )
+    {
+        if( canFind( ["trunk", "motorway"], val ) )
+            return HIGHWAY;
+        
+        if( canFind( ["primary", "tertiary"], val ) )
+            return PRIMARY;
+        
+        if( canFind( ["secondary"], val ) )
+            return SECONDARY;
+        
+        return ROAD_OTHER;
     }
 }
