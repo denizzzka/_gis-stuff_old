@@ -21,12 +21,7 @@ struct MapGraphPoint
         this.coords = coords;
     }
     
-    float distance( in MapGraphPoint v, in float weight ) const
-    {
-        return heuristic( v ) * weight;
-    }
-    
-    float heuristic( in MapGraphPoint v ) const
+    real calcSphericalDistance( in MapGraphPoint v ) const
     {
         return getSphericalDistance( getRadiansCoords, v.getRadiansCoords );
     }

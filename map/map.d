@@ -332,7 +332,7 @@ class Map
         
         do
         {
-            path = g.findPath( g.getRandomNode, g.getRandomNode );
+            path = g.findPath2( g.getRandomNode, g.getRandomNode );
         }
         while( path.length == 0 );
         

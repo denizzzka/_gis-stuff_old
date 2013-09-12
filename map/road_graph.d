@@ -26,9 +26,11 @@ struct RoadLine
     }
 }
 
-class RoadGraph : MapGraph!( UndirectedGraph, MapGraphPoint, RoadLine )
+private alias MapGraph!( UndirectedGraph, MapGraphPoint, RoadLine ) MG;
+
+class RoadGraph : PathFinder!MG
 {
-    EdgeDescr[] findPath( NodeDescr from_node, NodeDescr to_node ) const
+    EdgeDescr[] findPath2( NodeDescr from_node, NodeDescr to_node ) const
     {
         /*
         alias PathFinder!( RoadGraph ) PF;
@@ -67,7 +69,17 @@ class RoadGraph : MapGraph!( UndirectedGraph, MapGraphPoint, RoadLine )
         return res;
     }
     
-    real calcSphericalLength( in EdgeDescr descr ) const
+    override
+    real heuristicDistance( in NodeDescr fromDescr, in NodeDescr toDescr ) const
+    {
+        auto from = getNodePayload( fromDescr );
+        auto to = getNodePayload( toDescr );
+        
+        return from.calcSphericalDistance( to );
+    }
+    
+    override
+    real distance( in EdgeDescr descr ) const
     {
         auto coords = getMapCoords( descr );
         

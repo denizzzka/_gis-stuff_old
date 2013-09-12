@@ -195,8 +195,6 @@ unittest
         }
     }
     
-    //alias DirectedGraph!( DNP, EdgePayload ) G;
-    //alias PathFinder!( G ) pathFinder;
     alias G.NodeDescr NodeDescr;
     
     auto g = new G;
