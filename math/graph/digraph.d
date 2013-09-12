@@ -6,9 +6,14 @@ import std.random: uniform;
 class DirectedGraph( NodePayload, EdgePayload )
 {
     struct NodeDescr { private size_t idx; }
-    struct EdgeDescr { size_t idx; }
     
     immutable NodeDescr NodeMagic = { idx: size_t.max }; // magic for correct path reconstruct
+    
+    struct EdgeDescr
+    {
+        NodeDescr node;
+        private size_t idx;
+    }
     
     struct Edge
     {
