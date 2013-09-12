@@ -134,12 +134,22 @@ class UndirectedGraph( NodePayload, EdgePayload )
         return NodeDescr( uniform( 0, nodes.length ) );
     }
     
-    void forAllEdges( void delegate( EdgeDescr edge ) dg ) const
+    void forAllNodes( void delegate( NodeDescr node ) dg ) const
     {
         for( auto n = NodeDescr( 0 ); n.idx < nodes.length; n.idx++ )
-            foreach( ref e; getEdgesRange( n ) )
+            dg( n );
+    }
+    
+    void forAllEdges( void delegate( EdgeDescr edge ) dg ) const
+    {
+        void nodeDg( NodeDescr node )
+        {
+            foreach( e; getEdgesRange( node ) )
                 if( getEdge( e ).forward_direction )
                     dg( e );
+        }
+        
+        forAllNodes( &nodeDg );
     }
     
     struct EdgesRange
@@ -165,6 +175,10 @@ class UndirectedGraph( NodePayload, EdgePayload )
         };
         
         return res;
+    }
+    
+    void sortEdges(T)( T delegate( in EdgeDescr edge ) dg )
+    {
     }
 }
 
