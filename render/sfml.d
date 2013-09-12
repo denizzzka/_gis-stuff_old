@@ -6,6 +6,7 @@ import scene;
 import math.geometry;
 import map.map: MapLinesDescriptor, MapCoords, MercatorCoords, RoadGraph;
 import cat = config.categories;
+import map.objects_properties: LineClass; // TODO: remove it?
 import render.road;
 
 import std.conv: to;
@@ -119,7 +120,7 @@ class Window : IWindow
 		MapCoords[] encoded_points;
 		Color color;
 		
-		with( cat.LineClass ) final switch( line.line_class )
+		with( LineClass ) final switch( line.line_class )
 		{
 		    case POLYLINE:
 			auto graph = reg_lines.region.line_graph;

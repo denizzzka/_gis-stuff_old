@@ -1,6 +1,7 @@
 import osmpbf.osmformat: StringTable, Node;
 import osm: DecodedLine;
 import config.categories;
+import map.objects_properties;
 
 import std.conv: to;
 import std.algorithm: canFind;

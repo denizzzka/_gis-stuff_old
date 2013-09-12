@@ -8,6 +8,7 @@ import map.line_graph;
 import map.road_graph;
 import map.map_graph: cutOnCrossings;
 import map.area: Area;
+import map.objects_properties: LineClass;
 static import config.map;
 static import config.converter;
 
@@ -114,7 +115,7 @@ alias RTreePtrs!(BBox, Point) PointsStorage; // TODO: 2D-Tree points storage
 
 struct AnyLineDescriptor
 {
-    cat.LineClass line_class; // TODO: here is need polymorphism
+    LineClass line_class; // TODO: here is need polymorphism
     
     union
     {
@@ -211,7 +212,7 @@ class Region
                 auto bbox = line_graph.getBoundary( descriptor );
                 
                 AnyLineDescriptor any = {
-                    line_class: cat.LineClass.POLYLINE,
+                    line_class: LineClass.POLYLINE,
                     line: descriptor
                 };
                 
@@ -241,7 +242,7 @@ class Region
                 auto bbox = layer.road_graph.getBoundary( descriptior );
                 
                 AnyLineDescriptor any = {
-                    line_class: cat.LineClass.ROAD,
+                    line_class: LineClass.ROAD,
                 };
                 any.road = descriptior;
                 
@@ -268,7 +269,7 @@ class Region
                     area.generalize( epsilon );
                 
                 AnyLineDescriptor any = {
-                    line_class: cat.LineClass.AREA
+                    line_class: LineClass.AREA
                 };
                 any.area = area;
                 

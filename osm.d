@@ -11,6 +11,7 @@ import map.road_graph: RoadProperties;
 import map.area: Area;
 import cat = config.categories;
 import osm_tags_parsing;
+import map.objects_properties: LineClass; // FIXME: remove it
 
 import std.stdio;
 import std.string;
@@ -177,7 +178,7 @@ unittest
 struct DecodedLine
 {
     OSM_id[] coords_idx;
-    cat.LineClass classification;
+    LineClass classification;
     Tag[] tags;
     
     invariant()
@@ -334,7 +335,7 @@ Region getRegion( string filename, bool verbose )
                         if( type == cat.Line.UNSUPPORTED )
                             continue;
                         
-                        with( cat.LineClass )
+                        with( LineClass )
                         final switch( decoded.classification )
                         {
                             case POLYLINE:
