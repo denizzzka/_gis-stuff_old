@@ -17,6 +17,12 @@ class DirectedGraph( NodePayload, EdgePayload )
     {
         NodeDescr node;
         private size_t idx;
+        
+        this( NodeDescr node, size_t idx )
+        {
+            this.node = node;
+            this.idx = idx;
+        }
     }
     
     struct Edge
@@ -68,12 +74,10 @@ class DirectedGraph( NodePayload, EdgePayload )
     {
         Edge e = { to_node: conn.to, payload: edgePayload };
         
-        EdgeDescr res = {
-                node: conn.from,
-                idx: nodes[ conn.from.idx ].addEdge( e )
-            };
-        
-        return res;
+        return EdgeDescr(
+                conn.from,
+                nodes[ conn.from.idx ].addEdge( e )
+            );
     }
     
     ref const(NodePayload) getNodePayload( in NodeDescr node ) const
@@ -123,15 +127,10 @@ class DirectedGraph( NodePayload, EdgePayload )
     
     EdgesRange getEdgesRange( in NodeDescr node ) const
     {
-        EdgesRange res =
-        {
-            graph: this,
-            edge:
-            {
-                node: node,
-                idx: 0
-            }
-        };
+        EdgesRange res = {
+                graph: this,
+                EdgeDescr( node, 0 )
+            };
         
         return res;
     }

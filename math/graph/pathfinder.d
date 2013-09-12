@@ -44,15 +44,15 @@ template PathFinder( Graph )
             const auto start = graph.getNodePayload( startDescr );
             const auto goal = graph.getNodePayload( goalDescr );
             
-            Score startScore = {
-                    came_through_edge:
-                    {
-                        node: Graph.NodeMagic, // magic for correct path reconstruct
-                        idx: 666 // not magic, just for ease of debugging
-                    },
-                    g: 0,
-                    full: start.heuristic( goal )
-                };
+            Score startScore =
+            {
+                came_through_edge: EdgeDescr(
+                        Graph.NodeMagic, // magic for correct path reconstruct
+                        666 // not magic, just for ease of debugging
+                    ),
+                g: 0,
+                full: start.heuristic( goal )
+            };
             
             score[startDescr] = startScore;
             open ~= startDescr;
