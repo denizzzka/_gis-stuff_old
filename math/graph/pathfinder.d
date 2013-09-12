@@ -90,10 +90,7 @@ class PathFinder( GraphEngine ) : GraphEngine
                 
                 foreach( edge; getEdgesRange( currDescr ) )
                 {
-                    const auto e = getEdge( edge );
-                    
-                    NodeDescr neighborNode = e.to_node;
-                    const auto neighbor = getNodePayload( neighborNode );
+                    NodeDescr neighborNode = getEdge( edge ).to_node;
                     
                     if( canFind( closed, neighborNode ) )
                         continue;
