@@ -12,6 +12,12 @@ class PathFinder( GraphEngine ) : GraphEngine
         EdgeDescr came_through_edge;
     }
     
+    abstract
+    real heuristicDistance( in NodeDescr fromDescr, in NodeDescr toDescr ) const;
+    
+    abstract
+    real distance( in EdgeDescr edgeDescr ) const;
+    
     /// A* algorithm
     ///
     /// Returns: elements in the reverse order
@@ -36,9 +42,6 @@ class PathFinder( GraphEngine ) : GraphEngine
             const (NodeDescr)[] closed; /// The set of nodes already evaluated
             Score[NodeDescr] score;
             
-            //const auto start = getNodePayload( startDescr );
-            //const auto goal = getNodePayload( goalDescr );
-            
             Score startScore =
             {
                 came_through_edge: EdgeDescr(
@@ -46,7 +49,7 @@ class PathFinder( GraphEngine ) : GraphEngine
                         666 // not magic, just for ease of debugging
                     ),
                 g: 0,
-                //full: heuristicDistance( start, goal )
+                full: heuristicDistance( startDescr, goalDescr )
             };
             
             score[startDescr] = startScore;
@@ -95,7 +98,7 @@ class PathFinder( GraphEngine ) : GraphEngine
                     if( canFind( closed, neighborNode ) )
                         continue;
                     
-                    auto tentative = score[currDescr].g; // + distance( edge );
+                    auto tentative = score[currDescr].g + distance( edge );
                     
                     if( !canFind( open, neighborNode ) )
                     {
@@ -110,7 +113,7 @@ class PathFinder( GraphEngine ) : GraphEngine
                     Score neighborScore = {
                             came_through_edge: edge,
                             g: tentative,
-                            full: tentative // + heuristicDistance( neighbor, goal )
+                            full: tentative + heuristicDistance( neighborNode, goalDescr )
                         };
                         
                     score[neighborNode] = neighborScore;
@@ -174,6 +177,7 @@ unittest
     
     class G : PathFinder!DG
     {
+        override
         real heuristicDistance( in NodeDescr fromDescr, in NodeDescr toDescr ) const
         {
             auto from = getNodePayload( fromDescr );
@@ -182,6 +186,7 @@ unittest
             return from.direct_distance( to );
         }
         
+        override
         real distance( in EdgeDescr edgeDescr ) const
         {
             auto nodeDescr = edgeDescr.node;
