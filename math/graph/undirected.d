@@ -180,7 +180,7 @@ class UndirectedGraph( NodePayload, EdgePayload )
     
     void sortEdges(T)( T delegate( in EdgeDescr edge, in EdgeDescr edge ) less )
     {
-        void nodeDg( NodeDescr node )
+        void sortNode( NodeDescr node )
         {
             EdgeDescr[] be_sorted;
             
@@ -197,7 +197,7 @@ class UndirectedGraph( NodePayload, EdgePayload )
             nodes[ node.idx ].edges = res_edges;
         }
         
-        forAllNodes( &nodeDg );
+        forAllNodes( &sortNode );
     }
 }
 
