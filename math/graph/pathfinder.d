@@ -51,7 +51,7 @@ template PathFinder( Graph )
                         666 // not magic, just for ease of debugging
                     ),
                 g: 0,
-                full: start.heuristic( goal )
+                full: graph.heuristicDistance( start, goal )
             };
             
             score[startDescr] = startScore;
@@ -115,7 +115,7 @@ template PathFinder( Graph )
                     Score neighborScore = {
                             came_through_edge: edge,
                             g: tentative,
-                            full: tentative + neighbor.heuristic( goal )
+                            full: tentative + graph.heuristicDistance( neighbor, goal )
                         };
                         
                     score[neighborNode] = neighborScore;
@@ -172,7 +172,7 @@ unittest
             return (coords - v.coords).length * weight;
         }
 
-        float heuristic( in DNP v ) const
+        real _heuristic( in DNP v ) const
         {
             return (coords - v.coords).length;
         }
@@ -182,12 +182,9 @@ unittest
     
     class G : DirectedGraph!( DNP, EdgePayload )
     {
-        real heuristicDistance( in NodeDescr fromDescr, in NodeDescr toDescr )
+        real heuristicDistance( in DNP from, in DNP to ) const
         {
-            auto from = getNodePayload( fromDescr );
-            auto to = getNodePayload( toDescr );
-            
-            return from.heuristic( to );
+            return from._heuristic( to );
         }
     }
     
