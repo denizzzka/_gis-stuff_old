@@ -44,22 +44,18 @@ struct MapGraphPolyline
     @disable this();
 }
 
-class MapGraph( GraphEngine, Point, Polyline )
+class MapGraph( alias GraphEngine, Point, Polyline ) : GraphEngine!( Point, Polyline )
 {
-    alias GraphEngine G;
-    alias G.NodeDescr NodeDescr;
-    alias G.EdgeDescr EdgeDescr;
-    
     protected // TODO: need to be a package
     {
-        G graph;
+        //GraphEngine graph;
     }
     
     alias EdgeDescr PolylineDescriptor;
     
     this()()
     {
-        graph = new G;
+        //graph = new GraphEngine;
     }
     
     this( PolylineDescription )( scope PolylineDescription[] descriptions )
@@ -77,21 +73,21 @@ class MapGraph( GraphEngine, Point, Polyline )
     // TODO: replace this by getPayload()
     ref const (Polyline) getPolyline( in PolylineDescriptor descr ) const
     {
-        return graph.getEdge( descr ).payload;
+        return getEdge( descr ).payload;
     }
     
     MapCoords[] getMapCoords( in PolylineDescriptor descr ) const
     {
         MapCoords[] res;
         
-        res ~= graph.getNodePayload( descr.node );
+        res ~= getNodePayload( descr.node );
         
-        auto edge = graph.getEdge( descr );
+        auto edge = getEdge( descr );
         
         foreach( c; edge.payload.polyline.points )
             res ~= c;
         
-        res ~= graph.getNodePayload( edge.to_node );
+        res ~= getNodePayload( edge.to_node );
         
         return res;
     }
@@ -135,9 +131,9 @@ class MapGraph( GraphEngine, Point, Polyline )
         
         auto poly = Polyline( points, line_descr.properties );
         
-        G.ConnectionInfo conn = { from: from_node, to: to_node };
+        ConnectionInfo conn = { from: from_node, to: to_node };
         
-        return graph.addEdge( conn, poly );
+        return addEdge( conn, poly );
     }
     
     private
@@ -153,7 +149,7 @@ class MapGraph( GraphEngine, Point, Polyline )
         else
         {
             auto point = Point( node.getCoords );
-            auto descr = graph.addNode( point );
+            auto descr = addNode( point );
             already_stored[ node.foreign_id ] = descr;
             
             return descr;
@@ -169,7 +165,7 @@ class MapGraph( GraphEngine, Point, Polyline )
             res ~= edge;
         }
         
-        graph.forAllEdges( &dg );
+        forAllEdges( &dg );
         
         return res;
     }
@@ -192,11 +188,6 @@ class MapGraph( GraphEngine, Point, Polyline )
                 foreach( descr; graphLines.descriptors )
                     dg( graphLines.map_graph, descr );
         }
-    }
-    
-    G.NodeDescr getRandomNode() const
-    {
-        return graph.getRandomNode;
     }
     
     real calcSphericalLength( in PolylineDescriptor descr ) const

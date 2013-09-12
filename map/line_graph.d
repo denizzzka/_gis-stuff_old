@@ -24,8 +24,7 @@ struct MapGraphLine
     }
 }
 
-alias DirectedGraph!( MapGraphPoint, MapGraphLine ) DG;
-alias MapGraph!( DG, MapGraphPoint, MapGraphLine ) LineGraph;
+alias MapGraph!( DirectedGraph, MapGraphPoint, MapGraphLine ) LineGraph;
 
 unittest
 {

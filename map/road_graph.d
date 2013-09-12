@@ -26,15 +26,13 @@ struct RoadLine
     }
 }
 
-alias UndirectedGraph!( MapGraphPoint, RoadLine ) UG;
-
-class RoadGraph : MapGraph!( UG, MapGraphPoint, RoadLine )
+class RoadGraph : MapGraph!( UndirectedGraph, MapGraphPoint, RoadLine )
 {
     RoadGraph.PolylineDescriptor[] findPath( NodeDescr from_node, NodeDescr to_node ) const
     {
-        alias PathFinder!( UG ) PF;
+        alias PathFinder!( RoadGraph ) PF;
         
-        auto path = PF.findPath( graph, from_node, to_node );
+        auto path = PF.findPath( this, from_node, to_node );
         
         debug(path) writeln("path from=", from_node, " to=", to_node);
         
@@ -52,9 +50,9 @@ class RoadGraph : MapGraph!( UG, MapGraphPoint, RoadLine )
     {
         MapCoords[] res;
         
-        res ~= graph.getNodePayload( descr.node );
+        res ~= getNodePayload( descr.node );
         
-        auto edge = graph.getEdge( descr );
+        auto edge = getEdge( descr );
         
         if( edge.forward_direction )
             foreach( c; edge.payload.polyline.points )
@@ -63,7 +61,7 @@ class RoadGraph : MapGraph!( UG, MapGraphPoint, RoadLine )
             foreach_reverse( c; edge.payload.polyline.points )
                 res ~= c;
         
-        res ~= graph.getNodePayload( edge.to_node );
+        res ~= getNodePayload( edge.to_node );
         
         return res;
     }
