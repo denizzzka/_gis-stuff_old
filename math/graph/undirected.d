@@ -177,7 +177,7 @@ class UndirectedGraph( NodePayload, EdgePayload )
         return res;
     }
     
-    void sortEdges(T)( T delegate( in EdgeDescr edge ) dg )
+    void sortEdges(T)( T delegate( in EdgeDescr edge ) getRank )
     {
     }
 }

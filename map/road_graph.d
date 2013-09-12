@@ -78,6 +78,16 @@ class RoadGraph : PathFinder!MG
         
         return res;
     }
+    
+    void sortEdgesByReducingRank()
+    {
+        cat.Line getRank( in EdgeDescr edge )
+        {
+            return getEdge( edge ).payload.type;
+        }
+        
+        sortEdges( &getRank );
+    }
 }
 
 unittest
