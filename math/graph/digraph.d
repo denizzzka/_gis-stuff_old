@@ -7,7 +7,7 @@ class DirectedGraph( NodePayload, EdgePayload )
 {
     struct NodeDescr { private size_t idx; }
     
-    immutable NodeDescr NodeMagic = { idx: size_t.max }; // magic for correct path reconstruct
+    immutable NodeDescr NodeMagic = { idx: size_t.max };
     
     struct EdgeDescr
     {
@@ -29,13 +29,11 @@ class DirectedGraph( NodePayload, EdgePayload )
         NodePayload payload;
         
         private
-        EdgeDescr addEdge( Edge edge )
+        size_t addEdge( Edge edge )
         {
-            EdgeDescr res = { idx: edges.length };
-            
             edges ~= edge;
             
-            return res;
+            return edges.length - 1;
         }
     }
     
@@ -66,7 +64,12 @@ class DirectedGraph( NodePayload, EdgePayload )
     {
         Edge e = { to_node: conn.to, payload: edgePayload };
         
-        return nodes[ conn.from.idx ].addEdge( e );
+        EdgeDescr res = {
+                node: conn.from,
+                idx: nodes[ conn.from.idx ].addEdge( e )
+            };
+        
+        return res;
     }
     
     ref const(NodePayload) getNodePayload( in NodeDescr node ) const

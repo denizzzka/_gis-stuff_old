@@ -7,7 +7,7 @@ class UndirectedGraph( NodePayload, EdgePayload )
 {
     struct NodeDescr { private size_t idx; }
     
-    immutable NodeDescr NodeMagic = { idx: size_t.max }; // magic for correct path reconstruct
+    immutable NodeDescr NodeMagic = { idx: size_t.max };
     
     struct EdgeDescr
     {
@@ -49,13 +49,11 @@ class UndirectedGraph( NodePayload, EdgePayload )
         NodePayload payload;
         
         private
-        EdgeDescr addEdge( GlobalEdgeDescr edge )
+        size_t addEdge( GlobalEdgeDescr edge )
         {
-            EdgeDescr res = { idx: edges.length };
-            
             edges ~= edge;
             
-            return res;
+            return edges.length - 1;
         }
     }
     
@@ -85,22 +83,13 @@ class UndirectedGraph( NodePayload, EdgePayload )
         edges ~= e;
         
         nodes[ conn.to.idx ].addEdge( global );
-        return nodes[ conn.from.idx ].addEdge( global );
-    }
-    
-    // TODO: maybe blocking by weight will be better
-    EdgeDescr addOnewayEdge( ConnectionInfo conn, EdgePayload edgePayload )
-    {
-        GlobalEdgeDescr global = { idx: edges.length };
         
-        NodeDescr from = conn.from;
+        EdgeDescr res = {
+                node: conn.from,
+                idx: nodes[ conn.from.idx ].addEdge( global )
+            };
         
-        conn.from = conn.to;
-        
-        Edge e = { connection: conn, payload: edgePayload };
-        edges ~= e;
-        
-        return nodes[ from.idx ].addEdge( global );
+        return res;
     }
     
     ref const(NodePayload) getNodePayload( in NodeDescr node ) const
