@@ -186,6 +186,16 @@ unittest
         {
             return from._heuristic( to );
         }
+        
+        real distance( in EdgeDescr edgeDescr ) const
+        {
+            auto nodeDescr = edgeDescr.node;
+            auto node = getNodePayload( nodeDescr );
+            auto edge = getEdge( edgeDescr );
+            auto to_node = getNodePayload( edge.to_node );
+            
+            return node._heuristic( to_node ) * edge.payload.weight;
+        }
     }
     
     //alias DirectedGraph!( DNP, EdgePayload ) G;
