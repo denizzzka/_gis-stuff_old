@@ -152,7 +152,7 @@ class Window : IWindow
 			auto crds = MapToWindowCoords( encoded_points );
 			drawRoadSegments( crds, type );
 			*/
-			drawRoad( graph, line.road );
+			drawRoadEdge( graph, line.road );
 			
 			continue;
 			
@@ -173,7 +173,7 @@ class Window : IWindow
     {
 	foreach( graphLines; lines.lines )
 	    foreach( descr; graphLines.descriptors )
-		drawPathSegment( cast(RoadGraph) graphLines.map_graph, descr );
+		drawPathEdge( cast(RoadGraph) graphLines.map_graph, descr );
     }
     
     private

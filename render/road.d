@@ -55,7 +55,7 @@ mixin template Road()
         }
     }
     
-    void drawOneColoredRoad( Vector2F[] coords, in float width, in Color color )
+    void drawMonochromeRoadEdge( Vector2F[] coords, in float width, in Color color )
     {
         drawRoadSegments( coords, width, color );
         
@@ -69,44 +69,38 @@ mixin template Road()
         float outlineThickness;
         Color color;
         Color outlineColor;
+        
+        this( T )( T prop )
+        {
+            thickness = prop.thickness;
+            outlineThickness = prop.outlineThickness;
+            color = prop.color;
+            outlineColor = prop.outlineColor;
+        }
     }
     
-    void drawRoad( in RoadGraph g, in RoadGraph.EdgeDescr road, in RoadDrawProperties prop )
+    void drawRoadEdge( in RoadGraph g, in RoadGraph.EdgeDescr road, in RoadDrawProperties prop )
     {
         auto map_coords = g.getMapCoords( road );
         WindowCoords[] cartesian = MapToWindowCoords( map_coords );
         auto coords = cartesianToSFML( cartesian );
         
-        drawOneColoredRoad( coords, prop.outlineThickness, prop.outlineColor );
-        drawOneColoredRoad( coords, prop.thickness, prop.color );
+        drawMonochromeRoadEdge( coords, prop.outlineThickness, prop.outlineColor );
+        drawMonochromeRoadEdge( coords, prop.thickness, prop.color );
     }
     
-    void drawRoad( in RoadGraph g, in RoadGraph.EdgeDescr road )
+    void drawRoadEdge( in RoadGraph g, in RoadGraph.EdgeDescr road )
     {
         const type = g.getEdge( road ).payload.type;
-        const prop = &polylines.getProperty( type );
+        auto drawProps = RoadDrawProperties( polylines.getProperty( type ) );
         
-        RoadDrawProperties drawProps = {
-            thickness: prop.thickness,
-            outlineThickness: prop.outlineThickness,
-            color: prop.color,
-            outlineColor: prop.outlineColor
-        };
-        
-        drawRoad( g, road, drawProps );
+        drawRoadEdge( g, road, drawProps );
     }
     
-    void drawPathSegment( in RoadGraph g, in RoadGraph.EdgeDescr road )
+    void drawPathEdge( in RoadGraph g, in RoadGraph.EdgeDescr road )
     {
-        const prop = &polylines.getProperty( cat.Line.PATH );
+        auto drawProps = RoadDrawProperties( polylines.getProperty( cat.Line.PATH ) );
         
-        RoadDrawProperties drawProps = {
-            thickness: prop.thickness,
-            outlineThickness: prop.outlineThickness,
-            color: prop.color,
-            outlineColor: prop.outlineColor
-        };
-        
-        drawRoad( g, road, drawProps );
+        drawRoadEdge( g, road, drawProps );
     }    
 }
