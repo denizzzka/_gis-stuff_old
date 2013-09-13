@@ -104,13 +104,35 @@ mixin template Road()
         drawRoadEdge( g, road, drawProps );
     }
     
-    void drawRoadsLayer( RoadToSort[] roads, in RoadDrawProperties prop )
+    void drawMonochromeLayer( RoadToSort[] roads, in float width, in Color color )
     {
-        foreach( road; roads )
-        {
-        }
+        foreach( r; roads )
+            drawRoadSegments( r.coords, width, color );
+            
+        foreach( r; roads )
+            foreach( c; r.coords )
+                drawRoadJointPoint( c, width, color );
     }
-    
+    /*
+    void drawRoadsLayer( RoadToSort[] roads )
+    {
+        const fullWidth = prop.thickness + prop.outlineThickness;
+        
+        
+        foreach( r; roads )
+            if( foreground )
+                drawRoadSegments( r.coords, r.properties.thickness, r.properties.color );
+            else
+                drawRoadSegments( r.coords, fullWidth, r.properties.outlineColor );
+        
+        foreach( road; roads )
+            foreach( c; road.coords )
+                if( foreground )
+                    drawRoadJointPoint( c, r.properties.thickness, r.properties.outlineColor );
+                else
+                    drawRoadJointPoint( c, fullWidth, r.properties.outlineColor );
+    }
+    */
     void drawRoads( RoadsSorted sorted )
     {
         foreach( layer; sorted.roads )
