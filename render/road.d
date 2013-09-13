@@ -55,14 +55,6 @@ mixin template Road()
         }
     }
     
-    void drawMonochromeRoadEdge( Vector2F[] coords, in float width, in Color color )
-    {
-        drawRoadSegments( coords, width, color );
-        
-        foreach( c; coords )
-            drawRoadJointPoint( c, width, color );
-    }
-    
     struct RoadDrawProperties
     {
         float thickness;
@@ -85,8 +77,16 @@ mixin template Road()
         WindowCoords[] cartesian = MapToWindowCoords( map_coords );
         auto coords = cartesianToSFML( cartesian );
         
-        drawMonochromeRoadEdge( coords, prop.outlineThickness, prop.outlineColor );
-        drawMonochromeRoadEdge( coords, prop.thickness, prop.color );
+        auto fullWidth = prop.thickness + prop.outlineThickness;
+        
+        foreach( c; coords )
+            drawRoadJointPoint( c, fullWidth, prop.color );
+        
+        drawRoadSegments( coords, fullWidth, prop.outlineColor );
+        drawRoadSegments( coords, prop.thickness, prop.color );
+        
+        foreach( c; coords )
+            drawRoadJointPoint( c, prop.thickness, prop.color );
     }
     
     void drawRoadEdge( in RoadGraph g, in RoadGraph.EdgeDescr road )
