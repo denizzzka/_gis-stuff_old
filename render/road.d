@@ -114,16 +114,13 @@ mixin template Road()
         //drawRoadEdge( g, road, drawProps );
     }
     
-    void forAllRoads( bool path )( SfmlRoad[] roads, bool foreground,
+    void forAllRoads( SfmlRoad[] roads, bool foreground,
             void delegate( Vector2F[] coords, in float width, in Color color ) dg
         )
     {
         foreach( ref r; roads )
         {
-            static if( !path )
-                const props = &polylines.getProperty( r.props.type );
-            else
-                const props = &polylines.getProperty( cat.Line.PATH );
+            const props = &polylines.getProperty( r.props.type );
             
             float width;
             Color color;
@@ -143,19 +140,19 @@ mixin template Road()
         }
     }
     
-    void drawRoadsLayer( bool path = false )( SfmlRoad[] roads )
+    void drawRoadsLayer( SfmlRoad[] roads )
     {
         // background lines
-        forAllRoads!path( roads, false, &drawRoadSegments );
+        forAllRoads( roads, false, &drawRoadSegments );
         
         // background points
-        forAllRoads!path( roads, false, &drawPoints );
+        forAllRoads( roads, false, &drawPoints );
         
         // foreground lines
-        forAllRoads!path( roads, true, &drawRoadSegments );
+        forAllRoads( roads, true, &drawRoadSegments );
         
         // foreground points
-        forAllRoads!path( roads, true, &drawPoints );
+        forAllRoads( roads, true, &drawPoints );
     }
     
     void drawRoads( RoadsSorted sorted )
