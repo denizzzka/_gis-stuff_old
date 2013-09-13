@@ -41,6 +41,22 @@ mixin template Road()
         window.draw( rect );
     }
     
+    void drawRoadSegments( WindowCoords[] coords, in float width, in Color color )
+    in
+    {
+        assert( coords.length >= 2 );
+    }
+    body
+    {
+        auto prev = coords[0];
+        
+        for( auto i = 1; i < coords.length; i++ )
+        {
+            drawRoadSegmentLine( prev, coords[i], width, color );
+            prev = coords[i];
+        }
+    }
+    
     void drawRoadBend( WindowCoords center, cat.Line type )
     {
         auto prop = &polylines.getProperty( type );
