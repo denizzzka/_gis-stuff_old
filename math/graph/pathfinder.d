@@ -74,7 +74,6 @@ class PathFinder( GraphEngine ) : GraphEngine
                 if( currDescr == goalDescr )
                     return score;
                 
-                const auto curr = getNodePayload( currDescr );
                 debug(pathfinder) writefln("Curr %s lowest full=%s", currDescr, key_score);
                 
                 open = open[0..key] ~ open[key+1..$];
