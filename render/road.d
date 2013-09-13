@@ -57,6 +57,14 @@ mixin template Road()
         }
     }
     
+    void drawOneColoredRoad( WindowCoords[] coords, in float width, in Color color )
+    {
+        drawRoadSegments( coords, width, color );
+        
+        foreach( c; coords )
+            drawRoadJointPoint( c, width, color );
+    }
+    
     void drawRoadBend( WindowCoords center, cat.Line type )
     {
         auto prop = &polylines.getProperty( type );
