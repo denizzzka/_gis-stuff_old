@@ -139,19 +139,7 @@ class Window : IWindow
 			
 		    case ROAD:
 			auto graph = reg_lines.region.layers[ reg_lines.layer_num ].road_graph;
-			/*
-			encoded_points = graph.getMapCoords( line.road );
 			
-			auto bend1 = scene.metersToScreen( encoded_points[0] );
-			auto bend2 = scene.metersToScreen( encoded_points[$-1] );
-			
-			auto type = graph.getEdge( line.road ).payload.properties.type;
-			drawRoadBend( bend1, type );
-			drawRoadBend( bend2, type );
-			
-			auto crds = MapToWindowCoords( encoded_points );
-			drawRoadSegments( crds, type );
-			*/
 			drawRoadEdge( graph, line.road );
 			
 			continue;
