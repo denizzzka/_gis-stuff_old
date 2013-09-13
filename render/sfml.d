@@ -121,7 +121,9 @@ class Window : IWindow
     
     private
     void drawLines( MapLinesDescriptor[] map_lines )
-    {	
+    {
+	RoadsSorted roads;
+	
         foreach( ref reg_lines; map_lines )
 	    foreach( ref line; reg_lines.lines )
 	    {
@@ -140,8 +142,10 @@ class Window : IWindow
 			
 		    case ROAD:
 			auto graph = reg_lines.region.layers[ reg_lines.layer_num ].road_graph;
+			auto road = RoadToSort( graph, line.road );
 			
-			drawRoadEdge( graph, line.road );
+			roads.addRoad( road );
+			//drawRoadEdge( graph, line.road );
 			
 			continue;
 			
@@ -155,16 +159,18 @@ class Window : IWindow
 		auto res_points = MapToWindowCoords( encoded_points );
 		drawLine( res_points, color );
 	    }
+	
+	drawRoads( roads );
     }
     
     struct RoadToSort
     {
 	alias RoadGraph.EdgeDescr EdgeDescr;
 	
-	RoadGraph graph;
+	const RoadGraph graph;
 	EdgeDescr edge;
 	
-	this( RoadGraph graph, EdgeDescr edge )
+	this( in RoadGraph graph, EdgeDescr edge )
 	{
 	    this.graph = graph;
 	    this.edge = edge;

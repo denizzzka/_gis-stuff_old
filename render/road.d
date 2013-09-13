@@ -102,5 +102,12 @@ mixin template Road()
         auto drawProps = RoadDrawProperties( polylines.getProperty( cat.Line.PATH ) );
         
         drawRoadEdge( g, road, drawProps );
-    }    
+    }
+    
+    void drawRoads( RoadsSorted sorted )
+    {
+        foreach( layer; sorted.roads )
+            foreach( road; layer )
+                drawRoadEdge( road.graph, road.edge );
+    }
 }
