@@ -8,6 +8,7 @@ import map.map: MapLinesDescriptor, MapCoords, MercatorCoords, RoadGraph;
 import cat = config.categories;
 import map.objects_properties: LineClass; // TODO: remove it?
 import render.road;
+import map.road_graph: RoadProperties;
 
 import std.conv: to;
 import std.random;
@@ -109,7 +110,7 @@ class Window : IWindow
     }
     
     private
-    WindowCoords[] MapToWindowCoords( MapCoords[] map_points )
+    WindowCoords[] MapToWindowCoords( MapCoords[] map_points ) const
     {
 	auto res = new WindowCoords[ map_points.length ];
 	
@@ -142,7 +143,7 @@ class Window : IWindow
 			
 		    case ROAD:
 			auto graph = reg_lines.region.layers[ reg_lines.layer_num ].road_graph;
-			auto road = RoadToSort( graph, line.road );
+			auto road = RoadToSort( this, graph, line.road );
 			
 			roads.addRoad( road );
 			//drawRoadEdge( graph, line.road );
@@ -167,13 +168,16 @@ class Window : IWindow
     {
 	alias RoadGraph.EdgeDescr EdgeDescr;
 	
-	const RoadGraph graph;
-	EdgeDescr edge;
+        Vector2F[] coords;
+        const RoadProperties* properties;
 	
-	this( in RoadGraph graph, EdgeDescr edge )
+	this( in Window window, in RoadGraph g, EdgeDescr edge )
 	{
-	    this.graph = graph;
-	    this.edge = edge;
+            auto map_coords = g.getMapCoords( edge );
+            WindowCoords[] cartesian = window.MapToWindowCoords( map_coords );
+            coords = window.cartesianToSFML( cartesian );
+	    
+	    properties = &g.getEdge( edge ).payload.properties;
 	}
     }
     
@@ -186,7 +190,7 @@ class Window : IWindow
 	
 	void addRoad( RoadToSort road )
 	{
-	    auto layer = road.graph.getEdge( road.edge ).payload.layer;
+	    auto layer = road.properties.layer;
 	    
 	    enforce( layer >= -direction_layers_num );
 	    enforce( layer <= direction_layers_num );
@@ -256,7 +260,7 @@ class Window : IWindow
 	return c;
     }
     
-    Vector2F cartesianToSFML( in WindowCoords from )
+    Vector2F cartesianToSFML( in WindowCoords from ) const
     {
 	Vector2F res;
 	
@@ -266,7 +270,7 @@ class Window : IWindow
 	return res;
     }
     
-    Vector2F[] cartesianToSFML( in WindowCoords[] from )
+    Vector2F[] cartesianToSFML( in WindowCoords[] from ) const
     {
 	auto res = new Vector2F[ from.length ];
 	

@@ -119,7 +119,7 @@ mixin template Road()
                 //const type = g.getEdge( road ).payload.type;
                 //auto drawProps = RoadDrawProperties( polylines.getProperty( type ) );
                 
-                drawRoadEdge( road.graph, road.edge );
+                //drawRoadEdge( road.graph, road.edge );
             }
     }
 }
