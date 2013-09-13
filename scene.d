@@ -17,7 +17,6 @@ alias Vector2D!real Vector2r;
 alias Vector2D!size_t Vector2s;
 alias Vector2D!long Vector2l;
 
-
 class POV
 {
     const Map map;
