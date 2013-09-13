@@ -21,6 +21,7 @@ import std.bitmanip: bigEndianToNative;
 import std.zlib;
 import std.math: round;
 import std.algorithm: canFind;
+import std.conv: to;
 
 
 alias Vector2D!(long, "OSM coords") Coords;

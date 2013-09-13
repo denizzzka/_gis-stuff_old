@@ -243,10 +243,15 @@ Nullable!MapObjectProperties parseTags( in Tag[] tags )
             
             res.line.type = BUILDING;
         }
+        else // Object is not recognised
+        {
+            Nullable!MapObjectProperties null_ret;
+            return null_ret;
+        }
     }
     
-    Nullable!MapObjectProperties null_ret;
-    return null_ret;
+    Nullable!MapObjectProperties r = res;
+    return r;
 }
 
 Nullable!string getNoneOrOneStringVal( in Tag[] tags, in string key )
