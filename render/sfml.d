@@ -232,11 +232,17 @@ class Window : IWindow
 	return c;
     }
     
-    T cartesianToSFML( T )( ref T from )
+    T cartesianToSFML( T )( T from )
     {
 	from.y = to!real(window.size.y) - from.y;
 	
 	return from;
+    }
+    
+    void cartesianToSFML( T )( ref T[] from )
+    {
+	foreach( i, c; from )
+	    from[i] = cartesianToSFML( c );
     }
     
     mixin Road;

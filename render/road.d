@@ -3,6 +3,7 @@ module render.road;
 import dsfml.graphics;
 import cat = config.categories;
 import config.map: PolylineProperties, polylines;
+import map.map: RoadGraph;
 
 
 mixin template Road()
@@ -63,6 +64,14 @@ mixin template Road()
         
         foreach( c; coords )
             drawRoadJointPoint( c, width, color );
+    }
+    
+    void drawRoad( in RoadGraph g, in RoadGraph.EdgeDescr road )
+    {
+        auto type = g.getEdge( road ).payload.type;
+        auto prop = &polylines.getProperty( type );
+        
+        //drawOneColoredRoad
     }
     
     void drawRoadBend( WindowCoords center, cat.Line type )
