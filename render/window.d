@@ -11,15 +11,4 @@ alias Vector2D!(real, "Window coords") WindowCoords;
 interface IWindow
 {
     Vector2uint getSize();
-    
-    /*
-    void drawPoint( Vector2r coords, Color color );
-    
-    void drawArea( Vector2r[] coords, Color color );
-    
-    void drawRoad( Vector2r[] coords, Color color );
-    */
-    
-    void drawRoadBend( WindowCoords coords, cat.Line type );
-    void drawRoadSegments( WindowCoords[] coords, cat.Line type );
 }
