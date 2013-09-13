@@ -178,6 +178,15 @@ class UndirectedGraph( NodePayload, EdgePayload )
         return res;
     }
     
+    EdgeDescr getFirstEdge( in NodeDescr node ) const
+    {
+        auto range = getEdgesRange( node );
+        
+        assert( range.length );
+        
+        return range.front();
+    }
+    
     void sortEdges(T)( T delegate( in EdgeDescr edge, in EdgeDescr edge ) less )
     {
         void sortNode( NodeDescr node )
