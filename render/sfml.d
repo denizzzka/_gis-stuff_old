@@ -156,6 +156,29 @@ class Window : IWindow
 	    }
     }
     
+    struct RoadsSorted
+    {
+	alias RoadGraph.EdgeDescr EdgeDescr;
+	
+	struct Road
+	{
+	    RoadGraph graph;
+	    EdgeDescr edge;
+	    
+	    this( RoadGraph graph, EdgeDescr edge )
+	    {
+		this.graph = graph;
+		this.edge = edge;
+	    }
+	}
+	
+	Road[] roads;
+	
+	void addRoad( Road )
+	{
+	}
+    }
+    
     private
     void drawPath( in RoadGraph.Polylines lines )
     {
