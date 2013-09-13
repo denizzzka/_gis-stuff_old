@@ -7,7 +7,7 @@ import config.map: PolylineProperties, polylines;
 
 mixin template Road()
 {
-    void drawRoadJointPoint( WindowCoords center, in real diameter, in Color color )
+    void drawRoadJointPoint( WindowCoords center, in float diameter, in Color color )
     {
         auto radius = diameter / 2;
         Vector2f sfml_coords; sfml_coords = cartesianToSFML( center );
@@ -20,6 +20,25 @@ mixin template Road()
         circle.fillColor = color;
         
         window.draw( circle );
+    }
+    
+    void drawRoadSegmentLine( WindowCoords from, WindowCoords to, in float width, in Color color )
+    {
+        auto vector = to - from;
+        auto length = vector.length;
+        auto angleOX = vector.angleOX;
+        
+        Vector2f sfml_from; sfml_from = cartesianToSFML( from );
+        
+        auto rect = new RectangleShape;
+        
+        rect.origin = Vector2f( 0, width / 2 );
+        rect.position = sfml_from;
+        rect.rotation = angleOX.radian2degree - 90;
+        rect.size = Vector2f( length, width );
+        rect.fillColor = color;
+        
+        window.draw( rect );
     }
     
     void drawRoadBend( WindowCoords center, cat.Line type )
