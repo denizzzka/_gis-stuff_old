@@ -169,7 +169,7 @@ class Window : IWindow
 	alias RoadGraph.EdgeDescr EdgeDescr;
 	
         Vector2F[] coords;
-        const RoadProperties* properties;
+        const RoadProperties* props;
 	
 	this( in Window window, in RoadGraph g, EdgeDescr edge )
 	{
@@ -177,7 +177,7 @@ class Window : IWindow
             WindowCoords[] cartesian = window.MapToWindowCoords( map_coords );
             coords = window.cartesianToSFML( cartesian );
 	    
-	    properties = &g.getEdge( edge ).payload.properties;
+	    props = &g.getEdge( edge ).payload.properties;
 	}
     }
     
@@ -190,7 +190,7 @@ class Window : IWindow
 	
 	void addRoad( SfmlRoad road )
 	{
-	    auto layer = road.properties.layer;
+	    auto layer = road.props.layer;
 	    
 	    enforce( layer >= -direction_layers_num );
 	    enforce( layer <= direction_layers_num );

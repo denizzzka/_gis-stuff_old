@@ -22,6 +22,12 @@ mixin template Road()
         window.draw( circle );
     }
     
+    void drawPoints( Vector2F[] coords, in float width, in Color color )
+    {
+        foreach( c; coords )
+            drawRoadJointPoint( c, width, color );
+    }
+    
     void drawRoadSegmentLine( Vector2F from, Vector2F to, in float width, in Color color )
     {
         auto vector = to - from;
@@ -104,44 +110,50 @@ mixin template Road()
         drawRoadEdge( g, road, drawProps );
     }
     
-    void drawMonochromeLayer( SfmlRoad[] roads, in float width, in Color color )
+    void forAllRoads( SfmlRoad[] roads, bool foreground,
+            void delegate( Vector2F[] coords, in float width, in Color color ) dg
+        )
     {
-        foreach( r; roads )
-            drawRoadSegments( r.coords, width, color );
+        foreach( ref r; roads )
+        {
+			const props = &polylines.getProperty( r.props.type );
             
-        foreach( r; roads )
-            foreach( c; r.coords )
-                drawRoadJointPoint( c, width, color );
-    }
-    /*
-    void drawRoadsLayer( RoadToSort[] roads )
-    {
-        const fullWidth = prop.thickness + prop.outlineThickness;
-        
-        
-        foreach( r; roads )
+            float width;
+            Color color;
+            
             if( foreground )
-                drawRoadSegments( r.coords, r.properties.thickness, r.properties.color );
+            {
+                width = props.thickness;
+                color = props.color;
+            }
             else
-                drawRoadSegments( r.coords, fullWidth, r.properties.outlineColor );
-        
-        foreach( road; roads )
-            foreach( c; road.coords )
-                if( foreground )
-                    drawRoadJointPoint( c, r.properties.thickness, r.properties.outlineColor );
-                else
-                    drawRoadJointPoint( c, fullWidth, r.properties.outlineColor );
+            {
+                width = props.thickness + props.outlineThickness;
+                color = props.outlineColor;
+            }
+            
+            dg( r.coords, width, color );
+        }
     }
-    */
+    
+    void drawRoadsLayer( SfmlRoad[] roads )
+    {
+        // background lines
+        forAllRoads( roads, false, &drawRoadSegments );
+        
+        // background points
+        forAllRoads( roads, false, &drawPoints );
+        
+        // foreground lines
+        forAllRoads( roads, true, &drawRoadSegments );
+        
+        // foreground points
+        forAllRoads( roads, true, &drawPoints );
+    }
+    
     void drawRoads( RoadsSorted sorted )
     {
         foreach( layer; sorted.roads )
-            foreach( road; layer )
-            {
-                //const type = g.getEdge( road ).payload.type;
-                //auto drawProps = RoadDrawProperties( polylines.getProperty( type ) );
-                
-                //drawRoadEdge( road.graph, road.edge );
-            }
+            drawRoadsLayer( layer );
     }
 }
