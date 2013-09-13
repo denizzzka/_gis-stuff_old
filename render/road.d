@@ -7,6 +7,21 @@ import config.map: PolylineProperties, polylines;
 
 mixin template Road()
 {
+    void drawRoadJointPoint( WindowCoords center, in real diameter, in Color color )
+    {
+        auto radius = diameter / 2;
+        Vector2f sfml_coords; sfml_coords = cartesianToSFML( center );
+        
+        auto circle = new CircleShape;
+        
+        circle.origin = Vector2f( radius, radius );
+        circle.position = sfml_coords;
+        circle.radius = radius;
+        circle.fillColor = color;
+        
+        window.draw( circle );
+    }
+    
     void drawRoadBend( WindowCoords center, cat.Line type )
     {
         auto prop = &polylines.getProperty( type );
