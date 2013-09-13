@@ -8,33 +8,30 @@ import map.map: RoadGraph;
 
 mixin template Road()
 {
-    void drawRoadJointPoint( WindowCoords center, in float diameter, in Color color )
+    void drawRoadJointPoint( Vector2F center, in float diameter, in Color color )
     {
         auto radius = diameter / 2;
-        Vector2f sfml_coords; sfml_coords = cartesianToSFML( center );
         
         auto circle = new CircleShape;
         
         circle.origin = Vector2f( radius, radius );
-        circle.position = sfml_coords;
+        circle.position = Vector2f( center );
         circle.radius = radius;
         circle.fillColor = color;
         
         window.draw( circle );
     }
     
-    void drawRoadSegmentLine( WindowCoords from, WindowCoords to, in float width, in Color color )
+    void drawRoadSegmentLine( Vector2F from, Vector2F to, in float width, in Color color )
     {
         auto vector = to - from;
         auto length = vector.length;
         auto angleOX = vector.angleOX;
         
-        Vector2f sfml_from; sfml_from = cartesianToSFML( from );
-        
         auto rect = new RectangleShape;
         
         rect.origin = Vector2f( 0, width / 2 );
-        rect.position = sfml_from;
+        rect.position = Vector2f( from );
         rect.rotation = angleOX.radian2degree - 90;
         rect.size = Vector2f( length, width );
         rect.fillColor = color;
@@ -42,7 +39,7 @@ mixin template Road()
         window.draw( rect );
     }
     
-    void drawRoadSegments( WindowCoords[] coords, in float width, in Color color )
+    void drawRoadSegments( Vector2F[] coords, in float width, in Color color )
     in
     {
         assert( coords.length >= 2 );
@@ -58,7 +55,7 @@ mixin template Road()
         }
     }
     
-    void drawOneColoredRoad( WindowCoords[] coords, in float width, in Color color )
+    void drawOneColoredRoad( Vector2F[] coords, in float width, in Color color )
     {
         drawRoadSegments( coords, width, color );
         
@@ -68,10 +65,14 @@ mixin template Road()
     
     void drawRoad( in RoadGraph g, in RoadGraph.EdgeDescr road )
     {
-        auto type = g.getEdge( road ).payload.type;
-        auto prop = &polylines.getProperty( type );
+        const type = g.getEdge( road ).payload.type;
+        const prop = &polylines.getProperty( type );
         
-        //drawOneColoredRoad
+        auto map_coords = g.getMapCoords( road );
+        auto cartesian = MapToWindowCoords( map_coords );
+        auto coords = cartesianToSFML( cartesian );
+        
+        drawOneColoredRoad( coords, prop.outlineThickness, prop.outlineColor );
     }
     
     void drawRoadBend( WindowCoords center, cat.Line type )

@@ -16,16 +16,21 @@ debug(scene) import std.stdio;
 debug(controls) import std.stdio;
 
 
-struct Vector2f
+struct Vector2f /// extending sfml vector type
 {
     dsfml.graphics.Vector2f vector;
+    alias vector this;
     
-    this( float X, float Y )
+    this()( float X, float Y )
     {
 	vector = dsfml.graphics.Vector2f( X , Y );
     }
     
-    alias vector this;
+    this(T)( T vec )
+    {
+	x = vec.x;
+	y = vec.y;
+    }
     
     void opAssign(T)( in T v )
     if( !isScalarType!(T) )
@@ -34,6 +39,8 @@ struct Vector2f
 	y = v.y;
     }
 }
+
+alias Vector2D!float Vector2F; /// our more powerful vector
 
 class Window : IWindow
 {
@@ -103,10 +110,10 @@ class Window : IWindow
     private
     WindowCoords[] MapToWindowCoords( MapCoords[] map_points )
     {
-	WindowCoords[] res;
+	auto res = new WindowCoords[ map_points.length ];
 	
 	foreach( i, point; map_points )
-	    res ~= scene.metersToScreen( point );
+	    res[i] = scene.metersToScreen( point );
 	    
 	return res;
     }
@@ -232,17 +239,24 @@ class Window : IWindow
 	return c;
     }
     
-    T cartesianToSFML( T )( T from )
+    Vector2F cartesianToSFML( in WindowCoords from )
     {
-	from.y = to!real(window.size.y) - from.y;
+	Vector2F res;
 	
-	return from;
+	res.x = from.x;
+	res.y = to!real(window.size.y) - from.y;
+	
+	return res;
     }
     
-    void cartesianToSFML( T )( ref T[] from )
+    Vector2F[] cartesianToSFML( in WindowCoords[] from )
     {
+	auto res = new Vector2F[ from.length ];
+	
 	foreach( i, c; from )
-	    from[i] = cartesianToSFML( c );
+	    res[i] = cartesianToSFML( c );
+	    
+	return res;
     }
     
     mixin Road;
