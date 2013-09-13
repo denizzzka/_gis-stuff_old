@@ -139,6 +139,7 @@ class Window : IWindow
 			
 		    case ROAD:
 			auto graph = reg_lines.region.layers[ reg_lines.layer_num ].road_graph;
+			/*
 			encoded_points = graph.getMapCoords( line.road );
 			
 			auto bend1 = scene.metersToScreen( encoded_points[0] );
@@ -150,6 +151,9 @@ class Window : IWindow
 			
 			auto crds = MapToWindowCoords( encoded_points );
 			drawRoadSegments( crds, type );
+			*/
+			drawRoad( graph, line.road );
+			
 			continue;
 			
 		    case AREA:

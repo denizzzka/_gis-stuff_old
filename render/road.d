@@ -32,7 +32,7 @@ mixin template Road()
         
         rect.origin = Vector2f( 0, width / 2 );
         rect.position = Vector2f( from );
-        rect.rotation = angleOX.radian2degree - 90;
+        rect.rotation = -angleOX.radian2degree + 90;
         rect.size = Vector2f( length, width );
         rect.fillColor = color;
         
@@ -69,12 +69,14 @@ mixin template Road()
         const prop = &polylines.getProperty( type );
         
         auto map_coords = g.getMapCoords( road );
-        auto cartesian = MapToWindowCoords( map_coords );
+        WindowCoords[] cartesian = MapToWindowCoords( map_coords );
         auto coords = cartesianToSFML( cartesian );
         
         drawOneColoredRoad( coords, prop.outlineThickness, prop.outlineColor );
+        drawOneColoredRoad( coords, prop.thickness, prop.color );
     }
     
+    // Will be removed: ============================================
     void drawRoadBend( WindowCoords center, cat.Line type )
     {
         auto prop = &polylines.getProperty( type );
