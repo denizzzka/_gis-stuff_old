@@ -61,6 +61,7 @@ mixin template Road()
         }
     }
     
+    /*
     struct RoadDrawProperties
     {
         float thickness;
@@ -76,7 +77,9 @@ mixin template Road()
             outlineColor = prop.outlineColor;
         }
     }
+    */
     
+    /*
     void drawRoadEdge( in RoadGraph g, in RoadGraph.EdgeDescr road, in RoadDrawProperties prop )
     {
         auto map_coords = g.getMapCoords( road );
@@ -102,21 +105,25 @@ mixin template Road()
         
         drawRoadEdge( g, road, drawProps );
     }
+    */
     
     void drawPathEdge( in RoadGraph g, in RoadGraph.EdgeDescr road )
     {
-        auto drawProps = RoadDrawProperties( polylines.getProperty( cat.Line.PATH ) );
+        //auto drawProps = RoadDrawProperties( polylines.getProperty( cat.Line.PATH ) );
         
-        drawRoadEdge( g, road, drawProps );
+        //drawRoadEdge( g, road, drawProps );
     }
     
-    void forAllRoads( SfmlRoad[] roads, bool foreground,
+    void forAllRoads( bool path )( SfmlRoad[] roads, bool foreground,
             void delegate( Vector2F[] coords, in float width, in Color color ) dg
         )
     {
         foreach( ref r; roads )
         {
-			const props = &polylines.getProperty( r.props.type );
+            static if( !path )
+                const props = &polylines.getProperty( r.props.type );
+            else
+                const props = &polylines.getProperty( cat.Line.PATH );
             
             float width;
             Color color;
@@ -136,19 +143,19 @@ mixin template Road()
         }
     }
     
-    void drawRoadsLayer( SfmlRoad[] roads )
+    void drawRoadsLayer( bool path = false )( SfmlRoad[] roads )
     {
         // background lines
-        forAllRoads( roads, false, &drawRoadSegments );
+        forAllRoads!path( roads, false, &drawRoadSegments );
         
         // background points
-        forAllRoads( roads, false, &drawPoints );
+        forAllRoads!path( roads, false, &drawPoints );
         
         // foreground lines
-        forAllRoads( roads, true, &drawRoadSegments );
+        forAllRoads!path( roads, true, &drawRoadSegments );
         
         // foreground points
-        forAllRoads( roads, true, &drawPoints );
+        forAllRoads!path( roads, true, &drawPoints );
     }
     
     void drawRoads( RoadsSorted sorted )

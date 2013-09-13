@@ -49,6 +49,8 @@ class Window : IWindow
     POV scene;
     RenderWindow window;    
     
+    SfmlRoad[] path;
+    
     private
     {
 	VertexArray vertex_array;
@@ -146,7 +148,6 @@ class Window : IWindow
 			auto road = SfmlRoad( this, graph, line.road );
 			
 			roads.addRoad( road );
-			//drawRoadEdge( graph, line.road );
 			
 			continue;
 			
@@ -202,9 +203,11 @@ class Window : IWindow
     private
     void drawPath( in RoadGraph.Polylines lines )
     {
+	/*
 	foreach( graphLines; lines.lines )
 	    foreach( descr; graphLines.descriptors )
 		drawPathEdge( cast(RoadGraph) graphLines.map_graph, descr );
+		*/
     }
     
     private
