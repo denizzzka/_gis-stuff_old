@@ -104,7 +104,7 @@ mixin template Road()
         drawRoadEdge( g, road, drawProps );
     }
     
-    void drawMonochromeLayer( RoadToSort[] roads, in float width, in Color color )
+    void drawMonochromeLayer( SfmlRoad[] roads, in float width, in Color color )
     {
         foreach( r; roads )
             drawRoadSegments( r.coords, width, color );

@@ -143,7 +143,7 @@ class Window : IWindow
 			
 		    case ROAD:
 			auto graph = reg_lines.region.layers[ reg_lines.layer_num ].road_graph;
-			auto road = RoadToSort( this, graph, line.road );
+			auto road = SfmlRoad( this, graph, line.road );
 			
 			roads.addRoad( road );
 			//drawRoadEdge( graph, line.road );
@@ -164,7 +164,7 @@ class Window : IWindow
 	drawRoads( roads );
     }
     
-    struct RoadToSort
+    struct SfmlRoad
     {
 	alias RoadGraph.EdgeDescr EdgeDescr;
 	
@@ -186,9 +186,9 @@ class Window : IWindow
 	immutable direction_layers_num = 5;
 	immutable array_length = direction_layers_num * 2 + 1;
 	
-	RoadToSort[][ array_length ] roads;
+	SfmlRoad[][ array_length ] roads;
 	
-	void addRoad( RoadToSort road )
+	void addRoad( SfmlRoad road )
 	{
 	    auto layer = road.properties.layer;
 	    
