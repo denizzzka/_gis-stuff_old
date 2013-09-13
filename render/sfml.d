@@ -11,6 +11,7 @@ import render.road;
 
 import std.conv: to;
 import std.random;
+import std.exception: enforce;
 debug(sfml) import std.stdio;
 debug(scene) import std.stdio;
 debug(controls) import std.stdio;
@@ -156,26 +157,35 @@ class Window : IWindow
 	    }
     }
     
-    struct RoadsSorted
+    struct RoadToSort
     {
 	alias RoadGraph.EdgeDescr EdgeDescr;
 	
-	struct Road
+	RoadGraph graph;
+	EdgeDescr edge;
+	
+	this( RoadGraph graph, EdgeDescr edge )
 	{
-	    RoadGraph graph;
-	    EdgeDescr edge;
-	    
-	    this( RoadGraph graph, EdgeDescr edge )
-	    {
-		this.graph = graph;
-		this.edge = edge;
-	    }
+	    this.graph = graph;
+	    this.edge = edge;
 	}
+    }
+    
+    struct RoadsSorted
+    {
+	immutable direction_layers_num = 5;
+	immutable array_length = direction_layers_num * 2 + 1;
 	
-	Road[] roads;
+	RoadToSort[][ array_length ] roads;
 	
-	void addRoad( Road )
+	void addRoad( RoadToSort road )
 	{
+	    auto layer = road.graph.getEdge( road.edge ).payload.layer;
+	    
+	    enforce( layer >= -direction_layers_num );
+	    enforce( layer <= direction_layers_num );
+	    
+	    roads[ layer + direction_layers_num ] ~= road;
 	}
     }
     
