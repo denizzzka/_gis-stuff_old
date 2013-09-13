@@ -171,26 +171,12 @@ class Window : IWindow
     private
     void drawPath( in RoadGraph.Polylines lines )
     {
-	alias RoadGraph.Polylines.MapGraphType_copy_because_compiling_bug RG;
-	
-	void dg( inout RG g, inout RoadGraph.EdgeDescr descr )
-	{
-	    auto encoded_points = g.getMapCoords( descr );
-	    
-	    auto bend1 = scene.metersToScreen( encoded_points[0] );
-	    auto bend2 = scene.metersToScreen( encoded_points[$-1] );
-	    
-	    auto type = config.categories.Line.PATH;
-	    drawRoadBend( bend1, type );
-	    drawRoadBend( bend2, type );
-	    
-	    auto crds = MapToWindowCoords( encoded_points );
-	    drawRoadSegments( crds, type );
-	}
-	
-	lines.forAllLines( &dg );
+	foreach( graphLines; lines.lines )
+	    foreach( descr; graphLines.descriptors )
+		drawPathSegment( cast(RoadGraph) graphLines.map_graph, descr );
     }
     
+    private
     void drawCenter()
     {
 	auto c = getCenter();

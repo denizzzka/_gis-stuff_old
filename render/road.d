@@ -63,17 +63,51 @@ mixin template Road()
             drawRoadJointPoint( c, width, color );
     }
     
-    void drawRoad( in RoadGraph g, in RoadGraph.EdgeDescr road )
+    struct RoadDrawProperties
     {
-        const type = g.getEdge( road ).payload.type;
-        const prop = &polylines.getProperty( type );
-        
+        float thickness;
+        float outlineThickness;
+        Color color;
+        Color outlineColor;
+    }
+    
+    void drawRoad( in RoadGraph g, in RoadGraph.EdgeDescr road, in RoadDrawProperties prop )
+    {
         auto map_coords = g.getMapCoords( road );
         WindowCoords[] cartesian = MapToWindowCoords( map_coords );
         auto coords = cartesianToSFML( cartesian );
         
         drawOneColoredRoad( coords, prop.outlineThickness, prop.outlineColor );
         drawOneColoredRoad( coords, prop.thickness, prop.color );
+    }
+    
+    void drawRoad( in RoadGraph g, in RoadGraph.EdgeDescr road )
+    {
+        const type = g.getEdge( road ).payload.type;
+        const prop = &polylines.getProperty( type );
+        
+        RoadDrawProperties drawProps = {
+            thickness: prop.thickness,
+            outlineThickness: prop.outlineThickness,
+            color: prop.color,
+            outlineColor: prop.outlineColor
+        };
+        
+        drawRoad( g, road, drawProps );
+    }
+    
+    void drawPathSegment( in RoadGraph g, in RoadGraph.EdgeDescr road )
+    {
+        const prop = &polylines.getProperty( cat.Line.PATH );
+        
+        RoadDrawProperties drawProps = {
+            thickness: prop.thickness,
+            outlineThickness: prop.outlineThickness,
+            color: prop.color,
+            outlineColor: prop.outlineColor
+        };
+        
+        drawRoad( g, road, drawProps );
     }
     
     // Will be removed: ============================================

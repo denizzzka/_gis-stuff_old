@@ -128,23 +128,7 @@ class POV
     {
         return map.getLines( getCurrentLayerNum, boundary_meters.toBBox );
     }
-    /*
-    RoadGraph.Polylines[] getPathLines()
-    {
-        debug(scene) writeln("path=", found_path);
-        
-        RoadGraph.Polylines[] res;
-        
-        auto curr = RoadGraph.Polylines( map.regions[ 0 ].layers[ 0 ].road_graph ); // FIXME
-            
-        foreach( ref c; found_path )
-            curr.descriptors ~= &c;
-        
-        res ~= curr;
-        
-        return res;
-    }
-    */
+    
 	override string toString()
     {
         return format("center=%s zoom=%g scene mbox=%s size_len=%g", center, zoom, boundary_meters, boundary_meters.getSizeVector.length);	
