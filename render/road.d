@@ -104,10 +104,22 @@ mixin template Road()
         drawRoadEdge( g, road, drawProps );
     }
     
+    void drawRoadsLayer( RoadToSort[] roads, in RoadDrawProperties prop )
+    {
+        foreach( road; roads )
+        {
+        }
+    }
+    
     void drawRoads( RoadsSorted sorted )
     {
         foreach( layer; sorted.roads )
             foreach( road; layer )
+            {
+                //const type = g.getEdge( road ).payload.type;
+                //auto drawProps = RoadDrawProperties( polylines.getProperty( type ) );
+                
                 drawRoadEdge( road.graph, road.edge );
+            }
     }
 }
