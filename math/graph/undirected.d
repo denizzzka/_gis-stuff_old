@@ -178,7 +178,7 @@ class UndirectedGraph( NodePayload, EdgePayload )
         return res;
     }
     
-    EdgeDescr getFirstEdge( in NodeDescr node ) const
+    EdgeDescr getFirstEdgeDescr( in NodeDescr node ) const
     {
         auto range = getEdgesRange( node );
         

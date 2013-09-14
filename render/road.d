@@ -102,6 +102,16 @@ mixin template Road()
         forAllRoads( roads, true, &drawPoints );
     }
     
+    void drawPointType( Vector2F coords, cat.Line type )
+    {
+        auto props = &polylines.getProperty( type );
+        
+        float width = props.thickness;
+        Color color = props.color;
+        
+        drawRoadJointPoint( coords, width, color );
+    }
+    
     void drawRoads( RoadsSorted sorted )
     {
         foreach( i, layer; sorted.roads )
@@ -113,6 +123,12 @@ mixin template Road()
                 drawBackgroundLayer( sorted.roads[i+1] );
             
             drawForegroundLayer( layer );
+            
+            foreach( road; layer )
+            {
+                drawPointType( road.coords[0], road.startDominatingType );
+                drawPointType( road.coords[$-1], road.endDominatingType );
+            }
         }
     }
 }
