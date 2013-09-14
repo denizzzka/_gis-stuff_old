@@ -163,7 +163,7 @@ class MapGraph( alias GraphEngine, Point, Polyline ) : GraphEngine!( Point, Poly
     }
 }
 
-auto cutOnCrossings(DescriptionsTree)( in DescriptionsTree lines_rtree )
+auto cutOnCrossings( DescriptionsTree )( in DescriptionsTree lines_rtree )
 {
     alias DescriptionsTree.Payload PolylineDescription;
     alias DescriptionsTree.Box BBox;
@@ -215,3 +215,49 @@ Description[] cutOnCrossings( Description )( Description[] lines )
     
     return cutOnCrossings( tree );
 }
+/*
+unittest
+{
+    alias MapCoords Coords;
+    alias Vector2D!long FC; // foreign coords
+    alias Box!(MapCoords.Coords) BBox;
+    
+    alias TPolyline!Coords Polyline;
+    alias TEdge!Polyline Edge;
+    alias TNode!( Edge, Point ) Node;
+    
+    alias TMapGraph!( GE, Point, Polyline ) G;
+    
+    FC[] points = [
+            FC(0,0), FC(1,1), FC(2,2), FC(3,3), FC(4,4), // first line
+            FC(4,0), FC(3,1), FC(1,3), FC(2,4) // second line
+        ];
+    
+    FC[ulong] nodes;
+    
+    foreach( i, c; points )
+        nodes[ i * 10 ] = c;
+    
+    ulong[] n1 = [ 0, 10, 20, 30, 40 ];
+    ulong[] n2 = [ 50, 60, 20, 70, 80, 30 ];
+    
+    Coords getNodeByID( in ulong id )
+    {
+        Coords res;
+        res.map_coords = nodes[ id ];
+        
+        return res;
+    }
+    
+    alias TPolylineDescription!( getNodeByID ) PolylineDescription;
+    
+    auto w1 = PolylineDescription( n1, cat.Line.HIGHWAY );
+    auto w2 = PolylineDescription( n2, cat.Line.PRIMARY );
+    
+    PolylineDescription[] lines = [ w1, w2 ];
+    
+    auto prepared = cutOnCrossings( lines );
+    
+    assert( prepared.length == 5 );
+}
+*/
