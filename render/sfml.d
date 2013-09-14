@@ -71,7 +71,7 @@ class Window : IWindow
 	{
 	    eventsProcessing();
 	    
-	    window.clear(Color.Black);
+	    window.clear(Color(0xE0, 0xE0, 0xE0));
 	    
 	    if( scene )
 	    {
@@ -198,7 +198,7 @@ class Window : IWindow
 	immutable array_length = direction_layers_num * 2 + 1;
 	
 	immutable ubyte max_enum = 20; // TODO: is max enum type of roads, need read it from categories.d
-	SfmlRoad[][max_enum][ array_length ] roads;
+	SfmlRoad[][max_enum][ array_length ] sorted;
 	
 	void addRoad( SfmlRoad road )
 	{
@@ -207,7 +207,9 @@ class Window : IWindow
 	    enforce( layer >= -direction_layers_num );
 	    enforce( layer <= direction_layers_num );
 	    
-	    roads[road.props.type][ layer + direction_layers_num ] ~= road;
+	    //import std.stdio;
+	    //writeln( road.props.type );
+	    sorted[road.props.type][ layer + direction_layers_num ] ~= road;
 	}
 	
 	void addRoads( SfmlRoad[] roads )
