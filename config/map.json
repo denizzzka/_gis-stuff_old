@@ -30,8 +30,8 @@
         
         "PATH":
         {
-            "color": { "R": 0, "G": 0, "B": 240 },
-            "outlineColor": { "R": 0, "G": 0, "B": 140 },
+            "color": { "R": 0, "G": 240, "B": 240 },
+            "outlineColor": { "R": 0, "G": 100, "B": 240 },
             "thickness": 11.0,
             "outlineThickness": 5.0,
             "layers": [ 0, 1, 2, 3, 4 ]

@@ -168,7 +168,7 @@ class Window : IWindow
 	alias RoadGraph.EdgeDescr EdgeDescr;
 	
         Vector2F[] coords;
-        const RoadProperties* props;
+        RoadProperties* props;
 	bool draw_start_point;
 	bool draw_end_point;
 	
@@ -181,7 +181,7 @@ class Window : IWindow
 	    if( ps )
 		props = ps;
 	    else
-		props = &g.getEdge( edge ).payload.properties;
+		props = cast(RoadProperties*) &g.getEdge( edge ).payload.properties;
 	}
     }
     
@@ -247,8 +247,15 @@ class Window : IWindow
     
     SfmlRoad[] sfmlPath( in RoadGraph.Polylines r_path )
     {
-	SfmlRoad[] res;
+	size_t path_length;
 	
+	foreach( gline; r_path.lines )
+	    path_length += gline.descriptors.length;
+	    
+	SfmlRoad[] res;
+	res.length = path_length;
+	
+	size_t idx;
 	foreach( gline; r_path.lines )
 	    foreach( edge; gline.descriptors )
 	    {
@@ -256,7 +263,8 @@ class Window : IWindow
 		ps.type = cat.Line.PATH;
 		ps.weight = 1;
 		
-		res ~= SfmlRoad( this, cast(RoadGraph) gline.map_graph, edge, ps ); // FIXME: cast?!
+		res[idx] = SfmlRoad( this, cast(RoadGraph) gline.map_graph, edge, ps ); // FIXME: cast?!
+		idx++;
 	    }
 	    
 	return res;
