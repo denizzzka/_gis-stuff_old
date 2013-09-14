@@ -111,7 +111,7 @@ mixin template Road()
         }
         else
         {
-            width = props.outlineThickness;
+            width = props.thickness + props.outlineThickness;
             color = props.outlineColor;
         }
         

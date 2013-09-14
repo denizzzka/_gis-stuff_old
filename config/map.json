@@ -50,7 +50,7 @@
         {
             "color": { "R": 255, "G": 255, "B": 255 },
             "outlineColor": { "R": 0, "G": 0, "B": 0 },
-            "thickness": 10.0,
+            "thickness": 8.0,
             "outlineThickness": 3.0,
             "layers": [ 0, 1, 2, 3 ]
         },
@@ -59,8 +59,8 @@
         {
             "color": { "R": 200, "G": 200, "B": 0 },
             "outlineColor": { "R": 0, "G": 0, "B": 0 },
-            "thickness": 10.0,
-            "outlineThickness": 2.0,
+            "thickness": 7.0,
+            "outlineThickness": 3.0,
             "layers": [ 0, 1, 2 ]
         },
         
@@ -77,8 +77,8 @@
         {
             "color": { "R": 111, "G": 222, "B": 200 },
             "outlineColor": { "R": 0, "G": 0, "B": 0 },
-            "thickness": 1.0,
-            "outlineThickness": 1.0,
+            "thickness": 2.0,
+            "outlineThickness": 2.0,
             "layers": [ 0 ]
         },
         
@@ -87,7 +87,7 @@
             "color": { "R": 0, "G": 255, "B": 255 },
             "outlineColor": { "R": 0, "G": 0, "B": 0 },
             "thickness": 1.0,
-            "outlineThickness": 1.0,
+            "outlineThickness": 3.0,
             "layers": [ 0, 1 ]
         }
     }
