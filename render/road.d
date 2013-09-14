@@ -117,18 +117,22 @@ mixin template Road()
         foreach( i, layer; sorted.roads )
         {
             if( i == 0 ) // first layer
-                drawBackgroundLayer( layer );
+                foreach_reverse( by_type; layer )
+                    drawBackgroundLayer( by_type );
             
             if( i < sorted.roads.length-1 ) // not last layer
-                drawBackgroundLayer( sorted.roads[i+1] );
+                foreach_reverse( by_type; sorted.roads[i+1] )
+                    drawBackgroundLayer( by_type );
             
-            drawForegroundLayer( layer );
+            foreach_reverse( by_type; layer )
+                drawForegroundLayer( by_type );
             
-            foreach( road; layer )
-            {
-                drawPointType( road.coords[0], road.startDominatingType );
-                drawPointType( road.coords[$-1], road.endDominatingType );
-            }
+            foreach( by_type; layer )
+                foreach_reverse( road; by_type )
+                {
+                    drawPointType( road.coords[0], road.startDominatingType );
+                    drawPointType( road.coords[$-1], road.endDominatingType );
+                }
         }
     }
 }

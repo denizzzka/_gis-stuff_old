@@ -197,7 +197,8 @@ class Window : IWindow
 	immutable direction_layers_num = 5;
 	immutable array_length = direction_layers_num * 2 + 1;
 	
-	SfmlRoad[][ array_length ] roads;
+	immutable ubyte max_enum = 20; // TODO: is max enum type of roads, need read it from categories.d
+	SfmlRoad[][max_enum][ array_length ] roads;
 	
 	void addRoad( SfmlRoad road )
 	{
@@ -206,7 +207,7 @@ class Window : IWindow
 	    enforce( layer >= -direction_layers_num );
 	    enforce( layer <= direction_layers_num );
 	    
-	    roads[ layer + direction_layers_num ] ~= road;
+	    roads[road.props.type][ layer + direction_layers_num ] ~= road;
 	}
 	
 	void addRoads( SfmlRoad[] roads )
