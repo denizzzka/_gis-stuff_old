@@ -22,10 +22,10 @@ mixin template Road()
         window.draw( circle );
     }
     
-    void drawPoints( Vector2F[] coords, in float width, in Color color )
+    void drawPointsBetween( Vector2F[] coords, in float width, in Color color )
     {
-        foreach( c; coords )
-            drawRoadJointPoint( c, width, color );
+        for( auto i = 1; i < coords.length; i++ )
+            drawRoadJointPoint( coords[i], width, color );
     }
     
     void drawRoadSegmentLine( Vector2F from, Vector2F to, in float width, in Color color )
@@ -93,13 +93,13 @@ mixin template Road()
     void drawBackgroundLayer( SfmlRoad[] roads )
     {
         forAllRoads( roads, false, &drawRoadSegments );
-        forAllRoads( roads, false, &drawPoints );
+        forAllRoads( roads, false, &drawPointsBetween );
     }
     
     void drawForegroundLayer( SfmlRoad[] roads )
     {
         forAllRoads( roads, true, &drawRoadSegments );
-        forAllRoads( roads, true, &drawPoints );
+        forAllRoads( roads, true, &drawPointsBetween );
     }
     
     void drawPointType( Vector2F coords, cat.Line type )
