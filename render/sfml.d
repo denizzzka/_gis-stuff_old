@@ -169,6 +169,8 @@ class Window : IWindow
 	
         Vector2F[] coords;
         const RoadProperties* props;
+	bool draw_start_point;
+	bool draw_end_point;
 	
 	this( Window window, in RoadGraph g, in EdgeDescr edge, RoadProperties* ps = null )
 	{

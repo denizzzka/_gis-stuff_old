@@ -34,11 +34,14 @@ mixin template Road()
         auto length = vector.length;
         auto angleOX = vector.angleOX;
         
+        auto degrees = -angleOX.radian2degree + 90;
+        degrees = degrees % 360;
+        
         auto rect = new RectangleShape;
         
         rect.origin = Vector2f( 0, width / 2 );
         rect.position = Vector2f( from );
-        rect.rotation = -angleOX.radian2degree + 90;
+        rect.rotation = degrees;
         rect.size = Vector2f( length, width );
         rect.fillColor = color;
         
