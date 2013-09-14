@@ -90,24 +90,29 @@ mixin template Road()
         }
     }
     
-    void drawRoadsLayer( SfmlRoad[] roads )
+    void drawBackgroundLayer( SfmlRoad[] roads )
     {
-        // background lines
         forAllRoads( roads, false, &drawRoadSegments );
-        
-        // background points
         forAllRoads( roads, false, &drawPoints );
-        
-        // foreground lines
+    }
+    
+    void drawForegroundLayer( SfmlRoad[] roads )
+    {
         forAllRoads( roads, true, &drawRoadSegments );
-        
-        // foreground points
         forAllRoads( roads, true, &drawPoints );
     }
     
     void drawRoads( RoadsSorted sorted )
     {
-        foreach( layer; sorted.roads )
-            drawRoadsLayer( layer );
+        foreach( i, layer; sorted.roads )
+        {
+            if( i == 0 ) // first layer
+                drawBackgroundLayer( layer );
+            
+            if( i < sorted.roads.length-1 ) // not last layer
+                drawBackgroundLayer( sorted.roads[i+1] );
+            
+            drawForegroundLayer( layer );
+        }
     }
 }
