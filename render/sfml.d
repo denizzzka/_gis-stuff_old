@@ -197,7 +197,7 @@ class Window : IWindow
     
     struct RoadsSorted
     {
-	immutable direction_layers_num = 2;
+	immutable direction_layers_num = 5;
 	immutable layers_num = direction_layers_num * 2 + 1;
 	
 	immutable ubyte max_enum = 20; // TODO: is max enum type of roads, need read it from categories.d
@@ -210,26 +210,7 @@ class Window : IWindow
 	    enforce( layer >= -direction_layers_num );
 	    enforce( layer <= direction_layers_num );
 	    
-	    import std.stdio;
-	    //writeln( road.props.type );
 	    sorted[ layer + direction_layers_num ][ road.props.type ] ~= road;
-	    //writeln( sorted );
-	    /*
-	    if( count && road.props.type != cat.Line.HIGHWAY )
-	    {
-		writeln( sorted );
-		assert(false);
-	    }
-	    
-	    foreach( l, lay; sorted )
-	    {
-		foreach( b, by_type; lay )
-		    if( by_type.length )
-			writeln( "layer num=", l, " b=", b, " length=", by_type.length );
-	    }
-	    
-	    writeln;
-	    */
 	}
 	
 	void addRoads( SfmlRoad[] roads )
