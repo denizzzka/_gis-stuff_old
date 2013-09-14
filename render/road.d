@@ -18,6 +18,7 @@ mixin template Road()
         circle.position = Vector2f( center );
         circle.radius = radius;
         circle.fillColor = color;
+        circle.pointCount = 15;
         
         window.draw( circle );
     }
@@ -138,7 +139,6 @@ mixin template Road()
                 }
                 
             foreach_reverse( by_type; layer )
-            //auto by_type2 = layer[ cat.Line.UNSUPPORTED ];
                 drawLayer( by_type, true ); // foreground
             
             // foreground dominating points

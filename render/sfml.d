@@ -185,7 +185,7 @@ class Window : IWindow
 	    startDominatingType = g.getEdge( startDominatingDescr ).payload.properties.type;
 	    endDominatingType = g.getEdge( endDominatingDescr ).payload.properties.type;
 	    
-	    if( ps )
+	    if( ps != null )
 		props = ps;
 	    else
 		props = cast(RoadProperties*) &g.getEdge( edge ).payload.properties;
@@ -194,11 +194,11 @@ class Window : IWindow
     
     struct RoadsSorted
     {
-	immutable direction_layers_num = 5;
-	immutable array_length = direction_layers_num * 2 + 1;
+	immutable direction_layers_num = 2;
+	immutable layers_num = direction_layers_num * 2 + 1;
 	
 	immutable ubyte max_enum = 20; // TODO: is max enum type of roads, need read it from categories.d
-	SfmlRoad[][max_enum][ array_length ] sorted;
+	SfmlRoad[][max_enum][ layers_num ] sorted;
 	
 	void addRoad( SfmlRoad road )
 	{
@@ -207,9 +207,26 @@ class Window : IWindow
 	    enforce( layer >= -direction_layers_num );
 	    enforce( layer <= direction_layers_num );
 	    
-	    //import std.stdio;
+	    import std.stdio;
 	    //writeln( road.props.type );
-	    sorted[road.props.type][ layer + direction_layers_num ] ~= road;
+	    sorted[ layer + direction_layers_num ][ road.props.type ] ~= road;
+	    //writeln( sorted );
+	    /*
+	    if( count && road.props.type != cat.Line.HIGHWAY )
+	    {
+		writeln( sorted );
+		assert(false);
+	    }
+	    
+	    foreach( l, lay; sorted )
+	    {
+		foreach( b, by_type; lay )
+		    if( by_type.length )
+			writeln( "layer num=", l, " b=", b, " length=", by_type.length );
+	    }
+	    
+	    writeln;
+	    */
 	}
 	
 	void addRoads( SfmlRoad[] roads )
