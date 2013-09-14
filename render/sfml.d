@@ -56,6 +56,9 @@ class Window : IWindow
     
     this()
     {
+	ContextSettings context; // FIXME: not used!
+	context.antialiasingLevel = 4;
+	
 	auto vmode = VideoMode( 640, 480 );
 	string title = "hello world!";
 	
