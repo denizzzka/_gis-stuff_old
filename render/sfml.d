@@ -49,8 +49,6 @@ class Window : IWindow
     POV scene;
     RenderWindow window;    
     
-    SfmlRoad[] path;
-    
     private
     {
 	VertexArray vertex_array;
@@ -86,8 +84,6 @@ class Window : IWindow
 		
 		auto any = scene.getLines();
 		drawLines( any );
-		
-		drawPath( scene.found_path );
 	    }
 	    
 	    drawCenter;
@@ -162,6 +158,8 @@ class Window : IWindow
 		drawLine( res_points, color );
 	    }
 	
+	auto path = sfmlPath( scene.found_path );
+	roads.addRoads( path );
 	drawRoads( roads );
     }
     
@@ -172,13 +170,16 @@ class Window : IWindow
         Vector2F[] coords;
         const RoadProperties* props;
 	
-	this( in Window window, in RoadGraph g, EdgeDescr edge )
+	this( Window window, in RoadGraph g, in EdgeDescr edge, RoadProperties* ps = null )
 	{
             auto map_coords = g.getMapCoords( edge );
             WindowCoords[] cartesian = window.MapToWindowCoords( map_coords );
             coords = window.cartesianToSFML( cartesian );
 	    
-	    props = &g.getEdge( edge ).payload.properties;
+	    if( ps )
+		props = ps;
+	    else
+		props = &g.getEdge( edge ).payload.properties;
 	}
     }
     
@@ -198,18 +199,14 @@ class Window : IWindow
 	    
 	    roads[ layer + direction_layers_num ] ~= road;
 	}
+	
+	void addRoads( SfmlRoad[] roads )
+	{
+	    foreach( r; roads )
+		addRoad( r );
+	}
     }
-    
-    private
-    void drawPath( in RoadGraph.Polylines lines )
-    {
-	/*
-	foreach( graphLines; lines.lines )
-	    foreach( descr; graphLines.descriptors )
-		drawPathEdge( cast(RoadGraph) graphLines.map_graph, descr );
-		*/
-    }
-    
+        
     private
     void drawCenter()
     {
@@ -245,7 +242,24 @@ class Window : IWindow
 	
 	window.draw( line );
     }
-        
+    
+    SfmlRoad[] sfmlPath( in RoadGraph.Polylines r_path )
+    {
+	SfmlRoad[] res;
+	
+	foreach( gline; r_path.lines )
+	    foreach( edge; gline.descriptors )
+	    {
+		auto ps = new RoadProperties;
+		ps.type = cat.Line.PATH;
+		ps.weight = 1;
+		
+		res ~= SfmlRoad( this, cast(RoadGraph) gline.map_graph, edge, ps ); // FIXME: cast?!
+	    }
+	    
+	return res;
+    }
+    
     Vector2uint getSize()
     {
         Vector2uint res = window.size;
