@@ -61,59 +61,6 @@ mixin template Road()
         }
     }
     
-    /*
-    struct RoadDrawProperties
-    {
-        float thickness;
-        float outlineThickness;
-        Color color;
-        Color outlineColor;
-        
-        this( T )( T prop )
-        {
-            thickness = prop.thickness;
-            outlineThickness = prop.outlineThickness;
-            color = prop.color;
-            outlineColor = prop.outlineColor;
-        }
-    }
-    */
-    
-    /*
-    void drawRoadEdge( in RoadGraph g, in RoadGraph.EdgeDescr road, in RoadDrawProperties prop )
-    {
-        auto map_coords = g.getMapCoords( road );
-        WindowCoords[] cartesian = MapToWindowCoords( map_coords );
-        auto coords = cartesianToSFML( cartesian );
-        
-        auto fullWidth = prop.thickness + prop.outlineThickness;
-        
-        foreach( c; coords )
-            drawRoadJointPoint( c, fullWidth, prop.color );
-        
-        drawRoadSegments( coords, fullWidth, prop.outlineColor );
-        drawRoadSegments( coords, prop.thickness, prop.color );
-        
-        foreach( c; coords )
-            drawRoadJointPoint( c, prop.thickness, prop.color );
-    }
-    
-    void drawRoadEdge( in RoadGraph g, in RoadGraph.EdgeDescr road )
-    {
-        const type = g.getEdge( road ).payload.type;
-        auto drawProps = RoadDrawProperties( polylines.getProperty( type ) );
-        
-        drawRoadEdge( g, road, drawProps );
-    }
-    */
-    
-    void drawPathEdge( in RoadGraph g, in RoadGraph.EdgeDescr road )
-    {
-        //auto drawProps = RoadDrawProperties( polylines.getProperty( cat.Line.PATH ) );
-        
-        //drawRoadEdge( g, road, drawProps );
-    }
-    
     void forAllRoads( SfmlRoad[] roads, bool foreground,
             void delegate( Vector2F[] coords, in float width, in Color color ) dg
         )
