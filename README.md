@@ -15,7 +15,7 @@ If no options are passed "-release" option will be used.
 
 * * *
 ![Image](screenshots/malta_lines_3_colored.png)
-![Image](screenshots/cyan.png.png)
+![Image](screenshots/cyan.png)
 ![Image](screenshots/roads.png)
 * * *
 
