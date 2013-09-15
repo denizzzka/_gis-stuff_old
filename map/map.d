@@ -242,7 +242,6 @@ class Region
             
             layer.road_graph.sortEdgesByReducingRank;
             
-            // adding edges to rtree
             void addEdgeToRtree( RoadGraph.EdgeDescr descr )
             {
                 auto bbox = layer.road_graph.getBoundary( descr );
