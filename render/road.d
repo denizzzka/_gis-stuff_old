@@ -25,7 +25,7 @@ mixin template Road()
     
     void drawPointsBetween( Vector2F[] coords, in float width, in Color color )
     {
-        for( auto i = 1; i < coords.length; i++ )
+       for( auto i = 1; i < coords.length-1; i++ )
             drawRoadJointPoint( coords[i], width, color );
     }
     
@@ -93,10 +93,11 @@ mixin template Road()
     
     void drawLayer( SfmlRoad[] roads, bool foreground )
     {
-        forAllRoads( roads, foreground, &drawRoadSegments );
         forAllRoads( roads, foreground, &drawPointsBetween );
+        forAllRoads( roads, foreground, &drawRoadSegments );
     }
     
+    //@disable // TODO: remove this function
     void drawPointType( Vector2F coords, cat.Line type, bool foreground )
     {
         auto props = &polylines.getProperty( type );
@@ -120,33 +121,41 @@ mixin template Road()
     
     void drawRoads( RoadsSorted roads )
     {
+        
         foreach( i, layer; roads.sorted )
         {
-            if( i == 0 ) // first layer
+            // background
+            foreach( by_type; layer )
+                drawLayer( by_type, false );
+            
+            // background end points
+            if( i == 0 )
                 foreach( by_type; layer )
-                    drawLayer( by_type, false ); // background
+                    foreach( road; by_type )
+                    {
+                        drawPointType( road.coords[0], road.props.type, false );
+                        drawPointType( road.coords[$-1], road.props.type, false );
+                    }
             
-            if( i < roads.sorted.length-1 ) // not last layer
-                foreach( by_type; roads.sorted[i+1] )
-                    drawLayer( by_type, false ); // background
+            // background end points for next layer
+            if( i < roads.sorted.length-1 )
+                foreach( next_by_type; roads.sorted[i+1] )
+                    foreach( road; next_by_type )
+                    {
+                        drawPointType( road.coords[0], road.props.type, false );
+                        drawPointType( road.coords[$-1], road.props.type, false );
+                    }
             
-            // background dominating points
-            foreach( by_type; layer )
-                foreach( road; by_type )
-                {
-                    drawPointType( road.coords[0], road.startDominatingType, false );
-                    drawPointType( road.coords[$-1], road.endDominatingType, false );
-                }
-                
+            // foreground
             foreach_reverse( by_type; layer )
-                drawLayer( by_type, true ); // foreground
+                drawLayer( by_type, true );
             
-            // foreground dominating points
-            foreach( by_type; layer )
+            // foreground end points
+            foreach_reverse( by_type; layer )
                 foreach( road; by_type )
                 {
-                    drawPointType( road.coords[0], road.startDominatingType, true );
-                    drawPointType( road.coords[$-1], road.endDominatingType, true );
+                    drawPointType( road.coords[0], road.props.type, true );
+                    drawPointType( road.coords[$-1], road.props.type, true );
                 }
         }
     }
