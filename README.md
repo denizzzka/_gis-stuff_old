@@ -15,7 +15,7 @@ If no options are passed "-release" option will be used.
 
 * * *
 ![Image](screenshots/malta_lines_3_colored.png)
-![Image](screenshots/render_bug.png)
+![Image](screenshots/roads_render.png)
 * * *
 
 Roadmap:
