@@ -121,14 +121,13 @@ mixin template Road()
     
     void drawRoads( RoadsSorted roads )
     {
-        
         foreach( i, layer; roads.sorted )
         {
             // background
             foreach( by_type; layer )
                 drawLayer( by_type, false );
             
-            // background end points
+            // background end points for first level
             if( i == 0 )
                 foreach( by_type; layer )
                     foreach( road; by_type )
@@ -145,7 +144,7 @@ mixin template Road()
                         drawPointType( road.coords[0], road.props.type, false );
                         drawPointType( road.coords[$-1], road.props.type, false );
                     }
-            
+                    
             // foreground
             foreach_reverse( by_type; layer )
                 drawLayer( by_type, true );
