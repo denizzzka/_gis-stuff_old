@@ -172,21 +172,12 @@ class Window : IWindow
 	
         Vector2F[] coords;
         RoadProperties* props;
-	cat.Line startDominatingType;
-	cat.Line endDominatingType;
 	
 	this( Window window, in RoadGraph g, in EdgeDescr edge, RoadProperties* ps = null )
 	{
             auto map_coords = g.getMapCoords( edge );
             WindowCoords[] cartesian = window.MapToWindowCoords( map_coords );
             coords = window.cartesianToSFML( cartesian );
-	    
-	    auto startDominatingDescr = g.getFirstEdgeDescr( edge.node );
-	    auto to_node = g.getEdge( edge ).to_node;
-	    auto endDominatingDescr = g.getFirstEdgeDescr( to_node );
-	    
-	    startDominatingType = g.getEdge( startDominatingDescr ).payload.properties.type;
-	    endDominatingType = g.getEdge( endDominatingDescr ).payload.properties.type;
 	    
 	    if( ps != null )
 		props = ps;
