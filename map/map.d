@@ -237,19 +237,25 @@ class Region
                 if( epsilon )
                     descr.generalize( epsilon );
                 
-                auto descriptior = layer.road_graph.addPolyline( descr, already_stored );
-                
-                auto bbox = layer.road_graph.getBoundary( descriptior );
+                layer.road_graph.addPolyline( descr, already_stored );
+            }
+            
+            layer.road_graph.sortEdgesByReducingRank;
+            
+            // adding edges to rtree
+            void addEdgeToRtree( RoadGraph.EdgeDescr descr )
+            {
+                auto bbox = layer.road_graph.getBoundary( descr );
                 
                 AnyLineDescriptor any = {
                     line_class: LineClass.ROAD,
                 };
-                any.road = descriptior;
+                any.road = descr;
                 
                 layer.lines.addObject( bbox, any );
             }
             
-            //layer.road_graph.sortEdgesByReducingRank; // FIXME: causes blinking edges bug
+            layer.road_graph.forAllEdges( &addEdgeToRtree );
         }
     }
     
