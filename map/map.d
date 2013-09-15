@@ -249,7 +249,7 @@ class Region
                 layer.lines.addObject( bbox, any );
             }
             
-            layer.road_graph.sortEdgesByReducingRank;
+            //layer.road_graph.sortEdgesByReducingRank; // FIXME: causes blinking edges bug
         }
     }
     
