@@ -91,10 +91,36 @@ mixin template Road()
         }
     }
     
-    void drawLayer( SfmlRoad[] roads, bool foreground )
+    void drawRoads( SfmlRoad[] roads, bool foreground )
     {
         forAllRoads( roads, foreground, &drawPointsBetween );
         forAllRoads( roads, foreground, &drawRoadSegments );
+    }
+    
+    struct RoadDrawProperties
+    {
+        float width;
+        Color color;
+    }
+    
+    RoadDrawProperties getRoadDrawProperties( cat.Line type, bool foreground )
+    {
+        auto props = &polylines.getProperty( type );
+        
+        RoadDrawProperties res;
+        
+        if( foreground )
+        {
+            res.width = props.thickness;
+            res.color = props.color;
+        }
+        else
+        {
+            res.width = props.thickness + props.outlineThickness;
+            res.color = props.outlineColor;
+        }
+        
+        return res;
     }
     
     //@disable // TODO: remove this function
@@ -125,7 +151,7 @@ mixin template Road()
         {
             // background
             foreach( by_type; layer )
-                drawLayer( by_type, false );
+                drawRoads( by_type, false );
             
             // background end points for first level
             if( i == 0 )
@@ -147,7 +173,7 @@ mixin template Road()
                     
             // foreground
             foreach_reverse( by_type; layer )
-                drawLayer( by_type, true );
+                drawRoads( by_type, true );
             
             // foreground end points
             foreach_reverse( by_type; layer )
