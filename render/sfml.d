@@ -219,7 +219,7 @@ class Window : IWindow
 		addRoad( r );
 	}
     }
-        
+    
     private
     void drawCenter()
     {
