@@ -308,11 +308,11 @@ class RTreePtrs( _Box, _Payload )
             ref size_t leafBlocksNum,
             Node* curr = null,
             size_t currDepth = 0
-        )
+        ) const
         {
             if( !curr )
             {
-                curr = root;
+                curr = cast(Node*) root;
                 nodesNum = 1;
             }
             

@@ -271,7 +271,7 @@ struct Box( _Vector, string S = "size" )
         this = this.getCircumscribed( v );
     }
     
-    ubyte[] Serialize() /// TODO: real serialization
+    ubyte[] Serialize() const /// TODO: real serialization
     {
         ubyte res[] = (cast (ubyte*) &this) [ 0 .. this.sizeof ];
         return res;

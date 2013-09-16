@@ -15,7 +15,7 @@ class RTreeArray( RTreePtrs )
     private ubyte[] storage;
     private ubyte depth = 0;
     
-    this( RTreePtrs source )
+    this( inout RTreePtrs source )
     in
     {
         size_t nodes, leafs, leafsBlocks;
@@ -69,7 +69,7 @@ class RTreeArray( RTreePtrs )
     }
     
     private
-    ubyte[] fillFrom( RTreePtrs!(Box, Payload).Node* curr, size_t currDepth = 0 )
+    ubyte[] fillFrom( inout RTreePtrs!(Box, Payload).Node* curr, size_t currDepth = 0 )
     {
         ubyte[] res = packVarint( curr.children.length ); // number of items
         
