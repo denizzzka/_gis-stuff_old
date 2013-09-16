@@ -240,9 +240,9 @@ struct Box( _Vector, string S = "size" )
         return size.x * size.y;
     }
     
-    Box!Vector getCircumscribed( in Vector v ) const pure
+    Box getCircumscribed( in Vector v ) const pure
     {
-        Box!Vector res;
+        Box res;
         
         res.ld.x = min( ld.x, v.x );
         res.ld.y = min( ld.y, v.y );
@@ -253,9 +253,9 @@ struct Box( _Vector, string S = "size" )
         return res;
     }
     
-    Box!Vector getCircumscribed( in Box!Vector b ) const pure
+    Box getCircumscribed( in Box b ) const pure
     {
-        Box!Vector res;
+        Box res;
         
         res.ld.x = min( ld.x, b.ld.x );
         res.ld.y = min( ld.y, b.ld.y );
@@ -269,6 +269,16 @@ struct Box( _Vector, string S = "size" )
     void addCircumscribe(T)( in T v )
     {
         this = this.getCircumscribed( v );
+    }
+    
+    Box getCornersDifference( inout Box v ) const
+    {
+        Box res;
+        
+        res.leftDownCorner = leftDownCorner - v.leftDownCorner;
+        res.rightUpperCorner = rightUpperCorner - v.rightUpperCorner;
+        
+        return res;
     }
     
     ubyte[] Serialize() const /// TODO: real serialization
