@@ -56,8 +56,8 @@ unittest
     
     D d = new D;
     
-    assert( 2 / 3 == 0 );
     assert( d.findKey( 2 ) == 0 );
+    assert( d.findKey( 4 ) == 3 );
     
     d ~= 0.0f;
     d ~= 1.0f;
