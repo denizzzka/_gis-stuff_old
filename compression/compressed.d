@@ -65,7 +65,7 @@ class CompressedArray( T, size_t keyInterval )
     T opIndex( inout size_t idx )
     in
     {
-        debug assert( idx+1 < items_num );
+        debug assert( idx < items_num );
     }
     body
     {
@@ -112,6 +112,11 @@ unittest
     
     c ~= Val( 0.0f );
     c ~= Val( 1.0f );
+    c ~= Val( 2.0f );
+    c ~= Val( 3.0f );
     
     assert( c[0] == Val( 0.0f ) );
+    assert( c[1] == Val( 1.0f ) );
+    assert( c[2] == Val( 2.0f ) );
+    assert( c[3] == Val( 3.0f ) );
 }
