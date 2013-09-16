@@ -1,21 +1,85 @@
 module compression.compressed;
 
+/*
 class CompressedArray( T, size_t keyInterval )
 {
-    private ubyte[] compressed;
+    private ubyte[] compressed_storage;
+    private size_t[] keys_indexes;
+    
+    private
+    size_t findKeyIdx( in size_t valIdx )
+    {
+        return valIdx / keyInterval;
+    }
     
     void opOpAssign( string op )( T v )
     if( op == "~" )
     {
-        compressed ~= v.compressed;
+        auto keyIdx = findKeyIdx( compressed_storage.length );
+        
+        if( keyIdx >= keys_indexes.length ) // add new index?
+            keys_indexes ~= compressed_storage.length;
+        
+        compressed_storage ~= v.compressed;
     }
     
-    T opIndex( inout size_t i )
+    T opIndex( inout size_t idx )
     {
+        auto key_idx = findKeyIdx( idx );
+        
+        size_t from_byte_idx = keys_indexes[ key_idx ];
+        
+        size_t i = key_idx;
+        T res;
+        ubyte* curr = compressed_storage[ curr_byte_idx ];
+        do
+        {
+            curr_byte = res.decompress( curr_byte );
+        }
+        while( i != idx );
+        
+        for( auto i = start_idx; i < start_idx + keyInterval
+        
         ubyte[] to_decompress = compressed[i*4 .. i*4 + 4];
         
         T res;
         res.decompress( to_decompress );
+        
+        return res;
+    }
+}
+*/
+
+class CompressedArray( T, size_t keyInterval )
+{
+    private ubyte[] storage;
+    debug private size_t items_num;
+    
+    void opOpAssign( string op )( T v )
+    if( op == "~" )
+    {
+        storage ~= v.compressed;
+        debug items_num++;
+    }
+    
+    T opIndex( inout size_t idx )
+    in
+    {
+        debug assert( idx+1 < items_num );
+    }
+    body
+    {
+        ubyte* curr = &storage[0];
+        T res;
+        
+        for( auto i = 0; i <= idx; i++ )
+        {
+            debug auto prev_curr = curr;
+            
+            curr = res.decompress( curr );
+            
+            debug assert( curr > prev_curr );
+        }
         
         return res;
     }
@@ -34,9 +98,11 @@ unittest
             return [ to!ubyte( value ), 66, 77, 88 ];
         }
         
-        void decompress( inout ubyte[] from )
+        ubyte* decompress( ubyte* from )
         {
             value = to!float( from[0] );
+            
+            return from + 4;
         }
     }
     
@@ -47,5 +113,5 @@ unittest
     c ~= Val( 0.0f );
     c ~= Val( 1.0f );
     
-    assert( c[0] == 0 );
+    assert( c[0] == Val( 0.0f ) );
 }
