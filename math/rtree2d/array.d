@@ -8,14 +8,13 @@ debug import std.stdio;
 version(unittest) import std.string;
 
 
-// TODO: do not store bbox for every leaf element
 class RTreeArray( RTreePtrs )
 {
     alias RTreePtrs.Payload Payload;
     alias RTreePtrs.Box Box;
     
-    ubyte depth = 0;
-    ubyte[] data;
+    private ubyte[] storage;
+    private ubyte depth = 0;
     
     this( RTreePtrs source )
     in
@@ -27,37 +26,40 @@ class RTreeArray( RTreePtrs )
     }
     body
     {
-        alias source s;
+        depth = source.depth;
         
-        depth = s.depth;
-        
-        size_t offset;
-        data = fillFrom( s.root, offset );
+        storage = fillFrom( source.root );
     }
     
     Payload[] search( in Box boundary, size_t place = 0, in size_t currDepth = 0 )
     {
         Payload[] res;
-        size_t num;
         
-        place += unpackVarint( &data[place], num );
+        size_t items_num;
+        place += unpackVarint( &storage[place], items_num );
         
-        if( currDepth > depth ) // returning leaf
+        if( currDepth >= depth ) // returning leafs
         {
-            Payload o;
-            o.Deserialize( &data[place] );
-            res ~= o;
+            for( auto i = 0; i < items_num; i++ )
+            {
+                Payload o;
+                auto offset = o.decompress( &storage[place] );
+                assert( offset > 0 );
+                place += offset;
+                
+                res ~= o;
+            }
         }
         else // searching in nodes
         {
             Box box;
             
-            for( auto i = 0; i < num; i++ )
+            for( auto i = 0; i < items_num; i++ )
             {
                 size_t child;
                 
-                place += box.Deserialize( &data[place] );
-                place += unpackVarint( &data[place], child );
+                place += box.Deserialize( &storage[place] );
+                place += unpackVarint( &storage[place], child );
                 
                 if( box.isOverlappedBy( boundary ) )
                     res ~= search( boundary, place + child, currDepth+1 );
@@ -73,9 +75,10 @@ private:
     {
         ubyte[] res = packVarint( curr.children.length ); // number of items
         
-        if( currDepth > depth ) // adding leaf?
+        if( currDepth >= depth ) // adding leafs
         {
-            res ~= curr.payload.Serialize();
+            foreach( c; curr.children )
+                res ~= c.payload.compress;
         }
         else // adding node
         {
@@ -111,13 +114,13 @@ version(unittest)
     {
         char[6] data = [ 0x58, 0x58, 0x58, 0x58, 0x58, 0x58 ];
         
-        ubyte[] Serialize() const /// TODO: real serialization
+        ubyte[] compress() const /// TODO: real serialization
         {
             ubyte res[] = (cast (ubyte*) &this) [ 0 .. this.sizeof ];
             return res;
         }
         
-        size_t Deserialize( ubyte* data ) /// TODO: real serialization
+        size_t decompress( ubyte* data ) /// TODO: real serialization
         {
             (cast (ubyte*) &this)[ 0 .. this.sizeof] = data[ 0 .. this.sizeof ].dup;
             
@@ -129,8 +132,8 @@ version(unittest)
         DumbPayload a;
         DumbPayload b;
         
-        auto serialized = &(a.Serialize())[0];
-        auto size = b.Deserialize( serialized );
+        auto serialized = &(a.compress())[0];
+        auto size = b.decompress( serialized );
         
         assert( size == a.sizeof );
         assert( a == b );
