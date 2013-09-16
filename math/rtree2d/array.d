@@ -67,9 +67,8 @@ class RTreeArray( RTreePtrs )
         
         return res;
     }
-        
-private:
     
+    private
     ubyte[] fillFrom( RTreePtrs!(Box, Payload).Node* curr, size_t currDepth = 0 )
     {
         ubyte[] res = packVarint( curr.children.length ); // number of items
