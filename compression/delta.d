@@ -4,9 +4,9 @@ import std.math: trunc, lround;
 import std.conv: to;
 
 
-class DeltaEncodedArray( T, size_t keyInterval )
+class DeltaEncodedArray( alias Array, T, size_t keyInterval )
 {
-    private T[] encoded;
+    alias Array encoded;
     
     private
     static size_t findKey( in size_t idx )
@@ -51,7 +51,8 @@ class DeltaEncodedArray( T, size_t keyInterval )
 
 unittest
 {
-    alias DeltaEncodedArray!( float, 3 ) D;
+    float[] arr;
+    alias DeltaEncodedArray!( arr, float, 3 ) D;
     
     D d = new D;
     
