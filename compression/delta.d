@@ -34,7 +34,6 @@ class DeltaEncodedArray( T, size_t keyInterval )
     T opIndex( inout size_t idx )
     in
     {
-        assert( idx >= 0 );
         assert( idx < encoded.length );
     }
     body
