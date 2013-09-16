@@ -9,7 +9,7 @@ class DeltaEncodedArray( T, size_t keyInterval )
     private T[] encoded;
     
     private
-    size_t findKey( in size_t idx )
+    static size_t findKey( in size_t idx )
     {
         return idx / keyInterval * keyInterval;
     }
