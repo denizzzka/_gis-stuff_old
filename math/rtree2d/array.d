@@ -5,7 +5,6 @@ import math.geometry;
 import protobuf.runtime;
 
 debug import std.stdio;
-version(unittest) import std.string;
 
 
 class RTreeArray( RTreePtrs )
@@ -44,9 +43,10 @@ class RTreeArray( RTreePtrs )
             {
                 Payload o;
                 auto offset = o.decompress( &storage[place] );
-                assert( offset > 0 );
-                place += offset;
                 
+                assert( offset > 0 );
+                
+                place += offset;
                 res ~= o;
             }
         }
@@ -112,7 +112,10 @@ version(unittest)
 {
     struct DumbPayload
     {
-        char[6] data = [ 0x58, 0x58, 0x58, 0x58, 0x58, 0x58 ];
+        char[32] data;
+        
+        float* x;
+        float* y;
         
         ubyte[] compress() const /// TODO: real serialization
         {
@@ -125,6 +128,20 @@ version(unittest)
             (cast (ubyte*) &this)[ 0 .. this.sizeof] = data[ 0 .. this.sizeof ].dup;
             
             return this.sizeof;
+        }
+        
+        this( float x, float y )
+        {
+            this.x = cast(float*) &data[0];
+            this.y = cast(float*) &data[16];
+            
+            *this.x = x;
+            *this.y = y;
+        }
+        
+        string toString()
+        {
+            return "x=" ~ to!string( *x ) ~ " y=" ~ to!string( *y );
         }
     }
     unittest
@@ -143,6 +160,8 @@ version(unittest)
 
 unittest
 {
+    import std.string;
+    
     alias Vector2D!float Vector;
     alias Box!Vector BBox;
     
@@ -151,7 +170,7 @@ unittest
     for( float y = 1; y < 4; y++ )
         for( float x = 1; x < 4; x++ )
         {
-            DumbPayload payload;
+            DumbPayload payload = DumbPayload( x, y );
             BBox boundary = BBox( Vector( x, y ), Vector( 1, 1 ) );
             
             rtree.addObject( boundary, payload );
@@ -162,6 +181,10 @@ unittest
     // search request and test answers is from ptrs unittest
     BBox search1 = BBox( Vector( 2, 2 ), Vector( 1, 1 ) );
     BBox search2 = BBox( Vector( 2.1, 2.1 ), Vector( 0.8, 0.8 ) );
+    
+    auto res2 = rarr.search( search2 );
+    
+    writeln( rarr.search( search2 ) );
     
     assert( rarr.search( search1 ).length == 9 );
     assert( rarr.search( search2 ).length == 1 );
