@@ -4,6 +4,7 @@ module compression.compressed;
 class CompressedArray( T, size_t keyInterval )
 {
     private ubyte[] storage;
+    private size_t[] keys_indexes;
     debug private size_t items_num;
     
     private
@@ -15,6 +16,11 @@ class CompressedArray( T, size_t keyInterval )
     void opOpAssign( string op )( T v )
     if( op == "~" )
     {
+        auto keyIdx = findKeyIdx( storage.length );
+        
+        if( keyIdx >= keys_indexes.length ) // need new key?
+            keys_indexes ~= storage.length;
+            
         storage ~= v.compressed;
         debug items_num++;
     }
@@ -26,10 +32,13 @@ class CompressedArray( T, size_t keyInterval )
     }
     body
     {
-        ubyte* curr = &storage[0];
+        size_t key_idx = findKeyIdx( idx );
+        size_t from_byte_idx = keys_indexes[ key_idx ];
+        
+        ubyte* curr = &storage[ from_byte_idx ];
         T res;
         
-        for( auto i = 0; i <= idx; i++ )
+        for( auto i = key_idx; i <= idx; i++ )
         {
             debug auto prev_curr = curr;
             
@@ -71,59 +80,17 @@ unittest
     c ~= Val( 1.0f );
     c ~= Val( 2.0f );
     c ~= Val( 3.0f );
+    c ~= Val( 4.0f );
+    c ~= Val( 5.0f );
+    c ~= Val( 6.0f );
+    c ~= Val( 7.0f );
     
     assert( c[0] == Val( 0.0f ) );
     assert( c[1] == Val( 1.0f ) );
     assert( c[2] == Val( 2.0f ) );
     assert( c[3] == Val( 3.0f ) );
+    assert( c[4] == Val( 4.0f ) );
+    assert( c[5] == Val( 5.0f ) );
+    assert( c[6] == Val( 6.0f ) );
+    assert( c[7] == Val( 7.0f ) );
 }
-
-/*
-class FramedCompressedArray( T, size_t keyInterval )
-{
-    private ubyte[] compressed_storage;
-    private size_t[] keys_indexes;
-    
-    private
-    size_t findKeyIdx( in size_t valIdx )
-    {
-        return valIdx / keyInterval;
-    }
-    
-    void opOpAssign( string op )( T v )
-    if( op == "~" )
-    {
-        auto keyIdx = findKeyIdx( compressed_storage.length );
-        
-        if( keyIdx >= keys_indexes.length ) // add new index?
-            keys_indexes ~= compressed_storage.length;
-        
-        compressed_storage ~= v.compressed;
-    }
-    
-    T opIndex( inout size_t idx )
-    {
-        auto key_idx = findKeyIdx( idx );
-        
-        size_t from_byte_idx = keys_indexes[ key_idx ];
-        
-        size_t i = key_idx;
-        T res;
-        ubyte* curr = compressed_storage[ curr_byte_idx ];
-        do
-        {
-            curr_byte = res.decompress( curr_byte );
-        }
-        while( i != idx );
-        
-        for( auto i = start_idx; i < start_idx + keyInterval
-        
-        ubyte[] to_decompress = compressed[i*4 .. i*4 + 4];
-        
-        T res;
-        res.decompress( to_decompress );
-        
-        return res;
-    }
-}
-*/
