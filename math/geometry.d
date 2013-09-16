@@ -271,7 +271,17 @@ struct Box( _Vector, string S = "size" )
         this = this.getCircumscribed( v );
     }
     
-    Box getCornersDifference( inout Box v ) const
+    Box getCornersSum( inout Box v ) const
+    {
+        Box res;
+        
+        res.leftDownCorner = leftDownCorner + v.leftDownCorner;
+        res.rightUpperCorner = rightUpperCorner + v.rightUpperCorner;
+        
+        return res;
+    }
+    
+    Box getCornersDiff( inout Box v ) const
     {
         Box res;
         

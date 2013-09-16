@@ -30,7 +30,13 @@ class RTreeArray( RTreePtrs )
         storage = fillFrom( source.root, source.root.boundary );
     }
     
-    Payload[] search( in Box boundary, size_t place = 0, in size_t currDepth = 0 ) const
+    Payload[] search( in Box boundary ) const
+    {
+        return search( boundary, boundary );
+    }
+    
+    private
+    Payload[] search( in Box boundary, inout Box delta, size_t place = 0, in size_t currDepth = 0 ) const
     {
         Payload[] res;
         
@@ -58,10 +64,11 @@ class RTreeArray( RTreePtrs )
                 size_t child_offset;
                 
                 place += box.Deserialize( &storage[place] );
+                box = box.getCornersSum( delta );
                 place += unpackVarint( &storage[place], child_offset );
                 
                 if( box.isOverlappedBy( boundary ) )
-                    res ~= search( boundary, place + child_offset, currDepth+1 );
+                    res ~= search( boundary, delta, place + child_offset, currDepth+1 );
             }
         }
         
@@ -95,7 +102,7 @@ class RTreeArray( RTreePtrs )
             
             foreach_reverse( i, c; curr.children )
             {
-                auto boundary = c.boundary.getCornersDifference( delta );
+                auto boundary = c.boundary.getCornersDiff( delta );
                 auto s = boundary.Serialize();
                 s ~= packVarint( offsets[i] + boundaries.length );
                 boundaries = s ~ boundaries;
