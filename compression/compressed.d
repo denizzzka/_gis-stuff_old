@@ -33,18 +33,17 @@ class CompressedArray( T, size_t keyInterval )
     body
     {
         size_t key_idx = findKeyIdx( idx );
-        size_t from_byte_idx = keys_indexes[ key_idx ];
-        
-        ubyte* curr = &storage[ from_byte_idx ];
+        size_t offset = keys_indexes[ key_idx ];
         T res;
         
         for( auto i = key_idx; i <= idx; i++ )
         {
-            debug auto prev_curr = curr;
+            ubyte* curr = &storage[ offset ];
+            size_t next_offset = res.decompress( curr );
             
-            curr = res.decompress( curr );
+            assert( next_offset > 0 );
             
-            debug assert( curr > prev_curr );
+            offset += next_offset;
         }
         
         return res;
@@ -64,11 +63,11 @@ unittest
             return [ to!ubyte( value ), 66, 77, 88 ];
         }
         
-        ubyte* decompress( ubyte* from )
+        size_t decompress( ubyte* from )
         {
             value = to!float( from[0] );
             
-            return from + 4;
+            return 4;
         }
     }
     
