@@ -1,7 +1,7 @@
 module math.rtree2d.array;
 
 import math.rtree2d.ptrs;
-import math.geometry;
+import math.geometry: Box;
 import protobuf.runtime;
 
 debug import std.stdio;
@@ -75,7 +75,7 @@ private:
         ubyte[] res = packVarint( curr.children.length ); // number of items
         
         if( currDepth >= depth ) // adding leafs
-            foreach( ref c; curr.children )
+            foreach( c; curr.children )
                 res ~= c.payload.compress;
         
         else // adding nodes
@@ -107,20 +107,22 @@ private:
 
 version(unittest)
 {
+    import math.geometry;
+    
+    alias Vector2D!float Vector2f;
+    
     struct DumbPayload
     {
-        char[32] data;
+        Vector2f data;
+        alias data this;
         
-        float x = 0;
-        float y = 0;
-        
-        ubyte[] compress() const /// TODO: real serialization
+        ubyte[] compress() const
         {
             ubyte res[] = (cast (ubyte*) &this) [ 0 .. this.sizeof ];
             return res;
         }
         
-        size_t decompress( ubyte* storage ) /// TODO: real serialization
+        size_t decompress( ubyte* storage )
         {
             (cast (ubyte*) &this)[ 0 .. this.sizeof] = storage[ 0 .. this.sizeof ].dup;
             
@@ -129,13 +131,13 @@ version(unittest)
         
         this( float x, float y )
         {
-            this.x = x;
-            this.y = y;
+            data.x = x;
+            data.y = y;
         }
         
         string toString()
         {
-            return "x=" ~ to!string( x ) ~ " y=" ~ to!string( y );
+            return data.toString;
         }
     }
     unittest
