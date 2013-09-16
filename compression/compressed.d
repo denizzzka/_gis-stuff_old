@@ -15,8 +15,6 @@ unittest
 {
     import std.conv: to;
     
-    alias CompressedArray!( float, 3 ) C;
-    
     struct Val
     {
         float value;
@@ -26,4 +24,8 @@ unittest
             return [ to!ubyte( value ), 66, 77, 88 ];
         }
     }
+    
+    alias CompressedArray!( Val, 3 ) C;
+    
+    auto c = new C;
 }
