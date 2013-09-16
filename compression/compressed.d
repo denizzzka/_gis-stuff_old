@@ -1,10 +1,29 @@
 module compression.compressed;
 
-class Compressed( T, size_t keyInterval )
+class CompressedArray( T, size_t keyInterval )
 {
+    private ubyte[] compressed;
+    
+    void opOpAssign( string op )( T v )
+    if( op == "~" )
+    {
+        compressed ~= v.compressed;
+    }
 }
 
 unittest
 {
-    alias Compressed!( float, 3 ) C;
+    import std.conv: to;
+    
+    alias CompressedArray!( float, 3 ) C;
+    
+    struct Val
+    {
+        float value;
+        
+        ubyte[] compressed()
+        {
+            return [ to!ubyte( value ), 66, 77, 88 ];
+        }
+    }
 }
