@@ -52,17 +52,16 @@ class RTreeArray( RTreePtrs )
         }
         else // searching in nodes
         {
-            Box box;
-            
             for( auto i = 0; i < items_num; i++ )
             {
-                size_t child;
+                Box box;
+                size_t child_offset;
                 
                 place += box.Deserialize( &storage[place] );
-                place += unpackVarint( &storage[place], child );
+                place += unpackVarint( &storage[place], child_offset );
                 
                 if( box.isOverlappedBy( boundary ) )
-                    res ~= search( boundary, place + child, currDepth+1 );
+                    res ~= search( boundary, place + child_offset, currDepth+1 );
             }
         }
         
