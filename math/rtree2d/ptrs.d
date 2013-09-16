@@ -276,6 +276,12 @@ class RTreePtrs( _Box, _Payload )
             return newNode;
         }
         
+        package debug
+        void showTree()
+        {
+            showBranch( root );
+        }
+        
         debug
         void showBranch( Node* from, uint depth = 0 )
         {
@@ -283,7 +289,7 @@ class RTreePtrs( _Box, _Payload )
             
             if( depth > this.depth )
             {
-                writeln( "Leaf: ", from, " parent: ", from.parent );
+                writeln( "Leaf: ", from, " parent: ", from.parent, " value: ", *from.payload );
             }
             else
             {

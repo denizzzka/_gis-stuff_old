@@ -76,11 +76,10 @@ private:
         ubyte[] res = packVarint( curr.children.length ); // number of items
         
         if( currDepth >= depth ) // adding leafs
-        {
-            foreach( c; curr.children )
+            foreach( ref c; curr.children )
                 res ~= c.payload.compress;
-        }
-        else // adding node
+        
+        else // adding nodes
         {
             auto offsets = new size_t[ curr.children.length ];
             ubyte[] nodes;
@@ -107,15 +106,14 @@ private:
     }
 }
 
-
 version(unittest)
 {
     struct DumbPayload
     {
         char[32] data;
         
-        float* x;
-        float* y;
+        float x = 0;
+        float y = 0;
         
         ubyte[] compress() const /// TODO: real serialization
         {
@@ -123,25 +121,22 @@ version(unittest)
             return res;
         }
         
-        size_t decompress( ubyte* data ) /// TODO: real serialization
+        size_t decompress( ubyte* storage ) /// TODO: real serialization
         {
-            (cast (ubyte*) &this)[ 0 .. this.sizeof] = data[ 0 .. this.sizeof ].dup;
+            (cast (ubyte*) &this)[ 0 .. this.sizeof] = storage[ 0 .. this.sizeof ].dup;
             
             return this.sizeof;
         }
         
         this( float x, float y )
         {
-            this.x = cast(float*) &data[0];
-            this.y = cast(float*) &data[16];
-            
-            *this.x = x;
-            *this.y = y;
+            this.x = x;
+            this.y = y;
         }
         
         string toString()
         {
-            return "x=" ~ to!string( *x ) ~ " y=" ~ to!string( *y );
+            return "x=" ~ to!string( x ) ~ " y=" ~ to!string( y );
         }
     }
     unittest
@@ -170,7 +165,7 @@ unittest
     for( float y = 1; y < 4; y++ )
         for( float x = 1; x < 4; x++ )
         {
-            DumbPayload payload = DumbPayload( x, y );
+            auto payload = DumbPayload( x, y );
             BBox boundary = BBox( Vector( x, y ), Vector( 1, 1 ) );
             
             rtree.addObject( boundary, payload );
@@ -182,10 +177,6 @@ unittest
     BBox search1 = BBox( Vector( 2, 2 ), Vector( 1, 1 ) );
     BBox search2 = BBox( Vector( 2.1, 2.1 ), Vector( 0.8, 0.8 ) );
     
-    auto res2 = rarr.search( search2 );
-    
-    writeln( rarr.search( search2 ) );
-    
     assert( rarr.search( search1 ).length == 9 );
-    assert( rarr.search( search2 ).length == 1 );
+    assert( rarr.search( search2 ).length == 2 );
 }
