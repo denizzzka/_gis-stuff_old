@@ -277,7 +277,7 @@ struct Box( _Vector, string S = "size" )
         return res;
     }
     
-    size_t Deserialize( ubyte* data ) /// TODO: real serialization
+    size_t Deserialize( inout ubyte* data ) /// TODO: real serialization
     {
         (cast (ubyte*) &this)[ 0 .. this.sizeof] = data[ 0 .. this.sizeof ].dup;
         

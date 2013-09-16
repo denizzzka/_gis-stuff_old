@@ -30,7 +30,7 @@ class RTreeArray( RTreePtrs )
         storage = fillFrom( source.root );
     }
     
-    Payload[] search( in Box boundary, size_t place = 0, in size_t currDepth = 0 )
+    Payload[] search( in Box boundary, size_t place = 0, in size_t currDepth = 0 ) const
     {
         Payload[] res;
         
@@ -121,7 +121,7 @@ version(unittest)
             return res;
         }
         
-        size_t decompress( ubyte* storage )
+        size_t decompress( inout ubyte* storage )
         {
             (cast (ubyte*) &this)[ 0 .. this.sizeof] = storage[ 0 .. this.sizeof ].dup;
             
