@@ -2,7 +2,7 @@ module math.rtree2d.array;
 
 import math.rtree2d.ptrs;
 import math.geometry;
-import compression.pb_encoding: packVarint, unpackVarint;
+import compression.pb_encoding: packVarSint, unpackVarSint;
 import compression.geometry;
 
 debug import std.stdio;

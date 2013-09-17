@@ -62,8 +62,8 @@ unittest
 }
 
 
-pure size_t unpackVarint( T )( in ubyte* data, out T result )
-if( isUnsigned!( T ) )
+pure size_t unpackVarint( T )( out T result, inout ubyte* data )
+if( isIntegral!T && isUnsigned!T )
 {
     size_t i;
     size_t res; // big sized type used also for overflow checking
@@ -82,13 +82,13 @@ unittest
     ubyte d[2] = [ 0b_10101100, 0b_00000010 ];
     size_t result;
     
-    assert( unpackVarint( &d[0], result ) == d.length );
+    assert( result.unpackVarint( &d[0] ) == d.length );
     assert( result == 300 );
 }
 
 
 pure ubyte[] packVarint( T )( T value )
-if( isUnsigned!( T ) )
+if( isIntegral!T && isUnsigned!T )
 {
     ubyte[] res;
     
@@ -119,7 +119,7 @@ size_t unpackVarint(T)( out T value, inout ubyte* from )
 if( isIntegral!T && !isUnsigned!T )
 {
     Unsigned!T uval;
-    size_t res = unpackVarint( from, uval );
+    size_t res = uval.unpackVarint( from );
     value = decodeZigZag( uval );
     
     return res;
@@ -141,7 +141,7 @@ pure size_t parseTag( in ubyte* data, out uint fieldNumber, out WireType wireTyp
     wireType = cast( WireType ) ( *data & 0b_0000_0111 );
     
     uint v;
-    auto next = unpackVarint( data, v );
+    auto next = v.unpackVarint( data );
     
     // Parses as Varint, but takes the value of first byte and adds its real value without additional load
     fieldNumber = v - ( *data & 0b_1111_1111 ) + (( *data & 0b_0111_1000 ) >> 3 );
@@ -203,7 +203,7 @@ if( T.sizeof == 1 )
 {
     // find start and size of string
     size_t str_len;
-    next = unpackVarint( data, str_len );
+    next = str_len.unpackVarint( data );
     auto end = next + str_len;
     auto res = cast( T[] ) data[ next .. end ];
     next = end;
@@ -221,6 +221,6 @@ unittest
 
 const (ubyte)[] unpackMessage( const ubyte* data, out size_t next )
 {
-    auto size = unpackVarint!size_t( data, next );
+    auto size = next.unpackVarint!size_t( data );
     return unpackDelimited!ubyte( data+next, next );
 }

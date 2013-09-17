@@ -2,9 +2,9 @@ module compression.geometry;
 
 import math.geometry;
 import std.traits;
-import compression.pb_encoding: packVarint, unpackVarint, encodeZigZag, decodeZigZag;
+import compression.pb_encoding: packVarSint, unpackVarSint;
 
-
+/*
 ubyte[] compress(T)( inout T value )
 if( isIntegral!T )
 {
@@ -39,12 +39,13 @@ unittest
     assert( offset == c.length );
     assert( d == -2 );
 }
+*/
 
 ubyte[] compress(T)( inout T vector )
 if( isInstanceOf!(Vector2D, T) )
 {
-    ubyte[] res = compress( vector.x );
-    res ~= compress( vector.y );
+    ubyte[] res = packVarSint( vector.x );
+    res ~= packVarSint( vector.y );
     
     return res;
 }
@@ -52,8 +53,8 @@ if( isInstanceOf!(Vector2D, T) )
 size_t decompress(T)( out T vector, inout ubyte* from )
 if( isInstanceOf!(Vector2D, T) )
 {
-    size_t offset = vector.x.decompress( from );
-    offset += vector.y.decompress( from + offset );
+    size_t offset = vector.x.unpackVarint( from );
+    offset += vector.y.unpackVarint( from + offset );
     
     return offset;
 }
