@@ -148,7 +148,6 @@ unittest
     
     auto rarr = new RTreeArray!(typeof(rtree))( rtree );
     
-    // search request and test answers is from ptrs unittest
     BBox search1 = BBox( V( cast(short) 2, cast(short) 2 ), V( cast(short) 1, cast(short) 1 ) );
     
     import std.stdio;
