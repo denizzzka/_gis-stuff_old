@@ -184,7 +184,7 @@ struct Box( _Vector, string S = "size" )
     alias getLeftUpperCorner lu;
     alias getRightDownCorner rd;
     
-    this(V)( in V coords, in V size )
+    this( inout Vector coords, inout Vector size )
     {
         static if( S == "size" )
         {

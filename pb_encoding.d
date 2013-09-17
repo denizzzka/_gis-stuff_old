@@ -155,20 +155,19 @@ unittest
 Unsigned!T encodeZigZag( T )( inout T v ) pure
 if( isSigned!( T ) )
 {
-    return v > 0
-        ?
-            v * 2
-        :
-            -v * 2 - 1;
+    return cast( Unsigned!T )(
+            v > 0 ?
+            v * 2 :
+            -v * 2 - 1
+        );
 }
 unittest
 {
     assert( encodeZigZag!long( 2147483647 ) == 4294967294 );
     assert( encodeZigZag!long( -2147483648 ) == 4294967295 );
     
-    // FIXME:
-    //assert( encodeZigZag!short( 20 ) == 40 );
-    //assert( encodeZigZag!short( -20 ) == 39 );
+    assert( encodeZigZag!short( 20 ) == 40 );
+    assert( encodeZigZag!short( -20 ) == 39 );
 }
 
 
