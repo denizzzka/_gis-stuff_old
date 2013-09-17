@@ -1,13 +1,43 @@
 module compression.geometry2;
 
 import math.geometry;
-import std.traits: isIntegral;
+import std.traits;
 import protobuf.runtime: packVarint, unpackVarint, encodeZigZag, decodeZigZag;
 
 
-ubyte[] compress(T)( T v )
+ubyte[] compress(T)( T value )
+if( isIntegral!T )
 {
+    static if( isUnsigned!T )
+        return packVarint( value );
+    else
+        return packVarint( encodeZigZag( value ) );
+}
+
+size_t decompress(T)( inout ubyte* from, out T value )
+if( isIntegral!T )
+{
+    static if( isUnsigned!T )
+        return unpackVarint( from, value );
+    else
+    {
+        Unsigned!T uval;
+        size_t res = unpackVarint( from, uval );
+        value = decodeZigZag( uval );
+        
+        return res;
+    }
+}
+
+unittest
+{
+    auto c = compress!long( -2 );
     
+    long d;
+    size_t offset = decompress( &c[0], d );
+    
+    assert( offset == c.length );
+    assert( d == -2 );
 }
 
 struct CompressedVector( Vector )
