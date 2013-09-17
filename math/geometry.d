@@ -312,6 +312,7 @@ struct Box( _Vector, string S = "size" )
 
 unittest
 {
+    //Box!(Vector2D!(short)) SBox; // FIXME: causes bug in opBinary("-");
     alias Vector2D!float Vector;
     
     auto coords1 = Vector( 0, 0 );
