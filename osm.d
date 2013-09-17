@@ -373,10 +373,10 @@ Region getRegion( string filename, bool verbose )
     
     writeln("fillLines");
     res.fillLines( lines );
-    writeln("fillRoads");
-    res.fillRoads( roads );
     writeln("fillAreas");
     res.fillAreas( areas );
+    writeln("fillRoads");
+    res.fillRoads( roads );
     
     return res;
 }

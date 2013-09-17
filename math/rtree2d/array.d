@@ -32,13 +32,15 @@ class RTreeArray( RTreePtrs )
     {
         Payload[] res;
         
-        if( storage )
+        if( storage.length )
         {
             Box delta;
             
             size_t place = delta.Deserialize( &storage[0] );
             res = search( boundary, delta, place, 0 );
         }
+        
+        debug(rtreearray) writeln("Found ", res.length, " items" );
         
         return res;
     }
@@ -183,7 +185,7 @@ unittest
     auto rtree = new RTreePtrs!(BBox, DumbPayload)( 2, 2 );
     
     for( float y = -10; y < 10; y++ )
-        for( float x = 0; x < 10; x++ )
+        for( float x = -10; x < 10; x++ )
         {
             auto payload = DumbPayload( x, y );
             BBox boundary = BBox( Vector( x, y ), Vector( 1, 1 ) );
