@@ -27,7 +27,7 @@ class RTreeArray( RTreePtrs )
     {
         depth = source.depth;
         
-        storage = fillFrom( source.root, source.root.boundary );
+        storage = fillFrom( source.root );
     }
     
     Payload[] search( in Box boundary ) const
@@ -36,7 +36,7 @@ class RTreeArray( RTreePtrs )
     }
     
     private
-    Payload[] search( in Box boundary, inout Box delta, size_t place = 0, in size_t currDepth = 0 ) const
+    Payload[] search( inout Box boundary, inout Box delta, size_t place = 0, in size_t currDepth = 0 ) const
     {
         Payload[] res;
         
@@ -76,10 +76,7 @@ class RTreeArray( RTreePtrs )
     }
     
     private
-    ubyte[] fillFrom(
-            inout RTreePtrs!(Box, Payload).Node* curr,
-            inout Box delta,
-            size_t currDepth = 0 )
+    ubyte[] fillFrom( inout RTreePtrs!(Box, Payload).Node* curr, size_t currDepth = 0 )
     {
         ubyte[] res = packVarint( curr.children.length ); // number of items
         
@@ -95,14 +92,14 @@ class RTreeArray( RTreePtrs )
             foreach( i, c; curr.children )
             {
                 offsets[i] = nodes.length;
-                nodes ~= fillFrom( c, delta, currDepth+1 );
+                nodes ~= fillFrom( c, currDepth+1 );
             }
             
             ubyte[] boundaries;
             
             foreach_reverse( i, c; curr.children )
             {
-                auto boundary = c.boundary.getCornersDiff( delta );
+                auto boundary = c.boundary.getCornersDiff( curr.boundary );
                 auto s = boundary.Serialize();
                 s ~= packVarint( offsets[i] + boundaries.length );
                 boundaries = s ~ boundaries;
