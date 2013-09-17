@@ -186,10 +186,10 @@ struct Box( _Vector )
     
     this( inout Vector coords, inout Vector size )
     {
-        leftDownCorner.x = coords.x + ((size.x > 0) ? 0 : size.x);
-        leftDownCorner.y = coords.y + ((size.y > 0) ? 0 : size.y);
-        rightUpperCorner.x = coords.x + ((size.x < 0) ? 0 : size.x);
-        rightUpperCorner.y = coords.y + ((size.y < 0) ? 0 : size.y);
+        ld.x = coords.x + ((size.x > 0) ? 0 : size.x);
+        ld.y = coords.y + ((size.y > 0) ? 0 : size.y);
+        ru.x = coords.x + ((size.x < 0) ? 0 : size.x);
+        ru.y = coords.y + ((size.y < 0) ? 0 : size.y);
     }
     
     Vector getLeftUpperCorner() const
