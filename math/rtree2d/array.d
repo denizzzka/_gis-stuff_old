@@ -137,8 +137,8 @@ unittest
     
     auto rtree = new RTreePtrs!(BBox, Vector)( 2, 2 );
     
-    for( long y = -10; y < 10; y++ )
-        for( long x = -10; x < 10; x++ )
+    for( long y = -100; y < 100; y++ )
+        for( long x = -100; x < 100; x++ )
         {
             auto payload = Vector( x, y );
             BBox boundary = BBox( Vector( x, y ), Vector( 1, 1 ) );
@@ -150,6 +150,11 @@ unittest
     
     // search request and test answers is from ptrs unittest
     BBox search1 = BBox( Vector( 2, 2 ), Vector( 1, 1 ) );
+    
+    import std.stdio;
+    writeln( rarr.search( search1 ) );
+    
+    assert( false );
     
     assert( rarr.search( search1 ).length >= 9 );
 }
