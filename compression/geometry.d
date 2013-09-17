@@ -1,7 +1,21 @@
 module compression.geometry2;
 
 import math.geometry;
+import std.traits: isIntegral;
+import protobuf.runtime: packVarint, unpackVarint, encodeZigZag, decodeZigZag;
 
+
+ubyte[] compress(T)( T v )
+{
+    
+}
+
+struct CompressedVector( Vector )
+if( isIntegral( Vector.T ) )
+{
+    Vector vector;
+    alias vector this;
+}
 
 struct CompressBox( Box )
 {
@@ -28,5 +42,5 @@ unittest
     alias Box!Vector2l OBox;
     alias CompressBox!OBox Box;
     
-    //static Box box;
+    static Box box;
 }
