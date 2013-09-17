@@ -1,4 +1,4 @@
-module compression.geometry2;
+module compression.geometry;
 
 import math.geometry;
 import std.traits;
@@ -103,9 +103,6 @@ unittest
     size_t offset_b = b2.decompress( &b_compressed[0] );
     
     assert( offset_b == b_compressed.length );
-    
-    import std.stdio;
-    writeln( b1, b2 );
     
     assert( b2 == b1 );
 }

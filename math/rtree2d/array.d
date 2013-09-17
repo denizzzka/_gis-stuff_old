@@ -2,7 +2,8 @@ module math.rtree2d.array;
 
 import math.rtree2d.ptrs;
 import math.geometry: Box;
-import protobuf.runtime;
+import protobuf.runtime: packVarint, unpackVarint;
+import compression.geometry;
 
 debug import std.stdio;
 
