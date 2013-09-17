@@ -172,7 +172,7 @@ unittest
 }
 
 
-struct Box( _Vector, string S = "size" )
+struct Box( _Vector )
 {
     alias _Vector Vector;
     
@@ -186,18 +186,10 @@ struct Box( _Vector, string S = "size" )
     
     this( inout Vector coords, inout Vector size )
     {
-        static if( S == "size" )
-        {
-            leftDownCorner.x = coords.x + ((size.x > 0) ? 0 : size.x);
-            leftDownCorner.y = coords.y + ((size.y > 0) ? 0 : size.y);
-            rightUpperCorner.x = coords.x + ((size.x < 0) ? 0 : size.x);
-            rightUpperCorner.y = coords.y + ((size.y < 0) ? 0 : size.y);
-        }
-        else // corners
-        {
-            leftDownCorner = coords;
-            rightUpCorner = size;
-        }
+        leftDownCorner.x = coords.x + ((size.x > 0) ? 0 : size.x);
+        leftDownCorner.y = coords.y + ((size.y > 0) ? 0 : size.y);
+        rightUpperCorner.x = coords.x + ((size.x < 0) ? 0 : size.x);
+        rightUpperCorner.y = coords.y + ((size.y < 0) ? 0 : size.y);
     }
     
     Vector getLeftUpperCorner() const
