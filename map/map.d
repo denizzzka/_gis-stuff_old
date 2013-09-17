@@ -2,6 +2,7 @@ module map.map;
 
 import math.geometry;
 import math.rtree2d.ptrs;
+import math.rtree2d.array;
 static import math.earth;
 import cat = config.categories;
 import map.line_graph;
@@ -122,10 +123,25 @@ struct AnyLineDescriptor
         LineGraph.EdgeDescr line;
         RoadGraph.EdgeDescr road;
         Area area;
-    }    
+    }
+    
+    // TODO: need real compression
+    ubyte[] compress() const
+    {
+        ubyte res[] = (cast (ubyte*) &this) [ 0 .. this.sizeof ];
+        return res;
+    }
+    
+    size_t decompress( inout ubyte* storage )
+    {
+        (cast (ubyte*) &this)[ 0 .. this.sizeof] = storage[ 0 .. this.sizeof ].dup;
+        
+        return this.sizeof;
+    }
 }
 
-alias RTreePtrs!(BBox, AnyLineDescriptor) LinesRTree;
+alias RTreePtrs!(BBox, AnyLineDescriptor) LinesRTree_ptrs;
+alias RTreeArray!LinesRTree_ptrs LinesRTree;
 
 void addPoint( PointsStorage storage, Point point )
 {
@@ -144,7 +160,6 @@ struct Layer
     void init()
     {
         POI = new PointsStorage;
-        lines = new LinesRTree;
     }
     
     MBBox boundary() const
@@ -201,6 +216,7 @@ class Region
         {
             auto epsilon = config.converter.layersGeneralization[i];
             auto cutted = cutOnCrossings( prepared.lines_to_store[i] );
+            auto lines = new LinesRTree_ptrs;
             
             foreach( descr; cutted )
             {
@@ -216,8 +232,10 @@ class Region
                     line: descriptor
                 };
                 
-                layers[i].lines.addObject( bbox, any );
+                lines.addObject( bbox, any );
             }
+            
+            layers[i].lines = new LinesRTree( lines );
         }
     }
     
@@ -242,6 +260,8 @@ class Region
             
             layer.road_graph.sortEdgesByReducingRank;
             
+            auto lines = new LinesRTree_ptrs;
+            
             void addEdgeToRtree( RoadGraph.EdgeDescr descr )
             {
                 auto bbox = layer.road_graph.getBoundary( descr );
@@ -251,16 +271,19 @@ class Region
                 };
                 any.road = descr;
                 
-                layer.lines.addObject( bbox, any );
+                lines.addObject( bbox, any );
             }
             
             layer.road_graph.forAllEdges( &addEdgeToRtree );
+            layer.lines = new LinesRTree( lines );
         }
     }
     
     void fillAreas( Area[] areas )
     {
         this.areas = areas;
+        
+        auto lines = new LinesRTree_ptrs[ layers.length ];
         
         foreach( area; areas )
         {
@@ -278,9 +301,12 @@ class Region
                 };
                 any.area = area;
                 
-                layers[n].lines.addObject( area.getBoundary, any );
+                lines[n].addObject( area.getBoundary, any );
             }
         }
+        
+        foreach( n, to_arr_rtree; lines )
+            layers[n].lines = new LinesRTree( to_arr_rtree );
     }
 }
 
@@ -302,7 +328,7 @@ struct MapLinesDescriptor
     const Region* region;
     const size_t layer_num;
     
-    AnyLineDescriptor*[] lines;
+    AnyLineDescriptor[] lines;
 }
 
 class Map
