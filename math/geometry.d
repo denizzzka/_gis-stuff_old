@@ -16,7 +16,7 @@ struct Vector2D( _T, string name = "noname" )
     alias x lon;
     alias y lat;
     
-    this( T1, T2 )( in T1 x, in T2 y )
+    this( T1, T2 )( inout T1 x, inout T2 y )
     //if( isScalarType!(T1) && isScalarType!(T2) ) // FIXME
     {
         this.x = x;
@@ -46,29 +46,39 @@ struct Vector2D( _T, string name = "noname" )
     Vector2D opBinary( string op, T )( in T v ) const
     if( isScalarType!(T) )
     {
+        Vector2D res = this;
+        
         static if( op == "*" )
-            return Vector2D( x*v, y*v );
+            res *= v;
         else static if( op == "/" )
-            return Vector2D( x/v, y/v );
+            res /= v;
         else
             static assert( false, "op \""~op~"\" is not found" );
+            
+        return res;
     }
     
     Vector2D opBinary( string op, T )( in T v ) const
     if( !isScalarType!(T) )
     {
+        Vector2D res = this;
+        
         static if( op == "+" )
-            return Vector2D( x + v.x, y + v.y );
+            res += v;
         else static if( op == "-" )
-            return Vector2D( x - v.x, y - v.y );
+            res -= v;
         else
             static assert( false, "op \""~op~"\" is not found" );
+            
+        return res;
     }
     
     void opOpAssign( string op, T )( in T v )
     if( isScalarType!(T) )
     {
-        static if( op == "/" )
+        static if( op == "*" )
+            x *= v, y *= v;
+        else static if( op == "/" )
             x /= v, y /= v;
         else
             static assert( false, "op \""~op~"\" is not found" );
