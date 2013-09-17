@@ -23,7 +23,7 @@ class RTreeArray( RTreePtrs )
             depth = source.depth;
             
             storage = source.root.boundary.Serialize();
-            storage ~= fillFrom( source.root );
+            storage ~= fillNode( source.root );
         }
         
         debug(rtreearray) writeln("RTreeArray created, size ", storage.length, " bytes" );
@@ -87,7 +87,7 @@ class RTreeArray( RTreePtrs )
     }
     
     private
-    ubyte[] fillFrom( inout RTreePtrs!(Box, Payload).Node* curr, size_t currDepth = 0 )
+    ubyte[] fillNode( inout RTreePtrs!(Box, Payload).Node* curr, size_t currDepth = 0 )
     in
     {
         assert( curr.children.length );
@@ -108,7 +108,7 @@ class RTreeArray( RTreePtrs )
             foreach( i, c; curr.children )
             {
                 offsets[i] = nodes.length;
-                nodes ~= fillFrom( c, currDepth+1 );
+                nodes ~= fillNode( c, currDepth+1 );
             }
             
             ubyte[] boundaries;
