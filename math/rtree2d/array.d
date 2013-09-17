@@ -2,7 +2,7 @@ module math.rtree2d.array;
 
 import math.rtree2d.ptrs;
 import math.geometry;
-import compression.pb_encoding: packVarSint, unpackVarSint;
+import compression.pb_encoding: packVarint, unpackVarint;
 import compression.geometry;
 
 debug import std.stdio;
@@ -52,7 +52,7 @@ class RTreeArray( RTreePtrs )
         Payload[] res;
         
         size_t items_num;
-        place += unpackVarint( &storage[place], items_num );
+        place += items_num.unpackVarint( &storage[place] );
         
         if( currDepth >= depth ) // returning leafs
         {
@@ -76,7 +76,7 @@ class RTreeArray( RTreePtrs )
                 
                 place += box.decompress( &storage[place] );
                 //box = box.getCornersSum( delta );
-                place += unpackVarint( &storage[place], child_offset );
+                place += child_offset.unpackVarint( &storage[place] );
                 
                 if( box.isOverlappedBy( boundary ) )
                     res ~= search( boundary, box, place + child_offset, currDepth+1 );

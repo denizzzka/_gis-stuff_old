@@ -2,7 +2,7 @@ module compression.geometry;
 
 import math.geometry;
 import std.traits;
-import compression.pb_encoding: packVarSint, unpackVarSint;
+import compression.pb_encoding: packVarint, unpackVarint;
 
 /*
 ubyte[] compress(T)( inout T value )
@@ -44,8 +44,8 @@ unittest
 ubyte[] compress(T)( inout T vector )
 if( isInstanceOf!(Vector2D, T) )
 {
-    ubyte[] res = packVarSint( vector.x );
-    res ~= packVarSint( vector.y );
+    ubyte[] res = packVarint( vector.x );
+    res ~= packVarint( vector.y );
     
     return res;
 }
