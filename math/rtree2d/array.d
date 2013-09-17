@@ -1,7 +1,7 @@
 module math.rtree2d.array;
 
 import math.rtree2d.ptrs;
-import math.geometry: Box;
+import math.geometry;
 import protobuf.runtime: packVarint, unpackVarint;
 import compression.geometry;
 
@@ -98,7 +98,7 @@ class RTreeArray( RTreePtrs )
         
         if( currDepth >= depth ) // adding leafs
             foreach( c; curr.children )
-                res ~= c.payload.compress;
+                res ~= (*c.payload).compress;
         
         else // adding nodes
         {
@@ -128,67 +128,19 @@ class RTreeArray( RTreePtrs )
     }
 }
 
-version(unittest)
-{
-    import math.geometry;
-    
-    alias Vector2D!float Vector2f;
-    
-    struct DumbPayload
-    {
-        Vector2f data;
-        alias data this;
-        
-        ubyte[] compress() const
-        {
-            ubyte res[] = (cast (ubyte*) &this) [ 0 .. this.sizeof ];
-            return res;
-        }
-        
-        size_t decompress( inout ubyte* storage )
-        {
-            (cast (ubyte*) &this)[ 0 .. this.sizeof] = storage[ 0 .. this.sizeof ].dup;
-            
-            return this.sizeof;
-        }
-        
-        this( float x, float y )
-        {
-            data.x = x;
-            data.y = y;
-        }
-        
-        string toString()
-        {
-            return data.toString;
-        }
-    }
-    unittest
-    {
-        DumbPayload a;
-        DumbPayload b;
-        
-        auto serialized = &(a.compress())[0];
-        auto size = b.decompress( serialized );
-        
-        assert( size == a.sizeof );
-        assert( a == b );
-    }
-}
-
 unittest
 {
     import std.string;
     
-    alias Vector2D!float Vector;
+    alias Vector2D!long Vector;
     alias Box!Vector BBox;
     
-    auto rtree = new RTreePtrs!(BBox, DumbPayload)( 2, 2 );
+    auto rtree = new RTreePtrs!(BBox, Vector)( 2, 2 );
     
-    for( float y = -10; y < 10; y++ )
-        for( float x = -10; x < 10; x++ )
+    for( long y = -10; y < 10; y++ )
+        for( long x = -10; x < 10; x++ )
         {
-            auto payload = DumbPayload( x, y );
+            auto payload = Vector( x, y );
             BBox boundary = BBox( Vector( x, y ), Vector( 1, 1 ) );
             
             rtree.addObject( boundary, payload );
@@ -198,8 +150,6 @@ unittest
     
     // search request and test answers is from ptrs unittest
     BBox search1 = BBox( Vector( 2, 2 ), Vector( 1, 1 ) );
-    BBox search2 = BBox( Vector( 2.1, 2.1 ), Vector( 0.8, 0.8 ) );
     
     assert( rarr.search( search1 ).length >= 9 );
-    assert( rarr.search( search2 ).length >= 1 );
 }

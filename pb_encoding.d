@@ -152,16 +152,14 @@ unittest
 }
 
 
-pure auto encodeZigZag( T )( in T v )
+Unsigned!T encodeZigZag( T )( inout T v ) pure
 if( isSigned!( T ) )
 {
-    Unsigned!( T ) res = ( v > 0 )
+    return v > 0
         ?
             v * 2
         :
             -v * 2 - 1;
-    
-    return res;
 }
 unittest
 {
