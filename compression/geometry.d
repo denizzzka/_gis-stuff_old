@@ -5,7 +5,7 @@ import std.traits;
 import protobuf.runtime: packVarint, unpackVarint, encodeZigZag, decodeZigZag;
 
 
-ubyte[] compress(T)( T value )
+ubyte[] compress(T)( inout T value )
 if( isIntegral!T )
 {
     static if( isUnsigned!T )
@@ -45,6 +45,8 @@ if( isIntegral( Vector.T ) )
 {
     Vector vector;
     alias vector this;
+    
+    
 }
 
 struct CompressBox( Box )
