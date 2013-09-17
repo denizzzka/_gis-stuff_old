@@ -290,24 +290,6 @@ struct Box( _Vector, string S = "size" )
         
         return res;
     }
-    
-    ubyte[] Serialize() const /// TODO: real serialization
-    {
-        ubyte res[] = (cast (ubyte*) &this) [ 0 .. this.sizeof ];
-        return res;
-    }
-    
-    size_t Deserialize( inout ubyte* data ) /// TODO: real serialization
-    {
-        (cast (ubyte*) &this)[ 0 .. this.sizeof] = data[ 0 .. this.sizeof ].dup;
-        
-        return this.sizeof;
-    }
-    
-    string toString() const
-    {
-        return "(ld:"~ld.toString~" ru:"~ru.toString~")";
-    }
 }
 
 unittest
@@ -330,12 +312,6 @@ unittest
     
     assert( box2.getCircumscribed( Vector(3,3) ) == BBox(Vector(1, 0), Vector(2, 3)) );
     assert( box1.getCircumscribed( box2 ) == BBox(Vector(0, 0), Vector(2, 1)) );
-    
-    auto serialized = &(box1.Serialize())[0];
-    auto size = box2.Deserialize( serialized );
-    
-    assert( size == box1.sizeof );
-    assert( box2 == box1 );
 }
 
 auto degree2radian( T )( in T val ) pure

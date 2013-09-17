@@ -22,7 +22,7 @@ class RTreeArray( RTreePtrs )
         {
             depth = source.depth;
             
-            storage = source.root.boundary.Serialize();
+            storage = source.root.boundary.compress;
             storage ~= fillNode( source.root );
         }
         
@@ -37,7 +37,7 @@ class RTreeArray( RTreePtrs )
         {
             Box delta;
             
-            size_t place = delta.Deserialize( &storage[0] );
+            size_t place = delta.decompress( &storage[0] );
             res = search( boundary, delta, place, 0 );
         }
         
@@ -74,7 +74,7 @@ class RTreeArray( RTreePtrs )
                 Box box;
                 size_t child_offset;
                 
-                place += box.Deserialize( &storage[place] );
+                place += box.decompress( &storage[place] );
                 //box = box.getCornersSum( delta );
                 place += unpackVarint( &storage[place], child_offset );
                 
@@ -116,7 +116,7 @@ class RTreeArray( RTreePtrs )
             foreach_reverse( i, c; curr.children )
             {
                 auto boundary = c.boundary; //.getCornersDiff( curr.boundary );
-                auto s = boundary.Serialize();
+                auto s = boundary.compress;
                 s ~= packVarint( offsets[i] + boundaries.length );
                 boundaries = s ~ boundaries;
             }
