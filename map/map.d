@@ -283,8 +283,11 @@ class Region
     {
         this.areas = areas;
         
-        auto lines = new LinesRTree_ptrs[ layers.length ];
+        LinesRTree_ptrs[] lines = new LinesRTree_ptrs[ layers.length ];
         
+        foreach( ref l; lines )
+            l = new LinesRTree_ptrs;
+            
         foreach( area; areas )
         {
             auto to_layers = config.map.polylines.getProperty( area._properties.type ).layers;
