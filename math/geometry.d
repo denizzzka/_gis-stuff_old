@@ -186,10 +186,10 @@ struct Box( _Vector )
     
     this( inout Vector coords, inout Vector size )
     {
-        ld.x = coords.x + ((size.x > 0) ? 0 : size.x);
-        ld.y = coords.y + ((size.y > 0) ? 0 : size.y);
-        ru.x = coords.x + ((size.x < 0) ? 0 : size.x);
-        ru.y = coords.y + ((size.y < 0) ? 0 : size.y);
+        ld.x = cast(Vector.T)( coords.x + ((size.x > 0) ? 0 : size.x) );
+        ld.y = cast(Vector.T)( coords.y + ((size.y > 0) ? 0 : size.y) );
+        ru.x = cast(Vector.T)( coords.x + ((size.x < 0) ? 0 : size.x) );
+        ru.y = cast(Vector.T)( coords.y + ((size.y < 0) ? 0 : size.y) );
     }
     
     Vector getLeftUpperCorner() const
