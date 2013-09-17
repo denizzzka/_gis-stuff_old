@@ -4,42 +4,6 @@ import math.geometry;
 import std.traits;
 import compression.pb_encoding: packVarint, unpackVarint;
 
-/*
-ubyte[] compress(T)( inout T value )
-if( isIntegral!T )
-{
-    static if( isUnsigned!T )
-        return packVarint( value );
-    else
-        return packVarint( encodeZigZag( value ) );
-}
-
-size_t decompress(T)( out T value, inout ubyte* from )
-if( isIntegral!T )
-{
-    static if( isUnsigned!T )
-        return unpackVarint( from, value );
-    else
-    {
-        Unsigned!T uval;
-        size_t res = unpackVarint( from, uval );
-        value = decodeZigZag( uval );
-        
-        return res;
-    }
-}
-
-unittest
-{
-    auto c = compress!long( -2 );
-    
-    long d;
-    size_t offset = d.decompress( &c[0] );
-    
-    assert( offset == c.length );
-    assert( d == -2 );
-}
-*/
 
 ubyte[] compress(T)( inout T vector )
 if( isInstanceOf!(Vector2D, T) )
