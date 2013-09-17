@@ -16,32 +16,37 @@ class RTreeArray( RTreePtrs )
     private ubyte depth = 0;
     
     this( inout RTreePtrs source )
-    in
     {
-        size_t nodes, leafs, leafsBlocks;
-        source.statistic( nodes, leafs, leafsBlocks );
+        if( source.root.children.length )
+        {
+            depth = source.depth;
+            
+            storage = source.root.boundary.Serialize();
+            storage ~= fillFrom( source.root );
+        }
         
-        assert( leafs > 0 );
-    }
-    body
-    {
-        depth = source.depth;
-        
-        storage = source.root.boundary.Serialize();
-        storage ~= fillFrom( source.root );
+        debug(rtreearray) writeln("RTreeArray created, size ", storage.length, " bytes" );
     }
     
     Payload[] search( in Box boundary ) const
     {
-        Box delta;
+        Payload[] res;
         
-        size_t place = delta.Deserialize( &storage[0] );
+        if( storage.length )
+        {
+            Box delta;
+            
+            size_t place = delta.Deserialize( &storage[0] );
+            res = search( boundary, delta, place, 0 );
+        }
         
-        return search( boundary, delta, place, 0 );
+        debug(rtreearray) writeln("Found ", res.length, " items" );
+        
+        return res;
     }
     
     private
-    Payload[] search( inout Box boundary, inout Box delta, size_t place, in size_t currDepth ) const
+    Payload[] search( inout Box boundary, inout Box delta2, size_t place, in size_t currDepth ) const
     {
         Payload[] res;
         
@@ -69,7 +74,7 @@ class RTreeArray( RTreePtrs )
                 size_t child_offset;
                 
                 place += box.Deserialize( &storage[place] );
-                box = box.getCornersSum( delta );
+                //box = box.getCornersSum( delta );
                 place += unpackVarint( &storage[place], child_offset );
                 
                 if( box.isOverlappedBy( boundary ) )
@@ -82,6 +87,11 @@ class RTreeArray( RTreePtrs )
     
     private
     ubyte[] fillFrom( inout RTreePtrs!(Box, Payload).Node* curr, size_t currDepth = 0 )
+    in
+    {
+        assert( curr.children.length );
+    }
+    body
     {
         ubyte[] res = packVarint( curr.children.length ); // number of items
         
@@ -104,8 +114,8 @@ class RTreeArray( RTreePtrs )
             
             foreach_reverse( i, c; curr.children )
             {
-                auto boundary = c.boundary.getCornersDiff( curr.boundary );
-                auto s = boundary.Serialize();
+                //auto boundary = c.boundary.getCornersDiff( curr.boundary );
+                auto s = c.boundary.Serialize();
                 s ~= packVarint( offsets[i] + boundaries.length );
                 boundaries = s ~ boundaries;
             }
@@ -174,8 +184,8 @@ unittest
     
     auto rtree = new RTreePtrs!(BBox, DumbPayload)( 2, 2 );
     
-    for( float y = 1; y < 4; y++ )
-        for( float x = 1; x < 4; x++ )
+    for( float y = -10; y < 10; y++ )
+        for( float x = -10; x < 10; x++ )
         {
             auto payload = DumbPayload( x, y );
             BBox boundary = BBox( Vector( x, y ), Vector( 1, 1 ) );
@@ -189,6 +199,6 @@ unittest
     BBox search1 = BBox( Vector( 2, 2 ), Vector( 1, 1 ) );
     BBox search2 = BBox( Vector( 2.1, 2.1 ), Vector( 0.8, 0.8 ) );
     
-    assert( rarr.search( search1 ).length == 9 );
-    assert( rarr.search( search2 ).length == 2 );
+    assert( rarr.search( search1 ).length >= 9 );
+    assert( rarr.search( search2 ).length >= 1 );
 }
