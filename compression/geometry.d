@@ -40,13 +40,36 @@ unittest
     assert( d == -2 );
 }
 
-struct CompressedVector( Vector )
-if( isIntegral( Vector.T ) )
+ubyte[] compress(T)( inout T vector )
+if( isInstanceOf!(Vector2D, T ) )
 {
-    Vector vector;
-    alias vector this;
+    ubyte[] res = compress( vector.x );
+    res ~= compress( vector.y );
     
+    return res;
+}
+
+size_t decompress(T)( out T vector, inout ubyte* from )
+if( isInstanceOf!(Vector2D, T ) )
+{
+    size_t offset = decompress( from, vector.x );
+    offset += decompress( from + offset, vector.y );
     
+    return offset;
+}
+
+unittest
+{
+    alias Vector2D!long Vector2l;
+    
+    auto v = Vector2l( 1, 2 );
+    
+    auto c = v.compress;
+    
+    Vector2l d;
+    d.decompress( &c[0] );
+    
+    assert( d == v );
 }
 
 struct CompressBox( Box )
