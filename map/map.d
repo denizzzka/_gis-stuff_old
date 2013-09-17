@@ -2,6 +2,7 @@ module map.map;
 
 import math.geometry;
 import math.rtree2d.ptrs;
+import math.rtree2d.array;
 static import math.earth;
 import cat = config.categories;
 import map.line_graph;
@@ -122,10 +123,26 @@ struct AnyLineDescriptor
         LineGraph.EdgeDescr line;
         RoadGraph.EdgeDescr road;
         Area area;
-    }    
+    }
+    
+    // TODO: need to implement real compression
+    ubyte[] compress() const
+    {
+        ubyte res[] = (cast (ubyte*) &this) [ 0 .. this.sizeof ];
+        return res;
+    }
+    
+    // TODO: need to implement real compression
+    size_t decompress( inout ubyte* storage )
+    {
+        (cast (ubyte*) &this)[ 0 .. this.sizeof] = storage[ 0 .. this.sizeof ].dup;
+        
+        return this.sizeof;
+    }
 }
 
 alias RTreePtrs!(BBox, AnyLineDescriptor) LinesRTree;
+alias RTreeArray!( LinesRTree ) LinesRTree_array;
 
 void addPoint( PointsStorage storage, Point point )
 {
@@ -138,6 +155,7 @@ struct Layer
 {
     PointsStorage POI;
     LinesRTree lines;
+    LinesRTree_array _lines;
     
     RoadGraph road_graph;
     
@@ -163,6 +181,15 @@ class Region
     {
         foreach( ref c; layers )
             c.init;
+    }
+    
+    void moveInfoIntoRTreeArray()
+    {
+        foreach( ref l; layers )
+        {
+            l._lines = new LinesRTree_array( l.lines );
+            delete l.lines;
+        }
     }
     
     MBBox boundary() const
@@ -302,7 +329,7 @@ struct MapLinesDescriptor
     const Region* region;
     const size_t layer_num;
     
-    AnyLineDescriptor*[] lines;
+    AnyLineDescriptor[] lines;
 }
 
 class Map
@@ -324,7 +351,7 @@ class Map
         {
             MapLinesDescriptor curr = { region: &region, layer_num: layer_num };
             
-            curr.lines ~= region.layers[ layer_num ].lines.search( boundary );
+            curr.lines ~= region.layers[ layer_num ]._lines.search( boundary );
             
             res ~= curr;
         }

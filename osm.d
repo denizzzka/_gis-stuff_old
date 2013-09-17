@@ -372,6 +372,7 @@ Region getRegion( string filename, bool verbose )
     res.fillLines( lines );
     res.fillRoads( roads );
     res.fillAreas( areas );
+    res.moveInfoIntoRTreeArray;
     
     return res;
 }
