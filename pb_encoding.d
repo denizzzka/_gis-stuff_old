@@ -165,6 +165,10 @@ unittest
 {
     assert( encodeZigZag!long( 2147483647 ) == 4294967294 );
     assert( encodeZigZag!long( -2147483648 ) == 4294967295 );
+    
+    // FIXME:
+    //assert( encodeZigZag!short( 20 ) == 40 );
+    //assert( encodeZigZag!short( -20 ) == 39 );
 }
 
 
