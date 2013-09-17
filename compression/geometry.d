@@ -2,7 +2,7 @@ module compression.geometry;
 
 import math.geometry;
 import std.traits;
-import protobuf.runtime: packVarint, unpackVarint, encodeZigZag, decodeZigZag;
+import compression.pb_encoding: packVarint, unpackVarint, encodeZigZag, decodeZigZag;
 
 
 ubyte[] compress(T)( inout T value )

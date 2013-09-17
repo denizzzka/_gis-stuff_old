@@ -1,10 +1,11 @@
 // Protocol Buffer encoding/decoding functions
 
-module protobuf.runtime;
+module compression.pb_encoding;
 
 import std.exception;
 import std.traits;
 debug(protobuf) import std.stdio;
+
 
 enum WireType : ubyte {
     VARINT           = 0,
