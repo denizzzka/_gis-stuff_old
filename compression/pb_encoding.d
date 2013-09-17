@@ -109,6 +109,32 @@ unittest
     assert( v == [ 0b_10101100, 0b_00000010 ] );
 }
 
+ubyte[] packVarint(T)( inout T value )
+if( isIntegral!T && !isUnsigned!T )
+{
+    return packVarint( encodeZigZag( value ) );
+}
+
+size_t unpackVarint(T)( out T value, inout ubyte* from )
+if( isIntegral!T && !isUnsigned!T )
+{
+    Unsigned!T uval;
+    size_t res = unpackVarint( from, uval );
+    value = decodeZigZag( uval );
+    
+    return res;
+}
+
+unittest
+{
+    auto c = packVarint!long( -2 );
+    
+    long d;
+    size_t offset = d.unpackVarint( &c[0] );
+    
+    assert( offset == c.length );
+    assert( d == -2 );
+}
 
 pure size_t parseTag( in ubyte* data, out uint fieldNumber, out WireType wireType )
 {
