@@ -165,7 +165,6 @@ version(unittest)
     }
 }
 
-
 unittest
 {
     import std.string;
