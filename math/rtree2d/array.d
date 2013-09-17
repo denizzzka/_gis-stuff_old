@@ -16,28 +16,29 @@ class RTreeArray( RTreePtrs )
     private ubyte depth = 0;
     
     this( inout RTreePtrs source )
-    in
     {
-        size_t nodes, leafs, leafsBlocks;
-        source.statistic( nodes, leafs, leafsBlocks );
-        
-        assert( leafs > 0 );
-    }
-    body
-    {
-        depth = source.depth;
-        
-        storage = source.root.boundary.Serialize();
-        storage ~= fillFrom( source.root );
+        if( source.root.children.length )
+        {
+            depth = source.depth;
+            
+            storage = source.root.boundary.Serialize();
+            storage ~= fillFrom( source.root );
+        }
     }
     
     Payload[] search( in Box boundary ) const
     {
-        Box delta;
+        Payload[] res;
         
-        size_t place = delta.Deserialize( &storage[0] );
+        if( storage )
+        {
+            Box delta;
+            
+            size_t place = delta.Deserialize( &storage[0] );
+            res = search( boundary, delta, place, 0 );
+        }
         
-        return search( boundary, delta, place, 0 );
+        return res;
     }
     
     private
@@ -82,6 +83,11 @@ class RTreeArray( RTreePtrs )
     
     private
     ubyte[] fillFrom( inout RTreePtrs!(Box, Payload).Node* curr, size_t currDepth = 0 )
+    in
+    {
+        assert( curr.children.length );
+    }
+    body
     {
         ubyte[] res = packVarint( curr.children.length ); // number of items
         
