@@ -80,18 +80,22 @@ unittest
 {
     alias Vector2D!long Vector2l;
     
-    auto v = Vector2l( 1, 2 );
-    auto c = v.compress;
+    auto v = Vector2l( -1, 2 );
+    auto v_compressed = v.compress;
     
     Vector2l d;
-    size_t offset_v = d.decompress( &c[0] );
+    size_t offset_v = d.decompress( &v_compressed[0] );
     
-    assert( offset_v == c.length );
+    assert( offset_v == v_compressed.length );
     assert( d == v );
     
     alias Box!Vector2l BBox;
     
-    BBox b1 = BBox( Vector2l( -3, -3 ), Vector2l( 3, 3 ) );
+    auto v1 = Vector2l( -3, -3 );
+    auto v2 = Vector2l( 3, 3 );
+    BBox b1;
+    b1.leftDownCorner = v1;
+    b1.rightUpperCorner = v2;
     
     auto b_compressed = b1.compress;
     
@@ -99,5 +103,9 @@ unittest
     size_t offset_b = b2.decompress( &b_compressed[0] );
     
     assert( offset_b == b_compressed.length );
+    
+    import std.stdio;
+    writeln( b1, b2 );
+    
     assert( b2 == b1 );
 }
