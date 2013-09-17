@@ -24,6 +24,9 @@ class RTreeArray( RTreePtrs )
             storage = source.root.boundary.Serialize();
             storage ~= fillFrom( source.root );
         }
+        
+        import std.stdio;
+        writeln("RTreeArray created, size=", storage.length );
     }
     
     Payload[] search( in Box boundary ) const
@@ -42,7 +45,7 @@ class RTreeArray( RTreePtrs )
     }
     
     private
-    Payload[] search( inout Box boundary, inout Box delta, size_t place, in size_t currDepth ) const
+    Payload[] search( inout Box boundary, inout Box delta2, size_t place, in size_t currDepth ) const
     {
         Payload[] res;
         
@@ -70,7 +73,7 @@ class RTreeArray( RTreePtrs )
                 size_t child_offset;
                 
                 place += box.Deserialize( &storage[place] );
-                box = box.getCornersSum( delta );
+                //box = box.getCornersSum( delta );
                 place += unpackVarint( &storage[place], child_offset );
                 
                 if( box.isOverlappedBy( boundary ) )
@@ -110,8 +113,8 @@ class RTreeArray( RTreePtrs )
             
             foreach_reverse( i, c; curr.children )
             {
-                auto boundary = c.boundary.getCornersDiff( curr.boundary );
-                auto s = boundary.Serialize();
+                //auto boundary = c.boundary.getCornersDiff( curr.boundary );
+                auto s = c.boundary.Serialize();
                 s ~= packVarint( offsets[i] + boundaries.length );
                 boundaries = s ~ boundaries;
             }
@@ -178,10 +181,10 @@ unittest
     alias Vector2D!float Vector;
     alias Box!Vector BBox;
     
-    auto rtree = new RTreePtrs!(BBox, DumbPayload)( 2, 2 );
+    auto rtree = new RTreePtrs!(BBox, DumbPayload)( 3, 3 );
     
-    for( float y = 1; y < 4; y++ )
-        for( float x = 1; x < 4; x++ )
+    for( float y = 1; y < 10; y++ )
+        for( float x = 1; x < 10; x++ )
         {
             auto payload = DumbPayload( x, y );
             BBox boundary = BBox( Vector( x, y ), Vector( 1, 1 ) );
@@ -195,6 +198,9 @@ unittest
     BBox search1 = BBox( Vector( 2, 2 ), Vector( 1, 1 ) );
     BBox search2 = BBox( Vector( 2.1, 2.1 ), Vector( 0.8, 0.8 ) );
     
+    writeln( rarr.search( search1 ) );
+    
+    assert(false);
     assert( rarr.search( search1 ).length == 9 );
     assert( rarr.search( search2 ).length == 2 );
 }

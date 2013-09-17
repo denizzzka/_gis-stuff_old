@@ -369,8 +369,13 @@ Region getRegion( string filename, bool verbose )
         }
     }
     
+    import std.stdio;
+    
+    writeln("fillLines");
     res.fillLines( lines );
+    writeln("fillRoads");
     res.fillRoads( roads );
+    writeln("fillAreas");
     res.fillAreas( areas );
     
     return res;
