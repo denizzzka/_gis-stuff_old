@@ -87,29 +87,72 @@ unittest
 }
 
 
-pure ubyte[] packVarint( T )( T value )
+static
+ubyte[] packVarint(T)( T value )
 if( isIntegral!T && isUnsigned!T )
 out( arr )
 {
     T d;
     size_t size = d.unpackVarint( &arr[0] );
     
+    import std.stdio;
+    import std.conv;
+    
+    writeln( typeid(T)," ", isUnsigned!T, " ===========> ", value, " res: ", arr );
+    stdout.flush;
+    
     assert( size == arr.length );
     assert( d == value );
 }
 body
 {
+    import std.stdio;
+    import std.conv;
+    
     ubyte[] res;
     
-    while( value >= 0b_1000_0000 )
+    immutable ubyte biggest = 0b_1000_0000;
+    
+    while( value >= biggest )
     {
-        res ~= cast( ubyte )( value | 0b_1000_0000 );
+        writeln( "value: ", value, " biggest: ", biggest );
+        
+        res ~= cast( ubyte )( value | biggest );
         value >>= 7;
+        
+        writeln( "value: ", value, " biggest: ", biggest );
+        writeln( "res: ", res );
+        stdout.flush;
     }
     
     res ~= cast( ubyte ) value;
     
     return res;
+    /*
+	ubyte[]ret;
+	int x;
+	if (input < 0) {
+		// shortcut negative numbers, this is always the case
+		ret.length = 10;
+	} else {
+		long tmp = input;
+		for (x = 1;tmp >= 128;x++) {
+			// arithmetic shift is fine, because we've already checked for
+			// negative numbers
+			tmp >>= 7;
+		}
+		ret.length = x;
+	}
+	for (x = 0;x<ret.length;x++) {
+		// set the top bit
+		ret[x] = cast(ubyte)(1<<7);
+		ret[x] |= (cast(ubyte)input)&0b1111111;
+		input >>= 7;
+	}
+	// unset the top bit of the last data element
+	ret[$-1] &= 0b1111111;
+	return ret;
+    */
 }
 unittest
 {
