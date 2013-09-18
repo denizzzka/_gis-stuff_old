@@ -56,7 +56,7 @@ unittest
     
     alias Box!Vector2l BBox;
     
-    auto v1 = Vector2l( -3, -3 );
+    auto v1 = Vector2l( -3, 2 );
     auto v2 = Vector2l( 3, 3 );
     BBox b1;
     b1.leftDownCorner = v1;

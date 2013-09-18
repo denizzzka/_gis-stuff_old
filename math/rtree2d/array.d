@@ -134,7 +134,7 @@ unittest
 {
     import std.string;
     
-    alias Vector2D!short V;
+    alias Vector2D!long V;
     alias Box!V BBox;
     
     auto rtree = new RTreePtrs!(BBox, V)( 2, 2 );
@@ -143,14 +143,14 @@ unittest
         for( short x = -100; x < 100; x++ )
         {
             auto payload = V( x, y );
-            BBox boundary = BBox( V( x, y ), V( cast(short) 1, cast(short) 1 ) );
+            BBox boundary = BBox( V( x, y ), V( 1, 1 ) );
             
             rtree.addObject( boundary, payload );
         }
     
     auto rarr = new RTreeArray!(typeof(rtree))( rtree );
     
-    BBox search1 = BBox( V( cast(short) 2, cast(short) 2 ), V( cast(short) 1, cast(short) 1 ) );
+    BBox search1 = BBox( V( 2, 2 ), V( 1, 1 ) );
     
     import std.stdio;
     writeln( rarr.search( search1 ) );
