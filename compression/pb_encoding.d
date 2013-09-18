@@ -62,18 +62,16 @@ unittest
 }
 
 
-pure size_t unpackVarint( T )( out T result, inout ubyte* data )
+pure size_t unpackVarint( T )( out T res, inout ubyte* data )
 if( isIntegral!T && isUnsigned!T )
 {
     size_t i;
-    size_t res; // big sized type used also for overflow checking
+    immutable ubyte mask = 0b_0111_1111;
     
     do {
-        res |= ( data[i] & 0b_0111_1111 ) << 7 * i;
+        res |= ( data[i] & mask ) << 7 * i;
         enforce( res <= T.max, "Varint is too big for type " ~ T.stringof );
     } while( msbIsSet( &data[i++] ) );
-    
-    result = cast(T) res;
     
     return i;
 }
