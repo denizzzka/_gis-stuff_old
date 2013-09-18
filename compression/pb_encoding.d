@@ -98,7 +98,7 @@ out( arr )
     import std.stdio;
     import std.conv;
     
-    writeln( typeid(T)," ", isUnsigned!T, " ===========> ", value, " res: ", arr );
+    writeln( "packVarint() call, type=", typeid(T), " isUnsigned=", isUnsigned!T, " arg=", value, " result=", arr );
     stdout.flush;
     
     assert( size == arr.length );
@@ -108,6 +108,8 @@ body
 {
     import std.stdio;
     import std.conv;
+    writeln( "value inside of body: ", value );
+    stdout.flush;
     
     ubyte[] res;
     
@@ -116,6 +118,7 @@ body
     while( value >= maximal )
     {
         writeln( "value: ", value, " biggest: ", maximal );
+        stdout.flush;
         
         res ~= cast( ubyte )( value | maximal );
         value >>= 7;
