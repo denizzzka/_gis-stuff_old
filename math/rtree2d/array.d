@@ -55,9 +55,8 @@ class RTreeArray( RTreePtrs )
         place += items_num.unpackVarint( &storage[place] );
         
         if( currDepth >= depth ) // returning leafs
-        {
             res ~= getPayloads( items_num, &storage[place] );
-        }
+        
         else // searching in nodes
         {
             size_t data_offset; // data storage offset

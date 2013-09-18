@@ -25,6 +25,15 @@ if( isInstanceOf!(Vector2D, T) )
 
 ubyte[] compress(T)( inout T box )
 if( isInstanceOf!(Box, T) )
+out( arr )
+{
+    T d;
+    size_t size = d.decompress( &arr[0] );
+    
+    assert( size == arr.length );
+    assert( d == box );
+}
+body
 {
     ubyte[] res = box.leftDownCorner.compress;
     res ~= box.rightUpperCorner.compress;
