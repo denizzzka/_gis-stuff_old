@@ -7,6 +7,15 @@ import compression.pb_encoding: packVarint, unpackVarint;
 
 ubyte[] compress(T)( inout T vector )
 if( isInstanceOf!(Vector2D, T) )
+out( arr )
+{
+    T d;
+    size_t size = d.decompress( &arr[0] );
+    
+    assert( size == arr.length );
+    assert( d == vector );
+}
+body
 {
     ubyte[] res = packVarint( vector.x );
     res ~= packVarint( vector.y );
