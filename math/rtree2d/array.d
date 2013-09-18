@@ -75,6 +75,8 @@ class RTreeArray( RTreePtrs )
                 if( box.isOverlappedBy( boundary ) )
                     res ~= search( boundary, box, data_start + child_offset, currDepth+1 );
             }
+            
+            assert( place == data_start );
         }
         
         return res;
