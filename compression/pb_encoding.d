@@ -89,6 +89,15 @@ unittest
 
 pure ubyte[] packVarint( T )( T value )
 if( isIntegral!T && isUnsigned!T )
+out( arr )
+{
+    T d;
+    size_t size = d.unpackVarint( &arr[0] );
+    
+    assert( size == arr.length );
+    assert( d == value );
+}
+body
 {
     ubyte[] res;
     
