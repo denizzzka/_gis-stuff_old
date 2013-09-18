@@ -111,16 +111,15 @@ body
     
     ubyte[] res;
     
-    immutable ubyte biggest = 0b_1000_0000;
+    immutable ubyte maximal = 0b_1000_0000;
     
-    while( value >= biggest )
+    while( value >= maximal )
     {
-        writeln( "value: ", value, " biggest: ", biggest );
+        writeln( "value: ", value, " biggest: ", maximal );
         
-        res ~= cast( ubyte )( value | biggest );
+        res ~= cast( ubyte )( value | maximal );
         value >>= 7;
         
-        writeln( "value: ", value, " biggest: ", biggest );
         writeln( "res: ", res );
         stdout.flush;
     }
