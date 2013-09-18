@@ -56,16 +56,7 @@ class RTreeArray( RTreePtrs )
         
         if( currDepth >= depth ) // returning leafs
         {
-            for( auto i = 0; i < items_num; i++ )
-            {
-                Payload o;
-                auto offset = o.decompress( &storage[place] );
-                
-                assert( offset > 0 );
-                
-                place += offset;
-                res ~= o;
-            }
+            res ~= getPayloads( items_num, &storage[place] );
         }
         else // searching in nodes
         {
@@ -90,22 +81,18 @@ class RTreeArray( RTreePtrs )
         return res;
     }
     
-    private
-    Payload[] getPayloads( inout size_t items_num, inout ubyte[] src )
+    private static
+    Payload[] getPayloads( inout size_t items_num, inout ubyte* src )
     {
-        auto res = new Payload[ items_num ];
+        Payload[] res = new Payload[ items_num ];
         size_t offset;
         
         for( auto i = 0; i < items_num; i++ )
         {
-            auto last_offset = res[i].decompress( &src[offset] );
-            
+            auto last_offset = res[i].decompress( src + offset );
             assert( last_offset > 0 );
-            
             offset += last_offset;
         }
-        
-        assert( src.length == offset );
         
         return res;
     }
