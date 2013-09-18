@@ -29,7 +29,7 @@ class RTreeArray( RTreePtrs )
         debug(rtreearray) writeln("RTreeArray created, size ", storage.length, " bytes" );
     }
     
-    Payload[] search( in Box boundary ) const
+    Payload[] search( inout Box boundary ) const
     {
         Payload[] res;
         
@@ -102,6 +102,8 @@ class RTreeArray( RTreePtrs )
         
         else // adding nodes
         {
+            // TODO: store data storage offset for nodes
+            
             auto offsets = new size_t[ curr.children.length ];
             ubyte[] nodes;
             
@@ -117,7 +119,7 @@ class RTreeArray( RTreePtrs )
             {
                 auto boundary = c.boundary; //.getCornersDiff( curr.boundary );
                 auto s = boundary.compress;
-                s ~= packVarint( offsets[i] + boundaries.length );
+                s ~= packVarint( boundaries.length + offsets[i] );
                 boundaries = s ~ boundaries;
             }
             
