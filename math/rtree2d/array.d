@@ -91,6 +91,26 @@ class RTreeArray( RTreePtrs )
     }
     
     private
+    Payload[] getPayloads( inout size_t items_num, inout ubyte[] src )
+    {
+        auto res = new Payload[ items_num ];
+        size_t offset;
+        
+        for( auto i = 0; i < items_num; i++ )
+        {
+            auto last_offset = res[i].decompress( &src[offset] );
+            
+            assert( last_offset > 0 );
+            
+            offset += last_offset;
+        }
+        
+        assert( src.length == offset );
+        
+        return res;
+    }
+    
+    private
     ubyte[] fillNode( inout RTreePtrs!(Box, Payload).Node* curr, size_t currDepth = 0 )
     in
     {
