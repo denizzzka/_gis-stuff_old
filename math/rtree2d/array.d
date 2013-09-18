@@ -69,6 +69,10 @@ class RTreeArray( RTreePtrs )
         }
         else // searching in nodes
         {
+            size_t data_offset; // data storage offset
+            place += data_offset.unpackVarint( &storage[place] );
+            const data_start = place + data_offset;
+            
             for( auto i = 0; i < items_num; i++ )
             {
                 Box box;
@@ -79,7 +83,7 @@ class RTreeArray( RTreePtrs )
                 place += child_offset.unpackVarint( &storage[place] );
                 
                 if( box.isOverlappedBy( boundary ) )
-                    res ~= search( boundary, box, place + child_offset, currDepth+1 );
+                    res ~= search( boundary, box, data_start + child_offset, currDepth+1 );
             }
         }
         
@@ -102,8 +106,6 @@ class RTreeArray( RTreePtrs )
         
         else // adding nodes
         {
-            // TODO: store data storage offset for nodes
-            
             auto offsets = new size_t[ curr.children.length ];
             ubyte[] nodes;
             
@@ -119,11 +121,13 @@ class RTreeArray( RTreePtrs )
             {
                 auto boundary = c.boundary; //.getCornersDiff( curr.boundary );
                 auto s = boundary.compress;
-                s ~= packVarint( boundaries.length + offsets[i] );
+                s ~= packVarint( offsets[i] );
                 boundaries = s ~ boundaries;
             }
             
-            res ~= boundaries ~ nodes;
+            res ~= packVarint( boundaries.length ); // data storage offset
+            res ~= boundaries;
+            res ~= nodes;
         }
         
         return res;
@@ -139,8 +143,8 @@ unittest
     
     auto rtree = new RTreePtrs!(BBox, V)( 2, 2 );
     
-    for( short y = -100; y < 100; y++ )
-        for( short x = -100; x < 100; x++ )
+    for( auto y = -16; y < 16; y++ )
+        for( auto x = -16; x < 16; x++ )
         {
             auto payload = V( x, y );
             BBox boundary = BBox( V( x, y ), V( 1, 1 ) );
