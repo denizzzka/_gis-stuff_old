@@ -119,8 +119,7 @@ body
         value >>= 7;
     }
     
-    import std.conv: to;
-    res ~= to!( ubyte )( value );
+    res ~= cast(ubyte) value;
     
     return res;
 }
