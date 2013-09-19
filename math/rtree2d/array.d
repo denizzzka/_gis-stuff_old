@@ -51,32 +51,27 @@ class RTreeArray( RTreePtrs )
     {
         Payload[] res;
         
-        size_t items_num;
-        place += items_num.unpackVarint( &storage[place] );
+        Box curr_boundary;
+        place += curr_boundary.decompress( &storage[place] );
         
-        if( currDepth >= depth ) // returning leafs
-            res ~= getPayloads( items_num, &storage[place] );
-        
-        else // searching in nodes
+        if( curr_boundary.isOverlappedBy( boundary ) )
         {
-            size_t data_offset; // data storage offset
-            place += data_offset.unpackVarint( &storage[place] );
-            const data_start = place + data_offset;
+            size_t children_num;
+            place += children_num.unpackVarint( &storage[place] );
             
-            for( auto i = 0; i < items_num; i++ )
+            if( currDepth >= depth ) // returning leafs
+                res ~= getPayloads( children_num, &storage[place] );
+            
+            else // searching in nodes
             {
-                Box box;
-                size_t child_offset;
+                auto offsets = new size_t[ children_num ];
                 
-                place += box.decompress( &storage[place] );
-                //box = box.getCornersSum( delta );
-                place += child_offset.unpackVarint( &storage[place] );
+                for( size_t i = 1; i < offsets.length; i++ ) // skips first zero offset
+                    place += offsets[i].unpackVarint( &storage[place] );
                 
-                if( box.isOverlappedBy( boundary ) )
-                    res ~= search( boundary, box, data_start + child_offset, currDepth+1 );
+                for( auto i = 0; i < children_num; i++ )
+                    res ~= search( boundary, boundary, place + offsets[i], currDepth+1 );
             }
-            
-            assert( place == data_start );
         }
         
         return res;
@@ -93,49 +88,6 @@ class RTreeArray( RTreePtrs )
             auto last_offset = res[i].decompress( src + offset );
             assert( last_offset > 0 );
             offset += last_offset;
-        }
-        
-        return res;
-    }
-    
-    private
-    ubyte[] fillNodes( inout RTreePtrs!(Box, Payload).Node* curr, size_t currDepth = 0 )
-    in
-    {
-        assert( curr.children.length );
-    }
-    body
-    {
-        ubyte[] res = packVarint( curr.children.length ); // number of items
-        
-        if( currDepth >= depth ) // adding leafs
-            foreach( c; curr.children )
-                res ~= (*c.payload).compress;
-        
-        else // adding nodes
-        {
-            auto offsets = new size_t[ curr.children.length ];
-            ubyte[] nodes;
-            
-            foreach( i, c; curr.children )
-            {
-                offsets[i] = nodes.length;
-                nodes ~= fillNodes( c, currDepth+1 );
-            }
-            
-            ubyte[] boundaries;
-            
-            foreach_reverse( i, c; curr.children )
-            {
-                auto boundary = c.boundary; //.getCornersDiff( curr.boundary );
-                auto s = boundary.compress;
-                s ~= packVarint( offsets[i] );
-                boundaries = s ~ boundaries;
-            }
-            
-            res ~= packVarint( boundaries.length ); // data storage offset
-            res ~= boundaries;
-            res ~= nodes;
         }
         
         return res;
