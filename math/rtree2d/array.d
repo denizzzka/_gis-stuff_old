@@ -99,7 +99,7 @@ class RTreeArray( RTreePtrs )
     }
     
     private
-    ubyte[] fillNode( inout RTreePtrs!(Box, Payload).Node* curr, size_t currDepth = 0 )
+    ubyte[] fillNodes( inout RTreePtrs!(Box, Payload).Node* curr, size_t currDepth = 0 )
     in
     {
         assert( curr.children.length );
@@ -120,7 +120,7 @@ class RTreeArray( RTreePtrs )
             foreach( i, c; curr.children )
             {
                 offsets[i] = nodes.length;
-                nodes ~= fillNode( c, currDepth+1 );
+                nodes ~= fillNodes( c, currDepth+1 );
             }
             
             ubyte[] boundaries;
@@ -136,6 +136,38 @@ class RTreeArray( RTreePtrs )
             res ~= packVarint( boundaries.length ); // data storage offset
             res ~= boundaries;
             res ~= nodes;
+        }
+        
+        return res;
+    }
+    
+    private
+    ubyte[] fillNode( inout RTreePtrs!(Box, Payload).Node* curr, size_t currDepth = 0 )
+    {
+        ubyte[] res = curr.boundary.compress; // boundary
+        res ~= packVarint( curr.children.length ); // number of children
+        
+        if( currDepth >= depth ) // adding leafs
+            foreach( c; curr.children )
+                res ~= (*c.payload).compress;
+                
+        else // adding nodes
+        {
+            auto offsets = new size_t[ curr.children.length ];
+            ubyte[] children_encoded;
+            
+            foreach( i, c; curr.children )
+            {
+                offsets[i] = children_encoded.length;
+                children_encoded ~= fillNode( c, currDepth+1 );
+            }
+            
+            ubyte[] offsets_encoded;
+            
+            foreach_reverse( i, c; curr.children )
+                offsets_encoded = packVarint( offsets[i] ) ~ offsets_encoded;
+                
+            res ~= offsets_encoded ~ children_encoded;
         }
         
         return res;
