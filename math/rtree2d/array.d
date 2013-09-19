@@ -22,8 +22,7 @@ class RTreeArray( RTreePtrs )
         {
             depth = source.depth;
             
-            storage = source.root.boundary.compress;
-            storage ~= fillNode( source.root );
+            storage = fillNode( source.root );
         }
         
         debug(rtreearray) writeln("RTreeArray created, size ", storage.length, " bytes" );
@@ -34,12 +33,7 @@ class RTreeArray( RTreePtrs )
         Payload[] res;
         
         if( storage.length )
-        {
-            Box delta;
-            
-            size_t place = delta.decompress( &storage[0] );
-            res = search( boundary, delta, place, 0 );
-        }
+            res = search( boundary, boundary, 0, 0 );
         
         debug(rtreearray) writeln("Found ", res.length, " items" );
         
