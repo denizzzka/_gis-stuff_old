@@ -164,10 +164,5 @@ unittest
     
     BBox search1 = BBox( V( 2, 2 ), V( 1, 1 ) );
     
-    import std.stdio;
-    writeln( rarr.search( search1 ) );
-    
-    assert( false );
-    
     assert( rarr.search( search1 ).length >= 9 );
 }
