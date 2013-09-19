@@ -242,6 +242,12 @@ struct Box( _Vector )
         return size.x * size.y;
     }
     
+    auto getPerimeter() const
+    {
+        auto size = getSizeVector();
+        return (size.x + size.y) * 2;
+    }
+    
     Box getCircumscribed( in Vector v ) const pure
     {
         Box res;
