@@ -138,16 +138,18 @@ class RTreePtrs( _Box, _Payload )
             {
                 debug assert( !curr.leafNode );
                 
-                auto area = new float[ curr.children.length ];
-                
                 // search for min area of child nodes
+                float minArea = float.infinity;
                 size_t minKey;
                 foreach( i, c; curr.children )
                 {
-                    area[i] = c.boundary.getCircumscribed( newItemBoundary ).getArea();
+                    auto area = c.boundary.getCircumscribed( newItemBoundary ).getArea();
                     
-                    if( area[i] < area[minKey] )
+                    if( area < minArea )
+                    {
+                        minArea = area;
                         minKey = i;
+                    }
                 }
                 
                 curr = curr.children[minKey];
