@@ -85,29 +85,20 @@ unittest
 }
 
 
-static
-ubyte[] packVarint(T)( T value )
+static pure
+ubyte[] packVarint(T)( T _value )
 if( isIntegral!T && isUnsigned!T )
 out( arr )
 {
     T d;
     size_t size = d.unpackVarint( &arr[0] );
     
-    import std.stdio;
-    import std.conv;
-    
-    writeln( "out contract, type=", typeid(T), " isUnsigned=", isUnsigned!T, " arg=", value, " result=", arr );
-    stdout.flush;
-    
     assert( size == arr.length );
-    assert( d == value );
+    assert( d == _value );
 }
 body
 {
-    import std.stdio;
-    import std.conv;
-    writeln( "value inside of body: ", value, " type=", typeid( typeof(value) ) );
-    stdout.flush;
+    auto value = _value; // FIXME: need because out contract fails on "value"
     
     ubyte[] res;
     
@@ -130,7 +121,8 @@ unittest
     assert( v == [ 0b_10101100, 0b_00000010 ] );
 }
 
-ubyte[] packVarint(T)( inout T value )
+
+ubyte[] packVarint(T)( in T value )
 if( isIntegral!T && !isUnsigned!T )
 out( arr )
 {
@@ -154,7 +146,6 @@ if( isIntegral!T && !isUnsigned!T )
     
     return res;
 }
-
 unittest
 {
     auto c = packVarint!long( -2 );
@@ -165,6 +156,7 @@ unittest
     assert( offset == c.length );
     assert( d == -2 );
 }
+
 
 pure size_t parseTag( in ubyte* data, out uint fieldNumber, out WireType wireType )
 {
@@ -191,7 +183,33 @@ unittest
 }
 
 
-pure auto decodeZigZag( T )( in T v )
+Unsigned!T encodeZigZag( T )( inout T v ) pure
+if( isSigned!( T ) )
+out( res )
+{
+    assert( decodeZigZag( res ) == v );
+}
+body
+{
+    return cast( Unsigned!T )(
+            v >= 0 ?
+            v * 2 :
+            -v * 2 - 1
+        );
+}
+unittest
+{
+    assert( encodeZigZag!long( 2147483647 ) == 4294967294 );
+    assert( encodeZigZag!long( -2147483648 ) == 4294967295 );
+    
+    assert( encodeZigZag!short( 20 ) == 40 );
+    assert( encodeZigZag!short( -20 ) == 39 );
+    
+    assert( encodeZigZag!short( 0 ) == 0 );
+}
+
+
+pure auto decodeZigZag( T )( inout T v )
 if( isUnsigned!( T ) )
 {
     Signed!( T ) res = ( v & 1 )
@@ -206,25 +224,6 @@ unittest
 {
     assert( decodeZigZag!ulong( 4294967294 ) == 2147483647 );
     assert( decodeZigZag!ulong( 4294967295 ) == -2147483648 );
-}
-
-
-Unsigned!T encodeZigZag( T )( inout T v ) pure
-if( isSigned!( T ) )
-{
-    return cast( Unsigned!T )(
-            v > 0 ?
-            v * 2 :
-            -v * 2 - 1
-        );
-}
-unittest
-{
-    assert( encodeZigZag!long( 2147483647 ) == 4294967294 );
-    assert( encodeZigZag!long( -2147483648 ) == 4294967295 );
-    
-    assert( encodeZigZag!short( 20 ) == 40 );
-    assert( encodeZigZag!short( -20 ) == 39 );
 }
 
 
