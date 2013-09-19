@@ -4,6 +4,7 @@ import math.geometry;
 
 import core.bitop;
 import std.typecons: Nullable;
+import std.exception: enforce;
 debug import std.stdio;
 version(unittest) import std.string;
 
@@ -222,12 +223,14 @@ class RTreePtrs( _Box, _Payload )
             
             size_t children_num = n.children.length;
             
+            alias uint BinKey;
+            
             float minArea = float.max;
-            uint minAreaKey;
+            BinKey minAreaKey;
             
             // loop through all combinations of nodes
-            auto capacity = numToBits!uint( children_num );
-            for( uint i = 1; i < ( capacity + 1 ) / 2; i++ )
+            auto capacity = numToBits!BinKey( children_num );
+            for( BinKey i = 1; i < ( capacity + 1 ) / 2; i++ )
             {
                 Nullable!Box b1;
                 Nullable!Box b2;
@@ -241,7 +244,7 @@ class RTreePtrs( _Box, _Payload )
                 }
                 
                 // division into two unique combinations of child nodes
-                for( uint j = 0; j < children_num; j++ )
+                for( BinKey j = 0; j < children_num; j++ )
                 {
                     auto boundary = n.children[j].boundary;
                     
@@ -347,6 +350,16 @@ private
     /// convert number to number of bits
     T numToBits( T, N )( N n ) pure
     {
+        {
+            auto max_n = n + 1;
+            auto bytes_used = max_n / 8;
+            
+            if( max_n % 8 > 0 )
+                bytes_used++;
+                
+            enforce( bytes_used <= T.sizeof );
+        }
+        
         T res;
         for( N i = 0; i < n; i++ )
             res = cast(T) ( res << 1 | 1 );
