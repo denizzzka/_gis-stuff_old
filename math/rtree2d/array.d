@@ -30,6 +30,23 @@ class RTreeArray( RTreePtrs )
         debug(rtreearray) writeln("RTreeArray created, size ", storage.length, " bytes" );
     }
     
+    struct Found
+    {
+        Payload[] payloads;
+        alias payloads this;
+        
+        debug
+        {
+            struct DeepenBox
+            {
+                Box box;
+                ushort depth;
+            }
+            
+            DeepenBox[] boxes;
+        }
+    }
+    
     Payload[] search( inout Box boundary ) const
     {
         Payload[] res;
