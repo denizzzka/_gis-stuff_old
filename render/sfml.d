@@ -164,7 +164,7 @@ class Window : IWindow
 	    
 	    debug(rtree_draw_boxes)
 	    {
-		drawBBoxes( reg_lines.lines.boxes );
+		drawDeepenBoxes( reg_lines.lines.boxes );
 	    }
 	}
 	
