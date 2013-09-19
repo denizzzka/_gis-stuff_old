@@ -225,8 +225,8 @@ class RTreePtrs( _Box, _Payload )
             
             alias ulong BinKey;
             
-            float minArea = float.max;
-            BinKey minAreaKey;
+            float minPerimeter = float.max;
+            BinKey minPerimeterKey;
             
             // loop through all combinations of nodes
             auto capacity = numToBits!BinKey( children_num );
@@ -255,12 +255,12 @@ class RTreePtrs( _Box, _Payload )
                 }
                 
                 // search for combination with minimum area
-                float area = b1.getArea() + b2.getArea();
+                float perimeter = b1.getPerimeter + b2.getPerimeter;
                 
-                if( area < minArea )
+                if( perimeter < minPerimeter )
                 {
-                    minArea = area;
-                    minAreaKey = i;
+                    minPerimeter = perimeter;
+                    minPerimeterKey = i;
                 }
             }
             
@@ -274,7 +274,7 @@ class RTreePtrs( _Box, _Payload )
             {
                 auto c = oldChildren[i];
                 
-                if( bt( cast( size_t* ) &minAreaKey, i ) == 0 )
+                if( bt( cast( size_t* ) &minPerimeterKey, i ) == 0 )
                     n.assignChild( c );
                 else
                     newNode.assignChild( c );
