@@ -1,58 +1,23 @@
-message Coords
-{
-    required sint64 lon = 1;
-    required sint64 lat = 2;
-}
-
 message Box
 {
-    required Coords leftDownCorner = 1;
-    required Coords rightUpperCorner = 2;
+    required bytes data = 1;
 }
 
-message RTreePayloads
+message Layer
 {
-    repeated sint64 list = 1; // FIXME: need type
-}
-
-message RTreeNodes
-{
-    repeated RTreeNode list = 1;
-}
-
-message RTreeNode
-{
-    required uint32 data_offset = 1; // data storage offset
+    required Box boundary = 1;
     
-    // union of possible node content:
-    optional RTreeNodes nodes = 2;
-    optional RTreePayloads payloads = 3;
+    optional bytes points_storage = 2;
+    optional bytes lines_rtree = 3;
+    optional bytes road_graph = 4;
 }
 
 message MapRegion
 {
-    required Box boundary = 1;
+    required bytes file_id = 1;
+    required Box boundary = 2;
+    
+    optional bytes line_graph = 3;
+    repeated Layer layers = 4;
+    optional bytes areas = 5;
 }
-
-/*
-message HeaderBlock {
-  optional HeaderBBox bbox = 1;
-  repeated string required_features = 4;
-  repeated string optional_features = 5;
-
-  optional string writingprogram = 16; 
-  optional string source = 17; // From the bbox field.
-
-
-  // replication timestamp, expressed in seconds since the epoch, 
-  // otherwise the same value as in the "timestamp=..." field
-  // in the state.txt file used by Osmosis
-  optional int64 osmosis_replication_timestamp = 32;
-
-  // replication sequence number (sequenceNumber in state.txt)
-  optional int64 osmosis_replication_sequence_number = 33;
-
-  // replication base URL (from Osmosis' configuration.txt file)
-  optional string osmosis_replication_base_url = 34;
-}
-*/
