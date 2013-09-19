@@ -40,7 +40,7 @@ class RTreeArray( RTreePtrs )
             struct DeepenBox
             {
                 Box box;
-                ushort depth;
+                size_t depth;
             }
             
             DeepenBox[] boxes;
@@ -69,6 +69,12 @@ class RTreeArray( RTreePtrs )
         Box curr_boundary;
         place += curr_boundary.decompress( &storage[place] );
         curr_boundary = curr_boundary.getCornersSum( delta );
+        
+        debug
+        {{
+            Found.DeepenBox box = { box: curr_boundary, depth: currDepth };
+            res.boxes ~= box;
+        }}
         
         if( curr_boundary.isOverlappedBy( search_boundary ) )
         {
