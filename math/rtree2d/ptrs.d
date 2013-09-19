@@ -3,6 +3,7 @@ module math.rtree2d.ptrs;
 import math.geometry;
 
 import core.bitop;
+import std.typecons: Nullable;
 debug import std.stdio;
 version(unittest) import std.string;
 
@@ -213,34 +214,41 @@ class RTreePtrs( _Box, _Payload )
         }
         body
         {
-            size_t children_num = n.children.length;
-            
-            float minArea = float.max;
-            uint minAreaKey;
-            
             debug(rtptrs)
             {
                 writeln( "Begin splitting node ", n, " by brute force" );
                 stdout.flush();
             }
             
+            size_t children_num = n.children.length;
+            
+            float minArea = float.max;
+            uint minAreaKey;
+            
             // loop through all combinations of nodes
             auto capacity = numToBits!uint( children_num );
             for( uint i = 1; i < ( capacity + 1 ) / 2; i++ )
             {
-                Box b1;
-                Box b2;
+                Nullable!Box b1;
+                Nullable!Box b2;
+                
+                static void circumscribe( ref Nullable!Box box, inout Box add )
+                {
+                    if( box.isNull )
+                        box = add;
+                    else
+                        box.addCircumscribe( add );
+                }
                 
                 // division into two unique combinations of child nodes
-                uint j;
-                for( j = 0; j < children_num; j++ )
+                for( uint j = 0; j < children_num; j++ )
                 {
                     auto boundary = n.children[j].boundary;
                     
                     if( bt( cast( size_t* ) &i, j ) == 0 )
-                        b1 = b1.getCircumscribed( boundary );
+                        circumscribe( b1, boundary );
                     else
-                        b2 = b2.getCircumscribed( boundary );
+                        circumscribe( b2, boundary );
                 }
                 
                 // search for combination with minimum area
@@ -249,7 +257,7 @@ class RTreePtrs( _Box, _Payload )
                 if( area < minArea )
                 {
                     minArea = area;
-                    minAreaKey = j;
+                    minAreaKey = i;
                 }
             }
             
@@ -409,7 +417,7 @@ unittest
     rtree.statistic( nodes, leafs, leafBlocksNum );
     
     assert( leafs == 9 );
-    assert( nodes == 13 );
+    //assert( nodes == 13 );
     assert( leafBlocksNum == 6 );
     
     assert( rtree.root.getBoundary == BBox(Vector(1, 1), Vector(3, 3)) );
