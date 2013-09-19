@@ -162,10 +162,12 @@ class RTreeArray( RTreePtrs )
                 children_encoded ~= fillNode( c, currDepth+1 );
             }
             
+            assert( offsets[0] == 0 ); // first offset
+            
             ubyte[] offsets_encoded;
             
-            foreach_reverse( i, c; curr.children )
-                offsets_encoded = packVarint( offsets[i] ) ~ offsets_encoded;
+            for( size_t i = 1; i < curr.children.length; i++ ) // excludes first offset
+                offsets_encoded ~= packVarint( offsets[i] );
                 
             res ~= offsets_encoded ~ children_encoded;
         }
