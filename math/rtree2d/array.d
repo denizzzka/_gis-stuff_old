@@ -47,9 +47,9 @@ class RTreeArray( RTreePtrs )
         }
     }
     
-    Payload[] search( inout Box boundary ) const
+    Found search( inout Box boundary ) const
     {
-        Payload[] res;
+        Found res;
         
         debug(rtreearray) writeln("Begin search for ", boundary.toString );
         
@@ -62,9 +62,9 @@ class RTreeArray( RTreePtrs )
     }
     
     private
-    Payload[] search( inout Box search_boundary, inout Box delta, size_t place, in size_t currDepth ) const
+    Found search( inout Box search_boundary, inout Box delta, size_t place, in size_t currDepth ) const
     {
-        Payload[] res;
+        Found res;
         
         Box curr_boundary;
         place += curr_boundary.decompress( &storage[place] );
