@@ -292,6 +292,11 @@ struct Box( _Vector )
         
         return res;
     }
+    
+    string toString() const
+    {
+        return "ld=" ~ ld.toString ~ " ru=" ~ ru.toString;
+    }
 }
 
 unittest

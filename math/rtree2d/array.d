@@ -32,6 +32,8 @@ class RTreeArray( RTreePtrs )
     {
         Payload[] res;
         
+        debug(rtreearray) writeln("Begin search for ", boundary.toString );
+        
         if( storage.length )
             res = search( boundary, boundary, 0, 0 );
         
@@ -74,6 +76,8 @@ class RTreeArray( RTreePtrs )
     private static
     Payload[] getPayloads( inout size_t items_num, inout ubyte* src )
     {
+        debug(rtreearray) writeln("payloads num=", items_num );
+        
         Payload[] res = new Payload[ items_num ];
         size_t offset;
         
