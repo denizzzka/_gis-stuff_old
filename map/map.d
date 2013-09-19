@@ -188,7 +188,7 @@ class Region
         foreach( ref l; layers )
         {
             l._lines = new LinesRTree_array( l.lines );
-            delete l.lines;
+            //delete l.lines;
         }
     }
     
@@ -329,7 +329,7 @@ struct MapLinesDescriptor
     const Region* region;
     const size_t layer_num;
     
-    AnyLineDescriptor[] lines;
+    AnyLineDescriptor*[] lines;
 }
 
 class Map
@@ -351,9 +351,19 @@ class Map
         {
             MapLinesDescriptor curr = { region: &region, layer_num: layer_num };
             
-            curr.lines ~= region.layers[ layer_num ]._lines.search( boundary );
+            curr.lines ~= region.layers[ layer_num ].lines.search( boundary );
             
             res ~= curr;
+        }
+        
+        debug(map)
+        {
+            size_t num;
+            
+            foreach( ref c; res )
+                num += c.lines.length;
+                
+            writeln( __FUNCTION__~": found ", num, " lines" );
         }
         
         return res;
