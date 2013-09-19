@@ -54,7 +54,7 @@ class RTreeArray( RTreePtrs )
         debug(rtreearray) writeln("Begin search for ", boundary.toString );
         
         if( storage.length )
-            res = search( boundary, zero_box, 0, 0 );
+            search( boundary, zero_box, 0, 0, res );
         
         debug(rtreearray) writeln("Found ", res.length, " items" );
         
@@ -62,10 +62,8 @@ class RTreeArray( RTreePtrs )
     }
     
     private
-    Found search( inout Box search_boundary, inout Box delta, size_t place, in size_t currDepth ) const
+    void search( inout Box search_boundary, inout Box delta, size_t place, in size_t currDepth, ref Found res ) const
     {
-        Found res;
-        
         Box curr_boundary;
         place += curr_boundary.decompress( &storage[place] );
         curr_boundary = curr_boundary.getCornersSum( delta );
@@ -92,11 +90,9 @@ class RTreeArray( RTreePtrs )
                     place += offsets[i].unpackVarint( &storage[place] );
                 
                 for( auto i = 0; i < children_num; i++ )
-                    res ~= search( search_boundary, curr_boundary, place + offsets[i], currDepth+1 );
+                    search( search_boundary, curr_boundary, place + offsets[i], currDepth+1, res );
             }
         }
-        
-        return res;
     }
     
     private static

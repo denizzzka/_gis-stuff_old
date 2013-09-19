@@ -159,6 +159,8 @@ class Window : IWindow
 		
 		auto res_points = MapToWindowCoords( encoded_points );
 		drawLine( res_points, color );
+		
+		// draw box here
 	    }
 	
 	auto path = sfmlPath( scene.found_path );
