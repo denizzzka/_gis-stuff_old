@@ -213,7 +213,7 @@ class RTreePtrs( _Box, _Payload )
         }
         body
         {
-            size_t len = n.children.length;
+            size_t children_num = n.children.length;
             
             float minArea = float.max;
             uint minAreaKey;
@@ -225,7 +225,7 @@ class RTreePtrs( _Box, _Payload )
             }
             
             // loop through all combinations of nodes
-            auto capacity = numToBits!uint( len );
+            auto capacity = numToBits!uint( children_num );
             for( uint i = 1; i < ( capacity + 1 ) / 2; i++ )
             {
                 Box b1;
@@ -233,7 +233,7 @@ class RTreePtrs( _Box, _Payload )
                 
                 // division into two unique combinations of child nodes
                 uint j;
-                for( j = 0; j < len; j++ )
+                for( j = 0; j < children_num; j++ )
                 {
                     auto boundary = n.children[j].boundary;
                     
@@ -259,7 +259,7 @@ class RTreePtrs( _Box, _Payload )
             
             auto newNode = new Node;
             
-            for( auto i = 0; i < len; i++ )
+            for( auto i = 0; i < children_num; i++ )
             {
                 auto c = oldChildren[i];
                 
@@ -337,7 +337,7 @@ class RTreePtrs( _Box, _Payload )
 private
 {
     /// convert number to number of bits
-    auto numToBits( T, N )( N n ) pure
+    T numToBits( T, N )( N n ) pure
     {
         T res;
         for( N i = 0; i < n; i++ )
