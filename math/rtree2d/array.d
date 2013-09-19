@@ -16,13 +16,15 @@ class RTreeArray( RTreePtrs )
     private ubyte[] storage;
     private ubyte depth = 0;
     
+    static immutable Box zero_box;
+    
     this( inout RTreePtrs source )
     {
         if( source.root.children.length )
         {
             depth = source.depth;
             
-            storage = fillNode( source.root );
+            storage = fillNode( source.root, zero_box );
         }
         
         debug(rtreearray) writeln("RTreeArray created, size ", storage.length, " bytes" );
@@ -35,7 +37,7 @@ class RTreeArray( RTreePtrs )
         debug(rtreearray) writeln("Begin search for ", boundary.toString );
         
         if( storage.length )
-            res = search( boundary, boundary, 0, 0 );
+            res = search( boundary, zero_box, 0, 0 );
         
         debug(rtreearray) writeln("Found ", res.length, " items" );
         
@@ -43,14 +45,15 @@ class RTreeArray( RTreePtrs )
     }
     
     private
-    Payload[] search( inout Box boundary, inout Box delta2, size_t place, in size_t currDepth ) const
+    Payload[] search( inout Box search_boundary, inout Box delta, size_t place, in size_t currDepth ) const
     {
         Payload[] res;
         
         Box curr_boundary;
         place += curr_boundary.decompress( &storage[place] );
+        curr_boundary = curr_boundary.getCornersSum( delta );
         
-        if( curr_boundary.isOverlappedBy( boundary ) )
+        if( curr_boundary.isOverlappedBy( search_boundary ) )
         {
             size_t children_num;
             place += children_num.unpackVarint( &storage[place] );
@@ -66,7 +69,7 @@ class RTreeArray( RTreePtrs )
                     place += offsets[i].unpackVarint( &storage[place] );
                 
                 for( auto i = 0; i < children_num; i++ )
-                    res ~= search( boundary, boundary, place + offsets[i], currDepth+1 );
+                    res ~= search( search_boundary, curr_boundary, place + offsets[i], currDepth+1 );
             }
         }
         
@@ -92,9 +95,9 @@ class RTreeArray( RTreePtrs )
     }
     
     private
-    ubyte[] fillNode( inout RTreePtrs!(Box, Payload).Node* curr, size_t currDepth = 0 )
+    ubyte[] fillNode( inout RTreePtrs!(Box, Payload).Node* curr, inout Box delta, inout size_t currDepth = 0 )
     {
-        ubyte[] res = curr.boundary.compress; // boundary
+        ubyte[] res = curr.boundary.getCornersDiff( delta ).compress; // boundary
         res ~= packVarint( curr.children.length ); // number of children
         
         if( currDepth >= depth ) // adding leafs
@@ -109,7 +112,7 @@ class RTreeArray( RTreePtrs )
             foreach( i, c; curr.children )
             {
                 offsets[i] = children_encoded.length;
-                children_encoded ~= fillNode( c, currDepth+1 );
+                children_encoded ~= fillNode( c, curr.boundary, currDepth+1 );
             }
             
             assert( offsets[0] == 0 ); // first offset
