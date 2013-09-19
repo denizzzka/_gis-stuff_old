@@ -329,7 +329,7 @@ struct MapLinesDescriptor
     const Region* region;
     const size_t layer_num;
     
-    AnyLineDescriptor[] lines;
+    LinesRTree_array.Found lines;
 }
 
 class Map
@@ -349,9 +349,11 @@ class Map
         
         foreach( ref region; regions )
         {
-            MapLinesDescriptor curr = { region: &region, layer_num: layer_num };
-            
-            curr.lines ~= region.layers[ layer_num ]._lines.search( boundary );
+            MapLinesDescriptor curr = {
+                    region: &region,
+                    layer_num: layer_num,
+                    lines: region.layers[ layer_num ]._lines.search( boundary )
+                };
             
             res ~= curr;
         }

@@ -127,6 +127,7 @@ class Window : IWindow
 	RoadsSorted roads;
 	
         foreach( ref reg_lines; map_lines )
+	{
 	    foreach( ref line; reg_lines.lines )
 	    {
 		MapCoords[] encoded_points;
@@ -159,9 +160,13 @@ class Window : IWindow
 		
 		auto res_points = MapToWindowCoords( encoded_points );
 		drawLine( res_points, color );
-		
-		// draw box here
 	    }
+	    
+	    debug(rtree_draw_boxes)
+	    {
+		writeln(reg_lines.lines.boxes);
+	    }
+	}
 	
 	auto path = sfmlPath( scene.found_path );
 	roads.addRoads( path );
