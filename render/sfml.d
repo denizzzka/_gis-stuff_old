@@ -164,7 +164,7 @@ class Window : IWindow
 	    
 	    debug(rtree_draw_boxes)
 	    {
-		writeln(reg_lines.lines.boxes);
+		drawBBoxes( reg_lines.lines.boxes );
 	    }
 	}
 	
@@ -237,14 +237,28 @@ class Window : IWindow
     }
     
     private
+    void drawBBoxes( DeepenBox )( inout DeepenBox[] boxes )
+    {
+	foreach( ref b; boxes )
+	    drawBox( b.box );
+    }
+    
+    private
     void drawBox( inout BBox b )
     {
 	alias BBox.Vector V;
 	
-	auto p1 = b.ld;
-	auto p2 = V( b.ru.x, b.ld.y );
-	auto p3 = b.ru;
-	auto p4 = V( b.ld.x, b.ru.y );
+	MapCoords[] map_points = [
+		MapCoords( b.ld ),
+		MapCoords( MapCoords.Coords( b.ru.x, b.ld.y ) ),
+		MapCoords( b.ru ),
+		MapCoords( MapCoords.Coords( b.ld.x, b.ru.y ) ),
+		MapCoords( b.ld )
+	    ];
+	    
+	auto points = MapToWindowCoords( map_points );
+	
+	drawLine( points, Color.Black );
     }
     
     private
