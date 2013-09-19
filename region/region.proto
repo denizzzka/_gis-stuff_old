@@ -1,0 +1,58 @@
+message Coords
+{
+    required sint64 lon = 1;
+    required sint64 lat = 2;
+}
+
+message Box
+{
+    required Coords leftDownCorner = 1;
+    required Coords rightUpperCorner = 2;
+}
+
+message RTreePayloads
+{
+    repeated sint64 list = 1; // FIXME: need type
+}
+
+message RTreeNodes
+{
+    repeated RTreeNode list = 1;
+}
+
+message RTreeNode
+{
+    required uint32 data_offset = 1; // data storage offset
+    
+    // union of possible node content:
+    optional RTreeNodes nodes = 2;
+    optional RTreePayloads payloads = 3;
+}
+
+message MapRegion
+{
+    required Box boundary = 1;
+}
+
+/*
+message HeaderBlock {
+  optional HeaderBBox bbox = 1;
+  repeated string required_features = 4;
+  repeated string optional_features = 5;
+
+  optional string writingprogram = 16; 
+  optional string source = 17; // From the bbox field.
+
+
+  // replication timestamp, expressed in seconds since the epoch, 
+  // otherwise the same value as in the "timestamp=..." field
+  // in the state.txt file used by Osmosis
+  optional int64 osmosis_replication_timestamp = 32;
+
+  // replication sequence number (sequenceNumber in state.txt)
+  optional int64 osmosis_replication_sequence_number = 33;
+
+  // replication base URL (from Osmosis' configuration.txt file)
+  optional string osmosis_replication_base_url = 34;
+}
+*/
