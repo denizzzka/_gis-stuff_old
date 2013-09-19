@@ -361,6 +361,7 @@ private
         }
         
         T res;
+        
         for( N i = 0; i < n; i++ )
             res = cast(T) ( res << 1 | 1 );
             
