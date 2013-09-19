@@ -223,7 +223,7 @@ class RTreePtrs( _Box, _Payload )
             
             size_t children_num = n.children.length;
             
-            alias uint BinKey;
+            alias ulong BinKey;
             
             float minArea = float.max;
             BinKey minAreaKey;
@@ -244,11 +244,11 @@ class RTreePtrs( _Box, _Payload )
                 }
                 
                 // division into two unique combinations of child nodes
-                for( BinKey j = 0; j < children_num; j++ )
+                for( size_t bit_num = 0; bit_num < children_num; bit_num++ )
                 {
-                    auto boundary = n.children[j].boundary;
+                    auto boundary = n.children[ bit_num ].boundary;
                     
-                    if( bt( cast( size_t* ) &i, j ) == 0 )
+                    if( bt( cast( size_t* ) &i, bit_num ) == 0 )
                         circumscribe( b1, boundary );
                     else
                         circumscribe( b2, boundary );
