@@ -14,7 +14,7 @@ message Layer
 
 message MapRegion
 {
-    required bytes file_id = 1;
+    required bytes file_id = 1 [ default = "6dFile!Map" ];
     required Box boundary = 2;
     
     optional bytes line_graph = 3;
