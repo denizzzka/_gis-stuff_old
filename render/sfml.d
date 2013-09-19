@@ -237,28 +237,31 @@ class Window : IWindow
     }
     
     private
-    void drawBBoxes( DeepenBox )( inout DeepenBox[] boxes )
+    void drawDeepenBoxes( DeepenBox )( inout DeepenBox[] boxes )
     {
 	foreach( ref b; boxes )
-	    drawBox( b.box );
+	    drawDeepenBox( b );
     }
     
     private
-    void drawBox( inout BBox b )
+    void drawDeepenBox( DeepenBox )( inout DeepenBox dbox )
     {
-	alias BBox.Vector V;
+	auto b = dbox.box;
+	
+	alias MapCoords.Coords Coords;
 	
 	MapCoords[] map_points = [
 		MapCoords( b.ld ),
-		MapCoords( MapCoords.Coords( b.ru.x, b.ld.y ) ),
+		MapCoords( Coords( b.ru.x, b.ld.y ) ),
 		MapCoords( b.ru ),
-		MapCoords( MapCoords.Coords( b.ld.x, b.ru.y ) ),
+		MapCoords( Coords( b.ld.x, b.ru.y ) ),
 		MapCoords( b.ld )
 	    ];
 	    
 	auto points = MapToWindowCoords( map_points );
 	
-	drawLine( points, Color.Black );
+	ubyte shade = to!ubyte( dbox.depth*30 );
+	drawLine( points, Color(255 - shade, 0, shade) );
     }
     
     private
