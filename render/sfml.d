@@ -4,7 +4,7 @@ import render.window;
 import dsfml.graphics;
 import scene;
 import math.geometry;
-import map.map: MapLinesDescriptor, MapCoords, MercatorCoords, RoadGraph;
+import map.map: MapLinesDescriptor, MapCoords, MercatorCoords, RoadGraph, BBox;
 import cat = config.categories;
 import map.objects_properties: LineClass; // TODO: remove it?
 import render.road;
@@ -234,6 +234,17 @@ class Window : IWindow
 	cross.append( Vertex(c+horiz) );
 	
 	window.draw( cross );
+    }
+    
+    private
+    void drawBox( inout BBox b )
+    {
+	alias BBox.Vector V;
+	
+	auto p1 = b.ld;
+	auto p2 = V( b.ru.x, b.ld.y );
+	auto p3 = b.ru;
+	auto p4 = V( b.ld.x, b.ru.y );
     }
     
     private
