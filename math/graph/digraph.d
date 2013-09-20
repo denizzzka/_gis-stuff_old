@@ -58,7 +58,7 @@ class DirectedGraph( NodePayload, EdgePayload, alias Storage )
             return edges.length - 1;
         }
         
-        ubyte[] compress()
+        ubyte[] compress() const
         {
             ubyte[] res;
             
