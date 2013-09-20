@@ -37,7 +37,7 @@ class DirectedGraph( NodePayload, EdgePayload, alias Storage )
             this.idx = idx;
         }
         
-        ubyte[] compress() const работать_здесь
+        ubyte[] compress() const //работать_здесь
         {
             ubyte[] res;
             
@@ -56,14 +56,14 @@ class DirectedGraph( NodePayload, EdgePayload, alias Storage )
         
         EdgePayload payload;
         
-        ubyte[] compress() const
+        ubyte[] compress()() const
         {
             ubyte[] res;
             
             return res;
         }
         
-        size_t decompress( inout ubyte* from )
+        size_t decompress()( inout ubyte* from )
         {
             return 1;
         }
@@ -82,14 +82,14 @@ class DirectedGraph( NodePayload, EdgePayload, alias Storage )
             return edges.length - 1;
         }
         
-        ubyte[] compress() const
+        ubyte[] compress()() const
         {
             ubyte[] res;
             
             return res;
         }
         
-        size_t decompress( inout ubyte* from )
+        size_t decompress()( inout ubyte* from )
         {
             return 1;
         }
