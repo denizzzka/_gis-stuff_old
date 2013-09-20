@@ -299,6 +299,32 @@ struct Box( _Vector )
         return res;
     }
     
+    /// Returns: can return box for non-overlapping boxes (i.e. "negative overlapping box")
+    Box getOverlappingBox(in Box b) const
+    {
+        Box r;
+        
+        r.ld.x = max( ld.x, b.ld.x );
+        r.ru.x = min( ru.x, b.ru.x );
+        
+        r.ld.y = max( ld.y, b.ld.y );
+        r.ru.y = min( ru.y, b.ru.y );
+        
+        return r;
+    }
+    unittest
+    {
+        alias Vector2D!float Vector2;
+        alias Box!Vector2 BBox;
+        
+        BBox b1 = BBox( Vector2(1, 1), Vector2(2, 2) );
+        BBox b2 = BBox( Vector2(2, 0), Vector2(2, 2) );
+        
+        BBox b3 = BBox( Vector2(2, 1), Vector2(1, 1) );
+        
+        assert( b1.getOverlappingBox( b2 ) == b3 );
+    }
+    
     string toString() const
     {
         return "ld=" ~ ld.toString ~ " ru=" ~ ru.toString;
