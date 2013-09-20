@@ -1,10 +1,22 @@
 module math.graph.digraph;
 
 import std.random: uniform;
+import std.traits;
 
-
-class DirectedGraph( NodePayload, EdgePayload )
+class DirectedGraph( NodePayload, EdgePayload ) : TDirectedGraph!( NodePayload, EdgePayload, string )
 {
+}
+
+class TDirectedGraph( NodePayload, EdgePayload, Storage )
+{
+    private
+    {
+        static if( isSomeString!Storage ) // "none"
+            Node[] nodes;
+        else
+            auto nodes = new Storage!Node;
+    }
+    
     struct NodeDescr
     {
         private size_t idx;
@@ -46,8 +58,6 @@ class DirectedGraph( NodePayload, EdgePayload )
             return edges.length - 1;
         }
     }
-    
-    private Node[] nodes;
     
     bool isAvailable( in NodeDescr nd ) const
     {
@@ -115,7 +125,7 @@ class DirectedGraph( NodePayload, EdgePayload )
     {
         private
         {
-            const DirectedGraph graph;
+            const TDirectedGraph graph;
             EdgeDescr edge;
         }
         
@@ -138,5 +148,8 @@ class DirectedGraph( NodePayload, EdgePayload )
 
 unittest
 {
+    import compression.delta;
+    
+    float[] nodes;
     auto t = new DirectedGraph!( float, double );
 }
