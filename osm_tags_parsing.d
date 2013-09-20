@@ -152,7 +152,7 @@ Nullable!MapObjectProperties parseTags( in Tag[] tags )
         
         else if( !tags.getNoneOrOneStringVal( "building" ).isNull )
         {
-            res.classification = POLYLINE;
+            res.classification = AREA;
             
             res.line.type = BUILDING;
         }

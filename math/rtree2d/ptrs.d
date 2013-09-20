@@ -22,7 +22,7 @@ class RTreePtrs( _Box, _Payload )
     
     private Payload[] payloads;
     
-    this( in size_t maxChildren = 4, in size_t maxLeafChildren = 50 )
+    this( in size_t maxChildren, in size_t maxLeafChildren )
     in
     {
         assert( maxChildren >= 2 );
@@ -227,8 +227,8 @@ class RTreePtrs( _Box, _Payload )
             
             struct Metrics
             {
-                auto overlapping_area = real.max;
-                auto perimeter = real.max;
+                auto overlapping_perimeter = real.max;
+                auto boundary_perimeter = real.max;
             }
             
             Metrics metrics;
@@ -264,21 +264,21 @@ class RTreePtrs( _Box, _Payload )
                 Metrics m;
                 
                 if( b1.isOverlappedBy( b2 ) )
-                    m.overlapping_area = b1.getOverlappingBox( b2 ).getArea;
+                    m.overlapping_perimeter = b1.getOverlappingBox( b2 ).getPerimeter;
                 else
-                    m.overlapping_area = 0;
+                    m.overlapping_perimeter = 0;
                     
-                if( metrics.overlapping_area )
-                    if( m.overlapping_area < metrics.overlapping_area )
+                if( metrics.overlapping_perimeter )
+                    if( m.overlapping_perimeter < metrics.overlapping_perimeter )
                     {
                         metrics = m;
                         minMetricsKey = i;
                     }
                 else
                 {
-                    m.perimeter = b1.getPerimeter + b2.getPerimeter;
+                    m.boundary_perimeter = b1.getPerimeter + b2.getPerimeter;
                     
-                    if( m.perimeter < metrics.perimeter )
+                    if( m.boundary_perimeter < metrics.boundary_perimeter )
                     {
                         metrics = m;
                         minMetricsKey = i;
