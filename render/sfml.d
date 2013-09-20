@@ -260,8 +260,17 @@ class Window : IWindow
 	    
 	auto points = MapToWindowCoords( map_points );
 	
-	ubyte shade = to!ubyte( dbox.depth*30 );
-	drawLine( points, Color(255 - shade, 0, shade) );
+	auto shade = 255.0 / 8 * dbox.depth;
+	
+	import core.bitop: bt;
+	
+	auto color = Color(
+		to!ubyte( bt( cast(size_t*) &dbox.box.ld.x, 0 ) * shade ),
+		to!ubyte( bt( cast(size_t*) &dbox.box.ld.x, 1 ) * shade ),
+		to!ubyte( bt( cast(size_t*) &dbox.box.ld.x, 2 ) * shade )
+	    );
+	    
+	drawLine(points, color);
     }
     
     private
