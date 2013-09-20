@@ -25,7 +25,7 @@ class CompressedArray( T, size_t keyInterval )
         items_num++;
     }
     
-    T opIndex( inout size_t idx )
+    T opIndex( inout size_t idx ) const
     in
     {
         assert( idx < items_num );
@@ -38,7 +38,7 @@ class CompressedArray( T, size_t keyInterval )
         
         for( auto i = key_idx; i <= idx; i++ )
         {
-            ubyte* curr = &storage[ offset ];
+            const ubyte* curr = &storage[ offset ];
             size_t next_offset = res.decompress( curr );
             
             assert( next_offset > 0 );
@@ -63,12 +63,12 @@ unittest
     {
         float value;
         
-        ubyte[] compress()
+        ubyte[] compress() const
         {
             return [ to!ubyte( value ), 66, 77, 88 ];
         }
         
-        size_t decompress( ubyte* from )
+        size_t decompress( inout ubyte* from )
         {
             value = to!float( from[0] );
             

@@ -167,5 +167,5 @@ unittest
     
     static class Compressed(T) : CompressedArray!( T, 3 ){}
     
-    auto t1 = new DirectedGraph!( float, double, Compressed );
+    auto t2 = new DirectedGraph!( float, double, Compressed );
 }
