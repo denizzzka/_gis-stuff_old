@@ -3,18 +3,19 @@ module math.graph.digraph;
 import std.random: uniform;
 import std.traits;
 
-class DirectedGraph( NodePayload, EdgePayload ) : TDirectedGraph!( NodePayload, EdgePayload, string )
+
+class DirectedGraph( NodePayload, EdgePayload ) : DirectedGraph!( NodePayload, EdgePayload, string )
 {
 }
 
-class TDirectedGraph( NodePayload, EdgePayload, Storage )
+class DirectedGraph( NodePayload, EdgePayload, Storage )
 {
     private
     {
         static if( isSomeString!Storage ) // "none"
             Node[] nodes;
         else
-            auto nodes = new Storage!Node;
+            Storage nodes = new Storage;
     }
     
     struct NodeDescr
@@ -125,7 +126,7 @@ class TDirectedGraph( NodePayload, EdgePayload, Storage )
     {
         private
         {
-            const TDirectedGraph graph;
+            const DirectedGraph graph;
             EdgeDescr edge;
         }
         
@@ -150,6 +151,8 @@ unittest
 {
     import compression.delta;
     
-    float[] nodes;
+    float[] a;
+    alias DeltaEncodedArray!( a, float, 3 ) DeltaA;
+    
     auto t = new DirectedGraph!( float, double );
 }
