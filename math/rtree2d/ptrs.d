@@ -225,8 +225,14 @@ class RTreePtrs( _Box, _Payload )
             
             alias ulong BinKey;
             
-            float minPerimeter = float.max;
-            BinKey minPerimeterKey;
+            struct Metrics
+            {
+                auto overlapping_area = real.max;
+                auto perimeter = real.max;
+            }
+            
+            Metrics metrics;
+            BinKey minMetricsKey;
             
             // loop through all combinations of nodes
             auto capacity = numToBits!BinKey( children_num );
@@ -254,13 +260,29 @@ class RTreePtrs( _Box, _Payload )
                         circumscribe( b2, boundary );
                 }
                 
-                // search for combination with minimum area
-                float perimeter = b1.getOverlappingBox( b2 ).getArea;
+                // search for combination with minimum metrics
+                Metrics m;
                 
-                if( perimeter < minPerimeter )
+                if( b1.isOverlappedBy( b2 ) )
+                    m.overlapping_area = b1.getOverlappingBox( b2 ).getArea;
+                else
+                    m.overlapping_area = 0;
+                    
+                if( metrics.overlapping_area )
+                    if( m.overlapping_area < metrics.overlapping_area )
+                    {
+                        metrics = m;
+                        minMetricsKey = i;
+                    }
+                else
                 {
-                    minPerimeter = perimeter;
-                    minPerimeterKey = i;
+                    m.perimeter = b1.getPerimeter + b2.getPerimeter;
+                    
+                    if( m.perimeter < metrics.perimeter )
+                    {
+                        metrics = m;
+                        minMetricsKey = i;
+                    }
                 }
             }
             
@@ -274,7 +296,7 @@ class RTreePtrs( _Box, _Payload )
             {
                 auto c = oldChildren[i];
                 
-                if( bt( cast( size_t* ) &minPerimeterKey, i ) == 0 )
+                if( bt( cast( size_t* ) &minMetricsKey, i ) == 0 )
                     n.assignChild( c );
                 else
                     newNode.assignChild( c );

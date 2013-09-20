@@ -369,7 +369,7 @@ Region getRegion( string filename, bool verbose )
         }
     }
     
-    res.fillAreas( areas );
+    //res.fillAreas( areas );
     res.fillLines( lines );
     //res.fillRoads( roads );
     res.moveInfoIntoRTreeArray;

@@ -162,7 +162,7 @@ struct Layer
     void init()
     {
         POI = new PointsStorage( 4, 5 );
-        lines = new LinesRTree( 4, 5 );
+        lines = new LinesRTree( 4, 1 );
     }
     
     MBBox boundary() const
