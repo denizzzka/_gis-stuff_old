@@ -43,6 +43,18 @@ class DirectedGraph( NodePayload, EdgePayload, alias Storage )
         NodeDescr to_node;
         
         EdgePayload payload;
+        
+        ubyte[] compress() const
+        {
+            ubyte[] res;
+            
+            return res;
+        }
+        
+        size_t decompress( inout ubyte* from )
+        {
+            return 1;
+        }
     }
     
     struct Node
