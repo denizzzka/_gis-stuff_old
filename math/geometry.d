@@ -299,7 +299,7 @@ struct Box( _Vector )
         return res;
     }
     
-    /// Returns: can return box for non-overlapping boxes (i.e. "negative overlapping box")
+    /// Returns: can return "negative box" for non-overlapping boxes
     Box getOverlappingBox(in Box b) const
     {
         Box r;

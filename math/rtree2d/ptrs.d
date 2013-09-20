@@ -255,7 +255,7 @@ class RTreePtrs( _Box, _Payload )
                 }
                 
                 // search for combination with minimum area
-                float perimeter = b1.getPerimeter + b2.getPerimeter;
+                float perimeter = b1.getOverlappingBox( b2 ).getArea;
                 
                 if( perimeter < minPerimeter )
                 {

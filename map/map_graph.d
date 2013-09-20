@@ -204,7 +204,7 @@ Description[] cutOnCrossings( Description )( Description[] lines )
     alias Description.BBox BBox;
     alias RTreePtrs!( BBox, Description ) DescriptionsTree;
     
-    auto tree = new DescriptionsTree( 4, 4 );
+    auto tree = new DescriptionsTree( 4, 1 );
     
     foreach( ref c; lines )
     {
