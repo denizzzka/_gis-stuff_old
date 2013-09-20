@@ -47,16 +47,27 @@ class DirectedGraph( NodePayload, EdgePayload, alias Storage )
     
     struct Node
     {
-        private Edge[] edges;
-        
         NodePayload payload;
         
-        private
-        size_t addEdge( Edge edge )
+        private Edge[] edges;
+        
+        private size_t addEdge( Edge edge )
         {
             edges ~= edge;
             
             return edges.length - 1;
+        }
+        
+        ubyte[] compress()
+        {
+            ubyte[] res;
+            
+            return res;
+        }
+        
+        size_t decompress( inout ubyte* from )
+        {
+            return 1;
         }
     }
     
@@ -91,7 +102,7 @@ class DirectedGraph( NodePayload, EdgePayload, alias Storage )
             );
     }
     
-    ref const(NodePayload) getNodePayload( in NodeDescr node ) const
+    ref const(NodePayload) getNodePayload( inout NodeDescr node ) const
     {
         return nodes[ node.idx ].payload;
     }
@@ -149,19 +160,12 @@ class DirectedGraph( NodePayload, EdgePayload, alias Storage )
 
 unittest
 {
-    auto t = new DirectedGraph!( float, double );
+    auto t1 = new DirectedGraph!( float, double );
     
-    import compression.delta;
+    import compression.compressed;
+    import compression.digraph;
     
-    static class TDelta(T)
-    {
-        T[] array;
-        
-        DeltaEncodedArray!( array, T, 3 ) encoded;
-        alias encoded this;
-        
-        //alias encoded.opAssign opAssign;
-    }
+    static class Compressed(T) : CompressedArray!( T, 3 ){}
     
-    //auto t = new DirectedGraph!( float, double, TDelta );
+    auto t1 = new DirectedGraph!( float, double, Compressed );
 }

@@ -5,7 +5,7 @@ class CompressedArray( T, size_t keyInterval )
 {
     private ubyte[] storage;
     private size_t[] keys_indexes;
-    debug private size_t items_num;
+    private size_t items_num;
     
     private
     static size_t findKeyIdx( in size_t valIdx )
@@ -21,14 +21,14 @@ class CompressedArray( T, size_t keyInterval )
         if( keyIdx >= keys_indexes.length ) // need new key?
             keys_indexes ~= storage.length;
             
-        storage ~= v.compressed;
-        debug items_num++;
+        storage ~= v.compress;
+        items_num++;
     }
     
     T opIndex( inout size_t idx )
     in
     {
-        debug assert( idx < items_num );
+        assert( idx < items_num );
     }
     body
     {
@@ -48,6 +48,11 @@ class CompressedArray( T, size_t keyInterval )
         
         return res;
     }
+    
+    size_t length() const
+    {
+        return items_num;
+    }
 }
 
 unittest
@@ -58,7 +63,7 @@ unittest
     {
         float value;
         
-        ubyte[] compressed()
+        ubyte[] compress()
         {
             return [ to!ubyte( value ), 66, 77, 88 ];
         }
