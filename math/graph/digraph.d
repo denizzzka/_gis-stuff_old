@@ -4,18 +4,18 @@ import std.random: uniform;
 import std.traits;
 
 
-class DirectedGraph( NodePayload, EdgePayload ) : DirectedGraph!( NodePayload, EdgePayload, string )
+class DirectedGraph( NodePayload, EdgePayload ) : DirectedGraph!( NodePayload, EdgePayload, "none" )
 {
 }
 
-class DirectedGraph( NodePayload, EdgePayload, Storage )
+class DirectedGraph( NodePayload, EdgePayload, alias Storage )
 {
     private
     {
-        static if( isSomeString!Storage ) // "none"
+        static if( isSomeString!(typeof(Storage)) ) // "none"
             Node[] nodes;
         else
-            Storage nodes = new Storage;
+            Storage!Node nodes = new Storage!Node;
     }
     
     struct NodeDescr
@@ -149,10 +149,19 @@ class DirectedGraph( NodePayload, EdgePayload, Storage )
 
 unittest
 {
+    auto t = new DirectedGraph!( float, double );
+    
     import compression.delta;
     
-    float[] a;
-    alias DeltaEncodedArray!( a, float, 3 ) DeltaA;
+    static class TDelta(T)
+    {
+        T[] array;
+        
+        DeltaEncodedArray!( array, T, 3 ) encoded;
+        alias encoded this;
+        
+        //alias encoded.opAssign opAssign;
+    }
     
-    auto t = new DirectedGraph!( float, double );
+    //auto t = new DirectedGraph!( float, double, TDelta );
 }
