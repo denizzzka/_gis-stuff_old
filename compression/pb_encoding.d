@@ -64,6 +64,11 @@ unittest
 
 pure size_t unpackVarint( T )( out T res, inout ubyte* data )
 if( isIntegral!T && isUnsigned!T )
+out( r )
+{
+    assert( r > 0 );
+}
+body
 {
     size_t i;
     immutable ubyte mask = 0b_0111_1111;
