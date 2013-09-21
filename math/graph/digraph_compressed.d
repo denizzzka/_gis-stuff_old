@@ -1,14 +1,15 @@
-module math.graph.digraph;
+module math.graph.digraph_compressed;
 
-import std.random: uniform;
-import std.traits: isSomeString;
+import compression.compressed;
+
+import std.traits;
 
 
-class DirectedGraph( NodePayload, EdgePayload ) : DirectedGraph!( NodePayload, EdgePayload, "none" )
-{
-}
+//class DirectedGraphCompressed( NodePayload, EdgePayload ) : DirectedGraph!( NodePayload, EdgePayload, "none" )
+//{
+//}
 
-class DirectedGraph( NodePayload, EdgePayload, alias Storage )
+class DirectedGraphCompressed( NodePayload, EdgePayload, alias Storage )
 {
     private
     {
@@ -188,10 +189,6 @@ class DirectedGraph( NodePayload, EdgePayload, alias Storage )
 
 unittest
 {
-    auto t1 = new DirectedGraph!( float, double );
-    
-    import compression.compressed;
-    
     static class Compressed(T) : CompressedArray!( T, 3 ){}
     
     //auto t2 = new DirectedGraph!( float, double, Compressed );
