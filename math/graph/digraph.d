@@ -4,11 +4,12 @@ import std.random: uniform;
 import std.traits: isSomeString;
 
 
-class DirectedGraph( NodePayload, EdgePayload ) : DirectedGraph!( NodePayload, EdgePayload, "none" )
+class DirectedGraph( NodePayload, EdgePayload ) : Directed_Internal!( NodePayload, EdgePayload, "none" )
 {
 }
 
-class DirectedGraph( NodePayload, EdgePayload, alias Storage )
+package
+class Directed_Internal( NodePayload, EdgePayload, alias Storage )
 {
     private
     {
@@ -165,7 +166,7 @@ class DirectedGraph( NodePayload, EdgePayload, alias Storage )
     {
         private
         {
-            const DirectedGraph graph;
+            const Directed_Internal graph;
             EdgeDescr edge;
         }
         
