@@ -8,7 +8,7 @@ class DirectedBase( NodePayload, EdgePayload )
 {
     struct NodeDescr
     {
-        private size_t idx;
+        package size_t idx;
         this( size_t idx ){ this.idx = idx; }
     }
     
@@ -51,8 +51,7 @@ class DirectedBase( NodePayload, EdgePayload )
         NodeDescr to;
     }
     
-    abstract
-    size_t getNodesNum() const;
+    abstract size_t getNodesNum() const;
     
     NodeDescr getRandomNode() const
     {
@@ -66,11 +65,9 @@ class DirectedBase( NodePayload, EdgePayload )
                 dg( e );
     }
     
-    abstract
-    ref const(Node) getNode( inout NodeDescr node ) const;
+    abstract protected const(Node) getNode( inout NodeDescr node ) const;
     
-    abstract
-    ref const(NodePayload) getNodePayload( inout NodeDescr node ) const;
+    abstract const(NodePayload) getNodePayload( inout NodeDescr node ) const;
     
     struct EdgesRange
     {
@@ -121,14 +118,13 @@ class DirectedGraph( NodePayload, EdgePayload ) : DirectedBase!( NodePayload, Ed
             );
     }
     
-    override
-    ref const(Node) getNode( inout NodeDescr node ) const
+    override const(Node) getNode( inout NodeDescr node ) const
     {
         return nodes[ node.idx ];
     }
     
     override
-    ref const(NodePayload) getNodePayload( inout NodeDescr node ) const
+    const(NodePayload) getNodePayload( inout NodeDescr node ) const
     {
         return nodes[ node.idx ].payload;
     }
