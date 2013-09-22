@@ -1,6 +1,6 @@
 #### Navigation app and tools for convert maps for it
 
-Under construction! / В процессе разработки!
+Under heavy development!
 * * *
 Please support this project via GitTip:
 https://www.gittip.com/denizzzka/
