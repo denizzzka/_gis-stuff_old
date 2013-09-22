@@ -48,7 +48,7 @@ Roadmap:
     - [ ] Binary protocols
     - [ ] Another sensors: compass, acceleration, altimeter
 
-- [ ] Downloading maps from a server
-    - [ ] Download all maps which contains path
+- [ ] Downloading maps from the server
+    - [ ] Download all maps which contains some path
 
 - [ ] Porting app to any mobile platform
