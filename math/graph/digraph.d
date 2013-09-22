@@ -65,7 +65,7 @@ class DirectedBase( NodePayload, EdgePayload )
                 dg( e );
     }
     
-    abstract protected const(Node) getNode( inout NodeDescr node ) const;
+    abstract size_t getNodeEdgesNum( inout NodeDescr node ) const;
     
     abstract const(NodePayload) getNodePayload( inout NodeDescr node ) const;
     
@@ -80,7 +80,7 @@ class DirectedBase( NodePayload, EdgePayload )
         EdgeDescr front() { return edge; }
         void popFront() { ++edge.idx; }
         bool empty() const { return edge.idx >= length; }
-        size_t length() const { return graph.getNode( edge.node ).edges.length; }
+        size_t length() const { return graph.getNodeEdgesNum( edge.node ); }
     }
     
     EdgesRange getEdgesRange( in NodeDescr node ) const
@@ -118,9 +118,9 @@ class DirectedGraph( NodePayload, EdgePayload ) : DirectedBase!( NodePayload, Ed
             );
     }
     
-    override const(Node) getNode( inout NodeDescr node ) const
+    override size_t getNodeEdgesNum( inout NodeDescr node ) const
     {
-        return nodes[ node.idx ];
+        return nodes[ node.idx ].edges.length;
     }
     
     override

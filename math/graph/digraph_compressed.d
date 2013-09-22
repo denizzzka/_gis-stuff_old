@@ -46,9 +46,9 @@ class DirectedGraphCompressed( NodePayload, EdgePayload ) : DirectedBase!( NodeP
         return nodes.length;
     }
     
-    override const(Super.Node) getNode( inout NodeDescr node ) const
+    override size_t getNodeEdgesNum( inout NodeDescr node ) const
     {
-        return nodes[ node.idx ];
+        return 666; // FIXME: // was: nodes[ node.idx ].edges.length;
     }
     
     override const(NodePayload) getNodePayload( inout NodeDescr node ) const
