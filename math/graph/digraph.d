@@ -5,7 +5,7 @@ import std.traits: isSomeString;
 
 
 package
-class Directed_Internal( NodePayload, EdgePayload, alias Storage )
+class DirectedBase( NodePayload, EdgePayload, alias Storage )
 {
     private
     {
@@ -152,7 +152,7 @@ class Directed_Internal( NodePayload, EdgePayload, alias Storage )
     {
         private
         {
-            const Directed_Internal graph;
+            const DirectedBase graph;
             EdgeDescr edge;
         }
         
@@ -173,7 +173,7 @@ class Directed_Internal( NodePayload, EdgePayload, alias Storage )
     }
 }
 
-class DirectedGraph( NodePayload, EdgePayload ) : Directed_Internal!( NodePayload, EdgePayload, "none" )
+class DirectedGraph( NodePayload, EdgePayload ) : DirectedBase!( NodePayload, EdgePayload, "none" )
 {
     EdgeDescr addEdge( in ConnectionInfo conn, EdgePayload edgePayload )
     {
