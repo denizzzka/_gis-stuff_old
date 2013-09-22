@@ -19,6 +19,11 @@ class DirectedGraphCompressed( NodePayload, EdgePayload ) : DirectedBase!( NodeP
         Super.Node node;
         alias node this;
         
+        this( Super.Node n )
+        {
+            node = n;
+        }
+        
         ubyte[] compress() const
         {
             ubyte[] res; // = node.compress;
