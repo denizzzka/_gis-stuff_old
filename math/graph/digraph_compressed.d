@@ -1,5 +1,6 @@
 module math.graph.digraph_compressed;
 
+import math.graph.digraph: DirectedBase;
 import compression.compressed;
 
 import std.traits;
@@ -9,7 +10,7 @@ import std.traits;
 //{
 //}
 
-class DirectedGraphCompressed( NodePayload, EdgePayload, alias Storage )
+class DirectedGraphCompressed( NodePayload, EdgePayload ) : DirectedBase!( NodePayload, EdgePayload )
 {
 }
 
@@ -17,5 +18,5 @@ unittest
 {
     static class Compressed(T) : CompressedArray!( T, 3 ){}
     
-    auto t1 = new DirectedGraphCompressed!( float, double, Compressed );
+    auto t1 = new DirectedGraphCompressed!( float, double );
 }

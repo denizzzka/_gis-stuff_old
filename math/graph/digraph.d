@@ -1,7 +1,6 @@
 module math.graph.digraph;
 
 import std.random: uniform;
-import std.traits: isSomeString;
 
 
 package
@@ -54,6 +53,11 @@ class DirectedBase( NodePayload, EdgePayload )
     
     abstract
     size_t getNodesNum() const;
+    
+    NodeDescr getRandomNode() const
+    {
+        return NodeDescr( uniform( 0, getNodesNum ) );
+    }
     
     void forAllEdges( void delegate( EdgeDescr edge ) dg ) const
     {
@@ -149,11 +153,6 @@ class DirectedGraph( NodePayload, EdgePayload ) : DirectedBase!( NodePayload, Ed
         return nodes.length;
     }
     
-    NodeDescr getRandomNode() const
-    {
-        return NodeDescr( uniform( 0, nodes.length ) );
-    }
-    
     bool isAvailable( in NodeDescr nd ) const
     {
         return nd.idx < nodes.length;
@@ -163,10 +162,4 @@ class DirectedGraph( NodePayload, EdgePayload ) : DirectedBase!( NodePayload, Ed
 unittest
 {
     auto t1 = new DirectedGraph!( float, double );
-    
-    import compression.compressed;
-    
-    static class Compressed(T) : CompressedArray!( T, 3 ){}
-    
-    //auto t2 = new DirectedGraph!( float, double, Compressed );
 }
