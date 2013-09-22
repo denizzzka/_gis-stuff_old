@@ -28,7 +28,7 @@ Roadmap:
     - [ ] Data support for: cars, trucks, pedestrians, planes, ships etc
     - [ ] Isohypses
     - [x] Pathfinding
-        - [ ] Given the altitude (for mountains)
+        - [ ] Given by altitude (for mountains)
 
 - [x] Scene visualisation
     - [x] Software
