@@ -1,0 +1,9 @@
+message MapCoords
+{
+    required int64 lon = 1;
+    required int64 lat = 2;
+}
+
+message Edge
+{
+}
