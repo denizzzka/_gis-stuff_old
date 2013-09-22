@@ -5,16 +5,8 @@ import std.traits: isSomeString;
 
 
 package
-class DirectedBase( NodePayload, EdgePayload, alias Storage )
+class DirectedBase( NodePayload, EdgePayload )
 {
-    private
-    {
-        static if( isSomeString!(typeof(Storage)) ) // "none"
-            Node[] nodes;
-        else
-            Storage!Node nodes = new Storage!Node;
-    }
-    
     struct NodeDescr
     {
         private size_t idx;
@@ -33,46 +25,17 @@ class DirectedBase( NodePayload, EdgePayload, alias Storage )
             this.node = node;
             this.idx = idx;
         }
-        /*
-        ubyte[] compress() const
-        {
-            ubyte[] res = node.compress;
-            res ~= idx.compress;
-            
-            return res;
-        }
-        
-        size_t decompress( inout ubyte* from )
-        {
-            return 1;
-        }
-        */
     }
     
     struct Edge
     {
         NodeDescr to_node;
-        
         EdgePayload payload;
-        /*
-        ubyte[] compress()() const
-        {
-            ubyte[] res;
-            
-            return res;
-        }
-        
-        size_t decompress()( inout ubyte* from )
-        {
-            return 1;
-        }
-        */
     }
     
     struct Node
     {
         NodePayload payload;
-        
         private Edge[] edges;
         
         private size_t addEdge( Edge edge )
@@ -81,25 +44,58 @@ class DirectedBase( NodePayload, EdgePayload, alias Storage )
             
             return edges.length - 1;
         }
-        /*
-        ubyte[] compress()() const
-        {
-            ubyte[] res;
-            
-            return res;
-        }
+    }
         
-        size_t decompress()( inout ubyte* from )
-        {
-            return 1;
-        }
-        */
+    struct ConnectionInfo
+    {
+        NodeDescr from;
+        NodeDescr to;
     }
     
-    bool isAvailable( in NodeDescr nd ) const
+    abstract
+    size_t getNodesNum() const;
+    
+    void forAllEdges( void delegate( EdgeDescr edge ) dg ) const
     {
-        return nd.idx < nodes.length;
+        for( auto n = NodeDescr( 0 ); n.idx < getNodesNum(); n.idx++ )
+            foreach( ref e; getEdgesRange( n ) )
+                dg( e );
     }
+    
+    abstract
+    ref const(Node) getNode( inout NodeDescr node ) const;
+    
+    abstract
+    ref const(NodePayload) getNodePayload( inout NodeDescr node ) const;
+    
+    struct EdgesRange
+    {
+        private
+        {
+            const DirectedBase graph;
+            EdgeDescr edge;
+        }
+        
+        EdgeDescr front() { return edge; }
+        void popFront() { ++edge.idx; }
+        bool empty() const { return edge.idx >= length; }
+        size_t length() const { return graph.getNode( edge.node ).edges.length; }
+    }
+    
+    EdgesRange getEdgesRange( in NodeDescr node ) const
+    {
+        EdgesRange res = {
+                graph: this,
+                EdgeDescr( node, 0 )
+            };
+        
+        return res;
+    }
+}
+
+class DirectedGraph( NodePayload, EdgePayload ) : DirectedBase!( NodePayload, EdgePayload )
+{
+    private Node[] nodes;
     
     NodeDescr addNode( NodePayload nodePayload )
     {
@@ -111,12 +107,23 @@ class DirectedBase( NodePayload, EdgePayload, alias Storage )
         return res;
     }
     
-    struct ConnectionInfo
+    EdgeDescr addEdge( in ConnectionInfo conn, EdgePayload edgePayload )
     {
-        NodeDescr from;
-        NodeDescr to;
+        Edge e = { to_node: conn.to, payload: edgePayload };
+        
+        return EdgeDescr(
+                conn.from,
+                nodes[ conn.from.idx ].addEdge( e )
+            );
     }
     
+    override
+    ref const(Node) getNode( inout NodeDescr node ) const
+    {
+        return nodes[ node.idx ];
+    }
+    
+    override
     ref const(NodePayload) getNodePayload( inout NodeDescr node ) const
     {
         return nodes[ node.idx ].payload;
@@ -136,53 +143,20 @@ class DirectedBase( NodePayload, EdgePayload, alias Storage )
         return nodes[ node.idx ].edges[ edge.idx ];
     }
     
+    override
+    size_t getNodesNum() const
+    {
+        return nodes.length;
+    }
+    
     NodeDescr getRandomNode() const
     {
         return NodeDescr( uniform( 0, nodes.length ) );
     }
     
-    void forAllEdges( void delegate( EdgeDescr edge ) dg ) const
+    bool isAvailable( in NodeDescr nd ) const
     {
-        for( auto n = NodeDescr( 0 ); n.idx < nodes.length; n.idx++ )
-            foreach( ref e; getEdgesRange( n ) )
-                dg( e );
-    }
-    
-    struct EdgesRange
-    {
-        private
-        {
-            const DirectedBase graph;
-            EdgeDescr edge;
-        }
-        
-        EdgeDescr front() { return edge; }
-        void popFront() { ++edge.idx; }
-        bool empty() const { return edge.idx >= length; }
-        size_t length() const { return graph.nodes[ edge.node.idx ].edges.length; }
-    }
-    
-    EdgesRange getEdgesRange( in NodeDescr node ) const
-    {
-        EdgesRange res = {
-                graph: this,
-                EdgeDescr( node, 0 )
-            };
-        
-        return res;
-    }
-}
-
-class DirectedGraph( NodePayload, EdgePayload ) : DirectedBase!( NodePayload, EdgePayload, "none" )
-{
-    EdgeDescr addEdge( in ConnectionInfo conn, EdgePayload edgePayload )
-    {
-        Edge e = { to_node: conn.to, payload: edgePayload };
-        
-        return EdgeDescr(
-                conn.from,
-                nodes[ conn.from.idx ].addEdge( e )
-            );
+        return nd.idx < nodes.length;
     }
 }
 
