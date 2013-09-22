@@ -37,12 +37,11 @@ Roadmap:
 
 - [ ] Text search for objects
 
-- [x] Загрубление данных на разных режимах детализации (увеличения)
+- [ ] Data generalization
+    - [x] By reducing points
 
-- [ ] Чтение "польского формата" ("Map Polish", ".mp")
-
-- [ ] Конвертер карт
-    - [ ] Упаковка данных с целью уменьшения размера файлов данных
+- [ ] Internal format of maps
+    - [ ] "Map Polish" format support (*.mp)
 
 - [ ] Поддержка ввода данных с датчика GPS (NMEA)
     - [ ] Глонасс
