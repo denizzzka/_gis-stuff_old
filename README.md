@@ -1,4 +1,4 @@
-#### Программа для навигации и набор утилит для создания карт для неё
+#### Navigation app and tools for convert maps for it
 
 Under construction! / В процессе разработки!
 * * *
