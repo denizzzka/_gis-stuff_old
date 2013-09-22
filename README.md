@@ -1,7 +1,10 @@
-#### Программа для навигации и набор утилит для создания карт для неё
+#### Navigation app and tools to convert maps for it
 
-Under construction! / В процессе разработки!
-
+Under heavy development!
+* * *
+Please support this project via GitTip:
+https://www.gittip.com/denizzzka/
+* * *
 Use "--recursive" for cloning this repository:
 ```
 git clone --recursive git://github.com/denizzzka/gis-stuff.git
@@ -21,34 +24,31 @@ If no options are passed "-release" option will be used.
 Roadmap:
 --------------
 
-- [x] Хранение геоданных слоями
-    - [ ] Отдельно данные для легковых авто, грузовых, пешеходов, самолётов, кораблей и т.д.
-    - [ ] Хранение изолиний
-    - [x] Прокладка маршрутов
-        - [ ] С учётом высот
+- [x] Data Layers
+    - [ ] Data support for: cars, trucks, pedestrians, planes, ships etc
+    - [ ] Isohypses
+    - [x] Pathfinding
+        - [ ] Given by altitude (for mountains)
 
-- [x] Сцена (выборка объектов для отображения в соответствии с общими свойствами сцены: углом, азимутом, высотой и т.д.)
-    
-- [x] Визуализация сцены
-    - [x] Софтверная сцена
-        - [ ] Отрисовка перспективы - переносимый на разные платформы интерфейс
-    - [ ] Отрисовка 3Д средствами OpenGL (для платформ, где хорошо работает OpenGL)
+- [x] Scene visualisation
+    - [x] Software
+        - [ ] Software 3D
+    - [ ] OpenGL
 
-- [ ] Текстовый поиск POI
+- [ ] Text search
 
-- [x] Загрубление данных на разных режимах детализации (увеличения)
+- [ ] Data generalization
+    - [x] By reducing points
 
-- [ ] Чтение "польского формата" ("Map Polish", ".mp")
+- [ ] Internal format of maps
+    - [ ] "Map Polish" format support (*.mp)
 
-- [ ] Конвертер карт
-    - [ ] Упаковка данных с целью уменьшения размера файлов данных
+- [ ] Support input from a GPS sensor (NMEA)
+    - [ ] GLONASS
+    - [ ] Binary protocols
+    - [ ] Another sensors: compass, acceleration, altimeter
 
-- [ ] Поддержка ввода данных с датчика GPS (NMEA)
-    - [ ] Глонасс
-    - [ ] Бинарные протоколы
-    - [ ] Другие датчики (компас, датчик ускорений, альтиметр)
+- [ ] Downloading maps from the server
+    - [ ] Download all maps which contains some path
 
-- [ ] Загрузка с сервера карт текущего местоположения
-    - [ ] Загрузка всех карт, через которые проходит заданный маршрут
-
-- [ ] Портирование программы на какую-нибудь мобильную платформу
+- [ ] Porting app to any mobile platform
