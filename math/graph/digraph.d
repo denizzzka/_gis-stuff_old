@@ -4,10 +4,6 @@ import std.random: uniform;
 import std.traits: isSomeString;
 
 
-class DirectedGraph( NodePayload, EdgePayload ) : Directed_Internal!( NodePayload, EdgePayload, "none" )
-{
-}
-
 package
 class Directed_Internal( NodePayload, EdgePayload, alias Storage )
 {
@@ -121,16 +117,6 @@ class Directed_Internal( NodePayload, EdgePayload, alias Storage )
         NodeDescr to;
     }
     
-    EdgeDescr addEdge( in ConnectionInfo conn, EdgePayload edgePayload )
-    {
-        Edge e = { to_node: conn.to, payload: edgePayload };
-        
-        return EdgeDescr(
-                conn.from,
-                nodes[ conn.from.idx ].addEdge( e )
-            );
-    }
-    
     ref const(NodePayload) getNodePayload( inout NodeDescr node ) const
     {
         return nodes[ node.idx ].payload;
@@ -184,6 +170,19 @@ class Directed_Internal( NodePayload, EdgePayload, alias Storage )
             };
         
         return res;
+    }
+}
+
+class DirectedGraph( NodePayload, EdgePayload ) : Directed_Internal!( NodePayload, EdgePayload, "none" )
+{
+    EdgeDescr addEdge( in ConnectionInfo conn, EdgePayload edgePayload )
+    {
+        Edge e = { to_node: conn.to, payload: edgePayload };
+        
+        return EdgeDescr(
+                conn.from,
+                nodes[ conn.from.idx ].addEdge( e )
+            );
     }
 }
 
