@@ -44,7 +44,7 @@ class DirectedBase( NodePayload, EdgePayload )
             return edges.length - 1;
         }
     }
-        
+    
     struct ConnectionInfo
     {
         NodeDescr from;

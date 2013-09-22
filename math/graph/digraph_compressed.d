@@ -33,7 +33,7 @@ class DirectedGraphCompressed( NodePayload, EdgePayload ) : DirectedBase!( NodeP
         }
     }
     
-    alias CompressedArray!( Node, 3 ) NodesArray;
+    alias CompressedArray!( Node, 10 ) NodesArray;
     private NodesArray nodes;
     
     this()
