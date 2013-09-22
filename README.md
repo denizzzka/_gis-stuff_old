@@ -1,4 +1,4 @@
-#### Navigation app and tools for convert maps for it
+#### Navigation app and tools to convert maps for it
 
 Under heavy development!
 * * *
