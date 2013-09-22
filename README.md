@@ -51,4 +51,4 @@ Roadmap:
 - [ ] Downloading maps from a server
     - [ ] Download all maps which contains path
 
-- [ ] Портирование программы на какую-нибудь мобильную платформу
+- [ ] Porting app to any mobile platform
