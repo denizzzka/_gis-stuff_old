@@ -30,12 +30,12 @@ Roadmap:
     - [x] Pathfinding
         - [ ] Given the altitude (for mountains)
 
-- [x] Dcene visualisation
+- [x] Scene visualisation
     - [x] Software
         - [ ] Software 3D
     - [ ] OpenGL
 
-- [ ] Text search for objects
+- [ ] Text search
 
 - [ ] Data generalization
     - [x] By reducing points
@@ -43,12 +43,12 @@ Roadmap:
 - [ ] Internal format of maps
     - [ ] "Map Polish" format support (*.mp)
 
-- [ ] Поддержка ввода данных с датчика GPS (NMEA)
-    - [ ] Глонасс
-    - [ ] Бинарные протоколы
-    - [ ] Другие датчики (компас, датчик ускорений, альтиметр)
+- [ ] Support input from a GPS sensor (NMEA)
+    - [ ] GLONASS
+    - [ ] Binary protocols
+    - [ ] Another sensors: compass, acceleration, altimeter
 
-- [ ] Загрузка с сервера карт текущего местоположения
-    - [ ] Загрузка всех карт, через которые проходит заданный маршрут
+- [ ] Downloading maps from a server
+    - [ ] Download all maps which contains path
 
 - [ ] Портирование программы на какую-нибудь мобильную платформу
