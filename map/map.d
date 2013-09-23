@@ -12,6 +12,7 @@ import map.area: Area;
 import map.objects_properties: LineClass;
 static import config.map;
 static import config.converter;
+static import pbf = pbf.map_objects;
 
 debug(map) import std.stdio;
 
@@ -53,6 +54,16 @@ struct MapCoords
     {
         return math.earth.mercator2coords( getMercatorCoords );
     }
+    
+    pbf.MapCoords toPbf() const
+    {
+        pbf.MapCoords res;
+        
+        res.lon = map_coords.lon;
+        res.lat = map_coords.lat;
+        
+        return res;
+    }    
 }
 
 alias Box!(MapCoords.Coords) BBox;

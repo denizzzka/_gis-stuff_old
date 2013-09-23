@@ -5,6 +5,7 @@ import math.rtree2d.ptrs;
 import map.map: MapCoords, BBox;
 import math.earth: mercator2coords, getSphericalDistance;
 import map.adapters: TPolylineDescription;
+static import pbf = pbf.map_objects;
 
 import std.algorithm: canFind;
 import std.random: uniform;
@@ -38,9 +39,17 @@ struct MapGraphPolyline
     
     @disable this();
     
-    ubyte[] Serialize() const
+    pbf.MapPolyline Serialize( MapCoords delta ) const
     {
-        assert(false);
+        pbf.MapPolyline res;
+        
+        foreach( p; points )
+        {
+            delta.map_coords = p.map_coords - delta.map_coords;
+            res.coords_delta ~= delta.toPbf();
+        }
+        
+        return res;
     }
     
     void Deserialize( inout ubyte[] from )
