@@ -39,7 +39,7 @@ struct MapGraphPolyline
     
     @disable this();
     
-    pbf.MapPolyline Serialize( MapCoords delta ) const
+    pbf.MapPolyline toPbf( MapCoords delta ) const
     {
         pbf.MapPolyline res;
         

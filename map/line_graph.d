@@ -4,6 +4,7 @@ import map.map_graph;
 import math.graph.digraph;
 import math.graph.digraph_compressed;
 import cat = config.categories: Line;
+static import pbf = pbf.line_graph;
 
 
 struct LineProperties
@@ -24,9 +25,14 @@ struct MapGraphLine
         this.properties = properties;
     }
     
-    ubyte[] Serialize() const
+    ubyte[] Serialize( MapCoords delta ) const
     {
-        assert(false);
+        pbf.Line res;
+        
+        res.polyline = polyline.toPbf( delta );
+        res.type = type;
+        
+        return res.Serialize;
     }
     
     static MapGraphLine Deserialize( inout ubyte[] from )
