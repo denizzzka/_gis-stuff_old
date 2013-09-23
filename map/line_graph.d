@@ -2,6 +2,7 @@ module map.line_graph;
 
 import map.map_graph;
 import math.graph.digraph;
+import math.graph.digraph_compressed;
 import cat = config.categories: Line;
 
 
@@ -25,6 +26,7 @@ struct MapGraphLine
 }
 
 alias MapGraph!( DirectedGraph, MapGraphPoint, MapGraphLine ) LineGraph;
+alias MapGraph!( DirectedGraphCompressed, MapGraphPoint, MapGraphLine ) LineGraphCompressed;
 
 unittest
 {

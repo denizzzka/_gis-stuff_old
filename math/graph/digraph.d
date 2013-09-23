@@ -17,7 +17,7 @@ class DirectedBase( NodePayload, EdgePayload )
     struct EdgeDescr
     {
         NodeDescr node;
-        private size_t idx;
+        package size_t idx;
         
         this( NodeDescr node, size_t idx )
         {

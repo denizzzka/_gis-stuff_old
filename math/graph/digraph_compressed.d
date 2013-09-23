@@ -2,6 +2,7 @@ module math.graph.digraph_compressed;
 
 static import pbf = math.graph.digraph_compressed_pbf;
 import math.graph.digraph;
+import compression.compressed: CompressedArray;
 
 import std.traits;
 
@@ -10,11 +11,15 @@ class DirectedGraphCompressed( NodePayload, EdgePayload ) : DirectedBase!( NodeP
 {
     alias BaseClassesTuple!DirectedGraphCompressed[0] Super;
     
-    private pbf.DirectedGraph storage;
+    alias CompressedArray!( pbf.Node, 3 ) CompressedArr;
+    
+    private const CompressedArr nodes;
     
     this( Digraph )( Digraph g )
     if( isInstanceOf!(DirectedGraph, Digraph) )
     {
+        CompressedArr nodes;
+        
         foreach( ref n; g.getNodesRange )
         {
             pbf.Node node;
@@ -31,23 +36,48 @@ class DirectedGraphCompressed( NodePayload, EdgePayload ) : DirectedBase!( NodeP
                 node.edges ~= edge;
             }
             
-            storage.nodes ~= node;
+            nodes ~= node;
         }
+        
+        this.nodes = nodes;
     }
     
     override size_t getNodesNum() const
     {
-        return storage.nodes.length;
+        return nodes.length;
     }
     
     override size_t getNodeEdgesNum( inout NodeDescr node ) const
     {
-        return storage.nodes[ node.idx ].edges.length;
+        return nodes[ node.idx ].edges.length;
     }
     
     override const(NodePayload) getNodePayload( inout NodeDescr node ) const
     {
-        return storage.nodes[ node.idx ].payload.Deserialize!NodePayload;
+        NodePayload res;
+        return res;
+        //return nodes[ node.idx ].payload.Deserialize!NodePayload;
+    }
+    
+    Edge getEdge( in EdgeDescr edge ) const
+    in
+    {
+        auto node = edge.node;
+        
+        assert( node.idx < getNodesNum );
+        assert( edge.idx < getNodeEdgesNum( node ) );
+    }
+    body
+    {
+        auto node = edge.node;
+        auto e = nodes[ node.idx ].edges.get[ edge.idx ];
+        
+        Edge res = {
+                to_node: e.to_node_idx,
+                //payload: Deserialize!EdgePayload( e.payload.get )
+            };
+        
+        return res;
     }
 }
 
