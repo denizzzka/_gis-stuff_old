@@ -47,7 +47,7 @@ class DirectedGraphCompressed( NodePayload, EdgePayload ) : DirectedBase!( NodeP
     
     override const(NodePayload) getNodePayload( inout NodeDescr node ) const
     {
-        return 777; //storage.nodes[ node.idx ].payload;
+        return storage.nodes[ node.idx ].payload.Deserialize!NodePayload;
     }
 }
 
@@ -59,6 +59,16 @@ version(unittest)
     {
         T t = cast(T) x;
         return packVarint( t );
+    }
+    
+    static T Deserialize(T)( inout ubyte[] data )
+    {
+        T res;
+        const offset = res.unpackVarint( &data[0] );
+        
+        assert( offset == data.length );
+        
+        return res;
     }
 }
 
