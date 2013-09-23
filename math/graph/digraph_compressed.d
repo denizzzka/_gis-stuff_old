@@ -47,6 +47,8 @@ class DirectedGraphCompressed( NodePayload, EdgePayload ) : DirectedBase!( NodeP
         {
             Node node;
             
+            auto node_payload = getNodePayload(n);
+            
             foreach( ref e; g.getEdgesRange( n ) )
             {
                 pbf.Edge edge;
@@ -54,7 +56,7 @@ class DirectedGraphCompressed( NodePayload, EdgePayload ) : DirectedBase!( NodeP
                 auto edge_ptr = &g.getEdge( e );
                 
                 edge.to_node_idx = edge_ptr.to_node.idx;
-                edge.payload = edge_ptr.payload.Serialize;
+                edge.payload = edge_ptr.payload.Serialize( node_payload );
                 
                 node.edges ~= edge;
             }
@@ -111,7 +113,7 @@ unittest
         short v;
         alias v this;
         
-        ubyte[] Serialize() const
+        ubyte[] Serialize( Val unused ) const
         {
             return packVarint( v );
         }
