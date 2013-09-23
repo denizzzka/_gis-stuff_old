@@ -16,12 +16,16 @@ class DirectedGraphCompressed( NodePayload, EdgePayload ) : DirectedBase!( NodeP
     this( Digraph )( Digraph g )
     if( isInstanceOf!(DirectedGraph, Digraph) )
     {
-        foreach( ref node; g.getNodesRange )
-            foreach( ref edge; g.getEdgesRange( node ) )
+        foreach( ref n; g.getNodesRange )
+        {
+            pbf.Node node;
+            
+            foreach( ref e; g.getEdgesRange( n ) )
             {
-                pbf.Edge e;
-                e.to_node_idx = g.getEdge( edge ).to_node.idx;
+                pbf.Edge edge;
+                edge.to_node_idx = g.getEdge( e ).to_node.idx;
             }
+        }
     }
     
     override size_t getNodesNum() const
