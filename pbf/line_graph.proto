@@ -1,0 +1,8 @@
+import "map_objects.proto";
+
+
+message Line
+{
+    required MapPolyline polyline = 1;
+    required uint32 type = 2;
+}

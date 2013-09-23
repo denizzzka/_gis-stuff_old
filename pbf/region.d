@@ -1,4 +1,4 @@
-module pbf.region;
+module region;
 import ProtocolBuffer.conversion.pbbinary;
 import std.conv;
 import std.typecons;

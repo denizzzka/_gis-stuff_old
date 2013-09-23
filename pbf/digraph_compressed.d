@@ -1,4 +1,4 @@
-module pbf.digraph_compressed;
+module digraph_compressed;
 import ProtocolBuffer.conversion.pbbinary;
 import std.conv;
 import std.typecons;
