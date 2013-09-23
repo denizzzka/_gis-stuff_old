@@ -46,7 +46,7 @@ class DirectedGraphCompressed( NodePayload, EdgePayload ) : DirectedBase!( NodeP
         {
             Node node;
             
-            auto node_payload = getNodePayload(n);
+            auto node_payload = g.getNodePayload(n);
             node.payload = node_payload.Serialize;
             
             foreach( ref e; g.getEdgesRange( n ) )
