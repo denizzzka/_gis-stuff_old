@@ -25,7 +25,7 @@ class DirectedGraphCompressed( NodePayload, EdgePayload ) : DirectedBase!( NodeP
         {
             pbf.Edge e;
             e.to_node_idx = to_node.idx;
-            //e.payload = payload.toPbf;
+            e.payload = payload.toPbf;
             
             return e;
         }        
@@ -44,7 +44,7 @@ class DirectedGraphCompressed( NodePayload, EdgePayload ) : DirectedBase!( NodeP
         pbf.Node toPbf() const
         {
             pbf.Node n;
-            //n.payload = payload.toPbf;
+            n.payload = payload.toPbf;
             
             foreach( ref e; edges )
                 n.edges ~= Edge(e).toPbf;
@@ -80,14 +80,20 @@ class DirectedGraphCompressed( NodePayload, EdgePayload ) : DirectedBase!( NodeP
     }
 }
 
-unittest
+version(unittest)
 {
     import compression.pb_encoding;
     
     static ubyte[] toPbf(T)( inout T x )
     {
-        return packVarint( x );
+        T t = cast(T) x;
+        return packVarint( t );
     }
+}
+
+unittest
+{
+    
     
     auto t1 = new DirectedGraphCompressed!( short, ulong );
 }
