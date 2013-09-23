@@ -1,7 +1,7 @@
 module math.graph.digraph_compressed;
 
 static import pbf = math.graph.digraph_compressed_pbf;
-import math.graph.digraph: DirectedBase;
+import math.graph.digraph;
 //import compression.delta;
 
 import std.traits;
@@ -60,7 +60,8 @@ class DirectedGraphCompressed( NodePayload, EdgePayload ) : DirectedBase!( NodeP
     
     private pbf.DirectedGraph storage;
     
-    this()
+    this( Digraph )( Digraph g )
+    if( isInstanceOf!(DirectedGraph, Digraph) )
     {
     }
     
@@ -93,7 +94,9 @@ version(unittest)
 
 unittest
 {
+    auto t1 = new DirectedGraph!( float, double );
     
+    alias DirectedGraphCompressed!( short, ulong ) CDG;
     
-    auto t1 = new DirectedGraphCompressed!( short, ulong );
+    auto t2 = new CDG( t1 );
 }
