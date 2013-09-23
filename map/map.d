@@ -63,7 +63,12 @@ struct MapCoords
         res.lat = map_coords.lat;
         
         return res;
-    }    
+    }
+    
+    ubyte[] Serialize() const
+    {
+        return toPbf.Serialize;
+    }
 }
 
 alias Box!(MapCoords.Coords) BBox;
