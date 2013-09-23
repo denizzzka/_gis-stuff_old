@@ -1,0 +1,5 @@
+message Edge
+{
+    required uint32 to_node_idx = 1;
+    required bytes payload = 2;
+}
