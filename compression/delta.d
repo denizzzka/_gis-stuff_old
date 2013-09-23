@@ -31,7 +31,7 @@ class DeltaEncodedArray( alias Array, T, size_t keyInterval )
         }
     }
     
-    T opIndex( inout size_t idx )
+    T opIndex( inout size_t idx ) const
     in
     {
         assert( idx < encoded.length );
@@ -46,6 +46,11 @@ class DeltaEncodedArray( alias Array, T, size_t keyInterval )
             res += encoded[i];
         
         return res;
+    }
+    
+    size_t length() const
+    {
+        return encoded.length;
     }
 }
 

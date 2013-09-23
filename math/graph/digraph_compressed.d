@@ -2,7 +2,7 @@ module math.graph.digraph_compressed;
 
 static import pbf = math.graph.digraph_compressed_pbf;
 import math.graph.digraph: DirectedBase;
-import compression.compressed;
+import compression.delta;
 
 import std.traits;
 
@@ -58,17 +58,15 @@ class DirectedGraphCompressed( NodePayload, EdgePayload ) : DirectedBase!( NodeP
         }
     }
     
-    alias CompressedArray!( Node, 10 ) NodesArray;
-    private NodesArray nodes;
+    private pbf.DirectedGraph storage;
     
     this()
     {
-        nodes = new NodesArray;
     }
     
     override size_t getNodesNum() const
     {
-        return nodes.length;
+        return storage.nodes.length;
     }
     
     override size_t getNodeEdgesNum( inout NodeDescr node ) const
@@ -78,7 +76,7 @@ class DirectedGraphCompressed( NodePayload, EdgePayload ) : DirectedBase!( NodeP
     
     override const(NodePayload) getNodePayload( inout NodeDescr node ) const
     {
-        return nodes[ node.idx ].payload;
+        return 777; //storage.nodes[ node.idx ].payload;
     }
 }
 
