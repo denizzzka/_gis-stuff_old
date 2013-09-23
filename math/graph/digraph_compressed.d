@@ -1,7 +1,7 @@
 module math.graph.digraph_compressed;
 
-static import pbf = math.graph.digraph_compressed_pbf;
-import math.graph.digraph;
+import math.graph.digraph_compressed_pbf;
+import math.graph.digraph: DirectedBase, OrigDirectedGraph = DirectedGraph;
 //import compression.delta;
 
 import std.traits;
@@ -10,7 +10,7 @@ import std.traits;
 class DirectedGraphCompressed( NodePayload, EdgePayload ) : DirectedBase!( NodePayload, EdgePayload )
 {
     alias BaseClassesTuple!DirectedGraphCompressed[0] Super;
-    
+    /*
     struct Edge
     {
         Super.Edge edge;
@@ -57,12 +57,19 @@ class DirectedGraphCompressed( NodePayload, EdgePayload ) : DirectedBase!( NodeP
             return 1;
         }
     }
-    
-    private pbf.DirectedGraph storage;
+    */
+    private DirectedGraph storage;
     
     this( Digraph )( Digraph g )
-    if( isInstanceOf!(DirectedGraph, Digraph) )
+    if( isInstanceOf!(OrigDirectedGraph, Digraph) )
     {
+        foreach( ref node; g.getNodesRange ){}
+        /*
+        for( auto n = NodeDescr( 0 ); n.idx < g.getNodesNum(); n.idx++ )
+            foreach( ref e; g.getEdgesRange( n ) )
+            {
+            }
+        */
     }
     
     override size_t getNodesNum() const
@@ -94,7 +101,7 @@ version(unittest)
 
 unittest
 {
-    auto t1 = new DirectedGraph!( float, double );
+    auto t1 = new OrigDirectedGraph!( float, double );
     
     alias DirectedGraphCompressed!( short, ulong ) CDG;
     

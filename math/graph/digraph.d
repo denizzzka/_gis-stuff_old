@@ -83,13 +83,37 @@ class DirectedBase( NodePayload, EdgePayload )
         size_t length() const { return graph.getNodeEdgesNum( edge.node ); }
     }
     
-    EdgesRange getEdgesRange( in NodeDescr node ) const
+    EdgesRange getEdgesRange( inout NodeDescr node ) const
     {
         EdgesRange res = {
                 graph: this,
                 EdgeDescr( node, 0 )
             };
         
+        return res;
+    }
+    
+    struct NodesRange
+    {
+        private
+        {
+            const DirectedBase graph;
+            NodeDescr node;
+        }
+        
+        NodeDescr front() { return node; }
+        void popFront() { ++node.idx; }
+        bool empty() const { return node.idx >= length; }
+        size_t length() const { return graph.getNodesNum(); }
+    }
+    
+    NodesRange getNodesRange() const
+    {
+        NodesRange res = {
+                graph: this,
+                NodeDescr( 0 )
+            };
+            
         return res;
     }
 }
