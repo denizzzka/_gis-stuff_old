@@ -2,7 +2,7 @@ module math.graph.digraph_compressed;
 
 static import pbf = math.graph.digraph_compressed_pbf;
 import math.graph.digraph: DirectedBase;
-import compression.delta;
+//import compression.delta;
 
 import std.traits;
 
@@ -82,7 +82,12 @@ class DirectedGraphCompressed( NodePayload, EdgePayload ) : DirectedBase!( NodeP
 
 unittest
 {
-    //static class Compressed(T) : CompressedArray!( T, 3 ){}
+    import compression.pb_encoding;
     
-    auto t1 = new DirectedGraphCompressed!( float, double );
+    static ubyte[] toPbf(T)( inout T x )
+    {
+        return packVarint( x );
+    }
+    
+    auto t1 = new DirectedGraphCompressed!( short, ulong );
 }
