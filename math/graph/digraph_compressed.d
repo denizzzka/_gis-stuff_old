@@ -11,7 +11,29 @@ class DirectedGraphCompressed( NodePayload, EdgePayload ) : DirectedBase!( NodeP
 {
     alias BaseClassesTuple!DirectedGraphCompressed[0] Super;
     
-    alias CompressedArray!( pbf.Node, 3 ) CompressedArr;
+    struct Node
+    {
+        pbf.Node node;
+        alias node this;
+        
+        ubyte[] compress()
+        {
+            return node.Serialize;
+        }
+        
+        size_t decompress( inout ubyte* from )
+        {
+            size_t len;
+            len.unpackVarint( from );
+            
+            auto arr = cast(ubyte[]) from[0..len];
+            node.Deserialize( arr );
+            
+            return 4;
+        }
+    }
+    
+    alias CompressedArray!( Node, 3 ) CompressedArr;
     
     private const CompressedArr nodes;
     
@@ -22,7 +44,7 @@ class DirectedGraphCompressed( NodePayload, EdgePayload ) : DirectedBase!( NodeP
         
         foreach( ref n; g.getNodesRange )
         {
-            pbf.Node node;
+            Node node;
             
             foreach( ref e; g.getEdgesRange( n ) )
             {

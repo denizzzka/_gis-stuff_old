@@ -21,7 +21,7 @@ class CompressedArray( T, size_t keyInterval )
         if( keyIdx >= keys_indexes.length ) // need new key?
             keys_indexes ~= storage.length;
             
-        storage ~= v.Serialize;
+        storage ~= v.compress;
         items_num++;
     }
     
@@ -39,7 +39,7 @@ class CompressedArray( T, size_t keyInterval )
         for( auto i = key_idx; i <= idx; i++ )
         {
             const ubyte* curr = &storage[ offset ];
-            size_t next_offset = res.Deserialize( curr );
+            size_t next_offset = res.decompress( curr );
             
             assert( next_offset > 0 );
             
@@ -63,12 +63,12 @@ unittest
     {
         float value;
         
-        ubyte[] Serialize() const
+        ubyte[] compress() const
         {
             return [ to!ubyte( value ), 66, 77, 88 ];
         }
         
-        size_t Deserialize( inout ubyte* from )
+        size_t decompress( inout ubyte* from )
         {
             value = to!float( from[0] );
             
