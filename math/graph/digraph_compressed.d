@@ -2,7 +2,6 @@ module math.graph.digraph_compressed;
 
 static import pbf = math.graph.digraph_compressed_pbf;
 import math.graph.digraph;
-//import compression.delta;
 
 import std.traits;
 
@@ -24,7 +23,12 @@ class DirectedGraphCompressed( NodePayload, EdgePayload ) : DirectedBase!( NodeP
             {
                 pbf.Edge edge;
                 edge.to_node_idx = g.getEdge( e ).to_node.idx;
+                edge.payload = g.getEdge( e ).payload.Serialize;
+                
+                node.edges ~= edge;
             }
+            
+            storage.nodes ~= node;
         }
     }
     
@@ -48,7 +52,7 @@ version(unittest)
 {
     import compression.pb_encoding;
     
-    static ubyte[] toPbf(T)( inout T x )
+    static ubyte[] Serialize(T)( inout T x )
     {
         T t = cast(T) x;
         return packVarint( t );
@@ -57,7 +61,7 @@ version(unittest)
 
 unittest
 {
-    auto t1 = new DirectedGraph!( float, double );
+    auto t1 = new DirectedGraph!( short, ulong );
     
     alias DirectedGraphCompressed!( short, ulong ) CDG;
     
