@@ -1,4 +1,4 @@
-module map_objects;
+module pbf.map_objects;
 import ProtocolBuffer.conversion.pbbinary;
 import std.conv;
 import std.typecons;

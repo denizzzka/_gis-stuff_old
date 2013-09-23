@@ -1,3 +1,6 @@
+package pbf.map_objects;
+
+
 message MapCoords
 {
     required int64 lon = 1;

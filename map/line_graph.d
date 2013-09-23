@@ -23,6 +23,16 @@ struct MapGraphLine
         polyline = MapGraphPolyline( points );
         this.properties = properties;
     }
+    
+    ubyte[] Serialize() const
+    {
+        assert(false);
+    }
+    
+    static MapGraphLine Deserialize( inout ubyte[] from )
+    {
+        assert(false);
+    }
 }
 
 alias MapGraph!( DirectedGraph, MapGraphPoint, MapGraphLine ) LineGraph;

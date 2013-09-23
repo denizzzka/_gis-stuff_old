@@ -1,8 +1,9 @@
 module math.graph.digraph_compressed;
 
-static import pbf = digraph_compressed;
+static import pbf = pbf.digraph_compressed;
 import math.graph.digraph;
 import compression.compressed: CompressedArray;
+import compression.pb_encoding;
 
 import std.traits;
 
@@ -96,31 +97,8 @@ class DirectedGraphCompressed( NodePayload, EdgePayload ) : DirectedBase!( NodeP
         
         Edge res = {
                 to_node: e.to_node_idx,
-                payload: Deserialize!EdgePayload( e.payload.get )
+                payload: EdgePayload.Deserialize( e.payload.get )
             };
-        
-        return res;
-    }
-}
-
-version(unittest)
-{
-    import compression.pb_encoding;
-    
-    static ubyte[] Serialize(T)( inout T x )
-    if( is( T == short ) || is( T == ulong ) )
-    {
-        T t = cast(T) x;
-        return packVarint( t );
-    }
-    
-    static T Deserialize(T)( inout ubyte[] data )
-    if( is( T == short ) || is( T == ulong ) )
-    {
-        T res;
-        const offset = res.unpackVarint( &data[0] );
-        
-        assert( offset == data.length );
         
         return res;
     }
@@ -128,9 +106,30 @@ version(unittest)
 
 unittest
 {
-    auto t1 = new DirectedGraph!( short, ulong );
+    static struct Val
+    {
+        short v;
+        alias v this;
+        
+        ubyte[] Serialize() const
+        {
+            return packVarint( v );
+        }
+        
+        static Val Deserialize( inout ubyte[] data )
+        {
+            Val res;
+            const offset = res.v.unpackVarint( &data[0] );
+            
+            assert( offset == data.length );
+            
+            return res;
+        }
+    }
     
-    alias DirectedGraphCompressed!( short, ulong ) CDG;
+    auto t1 = new DirectedGraph!( Val, Val );
+    
+    alias DirectedGraphCompressed!( Val, Val ) CDG;
     
     auto t2 = new CDG( t1 );
 }

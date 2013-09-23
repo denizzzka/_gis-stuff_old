@@ -1,5 +1,5 @@
-module line_graph;
-import map_objects;
+module pbf.line_graph;
+import pbf.map_objects;
 import ProtocolBuffer.conversion.pbbinary;
 import std.conv;
 import std.typecons;

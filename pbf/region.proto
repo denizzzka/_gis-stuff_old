@@ -1,3 +1,6 @@
+package pbf.region;
+
+
 //message Box
 //{
     //required bytes data = 1;

@@ -37,6 +37,16 @@ struct MapGraphPolyline
     }
     
     @disable this();
+    
+    ubyte[] Serialize() const
+    {
+        assert(false);
+    }
+    
+    void Deserialize( inout ubyte[] from )
+    {
+        assert(false);
+    }
 }
 
 class MapGraph( alias GraphEngine, Point, Polyline ) : GraphEngine!( Point, Polyline )
