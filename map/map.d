@@ -69,6 +69,18 @@ struct MapCoords
     {
         return toPbf.Serialize;
     }
+    
+    static MapCoords Deserialize( ubyte[] from )
+    {
+        auto c = pbf.MapCoords.Deserialize( from );
+        
+        MapCoords res;
+        
+        res.lon = c.lon;
+        res.lat = c.lat;
+        
+        return res;
+    }
 }
 
 alias Box!(MapCoords.Coords) BBox;

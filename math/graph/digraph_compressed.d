@@ -85,9 +85,7 @@ class DirectedGraphCompressed( NodePayload, EdgePayload ) : DirectedBase!( NodeP
     
     override const(NodePayload) getNodePayload( inout NodeDescr node ) const
     {
-        NodePayload res;
-        return res;
-        //return nodes[ node.idx ].payload.Deserialize!NodePayload;
+        return NodePayload.Deserialize( nodes[ node.idx ].payload );
     }
     
     Edge getEdge( in EdgeDescr edge ) const
