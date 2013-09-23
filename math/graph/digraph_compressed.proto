@@ -1,3 +1,5 @@
+package math.graph.digraph_compressed_pbf;
+
 message Edge
 {
     required uint32 to_node_idx = 1;
