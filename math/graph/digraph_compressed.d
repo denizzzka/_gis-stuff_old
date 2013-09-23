@@ -1,6 +1,6 @@
 module math.graph.digraph_compressed;
 
-static import pbf = math.graph.digraph_compressed_pbf;
+static import pbf = pbf.digraph_compressed;
 import math.graph.digraph;
 import compression.compressed: CompressedArray;
 

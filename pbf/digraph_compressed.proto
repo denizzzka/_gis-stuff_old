@@ -1,4 +1,5 @@
-package math.graph.digraph_compressed_pbf;
+package pbf.digraph_compressed;
+
 
 message Edge
 {
