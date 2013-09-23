@@ -1,7 +1,7 @@
 module math.graph.digraph_compressed;
 
-import math.graph.digraph_compressed_pbf;
-import math.graph.digraph: DirectedBase, OrigDirectedGraph = DirectedGraph;
+static import pbf = math.graph.digraph_compressed_pbf;
+import math.graph.digraph;
 //import compression.delta;
 
 import std.traits;
@@ -10,66 +10,18 @@ import std.traits;
 class DirectedGraphCompressed( NodePayload, EdgePayload ) : DirectedBase!( NodePayload, EdgePayload )
 {
     alias BaseClassesTuple!DirectedGraphCompressed[0] Super;
-    /*
-    struct Edge
-    {
-        Super.Edge edge;
-        alias edge this;
-        
-        this( Super.Edge e )
-        {
-            edge = e;
-        }
-        
-        pbf.Edge toPbf() const
-        {
-            pbf.Edge e;
-            e.to_node_idx = to_node.idx;
-            e.payload = payload.toPbf;
-            
-            return e;
-        }        
-    }
     
-    struct Node
-    {
-        Super.Node node;
-        alias node this;
-        
-        this( Super.Node n )
-        {
-            node = n;
-        }
-        
-        pbf.Node toPbf() const
-        {
-            pbf.Node n;
-            n.payload = payload.toPbf;
-            
-            foreach( ref e; edges )
-                n.edges ~= Edge(e).toPbf;
-            
-            return n;
-        }
-        
-        size_t decompress( inout ubyte* from )
-        {
-            return 1;
-        }
-    }
-    */
-    private DirectedGraph storage;
+    private pbf.DirectedGraph storage;
     
     this( Digraph )( Digraph g )
-    if( isInstanceOf!(OrigDirectedGraph, Digraph) )
+    if( isInstanceOf!(DirectedGraph, Digraph) )
     {
-        foreach( ref node; g.getNodesRange ){}
-        /*
-        for( auto n = NodeDescr( 0 ); n.idx < g.getNodesNum(); n.idx++ )
-            foreach( ref e; g.getEdgesRange( n ) )
+        foreach( ref node; g.getNodesRange )
+            foreach( ref edge; g.getEdgesRange( node ) )
             {
+                pbf.Edge e;
+                e.to_node_idx = g.getEdge( edge ).to_node.idx;
             }
-        */
     }
     
     override size_t getNodesNum() const
@@ -101,7 +53,7 @@ version(unittest)
 
 unittest
 {
-    auto t1 = new OrigDirectedGraph!( float, double );
+    auto t1 = new DirectedGraph!( float, double );
     
     alias DirectedGraphCompressed!( short, ulong ) CDG;
     
