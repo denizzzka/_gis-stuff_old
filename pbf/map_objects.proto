@@ -9,5 +9,5 @@ message MapCoords
 
 message MapPolyline
 {
-    repeated MapCoords coords_delta = 1;
+    repeated MapCoords coords_delta = 1; // delta is calculated from start node
 }

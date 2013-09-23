@@ -38,16 +38,16 @@ class DirectedGraphCompressed( NodePayload, EdgePayload ) : DirectedBase!( NodeP
     
     private const CompressedArr nodes;
     
-    this( Digraph )( Digraph g )
-    //if( isInstanceOf!(DirectedGraph, Digraph) )
+    this()( DirectedGraph!( NodePayload, EdgePayload ) g )
     {
-        CompressedArr nodes;
+        auto nodes = new CompressedArr;
         
         foreach( ref n; g.getNodesRange )
         {
             Node node;
             
             auto node_payload = getNodePayload(n);
+            node.payload = node_payload.Serialize;
             
             foreach( ref e; g.getEdgesRange( n ) )
             {
@@ -57,6 +57,12 @@ class DirectedGraphCompressed( NodePayload, EdgePayload ) : DirectedBase!( NodeP
                 
                 edge.to_node_idx = edge_ptr.to_node.idx;
                 edge.payload = edge_ptr.payload.Serialize( node_payload );
+                
+                if( node.edges.isNull ) // init nullified array?
+                {
+                    pbf.Edge[] zero_length;
+                    node.edges = zero_length;
+                }
                 
                 node.edges ~= edge;
             }
@@ -113,7 +119,12 @@ unittest
         short v;
         alias v this;
         
-        ubyte[] Serialize( Val unused ) const
+        ubyte[] Serialize() const // node
+        {
+            return packVarint( v );
+        }
+        
+        ubyte[] Serialize( Val unused ) const // edge
         {
             return packVarint( v );
         }
