@@ -23,13 +23,13 @@ class DirectedGraphCompressed( NodePayload, EdgePayload ) : DirectedBase!( NodeP
         
         size_t decompress( inout ubyte* from )
         {
-            size_t len;
-            len.unpackVarint( from );
+            size_t size;
+            size.unpackVarint( from );
             
-            auto arr = cast(ubyte[]) from[0..len];
+            auto arr = cast(ubyte[]) from[0..size];
             node.Deserialize( arr );
             
-            return 4;
+            return size;
         }
     }
     
