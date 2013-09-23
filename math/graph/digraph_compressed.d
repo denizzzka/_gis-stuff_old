@@ -25,7 +25,7 @@ class DirectedGraphCompressed( NodePayload, EdgePayload ) : DirectedBase!( NodeP
         {
             pbf.Edge e;
             e.to_node_idx = to_node.idx;
-            //e.payload = payload.compress;
+            //e.payload = payload.toPbf;
             
             return e;
         }        
@@ -44,7 +44,7 @@ class DirectedGraphCompressed( NodePayload, EdgePayload ) : DirectedBase!( NodeP
         pbf.Node toPbf() const
         {
             pbf.Node n;
-            //n.payload = payload.compress;
+            //n.payload = payload.toPbf;
             
             foreach( ref e; edges )
                 n.edges ~= Edge(e).toPbf;
