@@ -1,6 +1,6 @@
 module math.graph.digraph_compressed;
 
-import pbf = math.graph.digraph_compressed_pbf;
+static import pbf = math.graph.digraph_compressed_pbf;
 import math.graph.digraph: DirectedBase;
 import compression.compressed;
 
@@ -16,13 +16,18 @@ class DirectedGraphCompressed( NodePayload, EdgePayload ) : DirectedBase!( NodeP
         Super.Edge edge;
         alias edge this;
         
-        ubyte[] compress() const
+        this( Super.Edge e )
+        {
+            edge = e;
+        }
+        
+        pbf.Edge compress() const
         {
             pbf.Edge e;
             e.to_node_idx = to_node.idx;
             //e.payload = payload.compress;
             
-            return e.Serialize;
+            return e;
         }        
     }
     
@@ -36,12 +41,15 @@ class DirectedGraphCompressed( NodePayload, EdgePayload ) : DirectedBase!( NodeP
             node = n;
         }
         
-        ubyte[] compress() const
+        pbf.Node compress() const
         {
             pbf.Node n;
-            //n.edges = node.edges;
+            //n.payload = payload.compress;
             
-            return n.Serialize;
+            foreach( ref e; edges )
+                n.edges ~= Edge(e).compress;
+            
+            return n;
         }
         
         size_t decompress( inout ubyte* from )
