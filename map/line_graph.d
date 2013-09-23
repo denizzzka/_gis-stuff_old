@@ -41,8 +41,8 @@ struct MapGraphLine
     }
 }
 
-alias MapGraph!( DirectedGraph, MapGraphPoint, MapGraphLine ) LineGraph;
-alias MapGraph!( DirectedGraphCompressed, MapGraphPoint, MapGraphLine ) LineGraphCompressed;
+alias MapGraph!( DirectedGraph, MapCoords, MapGraphLine ) LineGraph;
+alias MapGraph!( DirectedGraphCompressed, MapCoords, MapGraphLine ) LineGraphCompressed;
 
 unittest
 {

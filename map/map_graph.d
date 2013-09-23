@@ -12,23 +12,6 @@ import std.random: uniform;
 import std.traits;
 
 
-struct MapGraphPoint
-{
-    MapCoords coords;
-    
-    alias coords this;
-    
-    this( MapCoords coords )
-    {
-        this.coords = coords;
-    }
-    
-    real calcSphericalDistance( in MapGraphPoint v ) const
-    {
-        return getSphericalDistance( getRadiansCoords, v.getRadiansCoords );
-    }
-}
-
 struct MapGraphPolyline
 {
     package MapCoords[] points; /// points between start and end points

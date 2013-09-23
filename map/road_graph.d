@@ -27,7 +27,7 @@ struct RoadLine
     }
 }
 
-private alias MapGraph!( UndirectedGraph, MapGraphPoint, RoadLine ) MG;
+private alias MapGraph!( UndirectedGraph, MapCoords, RoadLine ) MG;
 
 class RoadGraph : PathFinder!MG
 {
