@@ -9,6 +9,7 @@ static import pbf = pbf.map_objects;
 
 import std.algorithm: canFind;
 import std.random: uniform;
+import std.traits;
 
 
 struct MapGraphPoint
@@ -74,6 +75,12 @@ class MapGraph( alias GraphEngine, Point, Polyline ) : GraphEngine!( Point, Poly
         
         foreach( line; descriptions )
             addPolyline( line, already_stored );
+    }
+    
+    this(SomeMapGraph)(SomeMapGraph g)
+    if( isInstanceOf!( MapGraph, SomeMapGraph ) )
+    {
+        super(g);
     }
     
     MapCoords[] getMapCoords( in EdgeDescr descr ) const

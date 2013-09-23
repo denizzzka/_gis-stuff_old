@@ -39,7 +39,7 @@ class DirectedGraphCompressed( NodePayload, EdgePayload ) : DirectedBase!( NodeP
     private const CompressedArr nodes;
     
     this( Digraph )( Digraph g )
-    if( isInstanceOf!(DirectedGraph, Digraph) )
+    //if( isInstanceOf!(DirectedGraph, Digraph) )
     {
         CompressedArr nodes;
         

@@ -88,6 +88,8 @@ unittest
     assert( prepared.length == 5 );
     
     auto g = new G( [ w1, w2 ] );
+    
+    auto compressed = new LineGraphCompressed( g );
 }
 
 size_t createEdge( Graph, Payload )(
