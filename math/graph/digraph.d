@@ -35,7 +35,7 @@ class DirectedBase( NodePayload, EdgePayload )
     struct Node
     {
         NodePayload payload;
-        private Edge[] edges;
+        package Edge[] edges;
         
         private size_t addEdge( Edge edge )
         {
