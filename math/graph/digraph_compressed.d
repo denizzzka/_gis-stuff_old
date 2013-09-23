@@ -96,7 +96,7 @@ class DirectedGraphCompressed( NodePayload, EdgePayload ) : DirectedBase!( NodeP
         
         Edge res = {
                 to_node: e.to_node_idx,
-                //payload: Deserialize!EdgePayload( e.payload.get )
+                payload: Deserialize!EdgePayload( e.payload.get )
             };
         
         return res;
@@ -108,12 +108,14 @@ version(unittest)
     import compression.pb_encoding;
     
     static ubyte[] Serialize(T)( inout T x )
+    if( is( T == short ) || is( T == ulong ) )
     {
         T t = cast(T) x;
         return packVarint( t );
     }
     
     static T Deserialize(T)( inout ubyte[] data )
+    if( is( T == short ) || is( T == ulong ) )
     {
         T res;
         const offset = res.unpackVarint( &data[0] );
