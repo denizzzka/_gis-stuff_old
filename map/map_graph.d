@@ -14,8 +14,8 @@ import std.traits;
 
 struct MapGraphPolyline
 {
-    //package MapCoords[] points; /// points between start and end points
-    private const pbf.MapPolyline storage;
+    package const pbf.MapPolyline storage;
+    alias storage this;
     
     this( MapCoords[] points )
     {
@@ -35,6 +35,12 @@ struct MapGraphPolyline
         storage = l;
     }
     
+    ubyte[] Serialize() const
+    {
+        auto s = cast(pbf.MapPolyline) storage;
+        return s.Serialize;
+    }
+    
     MapCoords[] points() const
     {
         MapCoords[] res = new MapCoords[ storage.coords_delta.length ];
@@ -51,22 +57,6 @@ struct MapGraphPolyline
     }
     
     @disable this();
-    
-    pbf.MapPolyline toPbf( MapCoords delta ) const
-    {
-        pbf.MapPolyline res;
-        
-        pbf.MapCoords[] zero_length;
-        res.coords_delta = zero_length; // init nullified PBF array
-        
-        foreach( p; points )
-        {
-            delta.map_coords = p.map_coords - delta.map_coords;
-            res.coords_delta ~= delta.toPbf();
-        }
-        
-        return res;
-    }
     
     void Deserialize( inout ubyte[] from )
     {

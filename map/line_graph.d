@@ -25,14 +25,9 @@ struct MapGraphLine
         this.properties = properties;
     }
     
-    ubyte[] Serialize( MapCoords delta ) const
+    ubyte[] Serialize() const
     {
-        pbf.Line res;
-        
-        res.polyline = polyline.toPbf( delta );
-        res.type = type;
-        
-        return res.Serialize;
+        return polyline.Serialize;
     }
     
     static MapGraphLine Deserialize( inout ubyte[] from )
