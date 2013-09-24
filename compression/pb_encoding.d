@@ -62,7 +62,7 @@ unittest
 }
 
 
-size_t unpackVarint( T )( out T res, inout ubyte* data )
+pure size_t unpackVarint( T )( out T res, inout ubyte* data )
 if( isIntegral!T && isUnsigned!T )
 out( r )
 {
@@ -75,10 +75,6 @@ body
     
     do {
         res |= cast(T)( data[i] & mask ) << 7 * i;
-        
-        import std.stdio;
-        writeln("res=", res, " i=", i);
-        
         enforce( 7 * i + 7 <= T.sizeof * 8, "Varint is too big for type " ~ T.stringof );
     } while( msbIsSet( &data[i++] ) );
     
@@ -96,7 +92,7 @@ unittest
     ulong result2;
     
     assert( result2.unpackVarint( &d2[0] ) == d2.length );
-    //assert( result2 == 30_658_635_572 );
+    assert( result2 == 30_658_635_572 );
 }
 
 
@@ -114,7 +110,7 @@ out( arr )
     if( d != _value )
         writeln( d, " ", _value );
         
-    //assert( d == _value );
+    assert( d == _value );
 }
 body
 {
@@ -124,19 +120,13 @@ body
     
     immutable ubyte maximal = 0b_1000_0000;
     
-    size_t i;
-    import std.stdio;
-    
     while( value >= maximal )
     {
         res ~= cast( ubyte )( value | maximal );
-        writeln("pack value=", value, " res=", res, " i=", i);
-        i++;
         value >>= 7;
     }
     
     res ~= cast(ubyte) value;
-    writeln("pack value=", value, " res=", res, " i=", i);
     
     return res;
 }
@@ -184,7 +174,7 @@ unittest
 }
 
 
-size_t parseTag( in ubyte* data, out uint fieldNumber, out WireType wireType )
+pure size_t parseTag( in ubyte* data, out uint fieldNumber, out WireType wireType )
 {
     wireType = cast( WireType ) ( *data & 0b_0000_0111 );
     
