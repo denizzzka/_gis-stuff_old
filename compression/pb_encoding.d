@@ -90,7 +90,7 @@ unittest
 }
 
 
-static pure
+static
 ubyte[] packVarint(T)( T _value )
 if( isIntegral!T && isUnsigned!T )
 out( arr )
@@ -99,6 +99,11 @@ out( arr )
     size_t size = d.unpackVarint( &arr[0] );
     
     assert( size == arr.length );
+    
+    import std.stdio;
+    if( d != _value )
+        writeln( d, " ", _value );
+        
     assert( d == _value );
 }
 body
@@ -121,9 +126,15 @@ body
 }
 unittest
 {
-    auto v = packVarint!ulong( 300 );
-    assert( v.length == 2 );
-    assert( v == [ 0b_10101100, 0b_00000010 ] );
+    auto v1 = packVarint!ulong( 300 );
+    assert( v1.length == 2 );
+    assert( v1 == [ 0b_10101100, 0b_00000010 ] );
+    
+    ulong t2 = 30658635572;
+    auto c2 = packVarint( t2 );
+    ulong d2;
+    d2.unpackVarint( &c2[0] );
+    assert( t2 == d2 );
 }
 
 
