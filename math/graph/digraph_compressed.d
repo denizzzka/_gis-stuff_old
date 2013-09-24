@@ -58,7 +58,7 @@ class DirectedGraphCompressed( NodePayload, EdgePayload ) : DirectedBase!( NodeP
                 edge.to_node_idx = orig_edge.to_node.idx;
                 edge.payload = orig_edge.payload.Serialize( node_payload );
                 
-                if( node.edges.isNull ) // init nullified array?
+                if( node.edges.isNull ) // init nullified PBF array?
                 {
                     pbf.Edge[] zero_length;
                     node.edges = zero_length;
