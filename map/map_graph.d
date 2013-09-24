@@ -27,10 +27,13 @@ struct MapGraphPolyline
     {
         pbf.MapPolyline res;
         
+        pbf.MapCoords[] zero_length;
+        res.coords_delta = zero_length; // init nullified PBF array
+        
         foreach( p; points )
         {
             delta.map_coords = p.map_coords - delta.map_coords;
-            //res.coords_delta ~= delta.toPbf();
+            res.coords_delta ~= delta.toPbf();
         }
         
         return res;
