@@ -30,6 +30,11 @@ struct Vector2D( _T, string name = "noname" )
         this.y = v.y;
     }
     
+    static zero()
+    {
+        return Vector2D( 0, 0 );
+    }
+    
     auto length() const
     {
         return hypot( x, y );

@@ -24,12 +24,13 @@ struct MapGraphPolyline
         pbf.MapCoords[] zero_length;
         l.coords_delta = zero_length; // init nullified PBF array
         
-        MapCoords delta;
+        MapCoords prev = MapCoords.Coords.zero;
         
         foreach( p; points )
         {
-            delta.map_coords = p.map_coords; // - delta.map_coords;
-            l.coords_delta ~= delta.toPbf();
+            auto delta = MapCoords( p.map_coords - prev.map_coords );
+            l.coords_delta ~= delta.toPbf;
+            prev.map_coords = p.map_coords;
         }
         
         storage = l;
@@ -50,12 +51,12 @@ struct MapGraphPolyline
     {
         MapCoords[] res = new MapCoords[ storage.coords_delta.length ];
         
-        MapCoords delta;
+        MapCoords prev = MapCoords.Coords.zero;
         
         foreach( i, p; storage.coords_delta )
         {
-            delta.map_coords = MapCoords.fromPbf( p ).map_coords; // + delta.map_coords;
-            res[i] = delta;
+            prev.map_coords += MapCoords.fromPbf( p ).map_coords;
+            res[i] = prev;
         }
         
         return res;
