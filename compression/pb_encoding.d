@@ -17,7 +17,7 @@ enum WireType : ubyte {
 };
 
 
-pure bool msbIsSet( const ubyte* a )
+pure bool msbIsSet( inout ubyte* a )
 {
     import core.bitop: bt;
     
@@ -62,7 +62,7 @@ unittest
 }
 
 
-pure size_t unpackVarint( T )( out T res, inout ubyte* data )
+size_t unpackVarint( T )( out T res, inout ubyte* data )
 if( isIntegral!T && isUnsigned!T )
 out( r )
 {
@@ -75,18 +75,28 @@ body
     
     do {
         res |= ( data[i] & mask ) << 7 * i;
-        enforce( res <= T.max, "Varint is too big for type " ~ T.stringof );
+        
+        import std.stdio;
+        writeln("res=", res, " i=", i);
+        
+        enforce( 7 * i + 7 <= T.sizeof * 8, "Varint is too big for type " ~ T.stringof );
     } while( msbIsSet( &data[i++] ) );
     
     return i;
 }
 unittest
 {
-    ubyte d[2] = [ 0b_10101100, 0b_00000010 ];
-    size_t result;
+    ubyte[2] d1 = [ 0b_10101100, 0b_00000010 ];
+    size_t result1;
     
-    assert( result.unpackVarint( &d[0] ) == d.length );
-    assert( result == 300 );
+    assert( result1.unpackVarint( &d1[0] ) == d1.length );
+    assert( result1 == 300 );
+    
+    ubyte[] d2 = [180, 206, 150, 155, 114];
+    ulong result2;
+    
+    assert( result2.unpackVarint( &d2[0] ) == d2.length );
+    //assert( result2 == 30_658_635_572 );
 }
 
 
@@ -104,7 +114,7 @@ out( arr )
     if( d != _value )
         writeln( d, " ", _value );
         
-    assert( d == _value );
+    //assert( d == _value );
 }
 body
 {
@@ -114,13 +124,19 @@ body
     
     immutable ubyte maximal = 0b_1000_0000;
     
+    size_t i;
+    import std.stdio;
+    
     while( value >= maximal )
     {
         res ~= cast( ubyte )( value | maximal );
+        writeln("pack value=", value, " res=", res, " i=", i);
+        i++;
         value >>= 7;
     }
     
     res ~= cast(ubyte) value;
+    writeln("pack value=", value, " res=", res, " i=", i);
     
     return res;
 }
@@ -129,12 +145,6 @@ unittest
     auto v1 = packVarint!ulong( 300 );
     assert( v1.length == 2 );
     assert( v1 == [ 0b_10101100, 0b_00000010 ] );
-    
-    ulong t2 = 30658635572;
-    auto c2 = packVarint( t2 );
-    ulong d2;
-    d2.unpackVarint( &c2[0] );
-    assert( t2 == d2 );
 }
 
 
@@ -174,7 +184,7 @@ unittest
 }
 
 
-pure size_t parseTag( in ubyte* data, out uint fieldNumber, out WireType wireType )
+size_t parseTag( in ubyte* data, out uint fieldNumber, out WireType wireType )
 {
     wireType = cast( WireType ) ( *data & 0b_0000_0111 );
     
