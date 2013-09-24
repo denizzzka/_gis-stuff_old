@@ -14,11 +14,40 @@ import std.traits;
 
 struct MapGraphPolyline
 {
-    package MapCoords[] points; /// points between start and end points
+    //package MapCoords[] points; /// points between start and end points
+    private const pbf.MapPolyline storage;
     
     this( MapCoords[] points )
     {
-        this.points = points;
+        pbf.MapPolyline l;
+        
+        pbf.MapCoords[] zero_length;
+        l.coords_delta = zero_length; // init nullified PBF array
+        
+        MapCoords delta;
+        
+        foreach( p; points )
+        {
+            delta.map_coords = p.map_coords;// - delta.map_coords;
+            l.coords_delta ~= delta.toPbf();
+        }
+        
+        storage = l;
+    }
+    
+    MapCoords[] points() const
+    {
+        MapCoords[] res = new MapCoords[ storage.coords_delta.length ];
+        
+        MapCoords delta;
+        
+        foreach( i, p; storage.coords_delta )
+        {
+            delta.map_coords = MapCoords.fromPbf( p ).map_coords; // + delta.map_coords;
+            res[i] = delta;
+        }
+        
+        return res;
     }
     
     @disable this();

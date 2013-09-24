@@ -65,6 +65,16 @@ struct MapCoords
         return res;
     }
     
+    static MapCoords fromPbf( inout pbf.MapCoords from )
+    {
+        MapCoords res;
+        
+        res.map_coords.lon = from.lon;
+        res.map_coords.lat = from.lat;
+        
+        return res;
+    }
+    
     ubyte[] Serialize() const
     {
         return toPbf.Serialize;
