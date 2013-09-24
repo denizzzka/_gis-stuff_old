@@ -74,7 +74,7 @@ body
     immutable ubyte mask = 0b_0111_1111;
     
     do {
-        res |= ( data[i] & mask ) << 7 * i;
+        res |= cast(T)( data[i] & mask ) << 7 * i;
         
         import std.stdio;
         writeln("res=", res, " i=", i);
