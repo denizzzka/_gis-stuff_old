@@ -28,7 +28,7 @@ struct MapGraphPolyline
         
         foreach( p; points )
         {
-            delta.map_coords = p.map_coords - delta.map_coords;
+            delta.map_coords = p.map_coords; // - delta.map_coords;
             l.coords_delta ~= delta.toPbf();
         }
         
@@ -54,7 +54,7 @@ struct MapGraphPolyline
         
         foreach( i, p; storage.coords_delta )
         {
-            delta.map_coords = MapCoords.fromPbf( p ).map_coords + delta.map_coords;
+            delta.map_coords = MapCoords.fromPbf( p ).map_coords; // + delta.map_coords;
             res[i] = delta;
         }
         
