@@ -41,12 +41,6 @@ struct MapGraphPolyline
         this.storage = storage;
     }
     
-    ubyte[] Serialize() const
-    {
-        auto s = cast(pbf.MapPolyline) storage;
-        return s.Serialize;
-    }
-    
     MapCoords[] points() const
     {
         MapCoords[] res = new MapCoords[ storage.coords_delta.length ];
@@ -63,11 +57,6 @@ struct MapGraphPolyline
     }
     
     @disable this();
-    
-    void Deserialize( inout ubyte[] from )
-    {
-        assert(false);
-    }
 }
 
 class MapGraph( alias GraphEngine, Point, Polyline ) : GraphEngine!( Point, Polyline )
