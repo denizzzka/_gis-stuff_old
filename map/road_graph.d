@@ -25,6 +25,11 @@ struct RoadLine
         polyline = MapGraphPolyline( points );
         this.properties = properties;
     }
+    
+    MapCoords[] points() const
+    {
+        return polyline.points;
+    }
 }
 
 private alias MapGraph!( UndirectedGraph, MapCoords, RoadLine ) MG;

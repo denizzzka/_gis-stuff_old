@@ -138,7 +138,7 @@ class Window : IWindow
 		    case POLYLINE:
 			auto graph = reg_lines.region.line_graph;
 			encoded_points = graph.getMapCoords( line.line );
-			auto type = graph.getEdge( line.line ).payload.properties.type;
+			auto type = graph.getEdge( line.line ).payload.type;
 			auto prop = &polylines.getProperty( type );
 			color = prop.color;
 			break;

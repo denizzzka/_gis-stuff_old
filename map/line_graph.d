@@ -14,20 +14,35 @@ struct LineProperties
 
 struct MapGraphLine
 {
-    package MapGraphPolyline polyline;
-    
-    LineProperties properties;
-    alias properties this;
+    public const pbf.Line storage;
+    alias storage this;
     
     this( MapCoords[] points, LineProperties properties )
     {
-        polyline = MapGraphPolyline( points );
-        this.properties = properties;
+        pbf.Line s;
+        
+        s.polyline = MapGraphPolyline( points );
+        s.type = properties.type;
+        
+        storage = s;
+    }
+    
+    MapCoords[] points() const
+    {
+        auto s = cast(pbf.Line) storage;
+        
+        return MapGraphPolyline(s.polyline).points();
+    }
+    
+    cat.Line type() const
+    {
+        return cast(cat.Line) storage.type;
     }
     
     ubyte[] Serialize() const
     {
-        return polyline.Serialize;
+        auto s = cast(pbf.Line) storage;
+        return s.Serialize;
     }
     
     static MapGraphLine Deserialize( inout ubyte[] from )

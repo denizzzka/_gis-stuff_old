@@ -14,7 +14,7 @@ import std.traits;
 
 struct MapGraphPolyline
 {
-    package const pbf.MapPolyline storage;
+    package pbf.MapPolyline storage;
     alias storage this;
     
     this( MapCoords[] points )
@@ -33,6 +33,11 @@ struct MapGraphPolyline
         }
         
         storage = l;
+    }
+    
+    this( pbf.MapPolyline storage )
+    {
+        this.storage = storage;
     }
     
     ubyte[] Serialize() const
@@ -96,7 +101,7 @@ class MapGraph( alias GraphEngine, Point, Polyline ) : GraphEngine!( Point, Poly
         
         auto edge = getEdge( descr );
         
-        foreach( c; edge.payload.polyline.points )
+        foreach( c; edge.payload.points )
             res ~= c;
         
         res ~= getNodePayload( edge.to_node );
