@@ -1,0 +1,9 @@
+package pbf.compressed_array;
+
+
+message Compressed_Array
+{
+    required uint32 items_num = 1;
+    repeated uint32 keys_indexes = 2;
+    required bytes storage = 3;
+}

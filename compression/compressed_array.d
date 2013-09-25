@@ -1,8 +1,12 @@
 module compression.compressed_array;
 
+static import pbf = pbf.compressed_array;
+
 
 class CompressedArray( T, size_t keyInterval )
 {
+    pbf.Compressed_Array ca;
+    
     private ubyte[] storage;
     private size_t[] keys_indexes;
     private size_t items_num;
