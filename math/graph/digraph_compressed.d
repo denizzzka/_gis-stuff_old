@@ -17,7 +17,6 @@ class DirectedGraphCompressed( NodePayload, EdgePayload ) : DirectedBase!( NodeP
         pbf.Node node;
         alias node this;
         
-        @disable
         ubyte[] compress()
         out(r)
         {
@@ -25,33 +24,35 @@ class DirectedGraphCompressed( NodePayload, EdgePayload ) : DirectedBase!( NodeP
             size_t offset = d.decompress(&r[0]);
             
             assert( offset == r.length );
-            assert( d == this );
         }
         body
         {
-            return node.Serialize;
+            auto bytes = node.Serialize;
+            auto size = packVarint(bytes.length);
+            
+            return size ~ bytes;
         }
         
-        @disable
         size_t decompress( inout ubyte* from )
         {
-            size_t size;
-            size.unpackVarint( from );
+            size_t blob_size;
+            size_t offset = blob_size.unpackVarint( from );
+            size_t end = offset + blob_size;
             
-            auto arr = cast(ubyte[]) from[0..size];
+            auto arr = cast(ubyte[]) from[offset..end];
             node.Deserialize( arr );
             
-            return size;
+            return end;
         }
     }
     
-    //alias CompressedArray!( Node, 3 ) CompressedArr;
-    alias Node[] CompressedArr;
+    alias CompressedArray!( Node, 3 ) CompressedArr;
+    //alias Node[] CompressedArr;
     private const CompressedArr nodes;
     
     this()( DirectedGraph!( NodePayload, EdgePayload ) g )
     {
-        CompressedArr nodes;
+        CompressedArr nodes = new CompressedArr;
         
         foreach( ref n; g.getNodesRange )
         {
