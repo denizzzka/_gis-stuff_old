@@ -73,9 +73,6 @@ class DirectedGraphCompressed( NodePayload, EdgePayload ) : DirectedBase!( NodeP
                 edge.payload = orig_edge.payload.Serialize;
                 
                 node.edges ~= edge;
-                
-                import std.stdio;
-                writeln( edge );
             }
             
             nodes ~= node;

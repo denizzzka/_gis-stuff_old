@@ -76,6 +76,13 @@ struct MapCoords
     }
     
     ubyte[] Serialize() const
+    out(r)
+    {
+        auto d = Deserialize(r);
+        
+        assert( d == this );
+    }
+    body
     {
         return toPbf.Serialize;
     }
@@ -85,12 +92,7 @@ struct MapCoords
         auto f = cast(ubyte[]) from.dup;
         auto c = pbf.MapCoords.Deserialize( f );
         
-        MapCoords res;
-        
-        res.lon = c.lon;
-        res.lat = c.lat;
-        
-        return res;
+        return MapCoords( MapCoords.Coords( c.lon.get, c.lat.get ) );
     }
 }
 
