@@ -29,12 +29,6 @@ class CompressedArray( T, size_t keyInterval )
         return res;
     }
     
-    /*
-    private ubyte[] storage;
-    private size_t[] keys_indexes;
-    private size_t items_num;
-    */
-    
     private
     static size_t findKeyIdx( in size_t valIdx )
     {
