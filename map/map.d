@@ -285,6 +285,7 @@ class Region
                     line: descriptor
                 };
                 
+                // TODO: be careful - this line uses old uncompressed graph class
                 layers[i].lines.addObject( bbox, any );
             }
         }
