@@ -59,7 +59,7 @@ struct MapGraphLine
     
     static MapGraphLine Deserialize( inout ubyte[] from )
     {
-        auto f = cast(ubyte[]) from.dup;
+        auto f = from.dup;
         
         MapGraphLine res = pbf.Line.Deserialize( f );
         

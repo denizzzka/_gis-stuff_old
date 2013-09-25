@@ -39,7 +39,7 @@ class DirectedGraphCompressed( NodePayload, EdgePayload ) : DirectedBase!( NodeP
             size_t offset = blob_size.unpackVarint( from );
             size_t end = offset + blob_size;
             
-            auto arr = cast(ubyte[]) from[offset..end];
+            auto arr = from[offset..end].dup;
             node.Deserialize( arr );
             
             return end;
@@ -58,8 +58,7 @@ class DirectedGraphCompressed( NodePayload, EdgePayload ) : DirectedBase!( NodeP
         {
             Node node;
             
-            auto node_payload = g.getNodePayload(n);
-            node.payload = node_payload.Serialize;
+            node.payload = g.getNodePayload(n).Serialize;
             
             pbf.Edge[] zero_length;
             node.edges = zero_length; // init nullified PBF array
@@ -94,6 +93,13 @@ class DirectedGraphCompressed( NodePayload, EdgePayload ) : DirectedBase!( NodeP
     
     override const(NodePayload) getNodePayload( inout NodeDescr node ) const
     {
+        import std.stdio;
+        
+        if( nodes[ node.idx ].payload.isNull )
+            writeln("node ", node.idx, " payload=null");
+        else
+            writeln("node ", node.idx, " payload=", nodes[ node.idx ].payload);
+        
         return NodePayload.Deserialize( nodes[ node.idx ].payload );
     }
     
