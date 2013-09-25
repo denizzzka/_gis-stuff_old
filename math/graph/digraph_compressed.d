@@ -49,6 +49,9 @@ class DirectedGraphCompressed( NodePayload, EdgePayload ) : DirectedBase!( NodeP
             auto node_payload = g.getNodePayload(n);
             node.payload = node_payload.Serialize;
             
+            pbf.Edge[] zero_length;
+            node.edges = zero_length; // init nullified PBF array
+            
             foreach( ref e; g.getEdgesRange( n ) )
             {
                 pbf.Edge edge;
@@ -58,13 +61,10 @@ class DirectedGraphCompressed( NodePayload, EdgePayload ) : DirectedBase!( NodeP
                 edge.to_node_idx = orig_edge.to_node.idx;
                 edge.payload = orig_edge.payload.Serialize;
                 
-                if( node.edges.isNull ) // init nullified PBF array?
-                {
-                    pbf.Edge[] zero_length;
-                    node.edges = zero_length;
-                }
-                
                 node.edges ~= edge;
+                
+                import std.stdio;
+                writeln( edge );
             }
             
             nodes ~= node;

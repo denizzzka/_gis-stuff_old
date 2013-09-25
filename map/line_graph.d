@@ -14,17 +14,22 @@ struct LineProperties
 
 struct MapGraphLine
 {
-    public pbf.Line storage;
+    private const pbf.Line storage;
     alias storage this;
     
     this( MapCoords[] points, LineProperties properties )
     {
         pbf.Line s;
         
-        s.polyline = MapGraphPolyline( points );
+        s.polyline = MapGraphPolyline( points ).storage;
         s.type = properties.type;
         
         storage = s;
+    }
+    
+    this( pbf.Line l )
+    {
+        storage = l;
     }
     
     MapCoords[] points() const
@@ -42,15 +47,20 @@ struct MapGraphLine
     ubyte[] Serialize() const
     {
         auto s = cast(pbf.Line) storage;
+        
         return s.Serialize;
     }
     
     static MapGraphLine Deserialize( inout ubyte[] from )
+    out(r)
     {
-        MapGraphLine res;
-        
+        assert( from == r.Serialize() );
+    }
+    body
+    {
         auto f = cast(ubyte[]) from.dup;
-        res.storage = pbf.Line.Deserialize( f );
+        
+        MapGraphLine res = pbf.Line.Deserialize( f );
         
         return res;
     }
