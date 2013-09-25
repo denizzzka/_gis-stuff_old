@@ -2,7 +2,7 @@ module math.graph.digraph_compressed;
 
 static import pbf = pbf.digraph_compressed;
 import math.graph.digraph;
-import compression.compressed: CompressedArray;
+import compression.compressed_array;
 import compression.pb_encoding;
 
 import std.traits;
@@ -61,9 +61,6 @@ class DirectedGraphCompressed( NodePayload, EdgePayload ) : DirectedBase!( NodeP
             
             node.payload = g.getNodePayload(n).Serialize;
             
-            pbf.Edge[] zero_length;
-            node.edges = zero_length; // init nullified PBF array
-            
             foreach( ref e; g.getEdgesRange( n ) )
             {
                 pbf.Edge edge;
@@ -72,6 +69,12 @@ class DirectedGraphCompressed( NodePayload, EdgePayload ) : DirectedBase!( NodeP
                 
                 edge.to_node_idx = orig_edge.to_node.idx;
                 edge.payload = orig_edge.payload.Serialize;
+                
+                if(node.edges.isNull)
+                {
+                    pbf.Edge[] zero_length;
+                    node.edges = zero_length; // init nullified PBF array
+                }
                 
                 node.edges ~= edge;
             }

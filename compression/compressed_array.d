@@ -1,4 +1,4 @@
-module compression.compressed;
+module compression.compressed_array;
 
 
 class CompressedArray( T, size_t keyInterval )
