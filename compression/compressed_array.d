@@ -5,7 +5,7 @@ static import pbf = pbf.compressed_array;
 
 class CompressedArray( T, size_t keyInterval )
 {
-    pbf.Compressed_Array ca;
+    private pbf.Compressed_Array ca;
     alias ca this;
     
     this()
@@ -17,6 +17,16 @@ class CompressedArray( T, size_t keyInterval )
         
         size_t[] zero_length_size_t;
         keys_indexes = zero_length_size_t;
+    }
+    
+    static CompressedArray Deserialize( ref inout ubyte[] from )
+    {
+        auto f = from.dup;
+        
+        auto res = new CompressedArray;
+        res.ca = pbf.Compressed_Array.Deserialize(f);
+        
+        return res;
     }
     
     /*
@@ -107,12 +117,16 @@ unittest
     c ~= Val( 6.0f );
     c ~= Val( 7.0f );
     
-    assert( c[0] == Val( 0.0f ) );
-    assert( c[1] == Val( 1.0f ) );
-    assert( c[2] == Val( 2.0f ) );
-    assert( c[3] == Val( 3.0f ) );
-    assert( c[4] == Val( 4.0f ) );
-    assert( c[5] == Val( 5.0f ) );
-    assert( c[6] == Val( 6.0f ) );
-    assert( c[7] == Val( 7.0f ) );
+    auto bytes = c.Serialize;
+    
+    auto d = C.Deserialize( bytes );
+    
+    assert( d[0] == Val( 0.0f ) );
+    assert( d[1] == Val( 1.0f ) );
+    assert( d[2] == Val( 2.0f ) );
+    assert( d[3] == Val( 3.0f ) );
+    assert( d[4] == Val( 4.0f ) );
+    assert( d[5] == Val( 5.0f ) );
+    assert( d[6] == Val( 6.0f ) );
+    assert( d[7] == Val( 7.0f ) );
 }
