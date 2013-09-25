@@ -24,6 +24,7 @@ class DirectedGraphCompressed( NodePayload, EdgePayload ) : DirectedBase!( NodeP
             size_t offset = d.decompress(&r[0]);
             
             assert( offset == r.length );
+            assert( payload.isNull == d.payload.isNull );
         }
         body
         {
@@ -40,7 +41,7 @@ class DirectedGraphCompressed( NodePayload, EdgePayload ) : DirectedBase!( NodeP
             size_t end = offset + blob_size;
             
             auto arr = from[offset..end].dup;
-            node.Deserialize( arr );
+            node = Deserialize( arr );
             
             return end;
         }
@@ -93,13 +94,6 @@ class DirectedGraphCompressed( NodePayload, EdgePayload ) : DirectedBase!( NodeP
     
     override const(NodePayload) getNodePayload( inout NodeDescr node ) const
     {
-        import std.stdio;
-        
-        if( nodes[ node.idx ].payload.isNull )
-            writeln("node ", node.idx, " payload=null");
-        else
-            writeln("node ", node.idx, " payload=", nodes[ node.idx ].payload);
-        
         return NodePayload.Deserialize( nodes[ node.idx ].payload );
     }
     
