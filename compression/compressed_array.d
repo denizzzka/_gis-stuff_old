@@ -19,9 +19,9 @@ class CompressedArray( T, size_t keyInterval )
         keys_indexes = zero_length_size_t;
     }
     
-    static CompressedArray Deserialize( ref inout ubyte[] from )
+    static CompressedArray Deserialize( inout ref ubyte[] from )
     {
-        auto f = from.dup;
+        auto f = cast(ubyte[]) from;
         
         auto res = new CompressedArray;
         res.ca = pbf.Compressed_Array.Deserialize(f);

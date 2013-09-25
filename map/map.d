@@ -87,7 +87,7 @@ struct MapCoords
         return toPbf.Serialize;
     }
     
-    static MapCoords Deserialize( inout ubyte[] from )
+    static MapCoords Deserialize( inout ref ubyte[] from )
     {
         auto f = cast(ubyte[]) from.dup;
         auto c = pbf.MapCoords.Deserialize( f );
