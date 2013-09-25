@@ -34,13 +34,13 @@ class DirectedGraphCompressed( NodePayload, EdgePayload ) : DirectedBase!( NodeP
         }
     }
     
-    alias CompressedArray!( Node, 3 ) CompressedArr;
-    
+    //alias CompressedArray!( Node, 3 ) CompressedArr;
+    alias Node[] CompressedArr;
     private const CompressedArr nodes;
     
     this()( DirectedGraph!( NodePayload, EdgePayload ) g )
     {
-        auto nodes = new CompressedArr;
+        CompressedArr nodes;
         
         foreach( ref n; g.getNodesRange )
         {

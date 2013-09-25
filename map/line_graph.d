@@ -14,7 +14,7 @@ struct LineProperties
 
 struct MapGraphLine
 {
-    public const pbf.Line storage;
+    public pbf.Line storage;
     alias storage this;
     
     this( MapCoords[] points, LineProperties properties )
@@ -47,7 +47,12 @@ struct MapGraphLine
     
     static MapGraphLine Deserialize( inout ubyte[] from )
     {
-        assert(false);
+        MapGraphLine res;
+        
+        auto f = cast(ubyte[]) from.dup;
+        res.storage = pbf.Line.Deserialize( f );
+        
+        return res;
     }
 }
 
