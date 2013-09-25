@@ -92,7 +92,7 @@ class MapGraph( alias GraphEngine, Point, Polyline ) : GraphEngine!( Point, Poly
         auto edge = getEdge( descr );
         
         foreach( c; edge.payload.points )
-            res ~= c;
+            res ~= MapCoords( c.map_coords + res[0].map_coords );
         
         res ~= getNodePayload( edge.to_node );
         
@@ -134,7 +134,7 @@ class MapGraph( alias GraphEngine, Point, Polyline ) : GraphEngine!( Point, Poly
         MapCoords points[];
         
         for( auto i = 1; i < last_node; i++ )
-            points ~= line_descr.getNode( i ).getCoords;
+            points ~= MapCoords( line_descr.getNode( i ).getCoords - line_descr.getNode( first_node ).getCoords );
         
         auto poly = Polyline( points, line_descr.properties );
         

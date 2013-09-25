@@ -39,22 +39,25 @@ class RoadGraph : PathFinder!MG
     override
     MapCoords[] getMapCoords( in EdgeDescr descr ) const
     {
-        MapCoords[] res;
-        
-        res ~= getNodePayload( descr.node );
+        auto orig = super.getMapCoords( descr );
         
         auto edge = getEdge( descr );
         
         if( edge.forward_direction )
-            foreach( c; edge.payload.polyline.points )
-                res ~= c;
+            return orig;
         else
-            foreach_reverse( c; edge.payload.polyline.points )
-                res ~= c;
-        
-        res ~= getNodePayload( edge.to_node );
-        
-        return res;
+        {
+            MapCoords[] res = new MapCoords[ orig.length ];
+            
+            res[0] = orig[0];
+            
+            foreach( i; 1 .. orig.length )
+                res[i] = orig[$-1 - i];
+                
+            res[$-1] = orig[$-1];
+            
+            return res;
+        }
     }
     
     override
