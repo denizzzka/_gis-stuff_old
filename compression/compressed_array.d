@@ -6,6 +6,18 @@ static import pbf = pbf.compressed_array;
 class CompressedArray( T, size_t keyInterval )
 {
     pbf.Compressed_Array ca;
+    alias ca this;
+    
+    this()
+    {
+        items_num = 0;
+        
+        ubyte[] zero_length;
+        storage = zero_length;
+        
+        size_t[] zero_length_size_t;
+        keys_indexes = zero_length_size_t;
+    }
     
     /*
     private ubyte[] storage;
@@ -34,7 +46,7 @@ class CompressedArray( T, size_t keyInterval )
     T opIndex( inout size_t idx ) const
     in
     {
-        assert( idx < items_num );
+        assert( idx < ca.items_num );
     }
     body
     {
