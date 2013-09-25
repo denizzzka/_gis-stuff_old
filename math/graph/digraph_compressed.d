@@ -17,11 +17,22 @@ class DirectedGraphCompressed( NodePayload, EdgePayload ) : DirectedBase!( NodeP
         pbf.Node node;
         alias node this;
         
+        @disable
         ubyte[] compress()
+        out(r)
+        {
+            Node d;
+            size_t offset = d.decompress(&r[0]);
+            
+            assert( offset == r.length );
+            assert( d == this );
+        }
+        body
         {
             return node.Serialize;
         }
         
+        @disable
         size_t decompress( inout ubyte* from )
         {
             size_t size;
