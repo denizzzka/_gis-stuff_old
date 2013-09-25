@@ -212,7 +212,8 @@ struct Layer
 class Region
 {
     Layer[5] layers;
-    LineGraph line_graph;
+    //LineGraph line_graph;
+    LineGraphCompressed _line_graph;
     Area[] areas;
     
     this()
@@ -258,7 +259,7 @@ class Region
     
     void fillLines( Prepare )( Prepare prepared )
     {
-        line_graph = new LineGraph;
+        auto line_graph = new LineGraph;
         
         LineGraph.NodeDescr[ulong] already_stored;
         
@@ -284,6 +285,8 @@ class Region
                 layers[i].lines.addObject( bbox, any );
             }
         }
+        
+        this._line_graph = new LineGraphCompressed( line_graph );
     }
     
     void fillRoads( Prepare )( Prepare prepared )

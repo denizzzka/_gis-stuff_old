@@ -136,7 +136,7 @@ class Window : IWindow
 		with( LineClass ) final switch( line.line_class )
 		{
 		    case POLYLINE:
-			auto graph = reg_lines.region.line_graph;
+			auto graph = reg_lines.region._line_graph;
 			encoded_points = graph.getMapCoords( line.line );
 			auto type = graph.getEdge( line.line ).payload.type;
 			auto prop = &polylines.getProperty( type );
