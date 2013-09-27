@@ -1,5 +1,5 @@
 DC := dmd
-PB := osmpbf/fileformat.d osmpbf/osmformat.d
+PB := osmproto/fileformat.d osmproto/osmformat.d
 PBLIB := ProtocolBuffer/libdprotobuf.a
 OSMPBFLIB := libosmpbfd
 DSFMLLIB := libdsfml

@@ -1,0 +1,13 @@
+{
+	"name": "gis-stuff",
+	"description": "Navigation app and tools for convert maps for it",
+	"homepage": "https://github.com/denizzzka/gis-stuff",
+	"copyright": "Copyright © 2013, Denis Feklushkin",
+	"authors": [
+		"Denis Feklushkin"
+	],
+	"dependencies": {
+	},
+	"sourcePaths": [ "." ],
+	"targetType": "executable",
+}
