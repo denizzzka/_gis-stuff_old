@@ -118,7 +118,6 @@ Point examNodeTag( Tag[] tags, Tag tag )
                 
             case "leisure":
                 return LEISURE;
-                break;
                 
             default:
                 return UNSUPPORTED;

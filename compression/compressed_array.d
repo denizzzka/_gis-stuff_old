@@ -15,7 +15,7 @@ class CompressedArray( T, size_t keyInterval )
         ubyte[] zero_length;
         storage = zero_length;
         
-        size_t[] zero_length_size_t;
+        uint[] zero_length_size_t;
         keys_indexes = zero_length_size_t;
     }
     
