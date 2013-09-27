@@ -18,9 +18,6 @@ $(OSMPBFLIB):
 	make -C ProtocolBuffer args="$(BITS)" libdprotobuf
 	$(DC) -d $(ARGS) $(BITS) -lib -of$(OSMPBFLIB) $(PBLIB) $(PB)
 
-derelict3:
-	cd ./Derelict3/build/; $(DC) build.d; ./build sfml2
-	
 dsfml:
 	$(DC) -d $(BITS) -lib -of$(DSFMLLIB) ./DSFML/dsfml/*.d
 
