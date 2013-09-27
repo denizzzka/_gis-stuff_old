@@ -3,12 +3,21 @@
 	"description": "Navigation app and tools for convert maps for it",
 	"homepage": "https://github.com/denizzzka/gis-stuff",
 	"copyright": "Copyright © 2013, Denis Feklushkin",
-	"authors": [
-		"Denis Feklushkin"
-	],
-	"dependencies": {
-	},
+	"authors": [ "Denis Feklushkin" ],
+	"dependencies": {},
+	
 	"sourcePaths": [ "." ],
 	"targetType": "executable",
-	"libs": [ "dl", "csfml-graphics", "csfml-window", "csfml-system" ]
+	"libs": [ "dl", "csfml-graphics", "csfml-window", "csfml-system" ],
+	
+	"excludedSourceFiles": [ "ProtocolBuffer/pbcompiler.d" ],
+	
+	"subPackages":
+	[
+		{
+			"name": "dsml",
+			"targetType": "library",
+			"sourcePaths": ["DSFML/dsfml/"]
+		}
+	]
 }
