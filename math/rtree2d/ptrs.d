@@ -269,11 +269,13 @@ class RTreePtrs( _Box, _Payload )
                     m.overlapping_perimeter = 0;
                     
                 if( metrics.overlapping_perimeter )
+                {
                     if( m.overlapping_perimeter < metrics.overlapping_perimeter )
                     {
                         metrics = m;
                         minMetricsKey = i;
                     }
+                }
                 else
                 {
                     m.boundary_perimeter = b1.getPerimeter + b2.getPerimeter;

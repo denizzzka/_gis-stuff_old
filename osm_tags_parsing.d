@@ -77,12 +77,14 @@ Tag[] searchTags( in Tag[] tags, in string[] keys, in string[] values = null )
     
     foreach( t; tags )
         if( canFind( keys, t.key ) )
+        {
             if( values is null )
                 res ~= t;
             else
                 if( canFind( values, t.value ) )
                     res ~= t;
-            
+        }
+        
     return res;
 }
 

@@ -10,4 +10,5 @@
 	},
 	"sourcePaths": [ "." ],
 	"targetType": "executable",
+	"libs": [ "dl", "csfml-graphics", "csfml-window", "csfml-system" ]
 }
