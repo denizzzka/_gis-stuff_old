@@ -176,7 +176,8 @@ struct AnyLineDescriptor
     // TODO: need to implement real compression
     size_t decompress( inout ubyte* storage )
     {
-        (cast (ubyte*) &this)[ 0 .. this.sizeof] = storage[ 0 .. this.sizeof ].dup;
+        ubyte* this_ptr = cast (ubyte*) &this;
+        this_ptr[ 0 .. this.sizeof] = storage[ 0 .. this.sizeof ].dup[this.sizeof];
         
         return this.sizeof;
     }

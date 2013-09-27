@@ -195,10 +195,10 @@ class Window : IWindow
     
     struct RoadsSorted
     {
-	immutable direction_layers_num = 5;
-	immutable layers_num = direction_layers_num * 2 + 1;
+	immutable static direction_layers_num = 5;
+	immutable static layers_num = direction_layers_num * 2 + 1;
 	
-	immutable ubyte max_enum = 20; // TODO: is max enum type of roads, need read it from categories.d
+	immutable static ubyte max_enum = 20; // TODO: is max enum type of roads, need read it from categories.d
 	SfmlRoad[][max_enum][ layers_num ] sorted;
 	
 	void addRoad( SfmlRoad road )

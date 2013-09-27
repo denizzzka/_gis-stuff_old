@@ -12,7 +12,7 @@ class UndirectedGraph( NodePayload, EdgePayload )
         this( size_t idx ){ this.idx = idx; }
     }
     
-    immutable auto NodeMagic = NodeDescr( -1 );
+    immutable static auto NodeMagic = NodeDescr( -1 );
     
     struct EdgeDescr
     {

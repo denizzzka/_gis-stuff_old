@@ -19,7 +19,7 @@ struct PolylineProperties
 
 class Polylines
 {
-    immutable string[] members = [ __traits( allMembers, cat.Line ) ];
+    immutable static string[] members = [ __traits( allMembers, cat.Line ) ];
     
     private static PolylineProperties[ members.length ] properties;
     
