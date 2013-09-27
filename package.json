@@ -4,20 +4,14 @@
 	"homepage": "https://github.com/denizzzka/gis-stuff",
 	"copyright": "Copyright © 2013, Denis Feklushkin",
 	"authors": [ "Denis Feklushkin" ],
-	"dependencies": {},
+	"dependencies":
+	{
+		"dsfml:graphics": "~master",
+		"dsfml:window": "~master"
+	},
 	
 	"sourcePaths": [ "." ],
 	"targetType": "executable",
-	"libs": [ "dl", "csfml-graphics", "csfml-window", "csfml-system" ],
 	
 	"excludedSourceFiles": [ "ProtocolBuffer/pbcompiler.d" ],
-	
-	"subPackages":
-	[
-		{
-			"name": "dsml",
-			"targetType": "library",
-			"sourcePaths": ["DSFML/dsfml/"]
-		}
-	]
 }
