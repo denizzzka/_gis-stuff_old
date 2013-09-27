@@ -177,7 +177,7 @@ struct AnyLineDescriptor
     size_t decompress( inout ubyte* storage )
     {
         ubyte* this_ptr = cast (ubyte*) &this;
-        this_ptr[ 0 .. this.sizeof] = storage[ 0 .. this.sizeof ].dup[this.sizeof];
+        this_ptr[ 0 .. this.sizeof] = storage[ 0 .. this.sizeof ].dup[0 .. this.sizeof];
         
         return this.sizeof;
     }
