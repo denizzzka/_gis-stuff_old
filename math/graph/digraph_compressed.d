@@ -3,46 +3,12 @@ module math.graph.digraph_compressed;
 static import pbf = pbf.digraph_compressed;
 import math.graph.digraph;
 import compression.compressed_array;
-import compression.pb_encoding;
+import compression.compressible_pbf_struct;
 
 
 class DirectedGraphCompressed( NodePayload, EdgePayload ) : DirectedBase!( NodePayload, EdgePayload )
 {
-    struct Node
-    {
-        pbf.Node node;
-        alias node this;
-        
-        ubyte[] compress()
-        out(r)
-        {
-            Node d;
-            size_t offset = d.decompress(&r[0]);
-            
-            assert( offset == r.length );
-            assert( payload.isNull == d.payload.isNull );
-        }
-        body
-        {
-            auto bytes = node.Serialize;
-            auto size = packVarint(bytes.length);
-            
-            return size ~ bytes;
-        }
-        
-        size_t decompress( inout ubyte* from )
-        {
-            size_t blob_size;
-            size_t offset = blob_size.unpackVarint( from );
-            size_t end = offset + blob_size;
-            
-            auto arr = from[offset..end].dup;
-            node = Deserialize( arr );
-            
-            return end;
-        }
-    }
-    
+    alias CompressiblePbfStruct!(pbf.Node) Node;
     alias CompressedArray!( Node, 3 ) CompressedArr;
     private const CompressedArr nodes;
     
@@ -119,6 +85,8 @@ class DirectedGraphCompressed( NodePayload, EdgePayload ) : DirectedBase!( NodeP
 
 unittest
 {
+    import compression.pb_encoding;
+    
     static struct Val
     {
         short v;
