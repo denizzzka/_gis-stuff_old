@@ -7,7 +7,8 @@ import compression.compressible_pbf_struct;
 
 
 class UndirectedGraphCompressed( NodePayload, EdgePayload ): UndirectedBase!( NodePayload, EdgePayload )
-{    
+{
+    alias UndirectedBase!(NodePayload, EdgePayload) Super;
     alias CompressiblePbfStruct!(pbf.Node) Node;
     alias CompressiblePbfStruct!(pbf.Edge) Edge;
     
@@ -77,6 +78,40 @@ class UndirectedGraphCompressed( NodePayload, EdgePayload ): UndirectedBase!( No
             return 0;
         else
             return n.global_edge_idx.length;
+    }
+    
+    override GlobalEdgeDescr getGlobalEdgeDescr( inout EdgeDescr edge ) const
+    in
+    {
+        auto node = edge.node;
+        
+        assert( node.idx < nodes.length );
+        assert( edge.idx < nodes[ node.idx ].edges.length );
+    }
+    body
+    {
+        auto node = edge.node;
+        
+        GlobalEdgeDescr res = { idx: nodes[ node.idx ].global_edge_idx.get[ edge.idx ] };
+        
+        return res;
+    }
+    
+    override const(Super.Edge) getGlobalEdge( inout GlobalEdgeDescr global ) const
+    {
+        auto e = edges[global.idx];
+        
+        Super.Edge res =
+            {
+                connection:
+                {
+                    from: Super.NodeDescr( e.from_node_idx ),
+                    to: Super.NodeDescr( e.to_node_idx )
+                },
+                payload: EdgePayload.Deserialize( e.payload.get )
+            };
+        
+        return res;
     }
 }
 
