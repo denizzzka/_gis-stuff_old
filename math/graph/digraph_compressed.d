@@ -51,7 +51,7 @@ class DirectedGraphCompressed( NodePayload, EdgePayload ) : DirectedBase!( NodeP
     //alias Node[] CompressedArr;
     private const CompressedArr nodes;
     
-    this()( DirectedGraph!( NodePayload, EdgePayload ) g )
+    this( DirectedGraph!( NodePayload, EdgePayload ) g )
     {
         CompressedArr nodes = new CompressedArr;
         
@@ -152,7 +152,7 @@ unittest
     
     auto t1 = new DirectedGraph!( Val, Val );
     
-    alias DirectedGraphCompressed!( Val, Val ) CDG;
+    alias DirectedGraphCompressed!( Val, Val ) DGC;
     
-    auto t2 = new CDG( t1 );
+    auto t2 = new DGC( t1 );
 }

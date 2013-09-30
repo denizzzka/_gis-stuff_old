@@ -1,14 +1,19 @@
 module math.graph.undirected_compressed;
 
-import std.random: uniform;
-import std.algorithm: sort;
+static import pbf = pbf.undirected_graph_compressed;
+import math.graph.undirected;
 
 
 class UndirectedGraphCompressed( NodePayload, EdgePayload ): UndirectedBase!( NodePayload, EdgePayload )
 {
+    this( UndirectedGraph!( NodePayload, EdgePayload ) g )
+    {
+    }
 }
 
 unittest
 {
-    auto t = new UndirectedGraphCompressed!( float, double );
+    alias UndirectedGraphCompressed!( float, double ) UGC;
+    
+    //auto t = new UGC("asd");
 }

@@ -411,7 +411,7 @@ version(unittest)
         
         size_t Deserialize( ubyte* data ) /// TODO: real serialization
         {
-            (cast (ubyte*) &this)[ 0 .. this.sizeof] = data[ 0 .. this.sizeof ].dup;
+            (cast (ubyte*) &this)[ 0 .. this.sizeof] = data[ 0 .. this.sizeof ].dup[ 0 .. this.sizeof ];
             
             return this.sizeof;
         }
