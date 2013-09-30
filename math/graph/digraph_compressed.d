@@ -9,6 +9,7 @@ import compression.compressible_pbf_struct;
 class DirectedGraphCompressed( NodePayload, EdgePayload ) : DirectedBase!( NodePayload, EdgePayload )
 {
     alias CompressiblePbfStruct!(pbf.Node) Node;
+    
     alias CompressedArray!( Node, 3 ) CompressedArr;
     private const CompressedArr nodes;
     
