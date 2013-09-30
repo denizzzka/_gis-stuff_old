@@ -285,7 +285,7 @@ class Region
                     line: descriptor
                 };
                 
-                // TODO: be careful - this line uses old uncompressed graph class
+                // be careful: this line uses uncompressed graph class
                 layers[i].lines.addObject( bbox, any );
             }
         }
@@ -314,7 +314,9 @@ class Region
             
             g.sortEdgesByReducingRank;
             
-            void addEdgeToRtree( RoadGraph.EdgeDescr descr )
+            layer.road_graph = new RoadGraphCompressed(g);
+            
+            void addEdgeToRtree( RoadGraphCompressed.EdgeDescr descr )
             {
                 auto bbox = g.getBoundary( descr );
                 
@@ -326,9 +328,9 @@ class Region
                 layer.lines.addObject( bbox, any );
             }
             
+            // be careful: this line uses uncompressed graph class
             g.forAllEdges( &addEdgeToRtree );
             
-            layer.road_graph = new RoadGraphCompressed(g);
         }
     }
     
