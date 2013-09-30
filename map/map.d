@@ -216,7 +216,6 @@ struct Layer
 class Region
 {
     Layer[5] layers;
-    //LineGraph line_graph;
     LineGraphCompressed _line_graph;
     Area[] areas;
     
