@@ -90,7 +90,7 @@ class RoadGraph: MapGraph!( UndirectedGraph, MapCoords, RoadLine )
 
 private alias MapGraph!( UndirectedGraphCompressed, MapCoords, RoadLine ) RGC;
 
-class RoadGraphCompressed: RGC //PathFinder!RGC
+class RoadGraphCompressed: PathFinder!RGC
 {
     this( RoadGraph g )
     {
@@ -119,9 +119,8 @@ class RoadGraphCompressed: RGC //PathFinder!RGC
             return res;
         }
     }
-    /*
-    override
-    real heuristicDistance( in NodeDescr fromDescr, in NodeDescr toDescr ) const
+    
+    override real heuristicDistance( in NodeDescr fromDescr, in NodeDescr toDescr ) const
     {
         auto from = getNodePayload( fromDescr );
         auto to = getNodePayload( toDescr );
@@ -129,8 +128,7 @@ class RoadGraphCompressed: RGC //PathFinder!RGC
         return from.calcSphericalDistance( to );
     }
     
-    override
-    real distance( in EdgeDescr descr ) const
+    override real distance( in EdgeDescr descr ) const
     {
         auto coords = getMapCoords( descr );
         
@@ -147,7 +145,6 @@ class RoadGraphCompressed: RGC //PathFinder!RGC
         
         return res;
     }
-    */
 }
 
 unittest
