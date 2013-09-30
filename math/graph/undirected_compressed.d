@@ -17,17 +17,52 @@ class UndirectedGraphCompressed( NodePayload, EdgePayload ): UndirectedBase!( No
     {
         CompressedNodesArr nodes;
         
-        //foreach( ref n; g.getNodesRange )
+        foreach( ref n; g.getNodesRange )
         {
         }
         
         this.nodes = nodes;
     }
+    
+    override size_t getNodesNum() const
+    {
+        return nodes.length;
+    }
 }
 
 unittest
 {
-    alias UndirectedGraphCompressed!( float, double ) UGC;
+    import compression.pb_encoding;
     
-    //auto t = new UGC("asd");
+    static struct Val
+    {
+        short v;
+        alias v this;
+        
+        ubyte[] Serialize() const // node
+        {
+            return packVarint( v );
+        }
+        
+        ubyte[] Serialize( Val unused ) const // edge
+        {
+            return packVarint( v );
+        }
+        
+        static Val Deserialize( inout ubyte[] data )
+        {
+            Val res;
+            const offset = res.v.unpackVarint( &data[0] );
+            
+            assert( offset == data.length );
+            
+            return res;
+        }
+    }
+    
+    auto t1 = new UndirectedGraph!( Val, Val );
+    
+    alias UndirectedGraphCompressed!( Val, Val ) UGC;
+    
+    auto t2 = new UGC( t1 );
 }
