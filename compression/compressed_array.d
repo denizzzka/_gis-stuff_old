@@ -29,8 +29,7 @@ class CompressedArray( T, size_t keyInterval )
         return res;
     }
     
-    private
-    static size_t findKeyIdx( in size_t valIdx )
+    private static size_t findKeyIdx( inout size_t valIdx )
     {
         return valIdx / keyInterval;
     }
@@ -38,7 +37,7 @@ class CompressedArray( T, size_t keyInterval )
     void opOpAssign( string op )( T v )
     if( op == "~" )
     {
-        auto keyIdx = findKeyIdx( storage.length );
+        auto keyIdx = findKeyIdx( items_num );
         
         if( keyIdx >= keys_indexes.length ) // need new key?
             keys_indexes ~= storage.length;
@@ -54,11 +53,11 @@ class CompressedArray( T, size_t keyInterval )
     }
     body
     {
-        size_t key_idx = findKeyIdx( idx );
+        const size_t key_idx = findKeyIdx( idx );
         size_t offset = keys_indexes[ key_idx ];
         T res;
         
-        for( auto i = key_idx; i <= idx; i++ )
+        for( auto i = key_idx * keyInterval; i <= idx; i++ )
         {
             const ubyte* curr = &storage[ offset ];
             size_t next_offset = res.decompress( curr );
@@ -110,6 +109,12 @@ unittest
     c ~= Val( 5.0f );
     c ~= Val( 6.0f );
     c ~= Val( 7.0f );
+    c ~= Val( 8.0f );
+    c ~= Val( 9.0f );
+    c ~= Val( 10.0f );
+    c ~= Val( 11.0f );
+    c ~= Val( 12.0f );
+    c ~= Val( 13.0f );
     
     auto bytes = c.Serialize;
     
@@ -123,4 +128,10 @@ unittest
     assert( d[5] == Val( 5.0f ) );
     assert( d[6] == Val( 6.0f ) );
     assert( d[7] == Val( 7.0f ) );
+    assert( d[8] == Val( 8.0f ) );
+    assert( d[9] == Val( 9.0f ) );
+    assert( d[10] == Val( 10.0f ) );
+    assert( d[11] == Val( 11.0f ) );
+    assert( d[12] == Val( 12.0f ) );
+    assert( d[13] == Val( 13.0f ) );
 }

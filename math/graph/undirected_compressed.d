@@ -12,8 +12,8 @@ class UndirectedGraphCompressed( NodePayload, EdgePayload ): UndirectedBase!( No
     alias CompressiblePbfStruct!(pbf.Node) Node;
     alias CompressiblePbfStruct!(pbf.Edge) Edge;
     
-    alias CompressedArray!( Node, 3 ) CompressedNodesArr;
-    alias CompressedArray!( Edge, 3 ) CompressedEdgesArr;
+    alias CompressedArray!( Node, 100 ) CompressedNodesArr;
+    alias CompressedArray!( Edge, 10 ) CompressedEdgesArr;
     
     private const CompressedNodesArr nodes;
     private const CompressedEdgesArr edges;
