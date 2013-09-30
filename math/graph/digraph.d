@@ -32,19 +32,6 @@ class DirectedBase( NodePayload, EdgePayload )
         EdgePayload payload;
     }
     
-    struct Node
-    {
-        NodePayload payload;
-        package Edge[] edges;
-        
-        private size_t addEdge( Edge edge )
-        {
-            edges ~= edge;
-            
-            return edges.length - 1;
-        }
-    }
-    
     struct ConnectionInfo
     {
         NodeDescr from;
@@ -120,6 +107,19 @@ class DirectedBase( NodePayload, EdgePayload )
 
 class DirectedGraph( NodePayload, EdgePayload ) : DirectedBase!( NodePayload, EdgePayload )
 {
+    struct Node
+    {
+        NodePayload payload;
+        package Edge[] edges;
+        
+        private size_t addEdge( Edge edge )
+        {
+            edges ~= edge;
+            
+            return edges.length - 1;
+        }
+    }
+    
     private Node[] nodes;
     
     NodeDescr addNode( NodePayload nodePayload )
