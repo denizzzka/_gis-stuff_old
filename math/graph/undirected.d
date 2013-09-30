@@ -79,6 +79,17 @@ class UndirectedBase( NodePayload, EdgePayload )
             
         return res;
     }
+    
+    NodeDescr getRandomNode() const
+    {
+        return NodeDescr( uniform( 0, getNodesNum ) );
+    }
+    
+    void forAllNodes( void delegate( NodeDescr node ) dg ) const
+    {
+        for( auto n = NodeDescr( 0 ); n.idx < getNodesNum; n.idx++ )
+            dg( n );
+    }
 }
 
 class UndirectedGraph( NodePayload, EdgePayload ): UndirectedBase!( NodePayload, EdgePayload )
@@ -170,17 +181,6 @@ class UndirectedGraph( NodePayload, EdgePayload ): UndirectedBase!( NodePayload,
     override size_t getNodesNum() const
     {
         return nodes.length;
-    }
-    
-    NodeDescr getRandomNode() const
-    {
-        return NodeDescr( uniform( 0, nodes.length ) );
-    }
-    
-    void forAllNodes( void delegate( NodeDescr node ) dg ) const
-    {
-        for( auto n = NodeDescr( 0 ); n.idx < nodes.length; n.idx++ )
-            dg( n );
     }
     
     void forAllEdges( void delegate( EdgeDescr edge ) dg ) const
