@@ -167,8 +167,7 @@ class DirectedGraph( NodePayload, EdgePayload ) : DirectedBase!( NodePayload, Ed
         return nodes[ node.idx ].edges[ edge.idx ];
     }
     
-    override
-    size_t getNodesNum() const
+    override size_t getNodesNum() const
     {
         return nodes.length;
     }

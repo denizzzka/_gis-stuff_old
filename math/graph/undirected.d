@@ -53,6 +53,32 @@ class UndirectedBase( NodePayload, EdgePayload )
             return forward_direction ? edge.connection.to : edge.connection.from;
         }
     }
+    
+    abstract size_t getNodesNum() const;
+    
+    struct NodesRange
+    {
+        private
+        {
+            const UndirectedBase graph;
+            NodeDescr node;
+        }
+        
+        NodeDescr front() { return node; }
+        void popFront() { ++node.idx; }
+        bool empty() const { return node.idx >= length; }
+        size_t length() const { return graph.getNodesNum(); }
+    }
+    
+    NodesRange getNodesRange() const
+    {
+        NodesRange res = {
+                graph: this,
+                NodeDescr( 0 )
+            };
+            
+        return res;
+    }
 }
 
 class UndirectedGraph( NodePayload, EdgePayload ): UndirectedBase!( NodePayload, EdgePayload )
@@ -132,6 +158,11 @@ class UndirectedGraph( NodePayload, EdgePayload ): UndirectedBase!( NodePayload,
             };
         
         return directed;
+    }
+    
+    override size_t getNodesNum() const
+    {
+        return nodes.length;
     }
     
     NodeDescr getRandomNode() const
