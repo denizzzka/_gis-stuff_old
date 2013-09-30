@@ -5,13 +5,9 @@ import math.graph.digraph;
 import compression.compressed_array;
 import compression.pb_encoding;
 
-import std.traits;
-
 
 class DirectedGraphCompressed( NodePayload, EdgePayload ) : DirectedBase!( NodePayload, EdgePayload )
 {
-    alias BaseClassesTuple!DirectedGraphCompressed[0] Super;
-    
     struct Node
     {
         pbf.Node node;
@@ -48,7 +44,6 @@ class DirectedGraphCompressed( NodePayload, EdgePayload ) : DirectedBase!( NodeP
     }
     
     alias CompressedArray!( Node, 3 ) CompressedArr;
-    //alias Node[] CompressedArr;
     private const CompressedArr nodes;
     
     this( DirectedGraph!( NodePayload, EdgePayload ) g )
