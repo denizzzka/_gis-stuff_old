@@ -178,7 +178,7 @@ class Window : IWindow
 	alias RoadGraph.EdgeDescr EdgeDescr;
 	
         Vector2F[] coords;
-        RoadProperties* props;
+        RoadProperties props;
 	
 	this( Window window, in RoadGraph g, in EdgeDescr edge, RoadProperties* ps = null )
 	{
@@ -187,9 +187,9 @@ class Window : IWindow
             coords = window.cartesianToSFML( cartesian );
 	    
 	    if( ps != null )
-		props = ps;
+		props = *ps;
 	    else
-		props = cast(RoadProperties*) &g.getEdge( edge ).payload.properties;
+		props = g.getEdge( edge ).payload.properties;
 	}
     }
     

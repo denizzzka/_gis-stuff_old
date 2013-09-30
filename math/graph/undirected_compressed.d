@@ -80,7 +80,7 @@ class UndirectedGraphCompressed( NodePayload, EdgePayload ): UndirectedBase!( No
             return n.global_edge_idx.length;
     }
     
-    override GlobalEdgeDescr getGlobalEdgeDescr( inout EdgeDescr edge ) const
+    override protected GlobalEdgeDescr getGlobalEdgeDescr( inout EdgeDescr edge ) const
     in
     {
         auto node = edge.node;
