@@ -44,7 +44,7 @@ class UndirectedBase( NodePayload, EdgePayload )
     
     struct DirectedEdge
     {
-        const Edge* edge;
+        const Edge edge;
         alias edge this;
         const bool forward_direction;
         
@@ -89,6 +89,64 @@ class UndirectedBase( NodePayload, EdgePayload )
     {
         for( auto n = NodeDescr( 0 ); n.idx < getNodesNum; n.idx++ )
             dg( n );
+    }
+    
+    void forAllEdges( void delegate( EdgeDescr edge ) dg ) const
+    {
+        void nodeDg( NodeDescr node )
+        {
+            foreach( e; getEdgesRange( node ) )
+                if( getEdge( e ).forward_direction )
+                    dg( e );
+        }
+        
+        forAllNodes( &nodeDg );
+    }
+    
+    abstract size_t getNodeEdgesNum( inout NodeDescr node ) const;
+    
+    struct EdgesRange
+    {
+        private
+        {
+            const UndirectedBase graph;
+            EdgeDescr edge;
+        }
+        
+        EdgeDescr front() { return edge; }
+        void popFront() { ++edge.idx; }
+        bool empty() const { return edge.idx >= length; }
+        size_t length() const { return graph.getNodeEdgesNum(edge.node); }
+    }
+    
+    EdgesRange getEdgesRange( in NodeDescr node ) const
+    {
+        EdgesRange res =
+        {
+            graph: this,
+            edge: EdgeDescr( node, 0 )
+        };
+        
+        return res;
+    }
+    
+    abstract protected GlobalEdgeDescr getGlobalEdgeDescr( inout EdgeDescr edge ) const;
+    abstract protected const(Edge) getGlobalEdge( inout GlobalEdgeDescr global ) const;
+    
+    DirectedEdge getEdge( inout EdgeDescr edge ) const
+    {
+        GlobalEdgeDescr global = getGlobalEdgeDescr( edge );
+        
+        const Edge e = getGlobalEdge(global);
+        
+        auto node = edge.node;
+        
+        DirectedEdge directed = {
+                edge: e,
+                forward_direction: e.connection.from == node
+            };
+        
+        return directed;
     }
 }
 
@@ -147,7 +205,7 @@ class UndirectedGraph( NodePayload, EdgePayload ): UndirectedBase!( NodePayload,
         return nodes[ node.idx ].payload;
     }
     
-    package GlobalEdgeDescr getGlobalEdgeDescr( inout EdgeDescr edge ) const
+    override GlobalEdgeDescr getGlobalEdgeDescr( inout EdgeDescr edge ) const
     in
     {
         auto node = edge.node;
@@ -162,62 +220,14 @@ class UndirectedGraph( NodePayload, EdgePayload ): UndirectedBase!( NodePayload,
         return nodes[ node.idx ].edges[ edge.idx ];
     }
     
-    DirectedEdge getEdge( inout EdgeDescr edge ) const
-    {
-        GlobalEdgeDescr global = getGlobalEdgeDescr( edge );
-        
-        const (Edge)* e = &edges[ global.idx ];
-        
-        auto node = edge.node;
-        
-        DirectedEdge directed = {
-                edge: e,
-                forward_direction: e.connection.from == node
-            };
-        
-        return directed;
-    }
-    
     override size_t getNodesNum() const
     {
         return nodes.length;
     }
     
-    void forAllEdges( void delegate( EdgeDescr edge ) dg ) const
+    override size_t getNodeEdgesNum( inout NodeDescr node ) const
     {
-        void nodeDg( NodeDescr node )
-        {
-            foreach( e; getEdgesRange( node ) )
-                if( getEdge( e ).forward_direction )
-                    dg( e );
-        }
-        
-        forAllNodes( &nodeDg );
-    }
-    
-    struct EdgesRange
-    {
-        private
-        {
-            const UndirectedGraph graph;
-            EdgeDescr edge;
-        }
-        
-        EdgeDescr front() { return edge; }
-        void popFront() { ++edge.idx; }
-        bool empty() const { return edge.idx >= length; }
-        size_t length() const { return graph.nodes[ edge.node.idx ].edges.length; }
-    }
-    
-    EdgesRange getEdgesRange( in NodeDescr node ) const
-    {
-        EdgesRange res =
-        {
-            graph: this,
-            edge: EdgeDescr( node, 0 )
-        };
-        
-        return res;
+        return nodes[ node.idx ].edges.length;
     }
     
     EdgeDescr getFirstEdgeDescr( in NodeDescr node ) const
@@ -227,6 +237,11 @@ class UndirectedGraph( NodePayload, EdgePayload ): UndirectedBase!( NodePayload,
         assert( range.length );
         
         return range.front();
+    }
+    
+    override const(Edge) getGlobalEdge( inout GlobalEdgeDescr global ) const
+    {
+        return edges[global.idx];
     }
     
     void sortEdges(T)( T delegate( in EdgeDescr edge, in EdgeDescr edge ) less )

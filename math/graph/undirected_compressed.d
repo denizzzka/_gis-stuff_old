@@ -68,6 +68,16 @@ class UndirectedGraphCompressed( NodePayload, EdgePayload ): UndirectedBase!( No
     {
         return nodes.length;
     }
+    
+    override size_t getNodeEdgesNum( inout NodeDescr node ) const
+    {
+        auto n = nodes[node.idx];
+        
+        if( n.global_edge_idx.isNull )
+            return 0;
+        else
+            return n.global_edge_idx.length;
+    }
 }
 
 unittest
