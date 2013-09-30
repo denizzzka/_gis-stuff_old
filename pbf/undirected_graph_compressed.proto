@@ -1,0 +1,21 @@
+package pbf.undirected_graph_compressed;
+
+
+message Edge
+{
+    required uint32 from_node_idx = 1;
+    required uint32 to_node_idx = 2;
+    required bytes payload = 3;
+}
+
+message Node
+{
+    required bytes payload = 1;
+    repeated uint32 global_edge_idx = 2;
+}
+
+message UndirectedGraph
+{
+    required bytes nodes = 1;
+    required bytes global_edges = 2;
+}
