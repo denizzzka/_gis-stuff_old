@@ -1,11 +1,10 @@
-module math.graph.undirected;
+module math.graph.undirected_compressed;
 
 import std.random: uniform;
 import std.algorithm: sort;
 
 
-package
-class UndirectedBase( NodePayload, EdgePayload )
+class UndirectedGraph( NodePayload, EdgePayload )
 {
     struct NodeDescr
     {
@@ -26,10 +25,7 @@ class UndirectedBase( NodePayload, EdgePayload )
             this.idx = idx;
         }
     }
-}
-
-class UndirectedGraph( NodePayload, EdgePayload ): UndirectedBase!( NodePayload, EdgePayload )
-{
+    
     private struct GlobalEdgeDescr { private size_t idx; }
     
     struct ConnectionInfo
