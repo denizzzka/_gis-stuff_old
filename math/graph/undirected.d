@@ -130,8 +130,8 @@ class UndirectedBase( NodePayload, EdgePayload )
         return res;
     }
     
-    abstract protected GlobalEdgeDescr getGlobalEdgeDescr( inout EdgeDescr edge ) const;
-    abstract protected const(Edge) getGlobalEdge( inout GlobalEdgeDescr global ) const;
+    abstract GlobalEdgeDescr getGlobalEdgeDescr( inout EdgeDescr edge ) const;
+    abstract const(Edge) getGlobalEdge( inout GlobalEdgeDescr global ) const;
     
     DirectedEdge getEdge( inout EdgeDescr edge ) const
     {
@@ -239,7 +239,7 @@ class UndirectedGraph( NodePayload, EdgePayload ): UndirectedBase!( NodePayload,
         return range.front();
     }
     
-    override const(Edge) getGlobalEdge( inout GlobalEdgeDescr global ) const
+    override protected const(Edge) getGlobalEdge( inout GlobalEdgeDescr global ) const
     {
         return edges[global.idx];
     }

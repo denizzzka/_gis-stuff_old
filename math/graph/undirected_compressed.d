@@ -97,7 +97,7 @@ class UndirectedGraphCompressed( NodePayload, EdgePayload ): UndirectedBase!( No
         return res;
     }
     
-    override const(Super.Edge) getGlobalEdge( inout GlobalEdgeDescr global ) const
+    override protected const(Super.Edge) getGlobalEdge( inout GlobalEdgeDescr global ) const
     {
         auto e = edges[global.idx];
         
@@ -105,8 +105,8 @@ class UndirectedGraphCompressed( NodePayload, EdgePayload ): UndirectedBase!( No
             {
                 connection:
                 {
-                    from: Super.NodeDescr( e.from_node_idx ),
-                    to: Super.NodeDescr( e.to_node_idx )
+                    from: NodeDescr( e.from_node_idx ),
+                    to: NodeDescr( e.to_node_idx )
                 },
                 payload: EdgePayload.Deserialize( e.payload.get )
             };
