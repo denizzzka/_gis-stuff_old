@@ -29,7 +29,7 @@ class POV
     }
     
     // TODO: need class Path
-    const (RoadGraph.Polylines) found_path()
+    const (RoadGraphCompressed.Polylines) found_path()
     {
         return map.found_path;
     }

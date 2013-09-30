@@ -199,7 +199,8 @@ struct Layer
     LinesRTree lines;
     LinesRTree_array _lines;
     
-    RoadGraph road_graph;
+    //RoadGraph road_graph;
+    RoadGraphCompressed _road_graph;
     
     void init()
     {
@@ -297,7 +298,7 @@ class Region
     {
         foreach( i, ref layer; layers )
         {
-            layer.road_graph = new RoadGraph;
+            RoadGraph g = new RoadGraph;
             
             RoadGraph.NodeDescr[ulong] already_stored;
             
@@ -309,14 +310,14 @@ class Region
                 if( epsilon )
                     descr.generalize( epsilon );
                 
-                layer.road_graph.addPolyline( descr, already_stored );
+                g.addPolyline( descr, already_stored );
             }
             
-            layer.road_graph.sortEdgesByReducingRank;
+            g.sortEdgesByReducingRank;
             
             void addEdgeToRtree( RoadGraph.EdgeDescr descr )
             {
-                auto bbox = layer.road_graph.getBoundary( descr );
+                auto bbox = g.getBoundary( descr );
                 
                 AnyLineDescriptor any = {
                     line_class: LineClass.ROAD,
@@ -326,7 +327,9 @@ class Region
                 layer.lines.addObject( bbox, any );
             }
             
-            layer.road_graph.forAllEdges( &addEdgeToRtree );
+            g.forAllEdges( &addEdgeToRtree );
+            
+            layer._road_graph = new RoadGraphCompressed(g);
         }
     }
     
@@ -381,7 +384,7 @@ class Map
 {
     Region[] regions;
     
-    RoadGraph.Polylines found_path;
+    RoadGraphCompressed.Polylines found_path;
     
     MBBox boundary() const
     {
@@ -418,17 +421,17 @@ class Map
     
     void updatePath()
     {
-        RoadGraph g = regions[0].layers[0].road_graph;
+        RoadGraphCompressed g = regions[0].layers[0]._road_graph;
         
         RoadGraph.EdgeDescr[] path;
         
         do
         {
-            path = g.findPath( g.getRandomNode, g.getRandomNode );
+            //path = g.findPath( g.getRandomNode, g.getRandomNode );
         }
         while( path.length == 0 );
         
-        RoadGraph.Polylines.GraphLines gl = { map_graph: g, descriptors: path };
+        RoadGraphCompressed.Polylines.GraphLines gl = { map_graph: g, descriptors: path };
         
         found_path.lines.destroy;
         found_path.lines ~= gl;

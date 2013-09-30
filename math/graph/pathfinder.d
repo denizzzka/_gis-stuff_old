@@ -5,7 +5,7 @@ debug(pathfinder) import std.stdio;
 
 
 class PathFinder( GraphEngine ) : GraphEngine
-{    
+{
     abstract
     real heuristicDistance( in NodeDescr fromDescr, in NodeDescr toDescr ) const;
     

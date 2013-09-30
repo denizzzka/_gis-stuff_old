@@ -83,7 +83,8 @@ class MapGraph( alias GraphEngine, Point, Polyline ) : GraphEngine!( Point, Poly
     }
     
     this(SomeMapGraph)(SomeMapGraph g)
-    if( isInstanceOf!( MapGraph, SomeMapGraph ) )
+    if( !isArray!SomeMapGraph )
+    //if( isInstanceOf!( MapGraph, SomeMapGraph ) )
     {
         super(g);
     }

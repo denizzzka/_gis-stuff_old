@@ -72,13 +72,32 @@ struct RoadLine
     }
 }
 
-private alias MapGraph!( UndirectedGraph, MapCoords, RoadLine ) MG;
-private alias MapGraph!( UndirectedGraphCompressed, MapCoords, RoadLine ) MGC;
-
-class RoadGraph : PathFinder!MG
+class RoadGraph: MapGraph!( UndirectedGraph, MapCoords, RoadLine )
 {
-    override
-    MapCoords[] getMapCoords( in EdgeDescr descr ) const
+    void sortEdgesByReducingRank()
+    {
+        bool greater( in EdgeDescr e1, in EdgeDescr e2 )
+        {
+            auto v1 = getEdge( e1 ).payload.type;
+            auto v2 = getEdge( e2 ).payload.type;
+            
+            return v1 < v2; // less value mean greater road rank
+        }
+        
+        sortEdges( &greater );
+    }
+}
+
+private alias MapGraph!( UndirectedGraphCompressed, MapCoords, RoadLine ) RGC;
+
+class RoadGraphCompressed: RGC //PathFinder!RGC
+{
+    this( RoadGraph g )
+    {
+        super(g);
+    }
+    
+    override MapCoords[] getMapCoords( in EdgeDescr descr ) const
     {
         auto orig = super.getMapCoords( descr );
         
@@ -100,7 +119,7 @@ class RoadGraph : PathFinder!MG
             return res;
         }
     }
-    
+    /*
     override
     real heuristicDistance( in NodeDescr fromDescr, in NodeDescr toDescr ) const
     {
@@ -128,19 +147,7 @@ class RoadGraph : PathFinder!MG
         
         return res;
     }
-    
-    void sortEdgesByReducingRank()
-    {
-        bool greater( in EdgeDescr e1, in EdgeDescr e2 )
-        {
-            auto v1 = getEdge( e1 ).payload.type;
-            auto v2 = getEdge( e2 ).payload.type;
-            
-            return v1 < v2; // less value mean greater road rank
-        }
-        
-        sortEdges( &greater );
-    }
+    */
 }
 
 unittest

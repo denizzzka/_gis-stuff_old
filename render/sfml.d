@@ -4,7 +4,7 @@ import render.window;
 import dsfml.graphics;
 import scene;
 import math.geometry;
-import map.map: MapLinesDescriptor, MapCoords, MercatorCoords, RoadGraph, BBox;
+import map.map: MapLinesDescriptor, MapCoords, MercatorCoords, RoadGraphCompressed, BBox;
 import cat = config.categories;
 import map.objects_properties: LineClass; // TODO: remove it?
 import render.road;
@@ -144,7 +144,7 @@ class Window : IWindow
 			break;
 			
 		    case ROAD:
-			auto graph = reg_lines.region.layers[ reg_lines.layer_num ].road_graph;
+			auto graph = reg_lines.region.layers[ reg_lines.layer_num ]._road_graph;
 			auto road = SfmlRoad( this, graph, line.road );
 			
 			roads.addRoad( road );
@@ -180,7 +180,7 @@ class Window : IWindow
         Vector2F[] coords;
         RoadProperties props;
 	
-	this( Window window, in RoadGraph g, in EdgeDescr edge, RoadProperties* ps = null )
+	this( Window window, inout RoadGraphCompressed g, in EdgeDescr edge, RoadProperties* ps = null )
 	{
             auto map_coords = g.getMapCoords( edge );
             WindowCoords[] cartesian = window.MapToWindowCoords( map_coords );
@@ -291,7 +291,7 @@ class Window : IWindow
 	window.draw( line );
     }
     
-    SfmlRoad[] sfmlPath( in RoadGraph.Polylines r_path )
+    SfmlRoad[] sfmlPath( in RoadGraphCompressed.Polylines r_path )
     {
 	size_t path_length;
 	
@@ -309,7 +309,7 @@ class Window : IWindow
 		ps.type = cat.Line.PATH;
 		ps.weight = 1;
 		
-		res[idx] = SfmlRoad( this, cast(RoadGraph) gline.map_graph, edge, ps ); // FIXME: cast?!
+		res[idx] = SfmlRoad( this, cast(RoadGraphCompressed) gline.map_graph, edge, ps );  // FIXME: cast?!
 		idx++;
 	    }
 	    

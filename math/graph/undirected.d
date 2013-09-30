@@ -56,6 +56,11 @@ class UndirectedBase( NodePayload, EdgePayload )
     
     abstract size_t getNodesNum() const;
     
+    bool isAvailable( in NodeDescr nd ) const
+    {
+        return nd.idx < getNodesNum;
+    }
+    
     struct NodesRange
     {
         private
@@ -172,11 +177,6 @@ class UndirectedGraph( NodePayload, EdgePayload ): UndirectedBase!( NodePayload,
     
     private Node[] nodes;
     package Edge[] edges;
-    
-    bool isAvailable( in NodeDescr nd ) const
-    {
-        return nd.idx < nodes.length;
-    }
     
     NodeDescr addNode( NodePayload v )
     {

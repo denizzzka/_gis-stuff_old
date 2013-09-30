@@ -21,7 +21,7 @@ class UndirectedGraphCompressed( NodePayload, EdgePayload ): UndirectedBase!( No
     this( UndirectedGraph!( NodePayload, EdgePayload ) g )
     {
         {
-            CompressedNodesArr nodes;
+            CompressedNodesArr nodes = new CompressedNodesArr;
             
             foreach( ref n; g.getNodesRange )
             {
@@ -48,7 +48,7 @@ class UndirectedGraphCompressed( NodePayload, EdgePayload ): UndirectedBase!( No
             this.nodes = nodes;
         }
         {
-            CompressedEdgesArr edges;
+            CompressedEdgesArr edges = new CompressedEdgesArr;
             
             foreach( ref e; g.edges )
             {
