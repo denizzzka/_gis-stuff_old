@@ -2,8 +2,10 @@ module map.road_graph;
 
 import map.map_graph;
 import math.graph.undirected;
+import math.graph.undirected_compressed;
 import math.graph.pathfinder: PathFinder;
 import cat = config.categories: Line;
+static import pbf = pbf.road_graph;
 
 
 struct RoadProperties
@@ -15,24 +17,63 @@ struct RoadProperties
 
 struct RoadLine
 {
-    package MapGraphPolyline polyline;
-    
-    RoadProperties properties;
-    alias properties this;
+    private const pbf.Road storage;
+    alias storage this;
     
     this( MapCoords[] points, RoadProperties properties )
     {
-        polyline = MapGraphPolyline( points );
-        this.properties = properties;
+        pbf.Road s;
+        
+        s.polyline = MapGraphPolyline( points ).storage;
+        s.type = properties.type;
+        s.weight = properties.weight;
+        s.layer = properties.layer;
+        
+        storage = s;
+    }
+    
+    this( pbf.Road r )
+    {
+        storage = r;
     }
     
     MapCoords[] points() const
     {
-        return polyline.points;
+        auto s = cast(pbf.Road) storage;
+        
+        return MapGraphPolyline(s.polyline).points();
+    }
+    
+    ubyte[] Serialize() const
+    {
+        auto s = cast(pbf.Road) storage;
+        
+        return s.Serialize;
+    }
+    
+    static RoadLine Deserialize( inout ref ubyte[] from )
+    {
+        auto f = from.dup;
+        
+        RoadLine res = pbf.Road.Deserialize( f );
+        
+        return res;
+    }
+    
+    RoadProperties properties() const
+    {
+        RoadProperties res;
+        
+        res.type = cast(cat.Line) storage.type;
+        res.weight = storage.weight;
+        res.layer = cast(byte) storage.layer;
+        
+        return res;
     }
 }
 
 private alias MapGraph!( UndirectedGraph, MapCoords, RoadLine ) MG;
+private alias MapGraph!( UndirectedGraphCompressed, MapCoords, RoadLine ) MGC;
 
 class RoadGraph : PathFinder!MG
 {

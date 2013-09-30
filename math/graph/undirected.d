@@ -131,6 +131,7 @@ class UndirectedBase( NodePayload, EdgePayload )
     }
     
     abstract GlobalEdgeDescr getGlobalEdgeDescr( inout EdgeDescr edge ) const;
+    
     abstract const(Edge) getGlobalEdge( inout GlobalEdgeDescr global ) const;
     
     DirectedEdge getEdge( inout EdgeDescr edge ) const
@@ -148,6 +149,8 @@ class UndirectedBase( NodePayload, EdgePayload )
         
         return directed;
     }
+    
+    abstract const(NodePayload) getNodePayload( inout NodeDescr node ) const;
 }
 
 class UndirectedGraph( NodePayload, EdgePayload ): UndirectedBase!( NodePayload, EdgePayload )
@@ -242,6 +245,11 @@ class UndirectedGraph( NodePayload, EdgePayload ): UndirectedBase!( NodePayload,
     override protected const(Edge) getGlobalEdge( inout GlobalEdgeDescr global ) const
     {
         return edges[global.idx];
+    }
+    
+    override const(NodePayload) getNodePayload( inout NodeDescr node ) const
+    {
+        return nodes[ node.idx ].payload;
     }
     
     void sortEdges(T)( T delegate( in EdgeDescr edge, in EdgeDescr edge ) less )

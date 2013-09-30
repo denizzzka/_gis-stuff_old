@@ -97,6 +97,11 @@ class UndirectedGraphCompressed( NodePayload, EdgePayload ): UndirectedBase!( No
         return res;
     }
     
+    override const(NodePayload) getNodePayload( inout NodeDescr node ) const
+    {
+        return NodePayload.Deserialize( nodes[ node.idx ].payload );
+    }
+    
     override protected const(Super.Edge) getGlobalEdge( inout GlobalEdgeDescr global ) const
     {
         auto e = edges[global.idx];

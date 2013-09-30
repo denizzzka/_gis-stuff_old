@@ -1,0 +1,13 @@
+package pbf.road_graph;
+
+import "pbf/map_objects.proto";
+
+
+message Road
+{
+    required MapPolyline polyline = 1;
+    
+    required uint32 type = 2;
+    required float weight = 3;
+    required int32 layer = 4;
+}
