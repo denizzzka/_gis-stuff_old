@@ -199,8 +199,7 @@ struct Layer
     LinesRTree lines;
     LinesRTree_array _lines;
     
-    //RoadGraph road_graph;
-    RoadGraphCompressed _road_graph;
+    RoadGraphCompressed road_graph;
     
     void init()
     {
@@ -329,7 +328,7 @@ class Region
             
             g.forAllEdges( &addEdgeToRtree );
             
-            layer._road_graph = new RoadGraphCompressed(g);
+            layer.road_graph = new RoadGraphCompressed(g);
         }
     }
     
@@ -421,7 +420,7 @@ class Map
     
     void updatePath()
     {
-        RoadGraphCompressed g = regions[0].layers[0]._road_graph;
+        RoadGraphCompressed g = regions[0].layers[0].road_graph;
         
         RoadGraph.EdgeDescr[] path;
         

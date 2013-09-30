@@ -144,7 +144,7 @@ class Window : IWindow
 			break;
 			
 		    case ROAD:
-			auto graph = reg_lines.region.layers[ reg_lines.layer_num ]._road_graph;
+			auto graph = reg_lines.region.layers[ reg_lines.layer_num ].road_graph;
 			auto road = SfmlRoad( this, graph, line.road );
 			
 			roads.addRoad( road );
