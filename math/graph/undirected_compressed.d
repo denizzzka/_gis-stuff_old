@@ -28,25 +28,19 @@ class UndirectedGraphCompressed( NodePayload, EdgePayload ): UndirectedBase!( No
                 
                 node.payload = g.getNodePayload(n).Serialize;
                 
-                /*
                 foreach( ref e; g.getEdgesRange( n ) )
                 {
-                    pbf.Edge edge;
+                    auto global = g.getGlobalEdgeDescr( e );
                     
-                    auto orig_edge = g.getEdge( e );
-                    
-                    edge.to_node_idx = orig_edge.to_node.idx;
-                    edge.payload = orig_edge.payload.Serialize;
-                    
-                    if(node.edges.isNull)
+                    if(node.global_edge_idx.isNull)
                     {
-                        pbf.Edge[] zero_length;
-                        node.edges = zero_length; // init nullified PBF array
+                        uint[] zero_length;
+                        node.global_edge_idx = zero_length; // init nullified PBF array
                     }
                     
-                    node.edges ~= edge;
+                    node.global_edge_idx ~= global.idx;
                 }
-                */
+                
                 nodes ~= node;
             }
             

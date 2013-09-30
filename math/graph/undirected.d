@@ -27,7 +27,7 @@ class UndirectedBase( NodePayload, EdgePayload )
         }
     }
     
-    package struct GlobalEdgeDescr { private size_t idx; }
+    package struct GlobalEdgeDescr { package size_t idx; }
     
     struct ConnectionInfo
     {
@@ -136,7 +136,7 @@ class UndirectedGraph( NodePayload, EdgePayload ): UndirectedBase!( NodePayload,
         return nodes[ node.idx ].payload;
     }
     
-    DirectedEdge getEdge( in EdgeDescr edge ) const
+    package GlobalEdgeDescr getGlobalEdgeDescr( inout EdgeDescr edge ) const
     in
     {
         auto node = edge.node;
@@ -148,9 +148,16 @@ class UndirectedGraph( NodePayload, EdgePayload ): UndirectedBase!( NodePayload,
     {
         auto node = edge.node;
         
-        GlobalEdgeDescr global = nodes[ node.idx ].edges[ edge.idx ];
+        return nodes[ node.idx ].edges[ edge.idx ];
+    }
+    
+    DirectedEdge getEdge( inout EdgeDescr edge ) const
+    {
+        GlobalEdgeDescr global = getGlobalEdgeDescr( edge );
         
         const (Edge)* e = &edges[ global.idx ];
+        
+        auto node = edge.node;
         
         DirectedEdge directed = {
                 edge: e,
