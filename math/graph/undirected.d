@@ -9,7 +9,7 @@ class UndirectedBase( NodePayload, EdgePayload )
 {
     struct NodeDescr
     {
-        private size_t idx;
+        package size_t idx;
         this( size_t idx ){ this.idx = idx; }
     }
     
@@ -99,7 +99,7 @@ class UndirectedGraph( NodePayload, EdgePayload ): UndirectedBase!( NodePayload,
     }
     
     private Node[] nodes;
-    private Edge[] edges;
+    package Edge[] edges;
     
     bool isAvailable( in NodeDescr nd ) const
     {

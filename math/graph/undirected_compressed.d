@@ -9,19 +9,65 @@ import compression.compressible_pbf_struct;
 class UndirectedGraphCompressed( NodePayload, EdgePayload ): UndirectedBase!( NodePayload, EdgePayload )
 {    
     alias CompressiblePbfStruct!(pbf.Node) Node;
+    alias CompressiblePbfStruct!(pbf.Edge) Edge;
     
     alias CompressedArray!( Node, 3 ) CompressedNodesArr;
+    alias CompressedArray!( Edge, 3 ) CompressedEdgesArr;
+    
     private const CompressedNodesArr nodes;
+    private const CompressedEdgesArr edges;
     
     this( UndirectedGraph!( NodePayload, EdgePayload ) g )
     {
-        CompressedNodesArr nodes;
-        
-        foreach( ref n; g.getNodesRange )
         {
+            CompressedNodesArr nodes;
+            
+            foreach( ref n; g.getNodesRange )
+            {
+                Node node;
+                
+                node.payload = g.getNodePayload(n).Serialize;
+                
+                /*
+                foreach( ref e; g.getEdgesRange( n ) )
+                {
+                    pbf.Edge edge;
+                    
+                    auto orig_edge = g.getEdge( e );
+                    
+                    edge.to_node_idx = orig_edge.to_node.idx;
+                    edge.payload = orig_edge.payload.Serialize;
+                    
+                    if(node.edges.isNull)
+                    {
+                        pbf.Edge[] zero_length;
+                        node.edges = zero_length; // init nullified PBF array
+                    }
+                    
+                    node.edges ~= edge;
+                }
+                */
+                nodes ~= node;
+            }
+            
+            this.nodes = nodes;
         }
-        
-        this.nodes = nodes;
+        {
+            CompressedEdgesArr edges;
+            
+            foreach( ref e; g.edges )
+            {
+                Edge edge;
+                
+                edge.from_node_idx = e.connection.from.idx;
+                edge.to_node_idx = e.connection.to.idx;
+                edge.payload = e.payload.Serialize;
+                
+                edges ~= edge;
+            }
+            
+            this.edges = edges;
+        }
     }
     
     override size_t getNodesNum() const
