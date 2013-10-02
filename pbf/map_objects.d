@@ -14,7 +14,7 @@ struct MapCoords {
 	///
 	Nullable!(long) lat;
 
-	ubyte[] Serialize(int field = -1) {
+	ubyte[] Serialize(int field = -1) const {
 		ubyte[] ret;
 		// Serialize member 1 Field Name lon
 		ret ~= toVarint(lon.get(),1);
@@ -86,7 +86,7 @@ struct MapPolyline {
 	///
 	Nullable!(MapCoords[]) coords_delta;
 
-	ubyte[] Serialize(int field = -1) {
+	ubyte[] Serialize(int field = -1) const {
 		ubyte[] ret;
 		// Serialize member 1 Field Name coords_delta
 		if(!coords_delta.isNull)
@@ -174,7 +174,7 @@ struct Box {
 	///
 	Nullable!(MapCoords) rightUpperCorner;
 
-	ubyte[] Serialize(int field = -1) {
+	ubyte[] Serialize(int field = -1) const {
 		ubyte[] ret;
 		// Serialize member 1 Field Name leftDownCorner
 		static if (is(MapCoords == struct)) {

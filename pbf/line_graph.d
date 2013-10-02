@@ -15,7 +15,7 @@ struct Line {
 	///
 	Nullable!(uint) type;
 
-	ubyte[] Serialize(int field = -1) {
+	ubyte[] Serialize(int field = -1) const {
 		ubyte[] ret;
 		// Serialize member 1 Field Name polyline
 		static if (is(MapPolyline == struct)) {

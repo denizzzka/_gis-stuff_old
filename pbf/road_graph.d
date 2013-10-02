@@ -19,7 +19,7 @@ struct Road {
 	///
 	Nullable!(int) layer;
 
-	ubyte[] Serialize(int field = -1) {
+	ubyte[] Serialize(int field = -1) const {
 		ubyte[] ret;
 		// Serialize member 1 Field Name polyline
 		static if (is(MapPolyline == struct)) {

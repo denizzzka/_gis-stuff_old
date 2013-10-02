@@ -14,7 +14,7 @@ struct Edge {
 	///
 	Nullable!(ubyte[]) payload;
 
-	ubyte[] Serialize(int field = -1) {
+	ubyte[] Serialize(int field = -1) const {
 		ubyte[] ret;
 		// Serialize member 1 Field Name to_node_idx
 		ret ~= toVarint(to_node_idx.get(),1);
@@ -89,7 +89,7 @@ struct Node {
 	///
 	Nullable!(Edge[]) edges;
 
-	ubyte[] Serialize(int field = -1) {
+	ubyte[] Serialize(int field = -1) const {
 		ubyte[] ret;
 		// Serialize member 1 Field Name payload
 		ret ~= toByteString(payload.get(),1);
@@ -188,7 +188,7 @@ struct DirectedGraph {
 	///
 	Nullable!(Node[]) nodes;
 
-	ubyte[] Serialize(int field = -1) {
+	ubyte[] Serialize(int field = -1) const {
 		ubyte[] ret;
 		// Serialize member 1 Field Name nodes
 		if(!nodes.isNull)

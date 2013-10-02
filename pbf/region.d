@@ -19,7 +19,7 @@ struct Layer {
 	///
 	Nullable!(ubyte[]) road_graph;
 
-	ubyte[] Serialize(int field = -1) {
+	ubyte[] Serialize(int field = -1) const {
 		ubyte[] ret;
 		// Serialize member 1 Field Name boundary
 		static if (is(Box == struct)) {
@@ -141,7 +141,7 @@ struct MapRegion {
 	///
 	Nullable!(ubyte[]) areas;
 
-	ubyte[] Serialize(int field = -1) {
+	ubyte[] Serialize(int field = -1) const {
 		ubyte[] ret;
 		// Serialize member 1 Field Name file_id
 		ret ~= toByteString(file_id.get(),1);

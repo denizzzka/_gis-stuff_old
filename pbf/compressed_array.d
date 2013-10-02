@@ -16,7 +16,7 @@ struct Compressed_Array {
 	///
 	Nullable!(ubyte[]) storage;
 
-	ubyte[] Serialize(int field = -1) {
+	ubyte[] Serialize(int field = -1) const {
 		ubyte[] ret;
 		// Serialize member 1 Field Name items_num
 		ret ~= toVarint(items_num.get(),1);
