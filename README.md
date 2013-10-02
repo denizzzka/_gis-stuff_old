@@ -9,12 +9,15 @@ Use "--recursive" for cloning this repository:
 ```
 git clone --recursive git://github.com/denizzzka/gis-stuff.git
 ```
-For passing options to the compiler use ARGS variable:
+Build using DUB:
 ```
-make -B ARGS="-d -unittest -g -debug -debug=osmpbf"
+$ cd gis-stuff
+$ dub -q --arch=x86 --build=unittest build
 ```
-("-B" is for unconditionally make target)
-If no options are passed "-release" option will be used.
+Run:
+```
+./gis-stuff --verbose malta-latest.osm.pbf
+```
 
 * * *
 ![Image](screenshots/malta_lines_3_colored.png)
