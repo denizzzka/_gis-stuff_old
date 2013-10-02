@@ -166,3 +166,113 @@ struct MapPolyline {
 		return Deserialize(input);
 	}
 }
+struct Box {
+	// deal with unknown fields
+	ubyte[] ufields;
+	///
+	Nullable!(MapCoords) leftDownCorner;
+	///
+	Nullable!(MapCoords) rightUpperCorner;
+
+	ubyte[] Serialize(int field = -1) {
+		ubyte[] ret;
+		// Serialize member 1 Field Name leftDownCorner
+		static if (is(MapCoords == struct)) {
+			ret ~= leftDownCorner.Serialize(1);
+		} else static if (is(MapCoords == enum)) {
+			ret ~= toVarint(cast(int)leftDownCorner.get(),1);
+		} else
+			static assert(0,"Can't identify type `MapCoords`");
+		// Serialize member 2 Field Name rightUpperCorner
+		static if (is(MapCoords == struct)) {
+			ret ~= rightUpperCorner.Serialize(2);
+		} else static if (is(MapCoords == enum)) {
+			ret ~= toVarint(cast(int)rightUpperCorner.get(),2);
+		} else
+			static assert(0,"Can't identify type `MapCoords`");
+		ret ~= ufields;
+		// take care of header and length generation if necessary
+		if (field != -1) {
+			ret = genHeader(field,WireType.lenDelimited)~toVarint(ret.length,field)[1..$]~ret;
+		}
+		return ret;
+	}
+
+	// if we're root, we can assume we own the whole string
+	// if not, the first thing we need to do is pull the length that belongs to us
+	static Box Deserialize(ref ubyte[] manip, bool isroot=true) {return Box(manip,isroot);}
+	this(ref ubyte[] manip,bool isroot=true) {
+		ubyte[] input = manip;
+		// cut apart the input string
+		if (!isroot) {
+			uint len = fromVarint!(uint)(manip);
+			input = manip[0..len];
+			manip = manip[len..$];
+		}
+		while(input.length) {
+			int header = fromVarint!(int)(input);
+			auto wireType = getWireType(header);
+			switch(getFieldNumber(header)) {
+			case 1:// Deserialize member 1 Field Name leftDownCorner
+				static if (is(MapCoords == struct)) {
+					if(wireType != WireType.lenDelimited)
+						throw new Exception("Invalid wiretype " ~
+						   to!(string)(wireType) ~
+						   " for variable type MapCoords");
+
+					leftDownCorner = MapCoords.Deserialize(input,false);
+				} else static if (is(MapCoords == enum)) {
+					if (wireType == WireType.varint) {
+						leftDownCorner = cast(MapCoords)
+						   fromVarint!(int)(input);
+					} else
+						throw new Exception("Invalid wiretype " ~
+						   to!(string)(wireType) ~
+						   " for variable type MapCoords");
+
+				} else
+					static assert(0,
+					  "Can't identify type `MapCoords`");
+			break;
+			case 2:// Deserialize member 2 Field Name rightUpperCorner
+				static if (is(MapCoords == struct)) {
+					if(wireType != WireType.lenDelimited)
+						throw new Exception("Invalid wiretype " ~
+						   to!(string)(wireType) ~
+						   " for variable type MapCoords");
+
+					rightUpperCorner = MapCoords.Deserialize(input,false);
+				} else static if (is(MapCoords == enum)) {
+					if (wireType == WireType.varint) {
+						rightUpperCorner = cast(MapCoords)
+						   fromVarint!(int)(input);
+					} else
+						throw new Exception("Invalid wiretype " ~
+						   to!(string)(wireType) ~
+						   " for variable type MapCoords");
+
+				} else
+					static assert(0,
+					  "Can't identify type `MapCoords`");
+			break;
+			default:
+				// rip off unknown fields
+			if(input.length)
+				ufields ~= toVarint(header)~
+				   ripUField(input,getWireType(header));
+			break;
+			}
+		}
+		if (leftDownCorner.isNull) throw new Exception("Did not find a leftDownCorner in the message parse.");
+		if (rightUpperCorner.isNull) throw new Exception("Did not find a rightUpperCorner in the message parse.");
+	}
+
+	void MergeFrom(Box merger) {
+		if (!merger.leftDownCorner.isNull) leftDownCorner = merger.leftDownCorner;
+		if (!merger.rightUpperCorner.isNull) rightUpperCorner = merger.rightUpperCorner;
+	}
+
+	static Box opCall(ref ubyte[]input) {
+		return Deserialize(input);
+	}
+}

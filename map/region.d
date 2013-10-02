@@ -10,6 +10,7 @@ import map.road_graph;
 import map.map_graph: cutOnCrossings;
 import map.area: Area;
 static import config.map;
+import pbf.region;
 
 
 struct Point
@@ -228,6 +229,11 @@ class Region
                 layers[n].lines.addObject( area.getBoundary, any );
             }
         }
+    }
+    
+    void dumpToFile(inout string filename)
+    {
+        // [ default = "6dFile!Map" ]
     }
 }
 

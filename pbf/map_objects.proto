@@ -11,3 +11,9 @@ message MapPolyline
 {
     repeated MapCoords coords_delta = 1; // delta is calculated from start node
 }
+
+message Box
+{
+    required MapCoords leftDownCorner = 1;
+    required MapCoords rightUpperCorner = 2;
+}
