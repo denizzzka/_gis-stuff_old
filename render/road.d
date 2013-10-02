@@ -3,7 +3,7 @@ module render.road;
 import dsfml.graphics;
 import cat = config.categories;
 import config.map: PolylineProperties, polylines;
-import map.map: RoadGraph;
+import map.region: RoadGraph;
 
 
 mixin template Road()

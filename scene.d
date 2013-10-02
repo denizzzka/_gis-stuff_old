@@ -1,6 +1,7 @@
 module scene;
 
 import map.map;
+import map.region: Point, RoadGraphCompressed;
 import map.road_graph;
 import math.geometry;
 import math.earth: Conv, WGS84, lon2canonical;
