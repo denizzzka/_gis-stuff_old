@@ -2,7 +2,7 @@ module map.map;
 
 import math.geometry;
 static import math.earth;
-import map.region;
+import map.region.region;
 static import config.converter;
 static import pbf = pbf.map_objects;
 import map.road_graph: RoadGraphCompressed; // TODO: temporary, need for current dirty path implementation
@@ -87,9 +87,17 @@ struct MapCoords
         
         return MapCoords( MapCoords.Coords( c.lon.get, c.lat.get ) );
     }
+    
+    alias Box!Coords BBox;
+    
+    /// Returns: zero-sized BBox containing this point
+    BBox getBBox() const
+    {
+        return BBox( map_coords, Coords(0,0) );
+    }
 }
 
-alias Box!(MapCoords.Coords) BBox;
+alias MapCoords.BBox BBox;
 alias Box!MercatorCoords MBBox;
 
 BBox toBBox( in MBBox mbox )

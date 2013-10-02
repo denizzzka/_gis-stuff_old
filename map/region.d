@@ -1,4 +1,4 @@
-module map.region;
+module map.region.region;
 
 import map.map: MapCoords, BBox, MBBox, toMBBox;
 import math.rtree2d.ptrs;
@@ -50,9 +50,7 @@ alias RTreePtrs!(BBox, Point) PointsStorage; // TODO: 2D-Tree points storage
 
 void addPoint( PointsStorage storage, Point point )
 {
-    BBox bbox = BBox( point.coords.map_coords, MapCoords.Coords(0,0) );
-    
-    storage.addObject( bbox, point );
+    storage.addObject( point.coords.getBBox, point );
 }
 
 struct AnyLineDescriptor

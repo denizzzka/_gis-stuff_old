@@ -5,7 +5,7 @@ import dsfml.graphics;
 import scene;
 import math.geometry;
 import map.map: MapLinesDescriptor, MapCoords, MercatorCoords, BBox;
-import map.region: RoadGraphCompressed;
+import map.region.region: RoadGraphCompressed;
 import cat = config.categories;
 import map.objects_properties: LineClass; // TODO: remove it?
 import render.road;
