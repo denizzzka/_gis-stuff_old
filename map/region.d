@@ -10,7 +10,7 @@ import map.road_graph;
 import map.map_graph: cutOnCrossings;
 import map.area: Area;
 static import config.map;
-import pbf.region;
+static import pbf = pbf.region;
 
 
 struct Point
@@ -233,7 +233,9 @@ class Region
     
     void dumpToFile(inout string filename)
     {
-        // [ default = "6dFile!Map" ]
+        pbf.MapRegion res;
+        
+        res.file_id = cast(ubyte[]) "6dFile!Map";
     }
 }
 
