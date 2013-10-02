@@ -8,7 +8,7 @@ struct CompressiblePbfStruct(T)
     T s;
     alias s this;
     
-    ubyte[] compress()
+    ubyte[] compress() const
     out(r)
     {
         CompressiblePbfStruct d;

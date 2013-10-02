@@ -81,7 +81,7 @@ struct MapCoords
     
     static MapCoords Deserialize( inout ref ubyte[] from )
     {
-        auto f = cast(ubyte[]) from.dup;
+        auto f = from.dup;
         auto c = pbf.MapCoords.Deserialize( f );
         
         return MapCoords( MapCoords.Coords( c.lon.get, c.lat.get ) );

@@ -46,9 +46,7 @@ struct MapGraphLine
     
     ubyte[] Serialize() const
     {
-        auto s = cast(pbf.Line) storage;
-        
-        return s.Serialize;
+        return storage.Serialize;
     }
     
     static MapGraphLine Deserialize( inout ref ubyte[] from )

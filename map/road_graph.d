@@ -46,9 +46,7 @@ struct RoadLine
     
     ubyte[] Serialize() const
     {
-        auto s = cast(pbf.Road) storage;
-        
-        return s.Serialize;
+        return storage.Serialize;
     }
     
     static RoadLine Deserialize( inout ref ubyte[] from )
