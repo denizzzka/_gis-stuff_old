@@ -36,6 +36,7 @@ struct MapCoords
     }
     
     alias getMercatorCoords this;
+    alias getMercatorCoords mercator;
     
     real calcSphericalDistance( in MapCoords v ) const
     {

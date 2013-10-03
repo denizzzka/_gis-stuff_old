@@ -1,6 +1,6 @@
 module map.adapters;
 
-import map.map: MapCoords;
+import map.map: MapCoords, MercatorCoords;
 import math.geometry: Box, to;
 
 static import math.reduce_points;
@@ -101,5 +101,12 @@ struct TNodeDescription( _ForeignID, alias MAP_COORDS_BY_ID )
     MapCoords getCoords() const
     {
         return MAP_COORDS_BY_ID( foreign_id );
-    }    
+    }
+    
+    MercatorCoords mercator() const
+    {
+        return getCoords.mercator;
+    }
+    
+    alias mercator this;
 }
