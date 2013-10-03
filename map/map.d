@@ -35,7 +35,7 @@ struct MapCoords
         return res;
     }
     
-    alias getMercatorCoords this;
+    //alias getMercatorCoords this;
     alias getMercatorCoords mercator;
     
     real calcSphericalDistance( in MapCoords v ) const
@@ -114,8 +114,8 @@ MBBox toMBBox( in BBox bbox )
 {
     MBBox res;
     
-    res.ld = MapCoords( bbox.ld );
-    res.ru = MapCoords( bbox.ru );
+    res.ld = MapCoords( bbox.ld ).mercator;
+    res.ru = MapCoords( bbox.ru ).mercator;
     
     return res;
 }

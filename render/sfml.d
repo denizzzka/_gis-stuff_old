@@ -117,7 +117,7 @@ class Window : IWindow
 	auto res = new WindowCoords[ map_points.length ];
 	
 	foreach( i, point; map_points )
-	    res[i] = scene.metersToScreen( point );
+	    res[i] = scene.metersToScreen( point.mercator );
 	    
 	return res;
     }

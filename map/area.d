@@ -33,7 +33,8 @@ struct AreaLine
     private
     void generalize( in real epsilon )
     {
-        points = math.reduce_points.reduce( points, epsilon );
+        /// FIXME:
+        //points = math.reduce_points.reduce( points, epsilon );
     }
 }
 
