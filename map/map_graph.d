@@ -28,9 +28,9 @@ struct MapGraphPolyline
         
         foreach( p; points )
         {
-            auto delta = MapCoords( p.map_coords - prev.map_coords );
+            auto delta = MapCoords( p - prev );
             l.coords_delta ~= delta.toPbf;
-            prev.map_coords = p.map_coords;
+            prev = p;
         }
         
         storage = l;
@@ -53,7 +53,7 @@ struct MapGraphPolyline
             
             foreach( i, p; storage.coords_delta )
             {
-                prev.map_coords += MapCoords.fromPbf( p ).map_coords;
+                prev += MapCoords.fromPbf( p );
                 res[i] = prev;
             }
         }
@@ -98,7 +98,7 @@ class MapGraph( alias GraphEngine, Point, Polyline ) : GraphEngine!( Point, Poly
         auto edge = getEdge( descr );
         
         foreach( c; edge.payload.points )
-            res ~= MapCoords( c.map_coords + res[0].map_coords );
+            res ~= MapCoords( c + res[0] );
         
         res ~= getNodePayload( edge.to_node );
         
@@ -110,10 +110,10 @@ class MapGraph( alias GraphEngine, Point, Polyline ) : GraphEngine!( Point, Poly
         auto points = getMapCoords( descr );
         assert( points.length > 0 );
         
-        auto res = BBox( points[0].map_coords, MapCoords.Coords(0,0) );
+        auto res = BBox( points[0], MapCoords.Coords(0,0) );
         
         for( auto i = 1; i < points.length; i++ )
-            res.addCircumscribe( points[i].map_coords );
+            res.addCircumscribe( points[i] );
         
         return res;
     }
@@ -140,7 +140,7 @@ class MapGraph( alias GraphEngine, Point, Polyline ) : GraphEngine!( Point, Poly
         MapCoords points[];
         
         for( auto i = 1; i < last_node; i++ )
-            points ~= MapCoords( line_descr.getNode( i ).getCoords.map_coords - line_descr.getNode( first_node ).getCoords.map_coords );
+            points ~= MapCoords( line_descr.getNode( i ).getCoords - line_descr.getNode( first_node ).getCoords );
         
         auto poly = Polyline( points, line_descr.properties );
         
@@ -211,7 +211,7 @@ auto cutOnCrossings( DescriptionsTree )( in DescriptionsTree lines_rtree )
         for( auto i = 1; i < line.nodes_ids.length - 1; i++ )
         {
             auto curr_point_id = line.nodes_ids[i];
-            auto point_bbox = BBox( line.getNode( i ).getCoords.map_coords, Coords(0, 0) );
+            auto point_bbox = BBox( line.getNode( i ).getCoords, Coords(0, 0) );
             auto near_lines = lines_rtree.search( point_bbox );
             
             foreach( n; near_lines )

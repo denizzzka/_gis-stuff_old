@@ -26,7 +26,7 @@ struct TPolylineDescription( Properties, alias MAP_COORDS_BY_ID )
         
         // coords reading checking
         for( size_t i = 0; i < nodes_ids.length; i++ )
-            auto unused = getNode( i ).getCoords.map_coords;
+            auto unused = getNode( i ).getCoords;
     }
     
     @disable this();
@@ -55,12 +55,12 @@ struct TPolylineDescription( Properties, alias MAP_COORDS_BY_ID )
     }
     body
     {
-        auto start_node = getNode( 0 ).getCoords.map_coords;
+        auto start_node = getNode( 0 ).getCoords;
         auto res = BBox( start_node, MapCoords.Coords(0,0) );
         
         for( auto i = 1; i < nodes_ids.length; i++ )
         {
-            auto curr_node = getNode( i ).getCoords.map_coords;
+            auto curr_node = getNode( i ).getCoords;
             res.addCircumscribe( curr_node );
         }
         

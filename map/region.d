@@ -295,8 +295,8 @@ BBox fromPbf( inout pbf.map_objects.Box b )
 {
     BBox res;
     
-    res.leftDownCorner = MapCoords.fromPbf( b.leftDownCorner ).map_coords;
-    res.rightUpperCorner = MapCoords.fromPbf( b.rightUpperCorner ).map_coords;
+    res.leftDownCorner = MapCoords.fromPbf( b.leftDownCorner );
+    res.rightUpperCorner = MapCoords.fromPbf( b.rightUpperCorner );
     
     return res;
 }

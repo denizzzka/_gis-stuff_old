@@ -15,27 +15,27 @@ struct MapCoords
 {
     alias Vector2D!(long, "Map coords vector") Coords;
     
-    Coords map_coords; // TODO: move it to alias this?
+    Coords map_coords2; // TODO: move it to alias this?
+    alias map_coords2 this;
     
     this( Coords coords )
     {
-        map_coords = coords;
+        map_coords2 = coords;
     }
     
     this( MercatorCoords coords )
     {
-        map_coords = ( coords * 10 ).lround;
+        map_coords2 = ( coords * 10 ).lround;
     }
     
     MercatorCoords getMercatorCoords() const pure
     {
-        MercatorCoords res = map_coords;
+        MercatorCoords res = map_coords2;
         res /= 10;
         
         return res;
     }
     
-    //alias getMercatorCoords this;
     alias getMercatorCoords mercator;
     
     real calcSphericalDistance( in MapCoords v ) const
@@ -52,8 +52,8 @@ struct MapCoords
     {
         pbf.MapCoords res;
         
-        res.lon = map_coords.lon;
-        res.lat = map_coords.lat;
+        res.lon = lon;
+        res.lat = lat;
         
         return res;
     }
@@ -62,8 +62,8 @@ struct MapCoords
     {
         MapCoords res;
         
-        res.map_coords.lon = from.lon;
-        res.map_coords.lat = from.lat;
+        res.lon = from.lon;
+        res.lat = from.lat;
         
         return res;
     }
@@ -93,7 +93,7 @@ struct MapCoords
     /// Returns: zero-sized BBox containing this point
     BBox getBBox() const
     {
-        return BBox( map_coords, Coords(0,0) );
+        return BBox( map_coords2, Coords(0,0) );
     }
 }
 

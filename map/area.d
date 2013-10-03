@@ -22,10 +22,10 @@ struct AreaLine
     
     BBox getBoundary() const
     {
-        auto res = BBox( points[0].map_coords, MapCoords.Coords(0,0) );
+        auto res = BBox( points[0], MapCoords.Coords(0,0) );
         
         for( auto i = 1; i < points.length; i++ )
-            res.addCircumscribe( points[i].map_coords );
+            res.addCircumscribe( points[i] );
         
         return res;
     }
