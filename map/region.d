@@ -107,7 +107,7 @@ class Region
         }
     }
     
-    MBBox boundary() const
+    BBox boundary() const
     {
         return layers[0].boundary; // FIXME
     }
@@ -237,6 +237,7 @@ class Region
         pbf.region.MapRegion res;
         
         res.file_id = cast(ubyte[]) "6dFile!Map";
+        res.boundary = boundary.toPbf;
     }
 }
 
@@ -254,9 +255,9 @@ struct Layer
         lines = new LinesRTree( 4, 1 );
     }
     
-    MBBox boundary() const
+    BBox boundary() const
     {
-        return POI.getBoundary.getCircumscribed( POI.getBoundary ).toMBBox; // FIXME
+        return POI.getBoundary.getCircumscribed( POI.getBoundary ); // FIXME
     }
 }
 
@@ -273,10 +274,10 @@ class TPrepareLines( Descr )
     }
 }
 
-ubyte[] Serialize( inout BBox box )
+pbf.map_objects.Box toPbf( inout BBox box )
 out(r)
 {
-    auto d = Deserialize(r);
+    auto d = r.fromPbf;
     
     assert( d == box );
 }
@@ -287,14 +288,11 @@ body
     b.leftDownCorner = MapCoords( box.leftDownCorner ).toPbf;
     b.rightUpperCorner = MapCoords( box.rightUpperCorner ).toPbf;
     
-    return b.Serialize;
+    return b;
 }
 
-BBox Deserialize( inout ref ubyte[] from )
+BBox fromPbf( inout pbf.map_objects.Box b )
 {
-    auto f = from.dup;
-    auto b = pbf.map_objects.Box.Deserialize(f);
-    
     BBox res;
     
     res.leftDownCorner = MapCoords.fromPbf( b.leftDownCorner ).map_coords;

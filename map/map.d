@@ -135,7 +135,7 @@ class Map
     
     MBBox boundary() const
     {
-        return regions[0].boundary; // FIXME
+        return regions[0].boundary.toMBBox; // FIXME
     }
     
     MapLinesDescriptor[] getLines( in size_t layer_num, in BBox boundary ) const
