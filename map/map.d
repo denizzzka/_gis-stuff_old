@@ -15,7 +15,7 @@ struct MapCoords
 {
     alias Vector2D!(long, "Map coords vector") Coords;
     
-    package Coords map_coords;
+    Coords map_coords; // TODO: move it to alias this?
     
     this( Coords coords )
     {

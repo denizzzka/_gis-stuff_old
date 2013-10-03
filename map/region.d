@@ -10,7 +10,8 @@ import map.road_graph;
 import map.map_graph: cutOnCrossings;
 import map.area: Area;
 static import config.map;
-static import pbf = pbf.region;
+static import pbf.map_objects;
+static import pbf.region;
 
 
 struct Point
@@ -233,7 +234,7 @@ class Region
     
     void dumpToFile(inout string filename)
     {
-        pbf.MapRegion res;
+        pbf.region.MapRegion res;
         
         res.file_id = cast(ubyte[]) "6dFile!Map";
     }
@@ -270,4 +271,34 @@ class TPrepareLines( Descr )
         foreach( n; to_layers )
             lines_to_store[n] ~= line_descr;
     }
+}
+
+ubyte[] Serialize( inout BBox box )
+out(r)
+{
+    auto d = Deserialize(r);
+    
+    assert( d == box );
+}
+body
+{
+    pbf.map_objects.Box b;
+    
+    b.leftDownCorner = MapCoords( box.leftDownCorner ).toPbf;
+    b.rightUpperCorner = MapCoords( box.rightUpperCorner ).toPbf;
+    
+    return b.Serialize;
+}
+
+BBox Deserialize( inout ref ubyte[] from )
+{
+    auto f = from.dup;
+    auto b = pbf.map_objects.Box.Deserialize(f);
+    
+    BBox res;
+    
+    res.leftDownCorner = MapCoords.fromPbf( b.leftDownCorner ).map_coords;
+    res.rightUpperCorner = MapCoords.fromPbf( b.rightUpperCorner ).map_coords;
+    
+    return res;
 }
