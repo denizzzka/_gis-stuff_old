@@ -15,22 +15,22 @@ struct MapCoords
 {
     alias Vector2D!(long, "Map coords vector") Coords;
     
-    Coords map_coords2; // TODO: move it to alias this?
-    alias map_coords2 this;
+    Coords map_coords;
+    alias map_coords this;
     
     this( Coords coords )
     {
-        map_coords2 = coords;
+        map_coords = coords;
     }
     
     this( MercatorCoords coords )
     {
-        map_coords2 = ( coords * 10 ).lround;
+        map_coords = ( coords * 10 ).lround;
     }
     
     MercatorCoords getMercatorCoords() const pure
     {
-        MercatorCoords res = map_coords2;
+        MercatorCoords res = map_coords;
         res /= 10;
         
         return res;
@@ -93,7 +93,7 @@ struct MapCoords
     /// Returns: zero-sized BBox containing this point
     BBox getBBox() const
     {
-        return BBox( map_coords2, Coords(0,0) );
+        return BBox( map_coords, Coords(0,0) );
     }
 }
 

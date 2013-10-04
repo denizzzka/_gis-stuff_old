@@ -86,7 +86,7 @@ unittest
     MapCoords getNodeByID( in ulong id )
     {
         MapCoords res;
-        res.map_coords2 = nodes[ id ];
+        res.map_coords = nodes[ id ];
         
         return res;
     }
