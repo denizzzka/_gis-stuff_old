@@ -36,6 +36,8 @@ void main( string[] args )
         auto map = getMap( args[1..$], verbose );
     }
     
+    map.regions[0].dumpToFile("/tmp/123.6d");    
+    
     window.scene = new POV( map );
     
     window.scene.setPOVtoBoundary( window.window.size, map.boundary );
