@@ -14,6 +14,7 @@ static import pbf.map_objects;
 static import pbf.region;
 
 import std.file: write;
+import std.mmfile;
 
 
 struct Point
@@ -234,7 +235,7 @@ class Region
         }
     }
     
-    void dumpToFile( inout string filename )
+    void dumpToFile( inout string filename ) const
     {
         pbf.region.MapRegion res;
         
@@ -242,6 +243,11 @@ class Region
         res.boundary = boundary.toPbf;
         
         write( filename, res.Serialize );
+    }
+    
+    void mmapToFile( inout string filename )
+    {
+        
     }
 }
 
