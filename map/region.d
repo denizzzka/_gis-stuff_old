@@ -13,6 +13,8 @@ static import config.map;
 static import pbf.map_objects;
 static import pbf.region;
 
+import std.file: write;
+
 
 struct Point
 {
@@ -232,12 +234,14 @@ class Region
         }
     }
     
-    void dumpToFile(inout string filename)
+    void dumpToFile( inout string filename )
     {
         pbf.region.MapRegion res;
         
         res.file_id = cast(ubyte[]) "6dFile!Map";
         res.boundary = boundary.toPbf;
+        
+        write( filename, res.Serialize );
     }
 }
 
