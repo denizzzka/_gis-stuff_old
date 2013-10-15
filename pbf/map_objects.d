@@ -276,3 +276,103 @@ struct Box {
 		return Deserialize(input);
 	}
 }
+struct Area {
+	// deal with unknown fields
+	ubyte[] ufields;
+	///
+	Nullable!(uint) type;
+	///
+	Nullable!(MapCoords[]) coords;
+
+	ubyte[] Serialize(int field = -1) const {
+		ubyte[] ret;
+		// Serialize member 1 Field Name type
+		ret ~= toVarint(type.get(),1);
+		// Serialize member 2 Field Name coords
+		if(!coords.isNull)
+		foreach(iter;coords.get()) {
+			static if (is(MapCoords == struct)) {
+				ret ~= iter.Serialize(2);
+			} else static if (is(MapCoords == enum)) {
+				ret ~= toVarint(cast(int)iter,2);
+			} else
+				static assert(0,"Can't identify type `MapCoords`");
+		}
+		ret ~= ufields;
+		// take care of header and length generation if necessary
+		if (field != -1) {
+			ret = genHeader(field,WireType.lenDelimited)~toVarint(ret.length,field)[1..$]~ret;
+		}
+		return ret;
+	}
+
+	// if we're root, we can assume we own the whole string
+	// if not, the first thing we need to do is pull the length that belongs to us
+	static Area Deserialize(ref ubyte[] manip, bool isroot=true) {return Area(manip,isroot);}
+	this(ref ubyte[] manip,bool isroot=true) {
+		ubyte[] input = manip;
+		// cut apart the input string
+		if (!isroot) {
+			uint len = fromVarint!(uint)(manip);
+			input = manip[0..len];
+			manip = manip[len..$];
+		}
+		while(input.length) {
+			int header = fromVarint!(int)(input);
+			auto wireType = getWireType(header);
+			switch(getFieldNumber(header)) {
+			case 1:// Deserialize member 1 Field Name type
+				if (wireType != WireType.varint)
+					throw new Exception("Invalid wiretype " ~
+					   to!(string)(wireType) ~
+					   " for variable type uint32");
+
+				type = fromVarint!(uint)(input);
+			break;
+			case 2:// Deserialize member 2 Field Name coords
+				static if (is(MapCoords == struct)) {
+					if(wireType != WireType.lenDelimited)
+						throw new Exception("Invalid wiretype " ~
+						   to!(string)(wireType) ~
+						   " for variable type MapCoords");
+
+					if(coords.isNull) coords = new MapCoords[](0);
+					coords ~= MapCoords.Deserialize(input,false);
+				} else static if (is(MapCoords == enum)) {
+					if (wireType == WireType.varint) {
+						if(coords.isNull) coords = new MapCoords[](0);
+						coords ~= cast(MapCoords)
+						   fromVarint!(int)(input);
+					} else if (wireType == WireType.lenDelimited) {
+						if(coords.isNull) coords = new MapCoords[](0);
+						coords ~=
+						   fromPacked!(MapCoords,fromVarint!(int))(input);
+					} else
+						throw new Exception("Invalid wiretype " ~
+						   to!(string)(wireType) ~
+						   " for variable type MapCoords");
+
+				} else
+					static assert(0,
+					  "Can't identify type `MapCoords`");
+			break;
+			default:
+				// rip off unknown fields
+			if(input.length)
+				ufields ~= toVarint(header)~
+				   ripUField(input,getWireType(header));
+			break;
+			}
+		}
+		if (type.isNull) throw new Exception("Did not find a type in the message parse.");
+	}
+
+	void MergeFrom(Area merger) {
+		if (!merger.type.isNull) type = merger.type;
+		if (!merger.coords.isNull) coords ~= merger.coords;
+	}
+
+	static Area opCall(ref ubyte[]input) {
+		return Deserialize(input);
+	}
+}

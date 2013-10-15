@@ -17,3 +17,10 @@ message Box
     required MapCoords leftDownCorner = 1;
     required MapCoords rightUpperCorner = 2;
 }
+
+message Area
+{
+    required uint32 type = 1;
+    
+    repeated MapCoords coords = 2;    
+}

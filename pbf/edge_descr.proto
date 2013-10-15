@@ -1,0 +1,8 @@
+package pbf.edge_descr;
+
+
+message EdgeDescr
+{
+    required uint32 node = 1;
+    required uint32 edge = 2;
+}

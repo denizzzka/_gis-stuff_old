@@ -12,6 +12,7 @@ import map.area: Area;
 static import config.map;
 static import pbf.map_objects;
 static import pbf.region;
+import math.graph.edge_descr_pbf;
 
 import std.file: write;
 import std.mmfile;
@@ -72,8 +73,26 @@ struct AnyLineDescriptor
     // TODO: need to implement real compression
     ubyte[] compress() const
     {
-        ubyte res[] = (cast (ubyte*) &this) [ 0 .. this.sizeof ];
-        return res;
+        pbf.region.AnyLineDescriptor res;
+        
+        res.line_class = line_class;
+        
+        with(LineClass) final switch( line_class )
+        {
+            case AREA:
+                // TODO: need area serialization/storage
+                break;
+                
+            case POLYLINE:
+                res.graph_descr = math.graph.edge_descr_pbf.toPbf(line);
+                break;
+                
+            case ROAD:
+                res.graph_descr = math.graph.edge_descr_pbf.toPbf(road);
+                break;
+        }
+        
+        return res.Serialize;
     }
     
     // TODO: need to implement real compression

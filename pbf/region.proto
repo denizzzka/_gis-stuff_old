@@ -1,6 +1,7 @@
 package pbf.region;
 
 import "pbf/map_objects.proto";
+import "pbf/edge_descr.proto";
 
 message Layer
 {
@@ -17,4 +18,12 @@ message MapRegion
     optional bytes line_graph = 3;
     repeated Layer layers = 4;
     optional bytes areas = 5;
+}
+
+message AnyLineDescriptor
+{
+    required uint32 line_class = 1;
+    
+    optional EdgeDescr graph_descr = 2;
+    optional Area area = 3;
 }

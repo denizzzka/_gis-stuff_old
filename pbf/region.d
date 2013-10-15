@@ -1,5 +1,6 @@
 module pbf.region;
 import pbf.map_objects;
+import pbf.edge_descr;
 import ProtocolBuffer.conversion.pbbinary;
 import std.conv;
 import std.typecons;
@@ -253,6 +254,128 @@ struct MapRegion {
 	}
 
 	static MapRegion opCall(ref ubyte[]input) {
+		return Deserialize(input);
+	}
+}
+struct AnyLineDescriptor {
+	// deal with unknown fields
+	ubyte[] ufields;
+	///
+	Nullable!(uint) line_class;
+	///
+	Nullable!(EdgeDescr) graph_descr;
+	///
+	Nullable!(Area) area;
+
+	ubyte[] Serialize(int field = -1) const {
+		ubyte[] ret;
+		// Serialize member 1 Field Name line_class
+		ret ~= toVarint(line_class.get(),1);
+		// Serialize member 2 Field Name graph_descr
+		static if (is(EdgeDescr == struct)) {
+			ret ~= graph_descr.Serialize(2);
+		} else static if (is(EdgeDescr == enum)) {
+			if (!graph_descr.isNull) ret ~= toVarint(cast(int)graph_descr.get(),2);
+		} else
+			static assert(0,"Can't identify type `EdgeDescr`");
+		// Serialize member 3 Field Name area
+		static if (is(Area == struct)) {
+			ret ~= area.Serialize(3);
+		} else static if (is(Area == enum)) {
+			if (!area.isNull) ret ~= toVarint(cast(int)area.get(),3);
+		} else
+			static assert(0,"Can't identify type `Area`");
+		ret ~= ufields;
+		// take care of header and length generation if necessary
+		if (field != -1) {
+			ret = genHeader(field,WireType.lenDelimited)~toVarint(ret.length,field)[1..$]~ret;
+		}
+		return ret;
+	}
+
+	// if we're root, we can assume we own the whole string
+	// if not, the first thing we need to do is pull the length that belongs to us
+	static AnyLineDescriptor Deserialize(ref ubyte[] manip, bool isroot=true) {return AnyLineDescriptor(manip,isroot);}
+	this(ref ubyte[] manip,bool isroot=true) {
+		ubyte[] input = manip;
+		// cut apart the input string
+		if (!isroot) {
+			uint len = fromVarint!(uint)(manip);
+			input = manip[0..len];
+			manip = manip[len..$];
+		}
+		while(input.length) {
+			int header = fromVarint!(int)(input);
+			auto wireType = getWireType(header);
+			switch(getFieldNumber(header)) {
+			case 1:// Deserialize member 1 Field Name line_class
+				if (wireType != WireType.varint)
+					throw new Exception("Invalid wiretype " ~
+					   to!(string)(wireType) ~
+					   " for variable type uint32");
+
+				line_class = fromVarint!(uint)(input);
+			break;
+			case 2:// Deserialize member 2 Field Name graph_descr
+				static if (is(EdgeDescr == struct)) {
+					if(wireType != WireType.lenDelimited)
+						throw new Exception("Invalid wiretype " ~
+						   to!(string)(wireType) ~
+						   " for variable type EdgeDescr");
+
+					graph_descr = EdgeDescr.Deserialize(input,false);
+				} else static if (is(EdgeDescr == enum)) {
+					if (wireType == WireType.varint) {
+						graph_descr = cast(EdgeDescr)
+						   fromVarint!(int)(input);
+					} else
+						throw new Exception("Invalid wiretype " ~
+						   to!(string)(wireType) ~
+						   " for variable type EdgeDescr");
+
+				} else
+					static assert(0,
+					  "Can't identify type `EdgeDescr`");
+			break;
+			case 3:// Deserialize member 3 Field Name area
+				static if (is(Area == struct)) {
+					if(wireType != WireType.lenDelimited)
+						throw new Exception("Invalid wiretype " ~
+						   to!(string)(wireType) ~
+						   " for variable type Area");
+
+					area = Area.Deserialize(input,false);
+				} else static if (is(Area == enum)) {
+					if (wireType == WireType.varint) {
+						area = cast(Area)
+						   fromVarint!(int)(input);
+					} else
+						throw new Exception("Invalid wiretype " ~
+						   to!(string)(wireType) ~
+						   " for variable type Area");
+
+				} else
+					static assert(0,
+					  "Can't identify type `Area`");
+			break;
+			default:
+				// rip off unknown fields
+			if(input.length)
+				ufields ~= toVarint(header)~
+				   ripUField(input,getWireType(header));
+			break;
+			}
+		}
+		if (line_class.isNull) throw new Exception("Did not find a line_class in the message parse.");
+	}
+
+	void MergeFrom(AnyLineDescriptor merger) {
+		if (!merger.line_class.isNull) line_class = merger.line_class;
+		if (!merger.graph_descr.isNull) graph_descr = merger.graph_descr;
+		if (!merger.area.isNull) area = merger.area;
+	}
+
+	static AnyLineDescriptor opCall(ref ubyte[]input) {
 		return Deserialize(input);
 	}
 }
