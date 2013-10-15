@@ -12,3 +12,13 @@ pbf.EdgeDescr toPbf( Descr )( inout Descr descr )
     
     return res;
 }
+
+Descr fromPbf( Descr )( inout pbf.EdgeDescr pbfDescr )
+{
+    Descr res;
+    
+    res.node.idx = pbfDescr.node;
+    res.idx = pbfDescr.edge;
+    
+    return res;
+}

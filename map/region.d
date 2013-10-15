@@ -13,6 +13,7 @@ static import config.map;
 static import pbf.map_objects;
 static import pbf.region;
 import math.graph.edge_descr_pbf;
+import compression.compressible_pbf_struct;
 
 import std.file: write;
 import std.mmfile;
@@ -70,10 +71,11 @@ struct AnyLineDescriptor
         Area area;
     }
     
-    // TODO: need to implement real compression
+    alias CompressiblePbfStruct!(pbf.region.AnyLineDescriptor) pbfAnyLineDescr;
+    
     ubyte[] compress() const
     {
-        pbf.region.AnyLineDescriptor res;
+        pbfAnyLineDescr res;
         
         res.line_class = line_class;
         
@@ -92,16 +94,33 @@ struct AnyLineDescriptor
                 break;
         }
         
-        return res.Serialize;
+        return res.compress;
     }
     
-    // TODO: need to implement real compression
     size_t decompress( inout ubyte* storage )
     {
-        ubyte* this_ptr = cast (ubyte*) &this;
-        this_ptr[ 0 .. this.sizeof] = storage[ 0 .. this.sizeof ].dup[0 .. this.sizeof];
+        pbfAnyLineDescr d;
         
-        return this.sizeof;
+        size_t offset = d.decompress( storage );
+        
+        line_class = cast(LineClass) d.line_class.get;
+        
+        with(LineClass) final switch( line_class )
+        {
+            case AREA:
+                // TODO: need area deserialization
+                break;
+                
+            case POLYLINE:
+                line = math.graph.edge_descr_pbf.fromPbf!(LineGraph.EdgeDescr)( d.graph_descr );
+                break;
+                
+            case ROAD:
+                road = math.graph.edge_descr_pbf.fromPbf!(RoadGraph.EdgeDescr)( d.graph_descr );
+                break;
+        }
+                
+        return offset;
     }
 }
 
