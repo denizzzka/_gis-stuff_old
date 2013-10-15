@@ -11,8 +11,6 @@ struct Layer {
 	// deal with unknown fields
 	ubyte[] ufields;
 	///
-	Nullable!(Box) boundary;
-	///
 	Nullable!(ubyte[]) points_storage;
 	///
 	Nullable!(ubyte[]) lines_rtree;
@@ -21,13 +19,6 @@ struct Layer {
 
 	ubyte[] Serialize(int field = -1) const {
 		ubyte[] ret;
-		// Serialize member 1 Field Name boundary
-		static if (is(Box == struct)) {
-			ret ~= boundary.Serialize(1);
-		} else static if (is(Box == enum)) {
-			ret ~= toVarint(cast(int)boundary.get(),1);
-		} else
-			static assert(0,"Can't identify type `Box`");
 		// Serialize member 2 Field Name points_storage
 		if (!points_storage.isNull) ret ~= toByteString(points_storage.get(),2);
 		// Serialize member 3 Field Name lines_rtree
@@ -57,27 +48,6 @@ struct Layer {
 			int header = fromVarint!(int)(input);
 			auto wireType = getWireType(header);
 			switch(getFieldNumber(header)) {
-			case 1:// Deserialize member 1 Field Name boundary
-				static if (is(Box == struct)) {
-					if(wireType != WireType.lenDelimited)
-						throw new Exception("Invalid wiretype " ~
-						   to!(string)(wireType) ~
-						   " for variable type Box");
-
-					boundary = Box.Deserialize(input,false);
-				} else static if (is(Box == enum)) {
-					if (wireType == WireType.varint) {
-						boundary = cast(Box)
-						   fromVarint!(int)(input);
-					} else
-						throw new Exception("Invalid wiretype " ~
-						   to!(string)(wireType) ~
-						   " for variable type Box");
-
-				} else
-					static assert(0,
-					  "Can't identify type `Box`");
-			break;
 			case 2:// Deserialize member 2 Field Name points_storage
 				if (wireType != WireType.lenDelimited)
 					throw new Exception("Invalid wiretype " ~
@@ -113,11 +83,9 @@ struct Layer {
 			break;
 			}
 		}
-		if (boundary.isNull) throw new Exception("Did not find a boundary in the message parse.");
 	}
 
 	void MergeFrom(Layer merger) {
-		if (!merger.boundary.isNull) boundary = merger.boundary;
 		if (!merger.points_storage.isNull) points_storage = merger.points_storage;
 		if (!merger.lines_rtree.isNull) lines_rtree = merger.lines_rtree;
 		if (!merger.road_graph.isNull) road_graph = merger.road_graph;

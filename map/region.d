@@ -273,17 +273,16 @@ struct Layer
         lines = new LinesRTree( 4, 1 );
     }
     
-    BBox boundary() const
+    Nullable!BBox boundary() const
     {
-        return POI.getBoundary.getCircumscribed( POI.getBoundary ); // FIXME
+        return POI.getBoundary; // FIXME
     }
     
     pbf.region.Layer toPbf() const
     {
         pbf.region.Layer res;
         
-        res.boundary = boundary.toPbf;
-        // TODO: storage POI storage
+        //res.points_storage = POI.Serialize; // TODO
         res.lines_rtree = _lines.Serialize;
         res.road_graph = road_graph.Serialize;
         

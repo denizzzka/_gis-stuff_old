@@ -4,8 +4,6 @@ import "pbf/map_objects.proto";
 
 message Layer
 {
-    required Box boundary = 1;
-    
     optional bytes points_storage = 2;
     optional bytes lines_rtree = 3;
     optional bytes road_graph = 4;

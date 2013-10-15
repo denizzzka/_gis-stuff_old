@@ -101,11 +101,14 @@ class RTreePtrs( _Box, _Payload )
         return search( boundary, r );
     }
     
-    Box getBoundary() const
+    Nullable!Box getBoundary() const
     {
-        assert( root.children.length );
+        Nullable!Box res;
         
-        return root.boundary;
+        if( root.children.length )
+            res = root.boundary;
+        
+        return res;
     }
     
     private
