@@ -1,0 +1,7 @@
+package pbf.rtree;
+
+message RTree
+{
+    required uint32 depth = 1;
+    required bytes storage = 2;
+}

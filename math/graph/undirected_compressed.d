@@ -18,6 +18,16 @@ class UndirectedGraphCompressed( NodePayload, EdgePayload ): UndirectedBase!( No
     private const CompressedNodesArr nodes;
     private const CompressedEdgesArr edges;
     
+    ubyte[] Serialize() const
+    {
+        pbf.UndirectedGraph res;
+        
+        res.nodes = nodes.Serialize;
+        res.global_edges = edges.Serialize;
+        
+        return res.Serialize;
+    }
+    
     this( UndirectedGraph!( NodePayload, EdgePayload ) g )
     {
         {

@@ -271,6 +271,18 @@ struct Layer
     {
         return POI.getBoundary.getCircumscribed( POI.getBoundary ); // FIXME
     }
+    
+    pbf.region.Layer toPbf() const
+    {
+        pbf.region.Layer res;
+        
+        res.boundary = boundary.toPbf;
+        // TODO: storage POI storage
+        res.lines_rtree = _lines.Serialize;
+        res.road_graph = road_graph.Serialize;
+        
+        return res;
+    }
 }
 
 class TPrepareLines( Descr )

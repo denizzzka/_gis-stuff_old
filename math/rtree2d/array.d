@@ -2,6 +2,7 @@ module math.rtree2d.array;
 
 import math.rtree2d.ptrs;
 import math.geometry;
+static import pbf = pbf.rtree; 
 import compression.pb_encoding: packVarint, unpackVarint;
 import compression.geometry;
 
@@ -17,6 +18,16 @@ class RTreeArray( RTreePtrs )
     private ubyte depth = 0;
     
     static immutable Box zero_box;
+    
+    ubyte[] Serialize() const
+    {
+        pbf.RTree res;
+        
+        res.depth = depth;
+        res.storage = storage.dup;
+        
+        return res.Serialize;
+    }
     
     this( inout RTreePtrs source )
     {
