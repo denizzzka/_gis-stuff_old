@@ -242,6 +242,8 @@ class Region
         res.file_id = cast(ubyte[]) "6dFile!Map";
         res.boundary = boundary.toPbf;
         
+        res.line_graph = _line_graph.Serialize;
+        
         write( filename, res.Serialize );
     }
     

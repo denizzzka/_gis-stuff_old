@@ -13,6 +13,11 @@ class DirectedGraphCompressed( NodePayload, EdgePayload ) : DirectedBase!( NodeP
     alias CompressedArray!( Node, 3 ) CompressedArr;
     private const CompressedArr nodes;
     
+    ubyte[] Serialize() const
+    {
+        return nodes.Serialize;
+    }
+    
     this( DirectedGraph!( NodePayload, EdgePayload ) g )
     {
         CompressedArr nodes = new CompressedArr;

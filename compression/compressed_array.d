@@ -19,6 +19,11 @@ class CompressedArray( T, size_t keyInterval )
         keys_indexes = zero_length_size_t;
     }
     
+    ubyte[] Serialize() const
+    {
+        return ca.Serialize;
+    }
+    
     static CompressedArray Deserialize( inout ref ubyte[] from )
     {
         auto f = cast(ubyte[]) from;
