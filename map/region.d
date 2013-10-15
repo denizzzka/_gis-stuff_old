@@ -244,6 +244,12 @@ class Region
         
         res.line_graph = _line_graph.Serialize;
         
+        pbf.region.Layer[] zero_layers;
+        res.layers = zero_layers;
+        
+        foreach(l; layers)
+            res.layers ~= l.toPbf;
+        
         write( filename, res.Serialize );
     }
     
