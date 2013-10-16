@@ -24,6 +24,6 @@ message AnyLineDescriptor
 {
     required uint32 line_class = 1;
     
-    optional EdgeDescr graph_descr = 2;
-    optional Area area = 3;
+    repeated EdgeDescr graph_descr = 2;
+    //optional Area area = 3;
 }

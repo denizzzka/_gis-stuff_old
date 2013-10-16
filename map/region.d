@@ -79,6 +79,9 @@ struct AnyLineDescriptor
         
         res.line_class = line_class;
         
+        typeof(res.graph_descr.get) zero_descr;
+        res.graph_descr = zero_descr; // temporary, because PBF "optional" is not serializable if isNull
+        
         with(LineClass) final switch( line_class )
         {
             case AREA:
@@ -86,11 +89,11 @@ struct AnyLineDescriptor
                 break;
                 
             case POLYLINE:
-                res.graph_descr = math.graph.edge_descr_pbf.toPbf(line);
+                res.graph_descr ~= math.graph.edge_descr_pbf.toPbf(line);
                 break;
                 
             case ROAD:
-                res.graph_descr = math.graph.edge_descr_pbf.toPbf(road);
+                res.graph_descr ~= math.graph.edge_descr_pbf.toPbf(road);
                 break;
         }
         
@@ -112,11 +115,11 @@ struct AnyLineDescriptor
                 break;
                 
             case POLYLINE:
-                line = math.graph.edge_descr_pbf.fromPbf!(LineGraph.EdgeDescr)( d.graph_descr );
+                line = math.graph.edge_descr_pbf.fromPbf!(LineGraph.EdgeDescr)( d.graph_descr[0] );
                 break;
                 
             case ROAD:
-                road = math.graph.edge_descr_pbf.fromPbf!(RoadGraph.EdgeDescr)( d.graph_descr );
+                road = math.graph.edge_descr_pbf.fromPbf!(RoadGraph.EdgeDescr)( d.graph_descr[0] );
                 break;
         }
                 

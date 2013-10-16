@@ -263,28 +263,22 @@ struct AnyLineDescriptor {
 	///
 	Nullable!(uint) line_class;
 	///
-	Nullable!(EdgeDescr) graph_descr;
-	///
-	Nullable!(Area) area;
+	Nullable!(EdgeDescr[]) graph_descr;
 
 	ubyte[] Serialize(int field = -1) const {
 		ubyte[] ret;
 		// Serialize member 1 Field Name line_class
 		ret ~= toVarint(line_class.get(),1);
 		// Serialize member 2 Field Name graph_descr
-		static if (is(EdgeDescr == struct)) {
-			ret ~= graph_descr.Serialize(2);
-		} else static if (is(EdgeDescr == enum)) {
-			if (!graph_descr.isNull) ret ~= toVarint(cast(int)graph_descr.get(),2);
-		} else
-			static assert(0,"Can't identify type `EdgeDescr`");
-		// Serialize member 3 Field Name area
-		static if (is(Area == struct)) {
-			ret ~= area.Serialize(3);
-		} else static if (is(Area == enum)) {
-			if (!area.isNull) ret ~= toVarint(cast(int)area.get(),3);
-		} else
-			static assert(0,"Can't identify type `Area`");
+		if(!graph_descr.isNull)
+		foreach(iter;graph_descr.get()) {
+			static if (is(EdgeDescr == struct)) {
+				ret ~= iter.Serialize(2);
+			} else static if (is(EdgeDescr == enum)) {
+				ret ~= toVarint(cast(int)iter,2);
+			} else
+				static assert(0,"Can't identify type `EdgeDescr`");
+		}
 		ret ~= ufields;
 		// take care of header and length generation if necessary
 		if (field != -1) {
@@ -323,11 +317,17 @@ struct AnyLineDescriptor {
 						   to!(string)(wireType) ~
 						   " for variable type EdgeDescr");
 
-					graph_descr = EdgeDescr.Deserialize(input,false);
+					if(graph_descr.isNull) graph_descr = new EdgeDescr[](0);
+					graph_descr ~= EdgeDescr.Deserialize(input,false);
 				} else static if (is(EdgeDescr == enum)) {
 					if (wireType == WireType.varint) {
-						graph_descr = cast(EdgeDescr)
+						if(graph_descr.isNull) graph_descr = new EdgeDescr[](0);
+						graph_descr ~= cast(EdgeDescr)
 						   fromVarint!(int)(input);
+					} else if (wireType == WireType.lenDelimited) {
+						if(graph_descr.isNull) graph_descr = new EdgeDescr[](0);
+						graph_descr ~=
+						   fromPacked!(EdgeDescr,fromVarint!(int))(input);
 					} else
 						throw new Exception("Invalid wiretype " ~
 						   to!(string)(wireType) ~
@@ -336,27 +336,6 @@ struct AnyLineDescriptor {
 				} else
 					static assert(0,
 					  "Can't identify type `EdgeDescr`");
-			break;
-			case 3:// Deserialize member 3 Field Name area
-				static if (is(Area == struct)) {
-					if(wireType != WireType.lenDelimited)
-						throw new Exception("Invalid wiretype " ~
-						   to!(string)(wireType) ~
-						   " for variable type Area");
-
-					area = Area.Deserialize(input,false);
-				} else static if (is(Area == enum)) {
-					if (wireType == WireType.varint) {
-						area = cast(Area)
-						   fromVarint!(int)(input);
-					} else
-						throw new Exception("Invalid wiretype " ~
-						   to!(string)(wireType) ~
-						   " for variable type Area");
-
-				} else
-					static assert(0,
-					  "Can't identify type `Area`");
 			break;
 			default:
 				// rip off unknown fields
@@ -371,8 +350,7 @@ struct AnyLineDescriptor {
 
 	void MergeFrom(AnyLineDescriptor merger) {
 		if (!merger.line_class.isNull) line_class = merger.line_class;
-		if (!merger.graph_descr.isNull) graph_descr = merger.graph_descr;
-		if (!merger.area.isNull) area = merger.area;
+		if (!merger.graph_descr.isNull) graph_descr ~= merger.graph_descr;
 	}
 
 	static AnyLineDescriptor opCall(ref ubyte[]input) {
