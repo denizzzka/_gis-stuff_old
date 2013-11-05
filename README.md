@@ -2,9 +2,6 @@
 
 Under heavy development!
 * * *
-Please support this project via GitTip:
-https://www.gittip.com/denizzzka/
-* * *
 Use "--recursive" for cloning this repository:
 ```
 git clone --recursive git://github.com/denizzzka/gis-stuff.git
