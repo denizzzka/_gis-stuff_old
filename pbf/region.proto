@@ -1,6 +1,6 @@
 package pbf.region;
 
-import "pbf/map_objects.proto";
+import "map_objects.proto";
 
 message Layer
 {

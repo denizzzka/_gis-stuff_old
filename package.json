@@ -7,11 +7,11 @@
 	"dependencies":
 	{
 		"dsfml:graphics": "~master",
-		"dsfml:window": "~master"
+		"dsfml:window": "~master",
+		"dproto": "~>2.0.0"
 	},
 	
 	"sourcePaths": [ "." ],
-	"targetType": "executable",
-	
-	"excludedSourceFiles": [ "ProtocolBuffer/pbcompiler.d" ],
+	"stringImportPaths": [ "pbf", "osmproto" ],
+	"targetType": "executable"
 }
