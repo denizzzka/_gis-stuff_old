@@ -1,10 +1,15 @@
 module math.graph.undirected_compressed;
 
-static import pbf;
+import dproto.dproto;
 import math.graph.undirected;
 import compression.compressed_array;
 import compression.compressible_pbf_struct;
 
+
+static struct pbf
+{
+    mixin ProtocolBuffer!"undirected_graph_compressed.proto";
+}
 
 class UndirectedGraphCompressed( NodePayload, EdgePayload ): UndirectedBase!( NodePayload, EdgePayload )
 {

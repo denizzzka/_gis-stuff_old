@@ -1,15 +1,20 @@
 module math.graph.digraph_compressed;
 
-static import pbf;
+import dproto.dproto;
 import math.graph.digraph;
 import compression.compressed_array;
 import compression.compressible_pbf_struct;
 
 
+static struct pbf
+{
+    mixin ProtocolBuffer!"digraph_compressed.proto";
+}
+
 class DirectedGraphCompressed( NodePayload, EdgePayload ) : DirectedBase!( NodePayload, EdgePayload )
 {
-    alias CompressiblePbfStruct!(pbf.Node) Node;
-    
+    alias Node = CompressiblePbfStruct!(pbf.Node);
+
     alias CompressedArray!( Node, 3 ) CompressedArr;
     private const CompressedArr nodes;
     

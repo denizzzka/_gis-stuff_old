@@ -17,3 +17,46 @@ message Box
     required MapCoords leftDownCorner = 1;
     required MapCoords rightUpperCorner = 2;
 }
+
+// moved from a separate files due to dproto MapCoords and Box conflict
+
+//package pbf.line_graph;
+//import "map_objects.proto";
+message Line
+{
+    required MapPolyline polyline = 1;
+
+    required uint32 type = 2;
+}
+
+//package pbf.road_graph;
+//import "map_objects.proto";
+message Road
+{
+    required MapPolyline polyline = 1;
+
+    required uint32 type = 2;
+    required float weight = 3;
+    required int32 layer = 4;
+}
+
+//package pbf.region;
+//import "map_objects.proto";
+message Layer
+{
+    required Box boundary = 1;
+
+    optional bytes points_storage = 2;
+    optional bytes lines_rtree = 3;
+    optional bytes road_graph = 4;
+}
+
+message MapRegion
+{
+    required bytes file_id = 1;
+    required Box boundary = 2;
+
+    optional bytes line_graph = 3;
+    repeated Layer layers = 4;
+    optional bytes areas = 5;
+}
