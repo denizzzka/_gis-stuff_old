@@ -72,7 +72,7 @@ struct AnyLineDescriptor
     // TODO: need to implement real compression
     ubyte[] compress() const
     {
-        ubyte res[] = (cast (ubyte*) &this) [ 0 .. this.sizeof ];
+        ubyte[] res = (cast (ubyte*) &this) [ 0 .. this.sizeof ];
         return res;
     }
     

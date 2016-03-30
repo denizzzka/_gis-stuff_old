@@ -56,7 +56,7 @@ pure size_t getVarintSize( const ubyte* data )
 }
 unittest
 {
-    ubyte d[3] = [ 0b_10101100, 0b_10101100, 0b_00000010 ];
+    ubyte[3] d = [ 0b_10101100, 0b_10101100, 0b_00000010 ];
     
     assert( getVarintSize( &d[0] ) == 3 );
 }
@@ -188,7 +188,7 @@ pure size_t parseTag( in ubyte* data, out uint fieldNumber, out WireType wireTyp
 }
 unittest
 {
-    ubyte d[3] = [ 0b_0000_1000, 0b_1001_0110, 0b_0000_0001 ];
+    ubyte[3] d = [ 0b_0000_1000, 0b_1001_0110, 0b_0000_0001 ];
     uint field;
     WireType wire;
     auto res = parseTag( &d[0], field, wire );

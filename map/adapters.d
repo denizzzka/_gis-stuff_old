@@ -11,7 +11,7 @@ struct TPolylineDescription( Properties, alias MAP_COORDS_BY_ID )
     alias Box!(MapCoords.Coords) BBox;
     alias TNodeDescription!( ulong, MAP_COORDS_BY_ID ) NodeDescription;
     
-    ulong nodes_ids[];
+    ulong[] nodes_ids;
     Properties properties;
     
     this( ulong[] nodes_ids, Properties properties )

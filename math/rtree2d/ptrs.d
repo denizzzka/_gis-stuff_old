@@ -405,7 +405,7 @@ version(unittest)
         
         ubyte[] Serialize() const /// TODO: real serialization
         {
-            ubyte res[] = (cast (ubyte*) &this) [ 0 .. this.sizeof ];
+            ubyte[] res = (cast (ubyte*) &this) [ 0 .. this.sizeof ];
             return res;
         }
         
