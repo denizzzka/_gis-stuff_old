@@ -5,7 +5,7 @@ import math.rtree2d.ptrs;
 import map.map: MapCoords, BBox;
 import math.earth: mercator2coords, getSphericalDistance;
 import map.adapters: TPolylineDescription;
-static import pbf = pbf.map_objects;
+static import pbf;
 
 import std.algorithm: canFind;
 import std.random: uniform;

@@ -1,6 +1,6 @@
 module math.graph.undirected_compressed;
 
-static import pbf = pbf.undirected_graph_compressed;
+static import pbf;
 import math.graph.undirected;
 import compression.compressed_array;
 import compression.compressible_pbf_struct;

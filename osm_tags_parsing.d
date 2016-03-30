@@ -1,4 +1,4 @@
-import osmproto.osmformat: StringTable, Node;
+import osmproto;
 import osm: DecodedLine, ReadPrimitiveException;
 import config.categories;
 import map.objects_properties;

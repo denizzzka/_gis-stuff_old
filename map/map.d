@@ -3,7 +3,7 @@ module map.map;
 import math.geometry;
 static import math.earth;
 import map.region.region;
-static import pbf = pbf.map_objects;
+static import pbf;
 import map.road_graph: RoadGraphCompressed; // TODO: temporary, need for current dirty path implementation
 
 debug(map) import std.stdio;

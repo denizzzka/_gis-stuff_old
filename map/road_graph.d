@@ -5,7 +5,7 @@ import math.graph.undirected;
 import math.graph.undirected_compressed;
 import math.graph.pathfinder: PathFinder;
 import cat = config.categories: Line;
-static import pbf = pbf.road_graph;
+static import pbf;
 
 
 struct RoadProperties

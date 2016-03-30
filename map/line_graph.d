@@ -4,7 +4,7 @@ import map.map_graph;
 import math.graph.digraph;
 import math.graph.digraph_compressed;
 import cat = config.categories: Line;
-static import pbf = pbf.line_graph;
+static import pbf;
 
 
 struct LineProperties

@@ -1,7 +1,6 @@
 module osm;
 
-import osmproto.fileformat;
-import osmproto.osmformat;
+import osmproto;
 import math.geometry: Vector2D, degrees2radians, radians2degrees;
 import math.earth;
 import map.map: Map, Region, BBox, Point, MapCoords, MercatorCoords, TPrepareLines;

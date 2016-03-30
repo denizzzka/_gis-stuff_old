@@ -10,8 +10,7 @@ import map.road_graph;
 import map.map_graph: cutOnCrossings;
 import map.area: Area;
 static import config.map;
-static import pbf.map_objects;
-static import pbf.region;
+static import pbf;
 
 import std.file: write;
 import std.mmfile;
