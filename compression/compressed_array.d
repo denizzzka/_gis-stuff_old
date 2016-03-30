@@ -1,6 +1,6 @@
 module compression.compressed_array;
 
-static import pbf = pbf.compressed_array;
+static import pbf;
 
 
 class CompressedArray( T, size_t keyInterval )
