@@ -283,7 +283,7 @@ class TPrepareLines( Descr )
     }
 }
 
-pbf.map_objects.Box toPbf( inout BBox box )
+pbf.Box toPbf( inout BBox box )
 out(r)
 {
     auto d = r.fromPbf;
@@ -300,7 +300,7 @@ body
     return b;
 }
 
-BBox fromPbf( inout pbf.map_objects.Box b )
+BBox fromPbf( inout pbf.Box b )
 {
     BBox res;
     
