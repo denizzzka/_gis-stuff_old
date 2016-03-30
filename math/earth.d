@@ -121,7 +121,8 @@ struct Conv( Datum )
         
         return res;
     }
-    
+
+    /// Calculate the great circle distance
     static auto getSphericalDistance( T1, T2 )( in T1 from, in T2 to ) pure
     in
     {
@@ -156,7 +157,8 @@ struct Conv( Datum )
         
         return Datum.approx_radius * angle;
     }
-    
+
+    /// Calculate the great circle azimuth
     static auto getSphericalAzimuth( T1, T2 )( in T1 from, in T2 to ) pure
     in
     {
@@ -176,7 +178,7 @@ struct Conv( Datum )
         auto sin_phi_s = sin(from.lat);
         auto cos_dLamb = cos(dLamb);
         
-        // (e1 and e2 is same as in getSphericalDistance())
+        // TODO: add pure, e1 and e2 is same as in getSphericalDistance()
         auto e1 = cos_phi_f * sin( dLamb );
         auto e2 = cos_phi_s * sin_phi_f - sin_phi_s * cos_phi_f * cos_dLamb;
         
