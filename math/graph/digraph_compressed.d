@@ -4,6 +4,7 @@ import dproto.dproto;
 import math.graph.digraph;
 import compression.compressed_array;
 import compression.compressible_pbf_struct;
+import std.conv: to;
 
 
 static struct pbf
@@ -34,7 +35,7 @@ class DirectedGraphCompressed( NodePayload, EdgePayload ) : DirectedBase!( NodeP
                 
                 auto orig_edge = &g.getEdge( e );
                 
-                edge.to_node_idx = orig_edge.to_node.idx;
+                edge.to_node_idx = orig_edge.to_node.idx.to!uint;
                 edge.payload = orig_edge.payload.Serialize;
                 
                 if(node.edges.isNull)
