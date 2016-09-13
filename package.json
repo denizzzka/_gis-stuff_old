@@ -6,8 +6,8 @@
 	"authors": [ "Denis Feklushkin" ],
 	"dependencies":
 	{
-		"dsfml:graphics": "~master",
-		"dsfml:window": "~master",
+		"dsfml:graphics": "~>2.1.1",
+		"dsfml:window": "~>2.1.1",
 		"dproto": "~>2.1.0"
 	},
 	

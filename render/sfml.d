@@ -279,7 +279,7 @@ class Window : IWindow
     {
 	debug(sfml) writeln("draw line, nodes num=", coords.length, " color=", color);
 	
-	auto line = new VertexArray( PrimitiveType.LinesStrip, coords.length );
+	auto line = new VertexArray( PrimitiveType.LinesStrip, coords.length.to!uint );
 	
 	foreach( i, point; coords )
 	{
@@ -334,7 +334,7 @@ class Window : IWindow
 	return c;
     }
     
-    Vector2F cartesianToSFML( in WindowCoords from ) const
+    Vector2F cartesianToSFML( in WindowCoords from )
     {
 	Vector2F res;
 	
@@ -344,7 +344,7 @@ class Window : IWindow
 	return res;
     }
     
-    Vector2F[] cartesianToSFML( in WindowCoords[] from ) const
+    Vector2F[] cartesianToSFML( in WindowCoords[] from )
     {
 	auto res = new Vector2F[ from.length ];
 	
@@ -363,11 +363,11 @@ class Window : IWindow
 	{
 	    switch( event.type )
 	    {
-		case Event.Closed:
+		case Event.EventType.Closed:
 		    window.close();
 		    break;
 		    
-		case Event.Resized:
+		case Event.EventType.Resized:
 		    auto visibleArea = FloatRect(0, 0, event.size.width, event.size.height);
 		    auto view = new View( visibleArea );
 		    window.view( view );
@@ -377,7 +377,7 @@ class Window : IWindow
 			
 		    break;
 		
-		case Event.KeyPressed:
+		case Event.EventType.KeyPressed:
 		    immutable auto zoom_step = 1.05;
 		    auto center = scene.getCenter;
 		    auto zoom = scene.getZoom;
