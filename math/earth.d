@@ -252,5 +252,5 @@ unittest
     // Azimuth
     auto az_from = Vector( 0, 0 );
     auto az_to = Vector( -0.1, 0 );
-    assert( az_from.getSphericalAzimuth( az_to ) == -PI_2 );
+    assert( az_from.getSphericalAzimuth( az_to ) + PI_2 < 0.0001 );
 }

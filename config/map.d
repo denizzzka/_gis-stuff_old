@@ -52,12 +52,12 @@ class Polylines
 
 Color getColor( JSONValue color_vals )
 {
-    ubyte chan( string name )
+    ubyte channel( string name )
     {
-        return to!ubyte( color_vals[ name ].uinteger );
+        return to!ubyte( color_vals[ name ].integer );
     }
     
-    return Color( chan("R"), chan("G"), chan("B") );
+    return Color( channel("R"), channel("G"), channel("B") );
 }
 
 size_t[] getSize_tArray( JSONValue v )
