@@ -6,7 +6,12 @@ Use "--recursive" for cloning this repository:
 ```
 git clone --recursive git://github.com/denizzzka/gis-stuff.git
 ```
-Build using DUB:
+Build:
+
+First, build or install https://github.com/Jebbs/DSFMLC library. Currently DSFMLC it isn't supports DUB.
+
+Then:
+
 ```
 $ cd gis-stuff
 $ dub --build=unittest
