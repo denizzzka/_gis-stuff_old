@@ -17,7 +17,7 @@ struct RoadProperties
 
 struct RoadLine
 {
-    private const pbf.Road storage;
+    private pbf.Road storage;
     alias storage this;
     
     this( MapCoords[] points, RoadProperties properties )
@@ -46,14 +46,15 @@ struct RoadLine
     
     ubyte[] Serialize() const
     {
-        return storage.Serialize;
+        return storage.serialize;
     }
     
     static RoadLine Deserialize( inout ref ubyte[] from )
     {
         auto f = from.dup;
         
-        RoadLine res = pbf.Road.Deserialize( f );
+        RoadLine res;
+        res.deserialize( f );
         
         return res;
     }

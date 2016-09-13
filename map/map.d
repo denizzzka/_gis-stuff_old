@@ -77,15 +77,16 @@ struct MapCoords
     }
     body
     {
-        return toPbf.Serialize;
+        return toPbf.serialize;
     }
     
     static MapCoords Deserialize( inout ref ubyte[] from )
     {
         auto f = from.dup;
-        auto c = pbf.MapCoords.Deserialize( f );
+        pbf.MapCoords c;
+        c.deserialize( f );
         
-        return MapCoords( MapCoords.Coords( c.lon.get, c.lat.get ) );
+        return MapCoords( MapCoords.Coords( c.lon, c.lat ) );
     }
     
     alias Box!Coords BBox;

@@ -153,7 +153,7 @@ struct Conv( Datum )
         auto dividend = hypot( e1, e2 );
         auto divider = sin_phi_s * sin_phi_f + cos_phi_s * cos_phi_f * cos_dLamb;
         
-        auto angle = atan2( dividend, divider );
+        auto angle = atan2( dividend.to!float, divider.to!float ); //FIXME: remove conversions
         
         return Datum.approx_radius * angle;
     }

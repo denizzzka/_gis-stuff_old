@@ -44,20 +44,17 @@ struct MapGraphPolyline
     MapCoords[] points() const
     {
         MapCoords[] res;
-        
-        if( !storage.coords_delta.isNull )
+
+        res.length = storage.coords_delta.length;
+
+        MapCoords prev = MapCoords.Coords.zero;
+
+        foreach( i, p; storage.coords_delta )
         {
-            res.length = storage.coords_delta.length;
-            
-            MapCoords prev = MapCoords.Coords.zero;
-            
-            foreach( i, p; storage.coords_delta )
-            {
-                prev += MapCoords.fromPbf( p );
-                res[i] = prev;
-            }
+            prev += MapCoords.fromPbf( p );
+            res[i] = prev;
         }
-        
+
         return res;
     }
     

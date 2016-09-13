@@ -51,7 +51,7 @@ PureBlob readBlob( ref File f )
     auto bc = f.rawRead( new ubyte[bh.datasize] );
     auto b = Blob( bc );
     
-    if( b.raw_size.isNull )
+    if( b.raw_size == 0 )
     {
         debug(osmpbf) writeln( "raw block, size=", b.raw.length );
         res.data = b.raw;
@@ -59,7 +59,7 @@ PureBlob readBlob( ref File f )
     else
     {
         debug(osmpbf) writeln( "zlib compressed block, size=", b.raw_size );
-        enforce( !b.zlib_data.isNull );
+        enforce( b.zlib_data.length > 0 );
         
         res.data = cast(ubyte[]) uncompress( b.zlib_data, b.raw_size );
     }
@@ -101,7 +101,7 @@ Node[] decodeDenseNodes(DenseNodesArray)( DenseNodesArray dn )
     
     Tags[] tags;
     
-    if( !dn.keys_vals.isNull )
+    if( dn.keys_vals.length != 0 )
         tags = decodeDenseTags( dn.keys_vals );
     
     foreach( i, c; dn.id )
@@ -202,7 +202,7 @@ DecodedLine decodeWay( in PrimitiveBlock prim, in Way way )
         res.coords_idx ~= curr;
     }
     
-    if( !way.keys.isNull )
+    if( way.keys.length > 0 )
         res.tags = prim.stringtable.getTagsByArray( way.keys, way.vals );
         
     return res;
@@ -320,10 +320,10 @@ Region getRegion( string filename, bool verbose )
                 addPoints( res, prim, nodes_coords, nodes );
             }
             
-            if( !c.nodes.isNull )
+            if( c.nodes.length != 0 )
                 addPoints( res, prim, nodes_coords, c.nodes );
                 
-            if( !c.ways.isNull )
+            if( c.ways.length != 0 )
                 foreach( w; c.ways )
                     try
                     {

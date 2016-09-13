@@ -6,13 +6,14 @@ import map.objects_properties;
 import std.conv: to;
 import std.algorithm: canFind;
 import std.typecons: Nullable;
+import std.traits: isNumeric;
 
 
 string getStringByIndex( in StringTable stringtable, in uint index )
 {
     char[] res;
     
-    if( !stringtable.s.isNull )
+    if( stringtable.s.length != 0 )
         res = cast( char[] ) stringtable.s[index];
         
     return to!string( res );
@@ -65,7 +66,7 @@ body
 Tag[] getTags(T)( in StringTable stringtable, in T obj )
 if( is( T == Node ) || is( T == Way ) )
 {
-    if( !obj.keys.isNull && obj.keys.length > 0 )
+    if( obj.keys.length > 0 )
         return stringtable.getTagsByArray( obj.keys, obj.vals );
     else
         return null;
@@ -209,7 +210,7 @@ Nullable!T getNoneOrVal( T )( in Tag[] tags, in string key )
 }
 
 T getZeroOrVal( T )( in Tag[] tags, in string key )
-if( isNumeric(T) )
+if( isNumeric!T )
 {
     auto r = tags.getNoneOrVal!( T )( key );
     

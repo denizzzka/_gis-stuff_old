@@ -236,12 +236,12 @@ class Region
     
     void dumpToFile( inout string filename ) const
     {
-        pbf.region.MapRegion res;
+        pbf.MapRegion res;
         
         res.file_id = cast(ubyte[]) "6dFile!Map";
         res.boundary = boundary.toPbf;
         
-        write( filename, res.Serialize );
+        write( filename, res.serialize );
     }
     
     void mmapToFile( inout string filename )
@@ -292,7 +292,7 @@ out(r)
 }
 body
 {
-    pbf.map_objects.Box b;
+    pbf.Box b;
     
     b.leftDownCorner = MapCoords( box.leftDownCorner ).toPbf;
     b.rightUpperCorner = MapCoords( box.rightUpperCorner ).toPbf;

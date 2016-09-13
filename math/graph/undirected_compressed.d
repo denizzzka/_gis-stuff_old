@@ -38,13 +38,7 @@ class UndirectedGraphCompressed( NodePayload, EdgePayload ): UndirectedBase!( No
                 {
                     auto global = g.getGlobalEdgeDescr( e );
                     
-                    if(node.global_edge_idx.isNull)
-                    {
-                        uint[] zero_length;
-                        node.global_edge_idx = zero_length; // init nullified PBF array
-                    }
-                    
-                    node.global_edge_idx ~= global.idx;
+                    node.global_edge_idx ~= global.idx.to!uint;
                 }
                 
                 nodes ~= node;
@@ -59,8 +53,8 @@ class UndirectedGraphCompressed( NodePayload, EdgePayload ): UndirectedBase!( No
             {
                 Edge edge;
                 
-                edge.from_node_idx = e.connection.from.idx;
-                edge.to_node_idx = e.connection.to.idx;
+                edge.from_node_idx = e.connection.from.idx.to!uint;
+                edge.to_node_idx = e.connection.to.idx.to!uint;
                 edge.payload = e.payload.Serialize;
                 
                 edges ~= edge;
@@ -78,11 +72,8 @@ class UndirectedGraphCompressed( NodePayload, EdgePayload ): UndirectedBase!( No
     override size_t getNodeEdgesNum( inout NodeDescr node ) const
     {
         auto n = nodes[node.idx];
-        
-        if( n.global_edge_idx.isNull )
-            return 0;
-        else
-            return n.global_edge_idx.length;
+
+        return n.global_edge_idx.length;
     }
     
     override protected GlobalEdgeDescr getGlobalEdgeDescr( inout EdgeDescr edge ) const
@@ -97,7 +88,7 @@ class UndirectedGraphCompressed( NodePayload, EdgePayload ): UndirectedBase!( No
     {
         auto node = edge.node;
         
-        GlobalEdgeDescr res = { idx: nodes[ node.idx ].global_edge_idx.get[ edge.idx ] };
+        GlobalEdgeDescr res = { idx: nodes[ node.idx ].global_edge_idx[ edge.idx ] };
         
         return res;
     }
@@ -118,7 +109,7 @@ class UndirectedGraphCompressed( NodePayload, EdgePayload ): UndirectedBase!( No
                     from: NodeDescr( e.from_node_idx ),
                     to: NodeDescr( e.to_node_idx )
                 },
-                payload: EdgePayload.Deserialize( e.payload.get )
+                payload: EdgePayload.Deserialize( e.payload )
             };
         
         return res;
