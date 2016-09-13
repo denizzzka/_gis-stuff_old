@@ -18,7 +18,7 @@ struct CompressiblePbfStruct(T)
     }
     body
     {
-        auto bytes = s.Serialize;
+        auto bytes = s.serialize;
         auto size = packVarint(bytes.length);
         
         return size ~ bytes;
@@ -31,7 +31,7 @@ struct CompressiblePbfStruct(T)
         size_t end = offset + blob_size;
         
         auto arr = from[offset..end].dup;
-        s = Deserialize( arr );
+        s.deserialize( arr );
         
         return end;
     }

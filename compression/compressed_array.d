@@ -1,7 +1,7 @@
 module compression.compressed_array;
 
 static import pbf;
-
+import std.conv: to;
 
 class CompressedArray( T, size_t keyInterval )
 {
@@ -24,7 +24,7 @@ class CompressedArray( T, size_t keyInterval )
         auto f = cast(ubyte[]) from;
         
         auto res = new CompressedArray;
-        res.ca = pbf.Compressed_Array.Deserialize(f);
+        res.ca.deserialize(f);
         
         return res;
     }
@@ -40,7 +40,7 @@ class CompressedArray( T, size_t keyInterval )
         auto keyIdx = findKeyIdx( items_num );
         
         if( keyIdx >= keys_indexes.length ) // need new key?
-            keys_indexes ~= storage.length;
+            keys_indexes ~= to!uint(storage.length);
             
         storage ~= v.compress;
         items_num++;
@@ -116,7 +116,7 @@ unittest
     c ~= Val( 12.0f );
     c ~= Val( 13.0f );
     
-    auto bytes = c.Serialize;
+    auto bytes = c.serialize;
     
     auto d = C.Deserialize( bytes );
     

@@ -8,7 +8,7 @@
 	{
 		"dsfml:graphics": "~master",
 		"dsfml:window": "~master",
-		"dproto": "~>2.0.0"
+		"dproto": "~>2.1.0"
 	},
 	
 	"sourcePaths": [ "." ],

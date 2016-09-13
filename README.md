@@ -9,7 +9,7 @@ git clone --recursive git://github.com/denizzzka/gis-stuff.git
 Build using DUB:
 ```
 $ cd gis-stuff
-$ dub --arch=x86 --build=unittest
+$ dub --build=unittest
 ```
 Run:
 ```
