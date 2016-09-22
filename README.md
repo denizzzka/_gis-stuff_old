@@ -8,7 +8,7 @@ git clone --recursive git://github.com/denizzzka/gis-stuff.git
 ```
 Build:
 
-First, build or install https://github.com/Jebbs/DSFMLC library. Currently DSFMLC it isn't supports DUB.
+First, build or install https://github.com/Jebbs/DSFMLC library. Currently DSFMLC isn't supports DUB.
 
 Then:
 
