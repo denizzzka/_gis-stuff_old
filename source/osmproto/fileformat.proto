@@ -15,6 +15,11 @@
 
 */
 
+syntax = "proto3";
+
+option optimize_for = LITE_RUNTIME;
+option java_package = "org.openstreetmap.osmosis.osmbinary";
+package OSMPBF;
 
 //protoc --java_out=../.. fileformat.proto
 
@@ -24,17 +29,17 @@
 //
 
 message Blob {
-  optional bytes raw = 1; // No compression
-  optional int32 raw_size = 2; // When compressed, the uncompressed size
+  bytes raw = 1; // No compression
+  int32 raw_size = 2; // When compressed, the uncompressed size
 
   // Possible compressed versions of the data.
-  optional bytes zlib_data = 3;
+  bytes zlib_data = 3;
 
   // PROPOSED feature for LZMA compressed data. SUPPORT IS NOT REQUIRED.
-  optional bytes lzma_data = 4;
+  bytes lzma_data = 4;
 
   // Formerly used for bzip2 compressed data. Depreciated in 2010.
-  optional bytes OBSOLETE_bzip2_data = 5 [deprecated=true]; // Don't reuse this tag number.
+  bytes OBSOLETE_bzip2_data = 5 [deprecated=true]; // Don't reuse this tag number.
 }
 
 /* A file contains an sequence of fileblock headers, each prefixed by
@@ -43,9 +48,11 @@ containing the actual data. types staring with a "_" are reserved.
 */
 
 message BlobHeader {
-  required string type = 1;
-  optional bytes indexdata = 2;
-  required int32 datasize = 3;
+  string type = 1;
+  bytes indexdata = 2;
+  int32 datasize = 3;
 }
 
-
+message BlobHeaderContainer {
+    BlobHeader bbbb = 1;
+}

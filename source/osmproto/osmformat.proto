@@ -1,8 +1,8 @@
 /** Copyright (c) 2010 Scott A. Crosby. <scott@sacrosby.com>
 
    This program is free software: you can redistribute it and/or modify
-   it under the terms of the GNU Lesser General Public License as 
-   published by the Free Software Foundation, either version 3 of the 
+   it under the terms of the GNU Lesser General Public License as
+   published by the Free Software Foundation, either version 3 of the
    License, or (at your option) any later version.
 
    This program is distributed in the hope that it will be useful,
@@ -15,11 +15,13 @@
 
 */
 
+syntax = "proto3";
+
 option optimize_for = LITE_RUNTIME;
 option java_package = "crosby.binary";
 package OSMPBF;
 
-/* OSM Binary file format 
+/* OSM Binary file format
 
 This is the master schema file of the OSM binary file format. This
 file is designed to support limited random-access and future
@@ -55,26 +57,26 @@ coding when representing nodes and relations.
 /* Contains the file header. */
 
 message HeaderBlock {
-  optional HeaderBBox bbox = 1;
+  HeaderBBox bbox = 1;
   /* Additional tags to aid in parsing this dataset */
   repeated string required_features = 4;
   repeated string optional_features = 5;
 
-  optional string writingprogram = 16; 
-  optional string source = 17; // From the bbox field.
+  string writingprogram = 16;
+  string source = 17; // From the bbox field.
 
   /* Tags that allow continuing an Osmosis replication */
 
-  // replication timestamp, expressed in seconds since the epoch, 
+  // replication timestamp, expressed in seconds since the epoch,
   // otherwise the same value as in the "timestamp=..." field
   // in the state.txt file used by Osmosis
-  optional int64 osmosis_replication_timestamp = 32;
+  int64 osmosis_replication_timestamp = 32;
 
   // replication sequence number (sequenceNumber in state.txt)
-  optional int64 osmosis_replication_sequence_number = 33;
+  int64 osmosis_replication_sequence_number = 33;
 
   // replication base URL (from Osmosis' configuration.txt file)
-  optional string osmosis_replication_base_url = 34;
+  string osmosis_replication_base_url = 34;
 }
 
 
@@ -83,10 +85,10 @@ header. Units are always in nanodegrees -- they do not obey
 granularity rules. */
 
 message HeaderBBox {
-   required sint64 left = 1;
-   required sint64 right = 2;
-   required sint64 top = 3;
-   required sint64 bottom = 4;
+   sint64 left = 1;
+   sint64 right = 2;
+   sint64 top = 3;
+   sint64 bottom = 4;
 }
 
 
@@ -95,17 +97,17 @@ message HeaderBBox {
 
 
 message PrimitiveBlock {
-  required StringTable stringtable = 1;
+  StringTable stringtable = 1;
   repeated PrimitiveGroup primitivegroup = 2;
 
   // Granularity, units of nanodegrees, used to store coordinates in this block
-  optional int32 granularity = 17 [default=100]; 
+  int32 granularity = 17;
   // Offset value between the output coordinates coordinates and the granularity grid in unites of nanodegrees.
-  optional int64 lat_offset = 19 [default=0];
-  optional int64 lon_offset = 20 [default=0]; 
+  int64 lat_offset = 19;
+  int64 lon_offset = 20;
 
 // Granularity of dates, normally represented in units of milliseconds since the 1970 epoch.
-  optional int32 date_granularity = 18 [default=1000]; 
+  int32 date_granularity = 18;
 
 
   // Proposed extension:
@@ -115,7 +117,7 @@ message PrimitiveBlock {
 // Group of OSMPrimitives. All primitives in a group must be the same type.
 message PrimitiveGroup {
   repeated Node     nodes = 1;
-  optional DenseNodes dense = 2;
+  DenseNodes dense = 2;
   repeated Way      ways = 3;
   repeated Relation relations = 4;
   repeated ChangeSet changesets = 5;
@@ -134,11 +136,11 @@ message StringTable {
 
 /* Optional metadata that may be included into each primitive. */
 message Info {
-   optional int32 version = 1 [default = -1];
-   optional int64 timestamp = 2;
-   optional int64 changeset = 3;
-   optional int32 uid = 4;
-   optional uint32 user_sid = 5; // String IDs
+   int32 version = 1;
+   int64 timestamp = 2;
+   int64 changeset = 3;
+   int32 uid = 4;
+   uint32 user_sid = 5; // String IDs
 
    // The visible flag is used to store history information. It indicates that
    // the current object version has been created by a delete operation on the
@@ -148,12 +150,12 @@ message Info {
    // If this flag is not available for some object it MUST be assumed to be
    // true if the file has the required_features tag "HistoricalInformation"
    // set.
-   optional bool visible = 6;
+   bool visible = 6;
 }
 
 /** Optional metadata that may be included into each primitive. Special dense format used in DenseNodes. */
 message DenseInfo {
-   repeated int32 version = 1 [packed = true]; 
+   repeated int32 version = 1 [packed = true];
    repeated sint64 timestamp = 2 [packed = true]; // DELTA coded
    repeated sint64 changeset = 3 [packed = true]; // DELTA coded
    repeated sint32 uid = 4 [packed = true]; // DELTA coded
@@ -174,8 +176,8 @@ message DenseInfo {
 // THIS IS STUB DESIGN FOR CHANGESETS. NOT USED RIGHT NOW.
 // TODO:    REMOVE THIS?
 message ChangeSet {
-   required int64 id = 1;
-//   
+   int64 id = 1;
+//
 //   // Parallel arrays.
 //   repeated uint32 keys = 2 [packed = true]; // String IDs.
 //   repeated uint32 vals = 3 [packed = true]; // String IDs.
@@ -190,21 +192,21 @@ message ChangeSet {
 
 
 message Node {
-   required sint64 id = 1;
+   sint64 id = 1;
    // Parallel arrays.
    repeated uint32 keys = 2 [packed = true]; // String IDs.
    repeated uint32 vals = 3 [packed = true]; // String IDs.
 
-   optional Info info = 4; // May be omitted in omitmeta
+   Info info = 4; // May be omitted in omitmeta
 
-   required sint64 lat = 8;
-   required sint64 lon = 9;
+   sint64 lat = 8;
+   sint64 lon = 9;
 }
 
 /* Used to densly represent a sequence of nodes that do not have any tags.
 
 We represent these nodes columnwise as five columns: ID's, lats, and
-lons, all delta coded. When metadata is not omitted, 
+lons, all delta coded. When metadata is not omitted,
 
 We encode keys & vals for all nodes as a single array of integers
 containing key-stringid and val-stringid, using a stringid of 0 as a
@@ -217,23 +219,23 @@ message DenseNodes {
    repeated sint64 id = 1 [packed = true]; // DELTA coded
 
    //repeated Info info = 4;
-   optional DenseInfo denseinfo = 5;
+   DenseInfo denseinfo = 5;
 
    repeated sint64 lat = 8 [packed = true]; // DELTA coded
    repeated sint64 lon = 9 [packed = true]; // DELTA coded
 
    // Special packing of keys and vals into one array. May be empty if all nodes in this block are tagless.
-   repeated int32 keys_vals = 10 [packed = true]; 
+   repeated int32 keys_vals = 10 [packed = true];
 }
 
 
 message Way {
-   required int64 id = 1;
+   int64 id = 1;
    // Parallel arrays.
    repeated uint32 keys = 2 [packed = true];
    repeated uint32 vals = 3 [packed = true];
 
-   optional Info info = 4;
+   Info info = 4;
 
    repeated sint64 refs = 8 [packed = true];  // DELTA coded
 }
@@ -243,18 +245,17 @@ message Relation {
     NODE = 0;
     WAY = 1;
     RELATION = 2;
-  } 
-   required int64 id = 1;
+  }
+   int64 id = 1;
 
    // Parallel arrays.
    repeated uint32 keys = 2 [packed = true];
    repeated uint32 vals = 3 [packed = true];
 
-   optional Info info = 4;
+   Info info = 4;
 
    // Parallel arrays
-   repeated int32 roles_sid = 8 [packed = true];
+   repeated int32 roles_sid = 8 [packed = true]; // This should have been defined as uint32 for consistency, but it is now too late to change it
    repeated sint64 memids = 9 [packed = true]; // DELTA encoded
    repeated MemberType types = 10 [packed = true];
 }
-
