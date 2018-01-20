@@ -6,10 +6,8 @@
 	"authors": [ "Denis Feklushkin" ],
 	"dependencies":
 	{
-		"dsfml:graphics": "~>2.1.1",
-		"dproto": "~>2.1.0"
+		"dsfml:graphics": "~>2.1.1"
 	},
 	"lflags" : ["-LDSFMLC/lib"],
-	"stringImportPaths": [ "source/pbf", "source/osmproto" ],
 	"targetType": "executable"
 }
