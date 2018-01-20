@@ -10,7 +10,6 @@
 		"dproto": "~>2.1.0"
 	},
 	"lflags" : ["-LDSFMLC/lib"],
-	"sourcePaths": [ "." ],
-	"stringImportPaths": [ "pbf", "osmproto" ],
+	"stringImportPaths": [ "source/pbf", "source/osmproto" ],
 	"targetType": "executable"
 }
